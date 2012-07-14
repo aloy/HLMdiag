@@ -1,0 +1,26 @@
+importFrom(stats4, coef, confint, plot)
+
+export("adjust_lmList",
+	"case_delete",
+	"compare_eb_ls",
+	"cooksd_hlm",
+	"covratio_hlm",
+	"covtrace_hlm",
+	"diagnostics",
+	"dotplot_diag",
+	"ggplot_qqnorm",
+	"ggplot_ppnorm",
+	"group_qqnorm",
+	"HLMresid",
+	"LSresids",
+	"mdffits_hlm",
+	"ppnormBand",
+	"rvc",
+	".sampleQuantiles",
+	".parse_formula",
+	".parse_f"
+)
+
+exportClasses("adjust_lmList")
+
+exportMethods("coef", "confint", "show", "plot")

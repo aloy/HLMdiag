@@ -1,0 +1,25 @@
+HLMdiag 0.1.5 ------------------------------------------------------
+* Updates to NAMESPACE to fix compatibility issues
+
+HLMdiag 0.1.4 ------------------------------------------------------
+* Updates for compatibility with ggplot2 0.9.0
+
+HLMdiag 0.1.3 ------------------------------------------------------
+* Added "marginal" residuals to the type argument for HLMresid.
+
+HLMdiag 0.1.2 ------------------------------------------------------
+
+USER-VISIBLE CHANGES:
+* Removed the formula argument from LSresids. The formula is now obtained automatically from the mer object. Note: we are still working on automatic recognition of math operators such as log(), but anything in I() is recognized.
+* Added the function HLMresid, a wrapper that will extract both the LS and EB residuals given an mer object.
+* Added a level argument to LSresids, so the function can extract LS residuals from either level of the model.
+
+BUG FIXES: 
+* Fixed the ordering of output from 'LSresids' to match the mode frame obtained from the mer object.
+
+HLMdiag 0.1.1 ------------------------------------------------------
+* Created 'adjust_lmList' class to handle fitting separate linear models when a factor is constant across the group.
+* 'random_ls_coef' was removed and replaced by the 'coef' method for 'adjust_lmList' objects.
+* Added 'rvc' diagnostic.
+* Extended 'case_delete' from only handling deletion for fixed effects to also handling deletion for variance components.
+* Improved 'dotplot_diag' to handle modified dotplots.
