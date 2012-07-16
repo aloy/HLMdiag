@@ -1,0 +1,15 @@
+# HLMdiag
+
+Up to now diagnostics for mixed and hierarchical models has relied on much programming by the analyst, especially if one desires influence diagnostics. To help fill this need, `HLMdiag`:
+
+* Provides convenience functions for residual analysis.
+  * Allows the analyst to obtain residuals estimated by least squares (LS) or empirical Bayes (EB).
+  * Allows the analyst to obtain different residual quantities (e.g. marginal, conditional, BLUPs for the two-level model).
+
+* Implements influence analysis.
+  * Leverage
+  * Deletion diagnostics -- Cook's distance, MDFFITS, covariance ratio & trace
+
+`HLMdiag` strives to provide an easy to use interface for models fit using `lmer` from the package `lme4` that is draws from the ideas of `influence.measures` for regression diagnostics.
+
+Development may be quite slow for a while as I am finishing my degree, so please bear with me!
