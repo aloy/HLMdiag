@@ -1,0 +1,158 @@
+\documentclass[article, nojss]{jss}
+
+\author{Adam Loy\\ Iowa State University}
+\title{Recent Developments in \pkg{HLMdiag}}
+
+\Abstract{
+The \pkg{HLMdiag} package provides diagnostic measures for linear mixed and hierarchical models fit using \code{lmer} in the \pkg{lme4} package. It take inspiration from \code{influence.measures} for regression models fit using \code{lm} for an intuitive presentation of deletion diagnostics. The first versions of \pkg{HLMdiag} served to develop the framework around which the package is built, but suffered from slow performance. Using \proglang{C++}, deletion diagnostics have since been implemented affordably.
+}
+\Keywords{\pkg{HLMdiag}, deletion diagnostics}
+
+\Address{
+  Adam Loy\\
+  Department of Statistics\\
+  Iowa State University\\
+  Ames, IA 50011-1210 United States of America\\
+  E-mail: \email{aloy@iastate.edu}\\
+  URL: \url{aloy.public.iastate.edu}
+}
+
+% Extra pacakges to use
+\usepackage{bm}
+\usepackage{amsmath}
+
+
+% User defined macros
+\newcommand{\trans}{\ensuremath{^\prime}}
+\newcommand{\inv}{\ensuremath{^{-1}}}
+
+\newtheorem{bblock}{Building block}
+%-----------------------------------------------------------------------------------------------------
+%-----------------------------------------------------------------------------------------------------
+\begin{document}
+
+\section{Introduction} \label{sec:intro}
+%-----------------------------------------------------------------------------------------------------
+
+The \pkg{HLMdiag} package \citep{hlmdiag} provides a framework to obtain residuals and deletion diagnostics from two-level linear mixed and hierarchical models in \proglang{R} \citep{R} fit by \code{lmer} in the \pkg{lme4} package \citep{lme4}. In the early versions, deletion diagnostics were not `usable' as they were not computationally affordable. This due to naive implementation, based on iteratively refitting a model based on a reduced data set. New versions ($> 0.1.5$) implement deletion diagnostics based on the building blocks developed by \cite{Christensen:1992vu}, \cite{Zewotir:2008gf}, and \cite{Haslett:2004un}. Additional computational speed has been achieved through the use of sparse matrices using the \pkg{Matrix} package \citep{matrix}, combining \proglang{R} and \proglang{C++} using the \pkg{Rcpp} package \citep{rcpp}, and the Armadillo \proglang{C++} library \citep{Sanderson:2010um} via \pkg{RcppArmadillo} \citep{rcpparmadillo}. 
+
+In this paper we provide an overview of the new developments in \pkg{HLMdiag}. In Section 2 include a brief overview of the models and detail methodology used to increase computational speed. Section 3 and 4 discuss changes to \pkg{HLMdiag}, providing an example, and provides timings comparisons for the implementations. Section 5 concludes this paper.
+
+\section{Methods} \label{sec:methods}
+%-----------------------------------------------------------------------------------------------------
+
+\subsection{The model}
+%---------------------
+
+We consider a two-level linear mixed model with nested error structure of the form
+%
+\begin{equation}\label{eq:lmm}
+\underset{(n \times 1)}{\bm{y}} = \underset{(n \times p)}{\bm{X}} \underset{(p \times 1)}{\bm{\beta}} + \underset{(n \times q)}{\bm{Z}} \underset{(q \times 1)}{\bm{b}} + \underset{(n \times 1)}{\bm{\varepsilon}}
+\end{equation}
+%
+where $\bm{b} \sim \mathcal{N}(0, \ \sigma^2 \bm{D})$ and $\bm{\varepsilon} \sim \mathcal{N}(0,\ \sigma^2 \bm{I})$. Notice that in this formulation, $\bm{D}$ is a matrix comprised of the ratio of variance components, which we  denote using the vector $\bm{\theta}$. We additionally assume that $\bm{b}$ and $\bm{\varepsilon}$ are mutually independent. This model specifications results in the following marginal distribution of $\bm{y}$
+%
+\begin{equation}\label{eq:ydsn}
+\bm{y} \sim \mathcal{N}(\bm{X \beta},\  \sigma^2 \bm{V})
+\end{equation}
+%
+where $\bm{V} = \bm{I} + \bm{ZDZ}\trans$. This model specification matches that of \code{lmer}.
+
+\subsection{Overview of deletion diagnostics}
+%--------------------------------------------
+
+Deletion diagnostics have become a common way to assess the sensitivity of the model to the observed data. These diagnostics summarize how the model changes based on the exclusion of one or more observations. In the mixed/hierarchical model setting, it is  recommended to run deletion both at the individual (observation) and group (sampling unit) levels. \pkg{HLMdiag} includes on deletion diagnostics focusing on specific aspects of the model
+%
+\begin{itemize}
+\item estimates of the fitted values -- Cook's distance and multivariate DFFITS (MDFFITS)
+%
+\begin{align}
+ \mathrm{C}_{I} \left(\widehat{\bm{\beta}} \right) 
+ &= \left( \widehat{\bm{\beta}} - \widehat{\bm{\beta}}_{[I]}  \right)\trans 
+     \bm{X}\trans \widehat{\bm{V}}\inv \bm{X} 
+     \left( \widehat{\bm{\beta}} - \widehat{\bm{\beta}}_{[I]}  \right) / \left( p \widehat{\sigma}^2 \right) \\
+ \text{MDFFITS}_{I} \left(\widehat{\bm{\beta}} \right)
+ &= \left( \widehat{\bm{\beta}} - \widehat{\bm{\beta}}_{[I]}  \right)\trans
+    \bm{X}\trans_{[I]} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{[I]}
+    \left( \widehat{\bm{\beta}} - \widehat{\bm{\beta}}_{[I]}  \right) / \left( p \widehat{\sigma}^2_{[I]} \right) 
+\end{align}
+%
+\item precision of estimates of the fitted values -- covariance trace (COVTRACE) and covariance ratio (COVRATIO)
+%
+\begin{align}
+ \text{COVTRACE}_{I} \left(\widehat{\bm{\beta}} \right) 
+ &= \frac{\widehat{\sigma}^2_{[I]}}{\widehat{\sigma}^2} \cdot  
+    \det \left(\left( \bm{X}\trans_{[I]} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{[I]} \right)^{-1} \right)
+    \det \left(\left( \bm{X}\trans \widehat{\bm{V}}\inv \bm{X} \right)^{-1}\right)^{-1}\\
+ \text{COVRATIO}_{I} \left(\widehat{\bm{\beta}} \right)
+ &= \frac{\widehat{\sigma}^2_{[I]}}{\widehat{\sigma}^2} \cdot 
+    \left| \mathrm{trace} 
+    \left( \left( \bm{X}\trans \widehat{\bm{V}}\inv \bm{X} \right) 
+    \left(  \bm{X}\trans_{[I]} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{[I]} \right)^{-1} \right) - p 
+    \right|
+\end{align}
+%
+\item predictions of the random effects -- Cook's distance
+%
+\begin{align}
+ \mathrm{C}_{I} \left(\widehat{\bm{b}} \right) 
+ &= \left( \widehat{\bm{b}} - \widehat{\bm{b}}_{[I]}  \right)\trans 
+     \bm{D}\inv
+     \left( \widehat{\bm{b}} - \widehat{\bm{b}}_{[I]}  \right) / \widehat{\sigma}^2
+\end{align}
+%
+\item estimates of the variance components -- not yet implemented efficiently
+\end{itemize}
+%
+\cite{Christensen:1992vu} extended Cook's distance and COVTRACE to the fixed effects and variance components of a mixed model, developing basic building blocks for more efficient computation for single case deletion. \cite{Banerjee:1997wo} extended Cook's distance using partial influence to account for the deletion of a group of observations, developing simlar building blocks. Finally, \cite{Zewotir:2005tg} refined these building blocks and \cite{Zewotir:2008gf} generalized the building blocks for both single case and group deletion. It is from this work that the building blocks used in \pkg{HLMdiag} are taken.
+
+\subsection{Building blocks of deletion diagnostics}
+%---------------------------------------------------
+
+In \pkg{HLMdiag}, deletion diagnostics are calculated in two steps. The first step extracts and calculates the building blocks of the requested deletion diagnostics and is carried out using the \code{case_delete} function. The second step is to calculate the requested diagnostic(s) and is carried out using either \code{diagnostics} or the individual diagnostics functions (e.g., \code{cooksd_hlm}). Affordable computation of diagnostics using this two-step approach requires building blocks that can be extracted/calculated from the original model fit, eliminating the need for a full refit. The building blocks of deletion diagnostics for mixed linear models can be summarized in the table~\ref{tab:bb}.
+%
+\begin{table}
+\centering
+\begin{tabular}{p{6cm} p{8cm}}\hline
+\textbf{Aspect} & \textbf{Building Blocks}\\ \hline
+estimates of the fitted values & $\widehat{\bm{\beta}} - \widehat{\bm{\beta}}_{[I]}$, $\bm{X}\trans \widehat{\bm{V}}\inv \bm{X}$ or $\bm{X}\trans_{[I]} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{[I]}$, \\
+& and $\widehat{\sigma}^2$ or $\widehat{\sigma}^2_{[I]}$ \\
+&\\
+precision of estimate of fitted values & $\bm{X}\trans \widehat{\bm{V}}\inv \bm{X}$, $\bm{X}\trans_{[I]} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{[I]}$, $\widehat{\sigma}^2$, and $\widehat{\sigma}^2_{[I]}$ \\
+&\\
+predicted random effects & $\widehat{\bm{b}} - \widehat{\bm{b}}_{[I]}$, $\bm{D}^{-1}$ \\
+\hline \end{tabular}
+\caption{\label{tab:bb} The building blocks of deletion diagnostics for mixed/hierarchical linear models.}
+\end{table}
+%
+
+\subsection{Computational building blocks}
+%-----------------------------------------
+
+It is clear that the building blocks presented in table~\ref{tab:bb} are not computational formulas, but looking to the literature we can adopt affordable formulas for these building blocks. Adopting the notation of \cite{Zewotir:2008gf} we use the subscript $[I]$ to the deletion of elements in the rows and columns indexed by $I$, and $(I)$ to denote a matrix or vector with the rows indexed by $I$ removed.
+
+Affordable computational building blocks for diagnostics relating to the fixed effects rely on rewriting 
+%
+\[
+  \bm{V}\inv = 
+  \begin{bmatrix}
+  \bm{V}_{II} & \bm{V}_{I(I)}\trans \\
+  \bm{V}_{I(I)} & \bm{V}_{[I]}
+  \end{bmatrix}
+\]
+%
+as a partioned matrix, where $\bm{V}_{[I]}$ denotes the matrix $\bm{V}$ with the elements indexed by $I$ removed, $\bm{V}_{II}$ are the deleted elements, and $V_{I[I]}$ is comprised of the elements from the columns of $\bm{V}$ from which elements were deleted. Additionally, the results of \cite{Christensen:1992vu} and \cite{Zewotir:2008gf} give
+%
+\begin{bblock}\label{eq:bb1}
+  $\bm{X}\trans_{(I)} \widehat{\bm{V}}\inv_{[I]} \bm{X}_{(I)} 
+  = \bm{X}\trans{V}\inv \bm{X} - 
+  \bm{X}\trans \bm{V}_{I(I)} \bm{V}_{[II]}\inv \bm{V}_{I(I)}\trans \bm{X}$
+\end{bblock}
+%
+
+To obtain an expression for the change in fixed effects estimates, we must first define the matrix $\bm{P} = \bm{V}\inv( \bm{I} - \bm{X} (\bm{X}\trans \bm{V}\inv \bm{X})\inv \bm{X}\trans \bm{V}\inv)$
+
+
+\bibliography{development}
+
+\end{document}

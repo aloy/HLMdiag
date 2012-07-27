@@ -1,0 +1,90 @@
+\begin{thebibliography}{12}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Banerjee and Frees(1997)}]{Banerjee:1997wo}
+Banerjee M, Frees E (1997).
+\newblock \enquote{{Influence Diagnostics for Linear Longitudinal Models}.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{92}(439), 999--1005.
+
+\bibitem[{Bates and Maechler(2012)}]{matrix}
+Bates D, Maechler M (2012).
+\newblock \emph{\pkg{Matrix}: Sparse and Dense Matrix Classes and Methods}.
+\newblock R package version 1.0-6,
+  \urlprefix\url{http://CRAN.R-project.org/package=Matrix}.
+
+\bibitem[{Bates \emph{et~al.}(2011)Bates, Maechler, and Bolker}]{lme4}
+Bates D, Maechler M, Bolker B (2011).
+\newblock \emph{\pkg{lme4}: Linear mixed-effects models using \proglang{S}4
+  classes}.
+\newblock R package version 0.999375-42,
+  \urlprefix\url{http://CRAN.R-project.org/package=lme4}.
+
+\bibitem[{Christensen \emph{et~al.}(1992)Christensen, Pearson, and
+  Johnson}]{Christensen:1992vu}
+Christensen R, Pearson L, Johnson W (1992).
+\newblock \enquote{{Case-deletion diagnostics for mixed models}.}
+\newblock \emph{Technometrics}, \textbf{34}(1), 38--45.
+
+\bibitem[{Eddelbuettel and Fran\c{c}ois(2011)}]{rcpp}
+Eddelbuettel D, Fran\c{c}ois R (2011).
+\newblock \enquote{\pkg{Rcpp}: Seamless \proglang{R} and \proglang{C++}
+  Integration.}
+\newblock \emph{Journal of Statistical Software}, \textbf{40}(8), 1--18.
+\newblock \urlprefix\url{http://www.jstatsoft.org/v40/i08/}.
+
+\bibitem[{Francois \emph{et~al.}(2012)Francois, Eddelbuettel, and
+  Bates}]{rcpparmadillo}
+Francois R, Eddelbuettel D, Bates D (2012).
+\newblock \emph{\pkg{RcppArmadillo}: \pkg{Rcpp} integration for Armadillo
+  templated linear algebra library}.
+\newblock R package version 0.3.2.4,
+  \urlprefix\url{http://CRAN.R-project.org/package=RcppArmadillo}.
+
+\bibitem[{Haslett and Dillane(2004)}]{Haslett:2004un}
+Haslett J, Dillane D (2004).
+\newblock \enquote{{Application of `delete= replace' to deletion diagnostics
+  for variance component estimation in the linear mixed model}.}
+\newblock \emph{Journal of the Royal Statistical Society. Series B (Statistical
+  Methodology)}, \textbf{66}(1), 131--143.
+
+\bibitem[{Loy(2012)}]{hlmdiag}
+Loy A (2012).
+\newblock \emph{\pkg{HLMdiag}: Diagnostic tools for two-level normal
+  hierarchical linear models}.
+\newblock R package version 0.1.5,
+  \urlprefix\url{http://CRAN.R-project.org/package=HLMdiag}.
+
+\bibitem[{{R Core Team}(2012)}]{R}
+{R Core Team} (2012).
+\newblock \emph{\proglang{R}: A Language and Environment for Statistical
+  Computing}.
+\newblock R Foundation for Statistical Computing, Vienna, Austria.
+\newblock {ISBN} 3-900051-07-0, \urlprefix\url{http://www.R-project.org/}.
+
+\bibitem[{Sanderson(2010)}]{Sanderson:2010um}
+Sanderson C (2010).
+\newblock \enquote{{Armadillo: An open source \proglang{C++} linear algebra
+  library for fast prototyping and computationally intensive experiments}.}
+
+\bibitem[{Zewotir(2008)}]{Zewotir:2008gf}
+Zewotir T (2008).
+\newblock \enquote{{Multiple Cases Deletion Diagnostics for Linear Mixed
+  Models}.}
+\newblock \emph{Communications in Statistics - Theory and Methods},
+  \textbf{37}(7), 1071--1084.
+
+\bibitem[{Zewotir and Galpin(2005)}]{Zewotir:2005tg}
+Zewotir T, Galpin J (2005).
+\newblock \enquote{{Influence diagnostics for linear mixed models}.}
+\newblock \emph{Journal of Data Science}, \textbf{3}, 153--177.
+
+\end{thebibliography}
