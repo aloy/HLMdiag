@@ -1,27 +1,40 @@
-#' Calculating residuals from two-level HLMs
+#'Extracting residuals from two-level HLMs
 #'
-#' \code{HLMresid} is a function that extracts residuals
-#' from two-level mixed/hierarchical linear models fit
-#' using \code{lmer}. That is, it is a function that
-#' will extract residuals from \code{mer} objects
-#' in a unified framework.
-#' 
-#' This function can extract residuals from either
-#' level of the model, and can extract residuals
-#' estimated using least squares (LS), Empirical 
-#' Bayes (EB), or both. This unified framework
-#' enables the analyst to more easily conduct
-#' an upward residual analysis during model
-#' exploration or checking.
+#'This is a wrapper function to extract the residuals from a two-level normal
+#'hierarchical linear model (HLM) fit using \code{lmer}. The EB residuals are
+#'extracted using using the functions \code{resid} and \code{ranef} for levels
+#'1 and 2, respectively.  To extract the LS residuals, \code{LSresids} is used.
 #'
-#' @param object an object of class \code{mer}.
-#' @param level specification of the residual of interest.
-#' @param how the residuals should be estimated; default is \code{"all"}.
-#' @param if \code{type = "all"} or \code{"LS"}, a linear formula
-#'  used by \code{adjust_lmList} (y ~ x1 + ... + xn | g where g is a grouping factor)
-#'  must be specified.
-#' @param data optional argument giving the data frame used for LS residuals. This
-#'  is used mainly for when dealing with simulations.
+#'
+#'@param object a fitted model object of class \code{mer}.
+#'@param level the level from which the residuals should be extracted; either
+#'\code{1} or \code{2} (both can be specified).
+#'@param type the type of residual to be extracted; \code{"LS"}, \code{"EB"},
+#'\code{"both"} (i.e. LS and EB), or \code{"marginal"}.
+#'@param sim an optional data vector containing a (simulated) response
+#'variable.
+#'@param semi.standardize if \code{TRUE} the semi-standardized residuals will
+#'also be returned. This argument is only used when \code{level = 1}.
+#'@return If \code{type = "marginal"} is specified, a numeric vector of the
+#'marginal residuals is returned.  Otherwise, a data frame is returned
+#'containing the following: \itemize{ \item When \code{level=1}: the model
+#'frame, the residuals (\code{LS.resid} and/or \code{EB.resid}), the fitted
+#'values (\code{fitted}), and, if \code{semi.standardize = TRUE}, the diagonal
+#'elements of the hat matrix (\code{hat}), the semi-standardized residuals
+#'(\code{semi.std.resid})
+#'
+#'\item When \code{level=2}: the LS and/or EB residuals corresponding to each
+#'random effect.
+#'
+#'\item When \code{level = c(1, 2)}: a list with elements \code{level.1} and
+#'\code{level.2}. Each element is specified as stated above.  }
+#'@author Adam Loy \email{aloy@@istate.edu}
+#'@examples
+#'
+#'data(Oxboys, package = 'mlmRev')
+#'fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
+#'level1Resids <- HLMresid(object = fm, level = c(1,2), type = "both", semi.standardize = TRUE)
+#'
 HLMresid <- function(object, level = c(1, 2), type = c("both", "LS", "EB", "marginal"), sim = NULL, semi.standardize = TRUE){
 	type <- match.arg(type)
 	if(is.null(data)){data <- object@frame}

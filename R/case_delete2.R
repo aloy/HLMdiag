@@ -6,12 +6,26 @@
 #' @param type the part of the model for which you are obtaining deletion diagnostics:
 #'   the fixed effects (\code{fixef}), random effects (\code{ranef}), 
 #'   variance components (\code{varcomp}), or \code{all}.
-#' @param 
+#'@return a list with the following compontents:
+#'@return fixef.original the original fixed effects
+#'@return ranef.original the origingal random effects
+#'@return vcov.original the original variance-covariance parameters
+#'@return varcomp.original the original variance components
+#'@return fixef.delete a list of the fixed effects obtained through case
+#'deletion
+#'@return ranef.delete a list of the changes in random effects obtained through case
+#'deletion
+#'@return vcov.delete a list of the variance-covariance parameters obtained
+#'through case deletion -- currently NULL
+#'@return fitted.delete a list of the fitted values obtained through case
+#'deletion -- Currently NULL
+#'@return varcomp.delete a list of the variance components obtained through
+#'case deletion -- Currently NULL
 #' @example
 #' library(mlmRev)
 #' fm <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + schgend + (schgend | school), data = Exam)
 #' fm.del <- case_delete2(fm)
-case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcomp")){
+case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcomp")){  
   
   # Extract key pieces of the model
   Y <- model@y
@@ -42,7 +56,7 @@ case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcom
   if(group == FALSE){
     # Obtain building blocks -- individual case deletion
     fixef.delete <- .Call("bbFixef1", y_ = Y, X_ = as.matrix(X), Vinv_ = as.matrix(Vinv), 
-                       XVXinv_ = as.matrix(XVXinv), beta_ = betaHat, PACKAGE = "HLMdiag2")
+                       XVXinv_ = as.matrix(XVXinv), beta_ = betaHat, PACKAGE = "HLMdiag")
   }
   
   if(group == TRUE){
@@ -56,12 +70,12 @@ case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcom
     fixef.delete <- .Call("bbFixefGroup", groupIndex = groups.index, X_ = X, 
                        Vinv_ = as.matrix(Vinv), XVinv_ = as.matrix(XVXinv),
                        P_ = as.matrix(P), e_ = as.matrix(P %*% Y),
-                       PACKAGE = "HLMdiag2")
+                       PACKAGE = "HLMdiag")
   }
   
   ranef.delete <- .Call("bbRanef", Zt_ = as.matrix(getME(model, "Zt")), 
                         D_ = as.matrix(D), P_ = as.matrix(P), 
-                        e_ = as.numeric(P %*% Y), PACKAGE = "HLMdiag2")
+                        e_ = as.numeric(P %*% Y), PACKAGE = "HLMdiag")
   
   sigma.original <- attr(VarCorr(model), "sc")
   varcomp.original <- c(sigma2 = sigma.original^2, diag(VarCorr(model)[[names(model@flist)]]))
@@ -86,7 +100,7 @@ case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcom
 #' library(mlmRev)
 #' fm <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + schgend + (schgend | school), data = Exam)
 #' fm.del <- case_delete2(fm)
-#' fm.cd  <- cook_fixef(fm.del, fixef(fm))
+#' fm.cd  <- cook_fixef(fm.del$fixef.delete, fixef(fm), sqrt(fm.del$varcomp.original[1]))
 cook_fixef <- function(bb, fixef, sig0) {
   sapply(bb, 
          function(x){

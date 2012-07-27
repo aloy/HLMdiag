@@ -138,6 +138,31 @@ pooledSD <- function(x, ...)
 }
 
 #----------------------------
+
+
+#'Fitting Common Models via \code{lm}
+#'
+#'Separate linear models are fit via \code{lm} similar to \code{lmList},
+#'however, \code{adjust_lmList} can handle models where a factor takes only one
+#'level within a group. In this case, the \code{formula} is updated eliminating
+#'the offending factors from the formula for that group as the effect is
+#'absorbed into the intercept.
+#'
+#'
+#'@aliases adjust_lmList adjust_lmList,formula,data.frame-method
+#'@param formula a linear formula such as that used by \code{lmList}, e.g.
+#'\code{y ~ x1 + ... + xn | g}, where \code{g} is a grouping factor.
+#'@param data a data frame containing the variables in the model.
+#'@param pool a logical value that indicates whether the pooled standard
+#'deviation/error should be used.
+#'@seealso \code{\link[lme4]{lmList}, \link[stats]{lm}}
+#'@references Douglas Bates, Martin Maechler and Ben Bolker (2011). lme4:
+#'Linear mixed-effects models using S4 classes. R package version 0.999375-42.
+#'@examples
+#'
+#'data(Exam, package = 'mlmRev')
+#'sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam)
+#'
 adjust_lmList <- function(formula, data, pool){
 	options(show.error.messages = FALSE)
 	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
