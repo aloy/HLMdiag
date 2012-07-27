@@ -1,25 +1,10 @@
+useDynLib(HLMdiag2)
+
+import(lme4, Matrix)
+
 importFrom(stats4, coef, confint, plot)
 
-export("adjust_lmList",
-	"case_delete",
-	"compare_eb_ls",
-	"cooksd_hlm",
-	"covratio_hlm",
-	"covtrace_hlm",
-	"diagnostics",
-	"dotplot_diag",
-	"ggplot_qqnorm",
-	"ggplot_ppnorm",
-	"group_qqnorm",
-	"HLMresid",
-	"LSresids",
-	"mdffits_hlm",
-	"ppnormBand",
-	"rvc",
-	".sampleQuantiles",
-	".parse_formula",
-	".parse_f"
-)
+exportPattern("^[[:alpha:]]+")
 
 exportClasses("adjust_lmList")
 
