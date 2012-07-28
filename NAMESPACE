@@ -1,6 +1,7 @@
-useDynLib(HLMdiag)
+useDynLib(HLMdiag2)
 
 import(lme4, Matrix)
+
 importFrom(stats4, coef, confint, plot)
 
 exportPattern("^[[:alpha:]]+")
