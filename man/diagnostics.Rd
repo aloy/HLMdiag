@@ -7,17 +7,7 @@
 \alias{rvc}
 \title{Calculating diagnostics for two-level hierarchical linear models.}
 \usage{
-  diagnostics(model, delete)
-
-  cooksd_hlm(model, delete)
-
-  mdffits_hlm(model, delete)
-
-  covtrace_hlm(model, delete)
-
-  covratio_hlm(model, delete)
-
-  rvc(delete)
+diagnostics(model, delete)
 }
 \arguments{
   \item{model}{an object contatining the original
@@ -48,7 +38,7 @@
 }
 \examples{
 data(Oxboys, package = "mlmRev")
-fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
+fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2) | Subject), data = Oxboys)
 fmDel <- case_delete(model = fm, group = TRUE, type = "both")
 fmDiag <- diagnostics(model = fm, delete = fmDel)
 
@@ -56,7 +46,8 @@ fmDiag <- diagnostics(model = fm, delete = fmDel)
 library(mlmRev)
 exm1 <- lmer(normexam ~ standLRT + sex + schgend + (1 | school), data = Exam)
 exm1DEL <- case_delete(model = exm1, group = TRUE, type = "both")
-exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)}
+exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)
+}
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
@@ -74,4 +65,3 @@ exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)}
   SAS Users Group International Conference}, SAS Users
   Group International.
 }
-

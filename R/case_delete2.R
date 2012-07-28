@@ -1,30 +1,37 @@
 #' Implementing Case Deletion.
 #' 
+#' This function is used to iteratively delete groups corresponding to the
+#' levels of a two-level hierarchical linear model. It uses \code{lmer()} to
+#' fit the models for each deleted case (i.e. uses brute force). To investigate
+#' numerous levels of the model, the function will need to be called multiple
+#' times, specifying the group (level) of interest each time.
+#' 
 #' @param model the original hierarchical model fit using \code{lmer()}
 #' @param group a variable used to define the group for which cases will be deleted.
 #'   If this is left \code{FALSE}, then the function will delete individual observations.
 #' @param type the part of the model for which you are obtaining deletion diagnostics:
 #'   the fixed effects (\code{fixef}), random effects (\code{ranef}), 
 #'   variance components (\code{varcomp}), or \code{all}.
-#'@return a list with the following compontents:
-#'@return fixef.original the original fixed effects
-#'@return ranef.original the origingal random effects
-#'@return vcov.original the original variance-covariance parameters
-#'@return varcomp.original the original variance components
-#'@return fixef.delete a list of the fixed effects obtained through case
-#'deletion
-#'@return ranef.delete a list of the changes in random effects obtained through case
-#'deletion
-#'@return vcov.delete a list of the variance-covariance parameters obtained
-#'through case deletion -- currently NULL
-#'@return fitted.delete a list of the fitted values obtained through case
-#'deletion -- Currently NULL
-#'@return varcomp.delete a list of the variance components obtained through
-#'case deletion -- Currently NULL
-#' @example
-#' library(mlmRev)
+#' @return a list with the following compontents:
+#' @return fixef.original the original fixed effects
+#' @return ranef.original the origingal random effects
+#' @return vcov.original the original variance-covariance parameters
+#' @return varcomp.original the original variance components
+#' @return fixef.delete a list of the fixed effects obtained through case
+#'   deletion
+#' @return ranef.delete a list of the changes in random effects obtained through case
+#'   deletion
+#' @return vcov.delete a list of the variance-covariance parameters obtained
+#'  through case deletion -- currently NULL
+#' @return fitted.delete a list of the fitted values obtained through case
+#'  deletion -- Currently NULL
+#' @return varcomp.delete a list of the variance components obtained through
+#'  case deletion -- Currently NULL
+#' @examples
+#' 
+#' \dontrun{data(Exam, package = 'mlmRev')
 #' fm <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + schgend + (schgend | school), data = Exam)
-#' fm.del <- case_delete2(fm)
+#' fm.del <- case_delete2(fm)}
 case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcomp")){  
   
   # Extract key pieces of the model
@@ -95,12 +102,20 @@ case_delete2 <- function(model, group = FALSE, type = c("both", "fixef", "varcom
 
 #------------------------------------------------------------------------------
 #' Cook's distance for fixed effects
+#' 
+#' Cook's distance for fixed effects
+#' 
+#' @param bb list of building blocks for level-1 deletion
+#' @param fixef fixed effects from mer object
+#' @param sig0 
 #'
 #' @example
-#' library(mlmRev)
+#' \dontrun{
+#' data(Exam, package = 'mlmRev')
 #' fm <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + schgend + (schgend | school), data = Exam)
 #' fm.del <- case_delete2(fm)
-#' fm.cd  <- cook_fixef(fm.del$fixef.delete, fixef(fm), sqrt(fm.del$varcomp.original[1]))
+#' fm.cd  <- cook_fixef(fm.del$fixef.delete, fixef(fm), sqrt(fm.del$varcomp.original[1]))}
+#' 
 cook_fixef <- function(bb, fixef, sig0) {
   sapply(bb, 
          function(x){

@@ -2,7 +2,7 @@
 \alias{ggplot_qqnorm}
 \title{Constructing a normal quantile-quantile plot}
 \usage{
-  ggplot_qqnorm(x, line = NULL, ...)
+ggplot_qqnorm(x, line = NULL, ...)
 }
 \arguments{
   \item{x}{a numeric vector}
@@ -25,4 +25,3 @@
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
-

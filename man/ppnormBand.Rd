@@ -2,7 +2,7 @@
 \alias{ppnormBand}
 \title{Adding simultaneous confidence bands to normal probability plots}
 \usage{
-  ppnormBand(x, e)
+ppnormBand(x, e)
 }
 \arguments{
   \item{x}{a vector of probabilities}
@@ -29,4 +29,3 @@
   \emph{Statistical Methods for Reliability Data}, New
   York, NY: Wiley.
 }
-
