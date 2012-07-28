@@ -12,4 +12,12 @@ Up to now diagnostics for mixed and hierarchical models have required much progr
 
 `HLMdiag` strives to provide an easy to use interface for models fit using `lmer` from the package `lme4` that is draws from the ideas of `influence.measures` for regression diagnostics.
 
-Development may be quite slow for a while as I am finishing my degree, so please bear with me!
+Development may be quite slow for a while, as I am finishing my degree, so please bear with me!
+
+## Development version
+
+If you would like to download the development version of `HLMdiag`, I would recommend using Hadley Wickham's `devtools` package:
+
+    # install.packages("devtools")
+    library(devtools)
+    install_github("HLMdiag", username = "aloy")
