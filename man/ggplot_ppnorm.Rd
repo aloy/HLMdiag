@@ -2,7 +2,7 @@
 \alias{ggplot_ppnorm}
 \title{Constructing a normal probability plot}
 \usage{
-ggplot_ppnorm(x, line = NULL, ...)
+  ggplot_ppnorm(x, line = NULL, ...)
 }
 \arguments{
   \item{x}{a numeric vector}
@@ -25,3 +25,4 @@ ggplot_ppnorm(x, line = NULL, ...)
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
+

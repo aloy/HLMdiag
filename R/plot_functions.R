@@ -1,30 +1,24 @@
 #' Dot plots for influence diagnostics
-#' 
+#'
 #' This is a function that can be used to create modified dotplots for the
-#' diagnostic measures.  The plot allows the user to understand the
-#' distribution of the diagnostic measure and visually identify unusual cases.
-#' 
-#' 
+#' diagnostic measures.  The plot allows the user to understand the distribution
+#' of the diagnostic measure and visually identify unusual cases.
+#'
 #' @param data an object containing the output from \code{diagnostics()}.
-#' @param type the part of the model the diagnostic corresponds to, either
-#' \code{"fixef"} or \code{"varcomp"}.
-#' @param name specification of which diagnostic to plot (either COOKSD,
-#' MDFFITS, COVTRACE, COVRATIO, or the name of the variance component for rvc).
+#' @param type the part of the model the diagnostic corresponds to, either \code{"fixef"} or \code{"varcomp"}.
+#' @param name specification of which diagnostic to plot (either COOKSD, MDFFITS, COVTRACE, COVRATIO, or rvc).
 #' @param cutoff value specifying unusual values of the diagnostic
 #' @param modify if \code{TRUE} will produce a space-saving modification
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
-#' @examples
-#' 
+#' @examples 
 #' data(Oxboys, package = 'mlmRev')
 #' fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-#' fmDel <- case_delete(model = fm, group = "Subject", type = "both")
-#' fmDiag <- diagnostics(model = fm, delete = fmDel)
-#' dotplot_diag(data = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal",
-#'  	modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
-#' dotplot_diag(data = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal",
-#'  	modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
-#' 
+#' fmDel <- case_delete(model = fm, group = "Subject")
+#' fmDiag <- diagnostics(model = fm, delete = fmDel, type = "fixef")
+#' dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
+#' dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
+#' @export
 dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL, modify = FALSE, ... ){
   type <- match.arg(type)
   if(class(data) == "list"){ data <- data[[paste(type,"_diag", sep = "")]] }
@@ -48,12 +42,19 @@ dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL
             geom_text(data = subset(data, extreme == TRUE), aes(label = IDS, hjust=.5, vjust=1.5, size=3))
         }
 
-        p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
-          geom_hline(aes(yintercept = cutoff), colour=I("red")) +
-           # geom_text(data = subset(data, extreme == TRUE), aes(label = IDS, hjust=.5, vjust=1.5, size=3)) + 
-              opts(legend.position = "none") +
+		ver <- as.numeric_version(packageVersion("ggplot2"))
+		if(ver >= as.numeric_version("0.9.2")) {
+        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+          		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+              	theme(legend.position = "none") +
                 coord_flip()
-      }
+      	} else{
+        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+          		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+              	opts(legend.position = "none") +
+                coord_flip()      			
+      	}
+    }
 
       else{
         data$extreme <- with(data, get(name) < cutoff[1] | get(name) > cutoff[2])
@@ -68,12 +69,21 @@ dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL
             geom_text(data = subset(data, extreme == TRUE), aes(label = IDS, hjust=.5, vjust=1.5, size=3))
         }
 
-        p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
-          geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
-            geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
-            #  geom_text(data = subset(data, extreme == TRUE), aes(label = IDS, hjust=.5, vjust=1.5, size=3)) + 
+		    ver <- as.numeric_version(packageVersion("ggplot2"))
+		    if(ver >= as.numeric_version("0.9.2")) {
+        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+          		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
+            	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
+                theme(legend.position = "none") +
+                coord_flip()	
+        } else{
+        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+          		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
+            	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
                 opts(legend.position = "none") +
-                  coord_flip()	
+                coord_flip()		        	
+       }
+        
       }
     }
   }	

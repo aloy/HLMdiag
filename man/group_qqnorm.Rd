@@ -2,7 +2,8 @@
 \alias{group_qqnorm}
 \title{Plotting numerous normal q-q plots on same plot}
 \usage{
-group_qqnorm(x, group, line = NULL, alpha_point = 1, alpha_line = 1, ...)
+  group_qqnorm(x, group, line = NULL, alpha_point = 1,
+  alpha_line = 1, ...)
 }
 \arguments{
   \item{x}{a numeric vector from which quantiles will be
@@ -39,3 +40,4 @@ group_qqnorm(x, group, line = NULL, alpha_point = 1, alpha_line = 1, ...)
   Mixed and Hierarchical Linear Models,'' Ph.D. thesis,
   University of California Los Angeles.
 }
+

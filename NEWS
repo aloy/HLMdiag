@@ -1,5 +1,6 @@
 HLMdiag 0.1.6 ------------------------------------------------------
-* Changed the way case-deletion is run to an approximation rather than full refit. Currently this new deletion is called `case_delete2`, but will replace case_delete once I have implemented all of the other changes (i.e. all the diagnostic functions).
+* Updates for compatibility with ggplot2 >= 0.9.2
+* Updates to NAMESPACE
 
 HLMdiag 0.1.5 ------------------------------------------------------
 * Updates to NAMESPACE to fix compatibility issues
