@@ -1,12 +1,18 @@
 #' @export
-cooksd_hlm <- function(model, delete){
-  groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
-  rank.X <- qr(model.matrix(model))$rank
+cooks.distance.case_delete <- function(delete){
+  p <- length(delete$fixef.original)
 
-  cook <- NULL
-  for(i in 1:length(groups)){
-    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
-    cook <- c(cook, t(change.fixef) %*% ginv(as.matrix(vcov(model))) %*% change.fixef / rank.X)
+  if(is(delete$fixef.delete, "matrix")) {
+    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+    cook <- NULL
+    for(i in 1:length(groups)){
+      change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
+      cook <- c(cook, t(change.fixef) %*% solve( as.matrix( delete$vcov.original ) ) %*% change.fixef / p)
+    }
+  }
+  else{
+    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete)
+    cook <- t(change.fixef) %*% solve( as.matrix( delete$vcov.original ) ) %*% change.fixef / p
   }
 
   return(cook)
@@ -14,30 +20,43 @@ cooksd_hlm <- function(model, delete){
 
 #--------------------------------------
 #' @export
-mdffits_hlm <- function(model, delete){
-  groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
-  rank.X <- qr(model.matrix(model))$rank
+mdffits.case_delete <- function(delete){
+  p <- length(delete$fixef.original)
 
-  MDFFITS <- NULL
-  for(i in 1:length(groups)){
-    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
-    MDFFITS <- c(MDFFITS, t(change.fixef) %*% ginv(as.matrix(delete$vcov.delete[[i]])) %*% change.fixef / rank.X)
-  }	
+  if(is(delete$fixef.delete, "matrix")) {
+    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+    MDFFITS <- NULL
+    for(i in 1:length(groups)){
+      change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
+      MDFFITS <- c(MDFFITS, t(change.fixef) %*% solve( as.matrix(delete$vcov.delete[[i]]) ) %*% change.fixef / p)
+    }
+  }
+  else{
+    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete)
+    MDFFITS <- t(change.fixef) %*% solve( as.matrix(delete$vcov.delete) ) %*% change.fixef / p
+  }
 
   return(MDFFITS)
 }
 
 #--------------------------------------
 #' @export
-covtrace_hlm <- function(model, delete){
-  groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
-  rank.X <- qr(model.matrix(model))$rank
+covtrace.case_delete <- function(delete){
+  p <- length(delete$fixef.original)
 
-  COVTRACE <- NULL
-  for(i in 1:length(groups)){
-    V.original <- as.matrix(vcov(model))
-    V.delete <- as.matrix(delete$vcov.delete[[i]])
-    COVTRACE <- c(COVTRACE, abs(sum(diag(ginv(V.original) %*% V.delete)) - rank.X))
+  if(is(delete$vcov.delete, "list")) {
+    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+    COVTRACE <- NULL
+    for(i in 1:length(groups)){
+      V.original <- as.matrix(delete$vcov.original)
+      V.delete <- as.matrix(delete$vcov.delete[[i]])
+      COVTRACE <- c(COVTRACE, abs(sum(diag(solve(V.original) %*% V.delete)) - p))
+    }
+  }
+  else{
+    V.original <- as.matrix(delete$vcov.original)
+    V.delete <- as.matrix(delete$vcov.delete)
+    COVTRACE <- abs(sum(diag(solve(V.original) %*% V.delete)) - p)
   }
 
   return(COVTRACE)	
@@ -45,23 +64,34 @@ covtrace_hlm <- function(model, delete){
 
 #--------------------------------------
 #' @export
-covratio_hlm <- function(model, delete){
-  groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
-
-  COVRATIO <- NULL
-  for(i in 1:length(groups)){
-    V.original <- as.matrix(vcov(model))
-    V.delete <- as.matrix(delete$vcov.delete[[i]])
-    COVRATIO <- c(COVRATIO, det(V.delete) / det(V.original))
+covratio.case_delete <- function(delete){
+  if(is(delete$vcov.delete, "list")) {
+    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+    COVRATIO <- NULL
+    for(i in 1:length(groups)){
+      V.original <- as.matrix(delete$vcov.original)
+      V.delete <- as.matrix(delete$vcov.delete[[i]])
+      COVRATIO <- c(COVRATIO, det(V.delete) / det(V.original))
+    }
   }
-
+  else{
+    V.original <- as.matrix(delete$vcov.original)
+    V.delete <- as.matrix(delete$vcov.delete)
+    COVRATIO <- det(V.delete) / det(V.original)
+  }
+  
   return(COVRATIO)
 }
 
 #--------------------------------------
 #' @export
-rvc <- function(delete){
-	res <- do.call('rbind', lapply(delete$varcomp.delete, function(x){ (x / delete$varcomp.original) - 1}))
+rvc.case_delete <- function(delete){
+	if(class(delete$varcomp.delete) == "list") {
+	  res <- do.call('rbind', lapply(delete$varcomp.delete, function(x){ (x / delete$varcomp.original) - 1}))
+	}
+  else{
+    res <- (delete$varcomp.delete / delete$varcomp.original) - 1
+  }
 	return(res)
 }
 
@@ -109,7 +139,7 @@ rvc <- function(delete){
 #' exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)
 #' }
 #' @export
-diagnostics <- function(model, delete){
+diagnostics <- function(delete){
   type <- attributes(delete)$type
   if(type %in% c("fixef", "both")){
     ids <- as.vector(rownames(delete$fixef.delete, do.NULL = FALSE, prefix = ""))
@@ -119,15 +149,25 @@ diagnostics <- function(model, delete){
     if(is.null(ids)) ids <- 1:length(delete$varcomp.delete)
   }
   if(type  %in% c("fixef", "both")){
-    res1 <- data.frame(IDS = ids, COOKSD = cooksd_hlm(model, delete),
-                       MDFFITS = mdffits_hlm(model, delete),
-                       COVTRACE = covtrace_hlm(model, delete),
-                       COVRATIO = covratio_hlm(model, delete))
+    if(!is(delete$fixef.delete, "matrix")) {
+      res1 <- data.frame(COOKSD = cooks.distance(delete),
+                        MDFFITS = mdffits(delete),
+                        COVTRACE = covtrace(delete),
+                        COVRATIO = covratio(delete))
+    }
+    else {
+      res1 <- data.frame(IDS = ids, COOKSD = cooks.distance(delete),
+                         MDFFITS = mdffits(delete),
+                         COVTRACE = covtrace(delete),
+                         COVRATIO = covratio(delete))
+    }
     if(type == "fixef") return(res1)
   }
 
   if(type %in% c("varcomp", "both")){
-    res2 <- data.frame(IDS = ids, rvc(delete))
+    if(!is(delete$varcomp.delete, "list")) { res2 <- data.frame(rvc(delete)) }
+    else res2 <- data.frame(IDS = ids, rvc(delete))
+    
     if(type == "varcomp") return(res2)
   }
 

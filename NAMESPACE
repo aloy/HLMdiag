@@ -1,30 +1,26 @@
+useDynLib(HLMdiag)
+
+import(lme4)
+import(Matrix)
 import(methods)
 import(plyr)
 import(reshape2)
 import(MASS)
 importFrom(stats4, coef, confint, plot)
+importFrom(stats, cooks.distance, covratio)
 
-export("adjust_lmList",
-	"case_delete",
-	"compare_eb_ls",
-	"cooksd_hlm",
-	"covratio_hlm",
-	"covtrace_hlm",
-	"diagnostics",
-	"dotplot_diag",
-	"ggplot_qqnorm",
-	"ggplot_ppnorm",
-	"group_qqnorm",
-	"HLMresid",
-	"LSresids",
-	"mdffits_hlm",
-	"ppnormBand",
-	"rvc",
-	".sampleQuantiles",
-	".parse_formula",
-	".parse_f"
-)
+exportPattern("^[[:alpha:]]+")
 
 exportClasses("adjust_lmList")
-
 exportMethods("coef", "confint", "show", "plot")
+
+S3method(cooks.distance, mer)
+S3method(cooks.distance, case_delete)
+S3method(covratio, lm)
+S3method(covratio, mer)
+S3method(covratio, case_delete)
+S3method(covtrace, mer)
+S3method(covtrace, case_delete)
+S3method(leverage, mer)
+S3method(mdffits, mer)
+S3method(mdffits, case_delete)

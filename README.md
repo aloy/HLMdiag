@@ -1,6 +1,8 @@
 # HLMdiag
 
-Up to now diagnostics for mixed and hierarchical models have required much programming by the analyst, especially if one desires influence diagnostics. To help fill this need, `HLMdiag`:
+Up to now diagnostics for mixed and hierarchical models have required much programming by 
+the analyst, especially if one desires influence diagnostics. 
+To help fill this need, `HLMdiag`:
 
 * Provides convenience functions for residual analysis.
   * Allows the analyst to obtain residuals estimated by least squares (LS) or empirical Bayes (EB).
