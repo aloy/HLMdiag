@@ -70,6 +70,7 @@ rvc.default <- function(model, ...){
 #'   Demidenko, E., & Stukel, T. A. (2005). 
 #'   Influence analysis for linear mixed-effects models. 
 #'   Statistics in Medicine, 24(6), 893–909.
+#' @author Adam Loy \email{aloy@@iastate.edu}
 leverage.mer <- function(model, level = "both") {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(model@dims[["nest"]] == 0) {
