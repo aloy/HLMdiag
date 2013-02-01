@@ -3,7 +3,7 @@
 \title{Dot plots for influence diagnostics}
 \usage{
   dotplot_diag(data, type = c("fixef", "varcomp"), name,
-  cutoff = NULL, modify = FALSE, ...)
+    cutoff = NULL, modify = FALSE, ...)
 }
 \arguments{
   \item{data}{an object containing the output from
@@ -14,8 +14,7 @@
   \code{"varcomp"}.}
 
   \item{name}{specification of which diagnostic to plot
-  (either COOKSD, MDFFITS, COVTRACE, COVRATIO, or the name
-  of the variance component for rvc).}
+  (either COOKSD, MDFFITS, COVTRACE, COVRATIO, or rvc).}
 
   \item{cutoff}{value specifying unusual values of the
   diagnostic}
@@ -35,14 +34,13 @@
 \examples{
 data(Oxboys, package = 'mlmRev')
 fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-fmDel <- case_delete(model = fm, group = "Subject", type = "both")
-fmDiag <- diagnostics(model = fm, delete = fmDel)
-dotplot_diag(data = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal",
- 	modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
-dotplot_diag(data = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal",
- 	modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
+fmDel <- case_delete(model = fm, group = "Subject")
+fmDiag <- diagnostics(model = fm, delete = fmDel, type = "fixef")
+dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
+dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
 }
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
+\keyword{hplot}
 

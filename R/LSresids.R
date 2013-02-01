@@ -3,62 +3,69 @@
 #' This function calculates the case-level least squares residuals
 #' found by fitting separate LS regression models to each case.
 #'
-#' @param formula a linear formula that is used by \code{adjust_lmList}' (y ~ x1 + ... + xn | g where g is a grouping factor)
-#' @param lme.model  an object contatining the original hierarchical model fit using lmer()
-#' @param semi.standardize if \code{TRUE} the semi-standardized residuals will also be returned
-#' @return a data frame with the following columns: id, residual, fitted
+#' @param object an object of class \code{mer}.
+#' @param level which residuals should be plotted: 1 for within-group
+#' residuals or the name of the grouping factor (as defined in \code{flist} of the 
+#' \code{mer} object) for between-group residuals.
+#' @param sim optional argument giving the data frame used for LS residuals. This
+#'  is used mainly for when dealing with simulations.
+#' @param standardize if \code{TRUE} the standardized level-1
+#' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
+#' the semi-standardized level-1 residuals will be returned.
 #' @author Adam Loy \email{aloy@@istate.edu}
-#' @examples
-#' data(Oxboys, package = 'mlmRev')
-#' fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-#' level1Resids <- LSresids(formula = height ~ age + I(age^2) | Subject, lme.model = fm, semi.standardize = TRUE)
-#' 
-#' \dontrun{wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)
-#' LSresids(formula = lnw ~ exper | id, lme.model = wages.fm1)}
 #' @export
-LSresids <- function(object, level, sim = NULL, semi.standardize = TRUE){
-	pform <- .parse_f(formula(object))
-	response <- as.character(formula(object)[[2]])
-	fixed <- subset(pform, type == "fixed" & included == TRUE)
-	random <- subset(pform, type == "random" & included == TRUE)
-	grp <- subset(pform, type == "group" & included == TRUE)
+#' @keywords models regression
+LSresids <- function(object, level, sim = NULL, standardize = NULL){
+  if(!is(object, "mer")) stop("object must be of class 'mer'")
+  if(!level %in% c(1, names(object@flist))) {
+    stop("level can only be 1 or a grouping factor from the fitted model.")
+  }
+  if(object@dims[["nest"]] == 0) {
+    stop("LSresids has not yet been implemented for models with 
+          crossed random effects")
+  }
+  if(!is.null(standardize) && !standardize %in% c(TRUE, "semi")) {
+    stop("standardize can only be specified to be TRUE or 'semi' .")
+  }
+  
+  fixed <- as.character( fixform( formula(object) ) )
 	
 	data <- object@frame
 	if(!is.null(sim)){data[,response] <- sim}
 	
 	if(level == 1){
 		# fitting a separate LS regression model to each group
-			
-		form <- paste(paste(response, "~"), 
-			paste(as.character(fixed[,"name"]), collapse = " + "), 
-			" | ", as.character(grp[, "name"]))
+		form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
 	
 		ls.models <- adjust_lmList(formula = formula(form), data = data)
 		
-#	if(level == 1){
-		# obtaining the residuals, fitted values, and model frame
-		# from that regression for each group
 		ls.residuals <- lapply(ls.models, resid)
 		ls.fitted <- lapply(ls.models, fitted)
-	
-		if(semi.standardize == TRUE){
-			ls.influence <- lapply(ls.models, lm.influence)
-			ls.hat <- lapply(ls.influence, function(x) x$hat)
-		}
 	
 		# creating a data frame of the residuals, fitted values, and model frames
 		ls.data <- lapply(ls.models, model.frame)
 		
 		row.order <- as.numeric(unlist(lapply(ls.data, function(x) row.names(x))))
 		
-		return.df <- data.frame(LS.resid = unlist(ls.residuals), fitted = unlist(ls.fitted), 
-			hat = unlist(ls.hat))
+		return.df <- data.frame(LS.resid = unlist(ls.residuals), 
+                            fitted = unlist(ls.fitted))
 	
-		if(semi.standardize == TRUE){
-			semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - hat))
+		if(!is.null(standardize) && standardize == "semi"){
+		  ls.influence <- lapply(ls.models, lm.influence)
+		  ls.hat <- lapply(ls.influence, function(x) x$hat)
+      
+		  h <- unlist(ls.hat)
+			semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
 			semi.std.resid[is.infinite(semi.std.resid)] <- NaN
 	
-			return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
+			return.df <- cbind(return.df, hat = h, semi.std.resid = semi.std.resid)
+		}
+    
+		if(!is.null(standardize) && standardize == TRUE){
+		  ls.rstandard <- unlist(lapply(ls.models, rstandard))
+		  ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+      
+      return.df <- cbind(return.df, std.resid = ls.rstandard)
 		}
 		
 		return.df <- return.df[order(row.order),]
@@ -67,42 +74,65 @@ LSresids <- function(object, level, sim = NULL, semi.standardize = TRUE){
 		return(return.df)
 	}
 	
-	if(level == 2){
-		ranef_names <- names(ranef(object)[[1]])
+	if(level != 1){
+    n.ranefs <- length(names(object@flist))
+		ranef_names <- names( ranef(object)[[level]] )
 		
-		form <- paste(paste(formula(object)[[2]], "~"), 
-			paste(paste(as.character(fixed[,"name"]), collapse = " + "), 
-				paste(as.character(random[,"name"]), collapse = " + "),
-				sep = " + "),
-			" | ", as.character(grp[, "name"]))
+		form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+    
+    if( level == names(object@flist)[n.ranefs] ) { # For highest level unit
+      gform <- fixform( formula(object) )
+      global.model <- lm(formula = formula(gform), data = data)
+      
+      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      ls.resid <- coef(ls.models)[,ranef_names] - coef(global.model)[ranef_names]
+      
+    } else{ # For 'intermediate' level unit
+      higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
+      gform <- paste(fixed[2], fixed[1], fixed[3], "|", higher.level)
+      global.model <- adjust_lmList(formula = formula(gform), data = data)
+      
+      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      
+      # matching lower level units to higer level units
+      units.mat <- unique(object@flist)
+      n.higher.level <- table(units.mat[higher.level])
+      
+      global.coefs <- rep(unlist(coef(global.model)[ranef_names]), 
+                          times = n.higher.level)
+      ls.resid <- coef(ls.models)[,ranef_names] - global.coefs
+      
+    }
 		
-		gform <- paste(response, "~", deparse(formula(form)[[3]][[2]]))
-		
-		ls.models <- adjust_lmList(formula = formula(form), data = data)
-		global.model <- lm(formula = formula(gform), data = data)
-		
-		ls.resid <- coef(ls.models)[,ranef_names] - coef(global.model)[ranef_names]
 		ls.resid <- as.data.frame(ls.resid)
 		colnames(ls.resid) <- ranef_names
-		
-#		ls.resid <- Matrix(unlist(ls.residuals))
-#		raw_resid <- tcrossprod(crossprod(solve(tcrossprod(object@Zt)), object@Zt), t(ls.resid))
-		
-#		ls.resid2 <- .format_rr(rr = raw_resid, object = object)
 
 		return(ls.resid)
 	}
 }
 
-#.format_rr <- function(rr, object){
-#	# Formatting LS level-2 residuals
-#	cn <- lapply(object@ST, colnames)
-#	nt <- 1 # there is only 1 grouping factor in a two-level model
-#	lterm <- lapply(lme4:::plist(lme4:::reinds(object@Gp), cn),
-#					function(el){
-#						cni <- el[[2]]
-#						matrix(rr[ el[[1]] ], nc = length(cni),
-#								dimnames = list(NULL, cni))
-#					})
-#	return(lterm[[1]])
-#}
+# 'fixform' is a copy of the 'nobars' function in the lme4 package, 
+# renamed so it doesn't cause any conflicts.  This should not be exported.
+fixform <- function (term) 
+{
+  if (!("|" %in% all.names(term))) 
+    return(term)
+  if (is.call(term) && term[[1]] == as.name("|")) 
+    return(NULL)
+  if (length(term) == 2) {
+    nb <- fixform(term[[2]])
+    if (is.null(nb)) 
+      return(NULL)
+    term[[2]] <- nb
+    return(term)
+  }
+  nb2 <- fixform(term[[2]])
+  nb3 <- fixform(term[[3]])
+  if (is.null(nb2)) 
+    return(nb3)
+  if (is.null(nb3)) 
+    return(nb2)
+  term[[2]] <- nb2
+  term[[3]] <- nb3
+  term
+}

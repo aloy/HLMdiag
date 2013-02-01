@@ -12,8 +12,7 @@
   \code{NULL}. \code{line = "rlm"} will use robust
   regression to fit a reference line. \code{line =
   "quantile"} will fit a line through the first and third
-  quartiles. These options are the same as those given for
-  the \code{qqPlot} function in the \code{car} package.}
+  quartiles.}
 
   \item{...}{other arguments to be passed to
   \code{qplot()}}
@@ -25,4 +24,5 @@
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
+\keyword{hplot}
 

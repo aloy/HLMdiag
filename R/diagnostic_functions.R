@@ -103,16 +103,16 @@ rvc.case_delete <- function(delete){
 #' The primary function if \code{diagnostics} which returns either a
 #' list or data frame of influence measures depending on whether
 #' \code{type = "both"} or if only one aspect of the model is selected.
-#' If \code{type = "both}, then a list with Cook's distance, MDFFITS,
+#' If \code{type = "both"}, then a list with Cook's distance, MDFFITS,
 #' COVTRACE, and COVRATIO are returned for the fixed effects and
 #' relative variance change (RVC) is returned for the variance components.
 #'
-#' The functions \code{cooksd_hlm}, \code{mdffits_hlm}, \code{covtrace_hlm},
-#' \code{covratio_hlm}, and \code{rvc} can be used for direct computation
-#' of the corresponding diagnostic quantities.
+#' The methods \code{cooks.distance}, \code{mdffits}, \code{covtrace},
+#' \code{covratio}, and \code{rvc} can be used for direct computation
+#' of the corresponding diagnostic quantities from an object of class
+#' \code{case_delete}.
 #'
-#' @aliases cooksd_hlm mdffits_hlm covtrace_hlm covratio_hlm rvc
-#' @param model an object contatining the original hierarchical model fit using \code{lmer()}
+#' @aliases cooks.distance.case_delete mdffits.case_delete covtrace.case_delete covratio.case_delete rvc.case_delete
 #' @param delete an object containing the output returned by \code{case_delete()}
 #' @author Adam Loy \email{aloy@@iastate.edu}
 #' @references Christensen, R., Pearson, L.M., and Johnson, W. (1992),
@@ -139,6 +139,7 @@ rvc.case_delete <- function(delete){
 #' exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)
 #' }
 #' @export
+#' @keywords models regression
 diagnostics <- function(delete){
   type <- attributes(delete)$type
   if(type %in% c("fixef", "both")){

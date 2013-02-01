@@ -5,21 +5,38 @@ Version: 0.2.0
 Date: 2013-1-10
 Author: Adam Loy <aloy@iastate.edu>
 Maintainer: Adam Loy <aloy@iastate.edu>
-Description: A suite of diagnostic tools for hierarchical 
+Description: A suite of diagnostic tools for hierarchical
     (multilevel) linear models. The package offers
     not only leverage and traditional deletion diagnostics (Cook's
-    distance, covratio, covtrace, and MDFFITS) but also provides 
-    convenience functions and graphics for residual analysis. The package 
+    distance, covratio, covtrace, and MDFFITS) but also provides
+    convenience functions and graphics for residual analysis. The package
     assumes that models were fit using the lme4 package.
-Depends: lme4, ggplot2
-Imports: stats, stats4, methods, plyr, reshape2, MASS
+Depends:
+    lme4,
+    ggplot2
+Imports:
+    stats,
+    stats4,
+    methods,
+    plyr,
+    reshape2,
+    MASS
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: mlmRev
+Suggests:
+    mlmRev
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
-Collate: 'diagnostic_functions.R' 'group_level_residual_functions.R'
-        'identification.R' 'plot_functions.R' 'quantile_functions.R'
-        'adjust_formula_lmList.R' 'case_delete.R' 'LSresids.R'
-        'HLMresid.R' 'parse_formula.R' 'case_delete2.R' 
-        'influence_functions.R' 'utility_functions.R'
+Collate:
+    'diagnostic_functions.R'
+    'group_level_residual_functions.R'
+    'identification.R'
+    'plot_functions.R'
+    'quantile_functions.R'
+    'adjust_formula_lmList.R'
+    'case_delete.R'
+    'LSresids.R'
+    'HLMresid.R'
+    'help.R'
+    'influence_functions.R'
+    'utility_functions.R'

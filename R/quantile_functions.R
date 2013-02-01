@@ -13,33 +13,39 @@
 
 #' Constructing a normal quantile-quantile plot
 #'
-#' This function will construct a normal quantile-quantile plot within
-#' the \code{ggplot} framework.
-#'
+#' This function will construct a normal quantile-quantile plot within the
+#' \code{ggplot} framework.
+#' 
+#' 
 #' @param x a numeric vector
-#' @param line the method used to fit a reference line. If no reference line is desired,
-#' leave the value as \code{NULL}. \code{line = "rlm"} will use robust regression to fit a
-#' reference line. \code{line = "quantile"} will fit a line through the first and third quartiles.
+#' @param line the method used to fit a reference line. If no reference line is
+#' desired, leave the value as \code{NULL}. \code{line = "rlm"} will use robust
+#' regression to fit a reference line. \code{line = "quantile"} will fit a line
+#' through the first and third quartiles. These options are the same as those
+#' given for the \code{qqPlot} function in the \code{car} package.
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
-#' @export
 ggplot_qqnorm <- function(x, line = NULL, ...){
-	p <- .sampleQuantiles(x)
-	theory <- qnorm(p = p)
-	yp <- sort(x)
-		ret <- qplot(x = theory, y = yp, xlab = "Theoretical Quantiles", ylab = "Sample Quantiles", ...)
-	if(!is.null(line)){
-		if(line == "quantile"){
-			line.info <- qqlineInfo(x)
-			ret <- ret + geom_abline(intercept = as.numeric(line.info[1]), slope = as.numeric(line.info[2]))
-		}
-		if(line == "rlm"){
-			line.info <- coef(rlm(yp ~ theory))
-			ret <- ret + geom_abline(intercept = as.numeric(line.info[1]), slope = as.numeric(line.info[2]))
-		}
-	}
-	return(ret)
+  p <- .sampleQuantiles(x)
+  theory <- qnorm(p = p)
+  yp <- sort(x)
+  ret <- qplot(x = theory, y = yp, xlab = "Theoretical Quantiles", 
+               ylab = "Sample Quantiles", ...)
+  if(!is.null(line)){
+    if(line == "quantile"){
+      line.info <- qqlineInfo(x)
+      ret <- ret + geom_abline(intercept = as.numeric(line.info[1]), 
+                               slope = as.numeric(line.info[2]))
+    }
+    if(line == "rlm"){
+      line.info <- coef(rlm(yp ~ theory))
+      ret <- ret + geom_abline(intercept = as.numeric(line.info[1]), 
+                               slope = as.numeric(line.info[2]))
+    }
+  }
+  return(ret)
 }
+
 
 #' Constructing a normal probability plot
 #'

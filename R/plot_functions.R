@@ -19,6 +19,7 @@
 #' dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
 #' dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
 #' @export
+#' @keywords hplot
 dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL, modify = FALSE, ... ){
   type <- match.arg(type)
   if(class(data) == "list"){ data <- data[[paste(type,"_diag", sep = "")]] }

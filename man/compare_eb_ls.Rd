@@ -2,20 +2,18 @@
 \alias{compare_eb_ls}
 \title{Visually comparing shrinkage and LS estimates}
 \usage{
-  compare_eb_ls(eb, ols, identify = FALSE, silent = TRUE, ...)
+  compare_eb_ls(eb, ols, identify = FALSE, silent = TRUE,
+    ...)
 }
 \arguments{
   \item{eb}{a matrix of random effects}
 
-  \item{ols}{a matrix of the LS estimates, these are the coefficients
-  of the individual OLS models.}
+  \item{ols}{a matrix of the LS estimates found using
+  \code{random_ls_coef}}
 
   \item{identify}{identify the percentage of points to
   identify as unusual, \code{FALSE} if you do not want the
   points identified.}
-
-  \item{silent}{a logical value indicating whether to return the data frames used to 
-  construct the plots.}
 
   \item{...}{other arguments to be passed to
   \code{qplot()}}

@@ -2,15 +2,15 @@
 \alias{case_delete}
 \title{Implementing Case Deletion.}
 \usage{
-  case_delete(model, group = FALSE, type = c("both",
-  "fixef", "varcomp"))
+  case_delete(model, group = NULL,
+    type = c("both", "fixef", "varcomp"), delete = NULL)
 }
 \arguments{
   \item{model}{the original hierarchical model fit using
   \code{lmer()}}
 
-  \item{group}{a logical value used whether a group of observations
-  or individual observations will be deleted. If this is left
+  \item{group}{a variable used to define the group for
+  which cases will be deleted.  If this is left
   \code{FALSE}, then the function will delete individual
   observations.}
 
@@ -20,20 +20,19 @@
   \code{both}}
 }
 \value{
-  a list with the following compontents:
-  \item{fixef.original}{the original fixed effects}
-  \item{ranef.original}{the origingal random effects}
-  \item{vcov.original}{the original variance-covariance
-  parameters} \item{varcomp.original}{the original variance
-  components} \item{fixef.delete}{a list of the fixed
-  effects obtained through case deletion}
-  \item{ranef.delete}{a list of the random effects obtained
-  through case deletion} \item{vcov.delete}{a list of the
-  variance-covariance parameters obtained through case
-  deletion} \item{fitted.delete}{a list of the fitted
-  values obtained through case deletion}
-  \item{varcomp.delete}{a list of the variance components
-  obtained through case deletion}
+  a list with the following compontents: \itemize{ \item
+  fixef.original the original fixed effects \item
+  ranef.original the origingal random effects \item
+  vcov.original the original variance-covariance parameters
+  \item varcomp.original the original variance components
+  \item fixef.delete a list of the fixed effects obtained
+  through case deletion \item ranef.delete a list of the
+  random effects obtained through case deletion \item
+  vcov.delete a list of the variance-covariance parameters
+  obtained through case deletion \item fitted.delete a list
+  of the fitted values obtained through case deletion \item
+  varcomp.delete a list of the variance components obtained
+  through case deletion }
 }
 \description{
   This function is used to iteratively delete groups
@@ -66,4 +65,6 @@ exm1DEL <- case_delete(model = exm1, group = TRUE, type = "both")}
   SAS Users Group International Conference}, SAS Users
   Group International.
 }
+\keyword{models}
+\keyword{regression}
 

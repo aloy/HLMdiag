@@ -1,21 +1,26 @@
+#' @export
 leverage <- function(model, ...){
   UseMethod("leverage", model)
 }
 
+#' @export
 leverage.default <- function(model, ...){
   stop(paste("there is no leverage() method for models of class",
              paste(class(model), collapse=", ")))
 }
 
+#' @export
 covratio <- function(model, ...){
   UseMethod("covratio", model)
 }
 
+#' @export
 covratio.default <- function(model, ...){
   stop(paste("there is no covratio() method for models of class",
              paste(class(model), collapse=", ")))
 }
 
+#' @export
 covratio.lm <- function(model, ...){
   function (model, infl = lm.influence(model, do.coef = FALSE), 
             res = weighted.residuals(model)) 
@@ -29,28 +34,34 @@ covratio.lm <- function(model, ...){
   }
 }
 
+#' @export
 covtrace <- function(model, ...){
   UseMethod("covtrace", model)
 }
 
+#' @export
 covtrace.default <- function(model, ...){
   stop(paste("there is no covtrace() method for models of class",
              paste(class(object), collapse=", ")))
 }
 
+#' @export
 mdffits <- function(model, ...){
   UseMethod("mdffits", model)
 }
 
+#' @export
 mdffits.default <- function(model, ...){
   stop(paste("there is no mdffits() method for models of class",
              paste(class(model), collapse=", ")))
 }
 
+#' @export
 rvc <- function(model, ...){
   UseMethod("rvc", model)
 }
 
+#' @export
 rvc.default <- function(model, ...){
   stop(paste("there is no rvc() method for models of class",
              paste(class(model), collapse=", ")))
@@ -58,10 +69,21 @@ rvc.default <- function(model, ...){
 
 
 #' Leverage for mixed/hierarchical linear models
-#'
+#' 
+#' This function calculates the leverage of
+#' a mixed/hierarchical model fit by \code{lmer}. 
+#' 
+#' @export
+#' @method leverage mer
+#' @S3method leverage mer
+#' @aliases leverage
 #' @param model fitted model of class \code{mer}
 #' @param the level at which the leverage should be calculated; either
-#'   1 or 2 (\code{"both"} can be specified)
+#'   1 for observation level leverage or the name of the grouping factor 
+#'   (as defined in \code{flist} of the \code{mer} object) for group level
+#'   leverage. \code{leverage} assumes that the grouping factors are unique;
+#'   thus, if IDs are repeated within each unit, unique IDs must be generated 
+#'   by the user prior to use of \code{leverage}.
 #' @references 
 #'   Nobre, J. S., & Singer, J. M. (2011). 
 #'   Leverage analysis for linear mixed models. 
@@ -71,13 +93,17 @@ rvc.default <- function(model, ...){
 #'   Influence analysis for linear mixed-effects models. 
 #'   Statistics in Medicine, 24(6), 893–909.
 #' @author Adam Loy \email{aloy@@iastate.edu}
-leverage.mer <- function(model, level = "both") {
+#' @export
+#' @seealso \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
+#' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}  
+leverage.mer <- function(model, level) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(model@dims[["nest"]] == 0) {
-    stop("leverage.mer has not yet been implemented for models with crossed random effects")
+    stop("leverage.mer has not yet been implemented for models with 
+         crossed random effects")
   }
-  if(!level %in% c("both", 1, 2)) {
-    stop("level can only be 1, 2, or 'both'")
+  if(!level %in% c( 1, names(getME(model, "flist")))) {
+    stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
   X <- getME(model, "X")
@@ -103,30 +129,47 @@ leverage.mer <- function(model, level = "both") {
   
   diag.H1 <- diag(H1)
   diag.H2 <- diag(H2)
-  flist <- getME(model, "flist")
   
-  if(level != 2) {
+  if(level == 1) {
     lev1 <- data.frame(fixef = diag.H1, ranef =  diag.H2)
-  }
-  if(level != 1) {
-    lev2 <- data.frame( fixef = aggregate(diag.H1, flist, sum)[,2], 
-                        ranef = aggregate(diag.H2, flist, sum)[,2])
+  } else {
+    flist   <- data.frame( getME(model, "flist")[, level] )
+    grp.lev <- data.frame( fixef = aggregate(diag.H1, flist, mean)[,2], 
+                           ranef = aggregate(diag.H2, flist, mean)[,2] )
   }
   
   if(level == 1) return(lev1)
-  if(level == 2) return(lev2)
-  if(level == "both") return(list(level.1 = lev1, level.2 = lev2))
+  if(level != 1) return(grp.lev)
 }
 
 
 #' Cook's distance for mixed/hierarchical linear models
+#'
+#' This function calculates Cook's distance for the fixed effects parameters
+#' for a mixed/hierarchical model fit by \code{lmer}. 
+#'
+#'@export
+#'@method cooks.distance mer
+#'@S3method cooks.distance mer
+#'@aliases cooks.distance
+#'@param model fitted model of class \code{mer}
+#'@param group variable used to define the group for which cases will be
+#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param delete index of individual cases to be deleted.  For higher level
+#'units specified in this manner, the \code{group} parameter must also be
+#'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@references
+#' Christensen, R., Pearson, L., & Johnson, W. (1992). 
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 38–45.
+#'   
+#' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
 #' 
-#' @param model fitted model of class \code{mer}
-#' @param group variable used to define the group for which cases will be deleted.
-#'   If \code{group = NULL}, then individual cases will be deleted.
-#' @param delete index of individual cases to be deleted. For higher level units
-#'   specified in this manner, the \code{group} parameter must also be specified.
-#'   If \code{case = NULL} then all cases are iteratively deleted.
+#'@keywords models regression
+#' @seealso \code{\link{leverage.mer}}, \code{\link{mdffits.mer}},
+#' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}  
 cooks.distance.mer <- function(model, group = NULL, delete = NULL) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
@@ -185,12 +228,29 @@ return(res)
 
 #' MDFFITS for mixed/hierarchical linear models
 #' 
+#' This function calculates multivariate DFFITS for the fixed effects parameters
+#' for a mixed/hierarchical model fit by \code{lmer}.
+#' 
+#' @export
+#' @method mdffits mer
+#' @S3method mdffits mer
+#' @aliases mdffits
 #' @param model fitted model of class \code{mer}
 #' @param group variable used to define the group for which cases will be deleted.
 #'   If \code{group = NULL}, then individual cases will be deleted.
 #' @param delete index of individual cases to be deleted. For higher level units
 #'   specified in this manner, the \code{group} parameter must also be specified.
 #'   If \code{case = NULL} then all cases are iteratively deleted.
+#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@references
+#'   
+#' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
+#' 
+#'@keywords models regression
+#' @seealso \code{\link{leverage.mer}}, \code{\link{mdffits.mer}},
+#' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 mdffits.mer <- function(model, group = NULL, delete = NULL) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
@@ -235,14 +295,41 @@ mdffits.mer <- function(model, group = NULL, delete = NULL) {
   return(res)
 }
 
-#' COVRATIO for mixed/hierarchical linear models
+
+
+#'COVRATIO for mixed/hierarchical linear models
+#'
+#' This function calculates COVRATIO for the fixed effects parameters
+#' for a mixed/hierarchical model fit by \code{lmer}.
+#'
+#'@export
+#'@method covratio mer
+#'@S3method covratio mer
+#'@aliases covratio
+#'@param model fitted model of class \code{mer}
+#'@param group variable used to define the group for which cases will be
+#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param delete index of individual cases to be deleted.  For higher level
+#'units specified in this manner, the \code{group} parameter must also be
+#'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#' @return If \code{delete = NULL} then a vector corresponding to each deleted
+#' observation/group is returned.
 #' 
-#' @param model fitted model of class \code{mer}
-#' @param group variable used to define the group for which cases will be deleted.
-#'   If \code{group = NULL}, then individual cases will be deleted.
-#' @param delete index of individual cases to be deleted. For higher level units
-#'   specified in this manner, the \code{group} parameter must also be specified.
-#'   If \code{case = NULL} then all cases are iteratively deleted.
+#' If \code{delete} is specified then a single value is returned corresponding
+#' to the deleted subset specified.
+#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@references
+#' Christensen, R., Pearson, L., & Johnson, W. (1992). 
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 38–45.
+#'   
+#' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
+#' 
+#'@keywords models regression
+#' @seealso \code{\link{leverage.mer}}, \code{\link{cooks.distance.mer}}
+#' \code{\link{mdffits.mer}},
+#'  \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 covratio.mer <- function(model, group = NULL, delete = NULL) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
@@ -281,14 +368,43 @@ covratio.mer <- function(model, group = NULL, delete = NULL) {
   return(res)
 }
 
-#' COVRATIO for mixed/hierarchical linear models
+
+
+#'COVTRACE for mixed/hierarchical linear models
+#'
+#' This function calculates COVTRACE for the fixed effects parameters
+#' for a mixed/hierarchical model fit by \code{lmer}.
+#'
+#'@export
+#'@method covtrace mer
+#'@S3method covtrace mer
+#'@aliases covtrace
+#'@param model fitted model of class \code{mer}
+#'@param group variable used to define the group for which cases will be
+#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param delete index of individual cases to be deleted.  For higher level
+#'units specified in this manner, the \code{group} parameter must also be
+#'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#' @return If \code{delete = NULL} then a vector corresponding to each deleted
+#' observation/group is returned.
 #' 
-#' @param model fitted model of class \code{mer}
-#' @param group variable used to define the group for which cases will be deleted.
-#'   If \code{group = NULL}, then individual cases will be deleted.
-#' @param delete index of individual cases to be deleted. For higher level units
-#'   specified in this manner, the \code{group} parameter must also be specified.
-#'   If \code{case = NULL} then all cases are iteratively deleted.
+#' If \code{delete} is specified then a single value is returned corresponding
+#' to the deleted subset specified.
+#' 
+#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@references
+#' Christensen, R., Pearson, L., & Johnson, W. (1992). 
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 
+#' 34(1), 38–45.
+#'   
+#' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
+#' 
+#'@keywords models regression
+#' @seealso \code{\link{leverage.mer}}, \code{\link{cooks.distance.mer}}, 
+#' \code{\link{mdffits.mer}},
+#' \code{\link{covratio.mer}}, \code{\link{rvc.mer}}
 covtrace.mer <- function(model, group = NULL, delete = NULL) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
@@ -297,7 +413,7 @@ covtrace.mer <- function(model, group = NULL, delete = NULL) {
     }
   }
   if(!model@dims["LMM"]){
-    stop("covtrace is currently not implemented for GLMMs.")
+    stop("covtrace is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
@@ -327,9 +443,40 @@ covtrace.mer <- function(model, group = NULL, delete = NULL) {
   return(res)
 }
 
-#' Relative variance change for mer objects
+#' Relative variance change for mixed/hierarchical linear models
 #' 
-#' model object of class \code{mer}
+#' This function calculates the relative variance change (RVC) for
+#' mixed/hierarchical linear models fit via \code{lmer}.
+#' 
+#' @export
+#' @method rvc mer
+#' @S3method rvc mer
+#' @aliases rvc
+#'@param model fitted model of class \code{mer}
+#'@param group variable used to define the group for which cases will be
+#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param delete index of individual cases to be deleted.  For higher level
+#'units specified in this manner, the \code{group} parameter must also be
+#'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#' @return If \code{delete = NULL} a matrix with columns corresponding to the variance 
+#' components of the model and rows corresponding to the deleted 
+#' observation/group is returned. 
+#' 
+#' If \code{delete} is specified then a named vector is returned.
+#' 
+#' The residual variance is named \code{sigma2} and the other variance 
+#' componenets are named \code{D**} where the trailing digits give the
+#' position in the covariance matrix of the random effects.
+#' 
+#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@references
+#' Dillane, D. (2005). ``Deletion Diagnostics for the Linear Mixed Model.'' 
+#' Ph.D. thesis, Trinity College Dublin
+#' 
+#' @keywords models regression
+#' @seealso \code{\link{leverage.mer}}, 
+#' \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
+#' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
 rvc.mer <- function(model, group = NULL, delete = NULL) {
     delete <- case_delete(model, group = group, type = "varcomp", delete = delete)
     return( rvc(delete) )
