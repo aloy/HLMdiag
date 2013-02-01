@@ -1,18 +1,18 @@
 #' @export
-cooks.distance.case_delete <- function(delete){
-  p <- length(delete$fixef.original)
+cooks.distance.case_delete <- function(model, ...){
+  p <- length(model$fixef.original)
 
-  if(is(delete$fixef.delete, "matrix")) {
-    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+  if(is(model$fixef.delete, "matrix")) {
+    groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
     cook <- NULL
     for(i in 1:length(groups)){
-      change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
-      cook <- c(cook, t(change.fixef) %*% solve( as.matrix( delete$vcov.original ) ) %*% change.fixef / p)
+      change.fixef <- as.matrix(model$fixef.original - model$fixef.delete[i,])
+      cook <- c(cook, t(change.fixef) %*% solve( as.matrix( model$vcov.original ) ) %*% change.fixef / p)
     }
   }
   else{
-    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete)
-    cook <- t(change.fixef) %*% solve( as.matrix( delete$vcov.original ) ) %*% change.fixef / p
+    change.fixef <- as.matrix(model$fixef.original - model$fixef.delete)
+    cook <- t(change.fixef) %*% solve( as.matrix( model$vcov.original ) ) %*% change.fixef / p
   }
 
   return(cook)
@@ -20,20 +20,20 @@ cooks.distance.case_delete <- function(delete){
 
 #--------------------------------------
 #' @export
-mdffits.case_delete <- function(delete){
-  p <- length(delete$fixef.original)
+mdffits.case_delete <- function(object, ...){
+  p <- length(object$fixef.original)
 
-  if(is(delete$fixef.delete, "matrix")) {
-    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+  if(is(object$fixef.delete, "matrix")) {
+    groups <- rownames(object$fixef.delete, do.NULL = FALSE, prefix = "")
     MDFFITS <- NULL
     for(i in 1:length(groups)){
-      change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete[i,])
-      MDFFITS <- c(MDFFITS, t(change.fixef) %*% solve( as.matrix(delete$vcov.delete[[i]]) ) %*% change.fixef / p)
+      change.fixef <- as.matrix(object$fixef.original - object$fixef.delete[i,])
+      MDFFITS <- c(MDFFITS, t(change.fixef) %*% solve( as.matrix(object$vcov.delete[[i]]) ) %*% change.fixef / p)
     }
   }
   else{
-    change.fixef <- as.matrix(delete$fixef.original - delete$fixef.delete)
-    MDFFITS <- t(change.fixef) %*% solve( as.matrix(delete$vcov.delete) ) %*% change.fixef / p
+    change.fixef <- as.matrix(object$fixef.original - object$fixef.delete)
+    MDFFITS <- t(change.fixef) %*% solve( as.matrix(object$vcov.delete) ) %*% change.fixef / p
   }
 
   return(MDFFITS)
@@ -41,21 +41,21 @@ mdffits.case_delete <- function(delete){
 
 #--------------------------------------
 #' @export
-covtrace.case_delete <- function(delete){
-  p <- length(delete$fixef.original)
+covtrace.case_delete <- function(object, ...){
+  p <- length(object$fixef.original)
 
-  if(is(delete$vcov.delete, "list")) {
-    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+  if(is(object$vcov.delete, "list")) {
+    groups <- rownames(object$fixef.delete, do.NULL = FALSE, prefix = "")
     COVTRACE <- NULL
     for(i in 1:length(groups)){
-      V.original <- as.matrix(delete$vcov.original)
-      V.delete <- as.matrix(delete$vcov.delete[[i]])
+      V.original <- as.matrix(object$vcov.original)
+      V.delete <- as.matrix(object$vcov.delete[[i]])
       COVTRACE <- c(COVTRACE, abs(sum(diag(solve(V.original) %*% V.delete)) - p))
     }
   }
   else{
-    V.original <- as.matrix(delete$vcov.original)
-    V.delete <- as.matrix(delete$vcov.delete)
+    V.original <- as.matrix(object$vcov.original)
+    V.delete <- as.matrix(object$vcov.delete)
     COVTRACE <- abs(sum(diag(solve(V.original) %*% V.delete)) - p)
   }
 
@@ -64,19 +64,19 @@ covtrace.case_delete <- function(delete){
 
 #--------------------------------------
 #' @export
-covratio.case_delete <- function(delete){
-  if(is(delete$vcov.delete, "list")) {
-    groups <- rownames(delete$fixef.delete, do.NULL = FALSE, prefix = "")
+covratio.case_delete <- function(object, ...){
+  if(is(object$vcov.delete, "list")) {
+    groups <- rownames(object$fixef.delete, do.NULL = FALSE, prefix = "")
     COVRATIO <- NULL
     for(i in 1:length(groups)){
-      V.original <- as.matrix(delete$vcov.original)
-      V.delete <- as.matrix(delete$vcov.delete[[i]])
+      V.original <- as.matrix(object$vcov.original)
+      V.delete <- as.matrix(object$vcov.delete[[i]])
       COVRATIO <- c(COVRATIO, det(V.delete) / det(V.original))
     }
   }
   else{
-    V.original <- as.matrix(delete$vcov.original)
-    V.delete <- as.matrix(delete$vcov.delete)
+    V.original <- as.matrix(object$vcov.original)
+    V.delete <- as.matrix(object$vcov.delete)
     COVRATIO <- det(V.delete) / det(V.original)
   }
   
@@ -85,12 +85,12 @@ covratio.case_delete <- function(delete){
 
 #--------------------------------------
 #' @export
-rvc.case_delete <- function(delete){
-	if(class(delete$varcomp.delete) == "list") {
-	  res <- do.call('rbind', lapply(delete$varcomp.delete, function(x){ (x / delete$varcomp.original) - 1}))
+rvc.case_delete <- function(object, ...){
+	if(class(object$varcomp.delete) == "list") {
+	  res <- do.call('rbind', lapply(object$varcomp.delete, function(x){ (x / object$varcomp.original) - 1}))
 	}
   else{
-    res <- (delete$varcomp.delete / delete$varcomp.original) - 1
+    res <- (object$varcomp.delete / object$varcomp.original) - 1
   }
 	return(res)
 }

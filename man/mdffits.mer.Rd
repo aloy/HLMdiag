@@ -3,11 +3,11 @@
 \alias{mdffits.mer}
 \title{MDFFITS for mixed/hierarchical linear models}
 \usage{
-  \method{mdffits}{mer} (model, group = NULL,
-    delete = NULL)
+  \method{mdffits}{mer} (object, group = NULL,
+    delete = NULL, ...)
 }
 \arguments{
-  \item{model}{fitted model of class \code{mer}}
+  \item{object}{fitted object of class \code{mer}}
 
   \item{group}{variable used to define the group for which
   cases will be deleted.  If \code{group = NULL}, then
@@ -18,6 +18,8 @@
   \code{group} parameter must also be specified.  If
   \code{case = NULL} then all cases are iteratively
   deleted.}
+
+  \item{...}{do not use}
 }
 \description{
   This function calculates multivariate DFFITS for the

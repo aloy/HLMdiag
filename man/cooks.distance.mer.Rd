@@ -4,7 +4,7 @@
 \title{Cook's distance for mixed/hierarchical linear models}
 \usage{
   \method{cooks.distance}{mer} (model, group = NULL,
-    delete = NULL)
+    delete = NULL, ...)
 }
 \arguments{
   \item{model}{fitted model of class \code{mer}}
@@ -16,8 +16,10 @@
   \item{delete}{index of individual cases to be deleted.
   For higher level units specified in this manner, the
   \code{group} parameter must also be specified.  If
-  \code{case = NULL} then all cases are iteratively
+  \code{delete = NULL} then all cases are iteratively
   deleted.}
+
+  \item{...}{do not use}
 }
 \description{
   This function calculates Cook's distance for the fixed
@@ -30,7 +32,7 @@
 \references{
   Christensen, R., Pearson, L., & Johnson, W. (1992).
   Case-deletion diagnostics for mixed models.
-  \emph{Technometrics}, 34(1), 38–45.
+  \emph{Technometrics}, 34(1), 38--45.
 
   Schabenberger, O. (2004),``Mixed Model Influence
   Diagnostics,'' in \emph{Proceedings of the Twenty-Ninth

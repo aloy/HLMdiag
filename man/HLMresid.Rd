@@ -2,25 +2,28 @@
 \alias{HLMresid}
 \title{Calculating residuals from two-level HLMs}
 \usage{
-  HLMresid(object, level = c(1, 2),
-    type = c("both", "LS", "EB", "marginal"), sim = NULL,
-    semi.standardize = TRUE)
+  HLMresid(object, level, type = "EB", sim = NULL,
+    standardize = TRUE)
 }
 \arguments{
   \item{object}{an object of class \code{mer}.}
 
-  \item{level}{specification of the residual of interest.}
+  \item{level}{which residuals should be plotted: 1 for
+  within-group residuals or the name of the grouping factor
+  (as defined in \code{flist} of the \code{mer} object) for
+  between-group residuals, or \code{marginal}.}
 
-  \item{how}{the residuals should be estimated; default is
-  \code{"all"}.}
+  \item{type}{how are the residuals predicted: either
+  \code{EB} or \code{LS}.}
 
-  \item{if}{\code{type = "all"} or \code{"LS"}, a linear
-  formula used by \code{adjust_lmList} (y ~ x1 + ... + xn |
-  g where g is a grouping factor) must be specified.}
+  \item{sim}{data optional argument giving the data frame
+  used for LS residuals. This is used mainly for when
+  dealing with simulations.}
 
-  \item{data}{optional argument giving the data frame used
-  for LS residuals. This is used mainly for when dealing
-  with simulations.}
+  \item{standardize}{if \code{TRUE} the standardized
+  level-1 residuals will also be returned (if \code{level =
+  1}); if \code{"semi"} then the semi-standardized level-1
+  residuals will be returned.}
 }
 \description{
   \code{HLMresid} is a function that extracts residuals
@@ -35,6 +38,9 @@
   unified framework enables the analyst to more easily
   conduct an upward residual analysis during model
   exploration or checking.
+}
+\author{
+  Adam Loy \email{aloy@istate.edu}
 }
 \keyword{models}
 \keyword{regression}

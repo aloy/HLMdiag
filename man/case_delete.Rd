@@ -18,6 +18,12 @@
   obtaining deletion diagnostics: the fixed effects
   (\code{fixef}), variance components (\code{varcomp}), or
   \code{both}}
+
+  \item{delete}{index of individual cases to be deleted.
+  For higher level units specified in this manner, the
+  \code{group} parameter must also be specified.  If
+  \code{delete = NULL} then all cases are iteratively
+  deleted.}
 }
 \value{
   a list with the following compontents: \itemize{ \item

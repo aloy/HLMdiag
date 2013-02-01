@@ -2,36 +2,29 @@
 \alias{LSresids}
 \title{Calculating case-level (level-1) least squares residuals}
 \usage{
-  LSresids(object, level, sim = NULL,
-    semi.standardize = TRUE)
+  LSresids(object, level, sim = NULL, standardize = NULL)
 }
 \arguments{
-  \item{formula}{a linear formula that is used by
-  \code{adjust_lmList}' (y ~ x1 + ... + xn | g where g is a
-  grouping factor)}
+  \item{object}{an object of class \code{mer}.}
 
-  \item{lme.model}{an object contatining the original
-  hierarchical model fit using lmer()}
+  \item{level}{which residuals should be plotted: 1 for
+  within-group residuals or the name of the grouping factor
+  (as defined in \code{flist} of the \code{mer} object) for
+  between-group residuals.}
 
-  \item{semi.standardize}{if \code{TRUE} the
-  semi-standardized residuals will also be returned}
-}
-\value{
-  a data frame with the following columns: id, residual,
-  fitted
+  \item{sim}{optional argument giving the data frame used
+  for LS residuals. This is used mainly for when dealing
+  with simulations.}
+
+  \item{standardize}{if \code{TRUE} the standardized
+  level-1 residuals will also be returned (if \code{level =
+  1}); if \code{"semi"} then the semi-standardized level-1
+  residuals will be returned.}
 }
 \description{
   This function calculates the case-level least squares
   residuals found by fitting separate LS regression models
   to each case.
-}
-\examples{
-data(Oxboys, package = 'mlmRev')
-fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-level1Resids <- LSresids(formula = height ~ age + I(age^2) | Subject, lme.model = fm, semi.standardize = TRUE)
-
-\dontrun{wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)
-LSresids(formula = lnw ~ exper | id, lme.model = wages.fm1)}
 }
 \author{
   Adam Loy \email{aloy@istate.edu}

@@ -3,10 +3,11 @@
 \alias{rvc.mer}
 \title{Relative variance change for mixed/hierarchical linear models}
 \usage{
-  \method{rvc}{mer} (model, group = NULL, delete = NULL)
+  \method{rvc}{mer} (object, group = NULL, delete = NULL,
+    ...)
 }
 \arguments{
-  \item{model}{fitted model of class \code{mer}}
+  \item{object}{fitted object of class \code{mer}}
 
   \item{group}{variable used to define the group for which
   cases will be deleted.  If \code{group = NULL}, then
@@ -17,6 +18,8 @@
   \code{group} parameter must also be specified.  If
   \code{case = NULL} then all cases are iteratively
   deleted.}
+
+  \item{...}{do not use}
 }
 \value{
   If \code{delete = NULL} a matrix with columns

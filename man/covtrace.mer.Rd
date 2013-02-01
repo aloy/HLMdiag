@@ -3,11 +3,11 @@
 \alias{covtrace.mer}
 \title{COVTRACE for mixed/hierarchical linear models}
 \usage{
-  \method{covtrace}{mer} (model, group = NULL,
-    delete = NULL)
+  \method{covtrace}{mer} (object, group = NULL,
+    delete = NULL, ...)
 }
 \arguments{
-  \item{model}{fitted model of class \code{mer}}
+  \item{object}{fitted object of class \code{mer}}
 
   \item{group}{variable used to define the group for which
   cases will be deleted.  If \code{group = NULL}, then
@@ -18,6 +18,8 @@
   \code{group} parameter must also be specified.  If
   \code{case = NULL} then all cases are iteratively
   deleted.}
+
+  \item{...}{do not use}
 }
 \value{
   If \code{delete = NULL} then a vector corresponding to
@@ -37,7 +39,7 @@
 \references{
   Christensen, R., Pearson, L., & Johnson, W. (1992).
   Case-deletion diagnostics for mixed models.
-  \emph{Technometrics}, 34(1), 38–45.
+  \emph{Technometrics}, 34(1), 38--45.
 
   Schabenberger, O. (2004),``Mixed Model Influence
   Diagnostics,'' in \emph{Proceedings of the Twenty-Ninth

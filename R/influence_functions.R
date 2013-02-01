@@ -1,32 +1,32 @@
 #' @export
-leverage <- function(model, ...){
-  UseMethod("leverage", model)
+leverage <- function(object, ...){
+  UseMethod("leverage", object)
 }
 
 #' @export
-leverage.default <- function(model, ...){
-  stop(paste("there is no leverage() method for models of class",
-             paste(class(model), collapse=", ")))
+leverage.default <- function(object, ...){
+  stop(paste("there is no leverage() method for objects of class",
+             paste(class(object), collapse=", ")))
 }
 
 #' @export
-covratio <- function(model, ...){
-  UseMethod("covratio", model)
+covratio <- function(object, ...){
+  UseMethod("covratio", object)
 }
 
 #' @export
-covratio.default <- function(model, ...){
-  stop(paste("there is no covratio() method for models of class",
-             paste(class(model), collapse=", ")))
+covratio.default <- function(object, ...){
+  stop(paste("there is no covratio() method for objects of class",
+             paste(class(object), collapse=", ")))
 }
 
 #' @export
-covratio.lm <- function(model, ...){
-  function (model, infl = lm.influence(model, do.coef = FALSE), 
-            res = weighted.residuals(model)) 
+covratio.lm <- function(object, ...){
+  function (object, infl = lm.influence(object, do.coef = FALSE), 
+            res = weighted.residuals(object)) 
   {
-    n <- nrow(qr.lm(model)$qr)
-    p <- model$rank
+    n <- nrow(qr.lm(object)$qr)
+    p <- object$rank
     omh <- 1 - infl$hat
     e.star <- res/(infl$sigma * sqrt(omh))
     e.star[is.infinite(e.star)] <- NaN
@@ -35,36 +35,36 @@ covratio.lm <- function(model, ...){
 }
 
 #' @export
-covtrace <- function(model, ...){
-  UseMethod("covtrace", model)
+covtrace <- function(object, ...){
+  UseMethod("covtrace", object)
 }
 
 #' @export
-covtrace.default <- function(model, ...){
-  stop(paste("there is no covtrace() method for models of class",
+covtrace.default <- function(object, ...){
+  stop(paste("there is no covtrace() method for objects of class",
              paste(class(object), collapse=", ")))
 }
 
 #' @export
-mdffits <- function(model, ...){
-  UseMethod("mdffits", model)
+mdffits <- function(object, ...){
+  UseMethod("mdffits", object)
 }
 
 #' @export
-mdffits.default <- function(model, ...){
-  stop(paste("there is no mdffits() method for models of class",
-             paste(class(model), collapse=", ")))
+mdffits.default <- function(object, ...){
+  stop(paste("there is no mdffits() method for objects of class",
+             paste(class(object), collapse=", ")))
 }
 
 #' @export
-rvc <- function(model, ...){
-  UseMethod("rvc", model)
+rvc <- function(object, ...){
+  UseMethod("rvc", object)
 }
 
 #' @export
-rvc.default <- function(model, ...){
-  stop(paste("there is no rvc() method for models of class",
-             paste(class(model), collapse=", ")))
+rvc.default <- function(object, ...){
+  stop(paste("there is no rvc() method for objects of class",
+             paste(class(object), collapse=", ")))
 }
 
 
@@ -77,52 +77,53 @@ rvc.default <- function(model, ...){
 #' @method leverage mer
 #' @S3method leverage mer
 #' @aliases leverage
-#' @param model fitted model of class \code{mer}
-#' @param the level at which the leverage should be calculated; either
+#' @param object fitted object of class \code{mer}
+#' @param level the level at which the leverage should be calculated; either
 #'   1 for observation level leverage or the name of the grouping factor 
 #'   (as defined in \code{flist} of the \code{mer} object) for group level
 #'   leverage. \code{leverage} assumes that the grouping factors are unique;
 #'   thus, if IDs are repeated within each unit, unique IDs must be generated 
 #'   by the user prior to use of \code{leverage}.
+#' @param ... do not use
 #' @references 
 #'   Nobre, J. S., & Singer, J. M. (2011). 
 #'   Leverage analysis for linear mixed models. 
-#'   Journal of Applied Statistics, 38(5), 1063–1072.
+#'   \emph{Journal of Applied Statistics}, 38(5), 1063--1072.
 #'   
 #'   Demidenko, E., & Stukel, T. A. (2005). 
 #'   Influence analysis for linear mixed-effects models. 
-#'   Statistics in Medicine, 24(6), 893–909.
+#'   \emph{Statistics in Medicine}, 24(6), 893--909.
 #' @author Adam Loy \email{aloy@@iastate.edu}
 #' @export
 #' @seealso \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}  
-leverage.mer <- function(model, level) {
-  if(!is(model, "mer")) stop("model must be of class 'mer'")
-  if(model@dims[["nest"]] == 0) {
+leverage.mer <- function(object, level, ...) {
+  if(!is(object, "mer")) stop("object must be of class 'mer'")
+  if(object@dims[["nest"]] == 0) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(getME(model, "flist")))) {
+  if(!level %in% c( 1, names(getME(object, "flist")))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
-  X <- getME(model, "X")
-  # Z <- BlockZ(model)
+  X <- getME(object, "X")
+  # Z <- BlockZ(object)
   
   n     <- nrow(X)
-  nt    <- model@dims[["nt"]]  # number of random-effects terms in the model
-  ngrps <- unname( summary(model)@ngrps )
+  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
+  ngrps <- unname( summary(object)@ngrps )
   
-  vc   <- VarCorr(model)
+  vc   <- VarCorr(object)
   # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
-  ZDZt <- attr(vc, "sc")^2 * crossprod( getME(model, "A") )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( getME(object, "A") )
   R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
   
   V      <- ZDZt + R
   V.chol <- chol( V )
   Vinv   <- chol2inv( V.chol )
   
-  xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(model, "RX"))
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(object, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
   H2 <- ZDZt %*% (Diagonal( n = n ) - H1)
@@ -133,7 +134,7 @@ leverage.mer <- function(model, level) {
   if(level == 1) {
     lev1 <- data.frame(fixef = diag.H1, ranef =  diag.H2)
   } else {
-    flist   <- data.frame( getME(model, "flist")[, level] )
+    flist   <- data.frame( getME(object, "flist")[, level] )
     grp.lev <- data.frame( fixef = aggregate(diag.H1, flist, mean)[,2], 
                            ranef = aggregate(diag.H2, flist, mean)[,2] )
   }
@@ -157,11 +158,13 @@ leverage.mer <- function(model, level) {
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
-#'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#'specified.  If \code{delete = NULL} then all cases are iteratively deleted.
+#' @param ... do not use
 #'@author Adam Loy \email{aloy@@iastate.edu}
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992). 
-#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 38–45.
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 
+#' 38--45.
 #'   
 #' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
 #' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
@@ -170,7 +173,7 @@ leverage.mer <- function(model, level) {
 #'@keywords models regression
 #' @seealso \code{\link{leverage.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}  
-cooks.distance.mer <- function(model, group = NULL, delete = NULL) {
+cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
     if(!group %in% names(getME(model, "flist"))) {
@@ -235,12 +238,13 @@ return(res)
 #' @method mdffits mer
 #' @S3method mdffits mer
 #' @aliases mdffits
-#' @param model fitted model of class \code{mer}
+#' @param object fitted object of class \code{mer}
 #' @param group variable used to define the group for which cases will be deleted.
 #'   If \code{group = NULL}, then individual cases will be deleted.
 #' @param delete index of individual cases to be deleted. For higher level units
 #'   specified in this manner, the \code{group} parameter must also be specified.
 #'   If \code{case = NULL} then all cases are iteratively deleted.
+#'@param ... do not use
 #'@author Adam Loy \email{aloy@@iastate.edu}
 #'@references
 #'   
@@ -251,19 +255,19 @@ return(res)
 #'@keywords models regression
 #' @seealso \code{\link{leverage.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
-mdffits.mer <- function(model, group = NULL, delete = NULL) {
-  if(!is(model, "mer")) stop("model must be of class 'mer'")
+mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
+  if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(model, "flist"))) {
+    if(!group %in% names(getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!model@dims["LMM"]){
+  if(!object@dims["LMM"]){
     stop("mdffits is currently not implemented for GLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .mer_matrices(model)
+  mats <- .mer_matrices(object)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
@@ -306,12 +310,13 @@ mdffits.mer <- function(model, group = NULL, delete = NULL) {
 #'@method covratio mer
 #'@S3method covratio mer
 #'@aliases covratio
-#'@param model fitted model of class \code{mer}
+#'@param object fitted object of class \code{mer}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
 #'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#'@param ... do not use
 #' @return If \code{delete = NULL} then a vector corresponding to each deleted
 #' observation/group is returned.
 #' 
@@ -320,7 +325,8 @@ mdffits.mer <- function(model, group = NULL, delete = NULL) {
 #'@author Adam Loy \email{aloy@@iastate.edu}
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992). 
-#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 38–45.
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 34(1), 
+#' 38--45.
 #'   
 #' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
 #' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
@@ -330,19 +336,19 @@ mdffits.mer <- function(model, group = NULL, delete = NULL) {
 #' @seealso \code{\link{leverage.mer}}, \code{\link{cooks.distance.mer}}
 #' \code{\link{mdffits.mer}},
 #'  \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
-covratio.mer <- function(model, group = NULL, delete = NULL) {
-  if(!is(model, "mer")) stop("model must be of class 'mer'")
+covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
+  if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(model, "flist"))) {
+    if(!group %in% names(getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!model@dims["LMM"]){
+  if(!object@dims["LMM"]){
     stop("covratio is currently not implemented for GLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .mer_matrices(model)
+  mats <- .mer_matrices(object)
   
   if( !is.null(group) ){
     grp.names <- unique( mats$flist[, group] )
@@ -379,12 +385,13 @@ covratio.mer <- function(model, group = NULL, delete = NULL) {
 #'@method covtrace mer
 #'@S3method covtrace mer
 #'@aliases covtrace
-#'@param model fitted model of class \code{mer}
+#'@param object fitted object of class \code{mer}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
 #'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#'@param ... do not use
 #' @return If \code{delete = NULL} then a vector corresponding to each deleted
 #' observation/group is returned.
 #' 
@@ -395,7 +402,7 @@ covratio.mer <- function(model, group = NULL, delete = NULL) {
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992). 
 #' Case-deletion diagnostics for mixed models. \emph{Technometrics}, 
-#' 34(1), 38–45.
+#' 34(1), 38--45.
 #'   
 #' Schabenberger, O. (2004),``Mixed Model Influence Diagnostics,''
 #' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
@@ -405,19 +412,19 @@ covratio.mer <- function(model, group = NULL, delete = NULL) {
 #' @seealso \code{\link{leverage.mer}}, \code{\link{cooks.distance.mer}}, 
 #' \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{rvc.mer}}
-covtrace.mer <- function(model, group = NULL, delete = NULL) {
-  if(!is(model, "mer")) stop("model must be of class 'mer'")
+covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
+  if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(model, "flist"))) {
+    if(!group %in% names(getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!model@dims["LMM"]){
+  if(!object@dims["LMM"]){
     stop("covtrace is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .mer_matrices(model)
+  mats <- .mer_matrices(object)
   
   if( !is.null(group) ){
     grp.names <- unique( mats$flist[, group] )
@@ -452,12 +459,13 @@ covtrace.mer <- function(model, group = NULL, delete = NULL) {
 #' @method rvc mer
 #' @S3method rvc mer
 #' @aliases rvc
-#'@param model fitted model of class \code{mer}
+#'@param object fitted object of class \code{mer}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
 #'specified.  If \code{case = NULL} then all cases are iteratively deleted.
+#'@param ... do not use
 #' @return If \code{delete = NULL} a matrix with columns corresponding to the variance 
 #' components of the model and rows corresponding to the deleted 
 #' observation/group is returned. 
@@ -477,7 +485,7 @@ covtrace.mer <- function(model, group = NULL, delete = NULL) {
 #' @seealso \code{\link{leverage.mer}}, 
 #' \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
-rvc.mer <- function(model, group = NULL, delete = NULL) {
-    delete <- case_delete(model, group = group, type = "varcomp", delete = delete)
+rvc.mer <- function(object, group = NULL, delete = NULL, ...) {
+    delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
     return( rvc(delete) )
 }

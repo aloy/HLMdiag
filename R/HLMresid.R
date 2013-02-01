@@ -29,7 +29,7 @@
 #' @keywords models regression
 HLMresid <- function(object, level, type = "EB", sim = NULL, standardize = TRUE){
   if(!is(object, "mer")) stop("object must be of class 'mer'")
-  if(!level %in% c(1, names(object@flist, "marginal"))) {
+  if(!level %in% c(1, names(object@flist), "marginal")) {
     stop("level can only be 1, a grouping factor from the fitted model,
          or marginal.")
   }
