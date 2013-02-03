@@ -24,7 +24,8 @@ Imports:
     Matrix
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
-    mlmRev
+    mlmRev,
+    WWGbook
 License: GPL-2
 LazyLoad: yes
 LazyData: yes

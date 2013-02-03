@@ -13,11 +13,11 @@
   cases will be deleted.  If \code{group = NULL}, then
   individual cases will be deleted.}
 
-  \item{delete}{index of individual cases to be deleted.
-  For higher level units specified in this manner, the
-  \code{group} parameter must also be specified.  If
-  \code{case = NULL} then all cases are iteratively
-  deleted.}
+  \item{delete}{index of individual cases to be deleted. To
+  delete specific observations the row number must be
+  specified. To delete higher level units the group ID and
+  \code{group} parameter must be specified. If \code{delete
+  = NULL} then all cases are iteratively deleted.}
 
   \item{...}{do not use}
 }
@@ -37,15 +37,15 @@
 }
 \description{
   This function calculates the relative variance change
-  (RVC) for mixed/hierarchical linear models fit via
+  (RVC) of mixed/hierarchical linear models fit via
   \code{lmer}.
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
 }
 \references{
-  Dillane, D. (2005). ``Deletion Diagnostics for the Linear
-  Mixed Model.'' Ph.D. thesis, Trinity College Dublin
+  Dillane, D. (2005) Deletion Diagnostics for the Linear
+  Mixed Model. Ph.D. thesis, Trinity College Dublin
 }
 \seealso{
   \code{\link{leverage.mer}},

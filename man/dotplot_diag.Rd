@@ -31,13 +31,25 @@
   the user to understand the distribution of the diagnostic
   measure and visually identify unusual cases.
 }
+\note{
+  The resulting plot is uses \code{coord_flip} to rotate
+  the plot, so when adding customized axis labels you will
+  need to flip the usage of \code{xlab} and \code{ylab}.
+}
 \examples{
-data(Oxboys, package = 'mlmRev')
-fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-fmDel <- case_delete(model = fm, group = "Subject")
-fmDiag <- diagnostics(model = fm, delete = fmDel, type = "fixef")
-dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = TRUE, xlab = "Subject", ylab = "Cook's Distance")
-dotplot_diag(diag.out = fmDiag, type = "fixef", name = "COOKSD", cutoff = "internal", modify = FALSE, xlab = "Subject", ylab = "Cook's Distance")
+data(sleepstudy, package = 'lme4')
+fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# Subject level deletion and diagnostics
+subject.del  <- case_delete(model = fm, group = "Subject", type = "fixef")
+subject.diag <- diagnostics(subject.del)
+
+dotplot_diag(data = subject.diag, type = "fixef", name = "COOKSD",
+             cutoff = "internal", modify = TRUE, xlab = "Subject",
+             ylab = "Cook's Distance")
+dotplot_diag(data = subject.diag, type = "fixef", name = "COOKSD",
+             cutoff = "internal", modify = FALSE, xlab = "Subject",
+             ylab = "Cook's Distance")
 }
 \author{
   Adam Loy \email{aloy@istate.edu}

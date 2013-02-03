@@ -1,9 +1,14 @@
 \name{covratio.mer}
 \alias{covratio}
 \alias{covratio.mer}
-\title{COVRATIO for mixed/hierarchical linear models}
+\alias{covtrace}
+\alias{covtrace.mer}
+\title{Influence on precision of fixed effects in HLMs}
 \usage{
   \method{covratio}{mer} (object, group = NULL,
+    delete = NULL, ...)
+
+  \method{covtrace}{mer} (object, group = NULL,
     delete = NULL, ...)
 }
 \arguments{
@@ -13,11 +18,11 @@
   cases will be deleted.  If \code{group = NULL}, then
   individual cases will be deleted.}
 
-  \item{delete}{index of individual cases to be deleted.
-  For higher level units specified in this manner, the
-  \code{group} parameter must also be specified.  If
-  \code{case = NULL} then all cases are iteratively
-  deleted.}
+  \item{delete}{index of individual cases to be deleted. To
+  delete specific observations the row number must be
+  specified. To delete higher level units the group ID and
+  \code{group} parameter must be specified. If \code{delete
+  = NULL} then all cases are iteratively deleted.}
 
   \item{...}{do not use}
 }
@@ -29,28 +34,54 @@
   returned corresponding to the deleted subset specified.
 }
 \description{
-  This function calculates COVRATIO for the fixed effects
-  parameters for a mixed/hierarchical model fit by
+  These function calculate measures of the change in the
+  variance-covariance matrices for the fixed effects based
+  on the deletetion of an observation, or group of
+  observations, for a hierarchical linear model fit using
   \code{lmer}.
+}
+\details{
+  Both the covariance ratio (\code{covratio}) and the
+  covariance trace (\code{covtrace}) measure the change in
+  the variance-covariance matrix of the fixed effects based
+  on the deletion of a subset of observations.  The key
+  difference is how the variance covariance matrices are
+  compared: \code{covratio} compares the ratio of the
+  determinants while \code{covtrace} compares the ratio of
+  the traces.
+}
+\examples{
+data(Exam, package = 'mlmRev')
+fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+
+# covratio for individual observations
+cr1 <- covratio(fm)
+
+# covratio for school-level deletion
+cr2 <- covratio(fm, group = "school")
+# covtrace for individual observations
+ct1 <- covtrace(fm)
+
+# covtrace for school-level deletion
+ct2 <- covtrace(fm, group = "school")
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
 }
 \references{
-  Christensen, R., Pearson, L., & Johnson, W. (1992).
+  Christensen, R., Pearson, L., & Johnson, W. (1992)
   Case-deletion diagnostics for mixed models.
-  \emph{Technometrics}, 34(1), 38--45.
+  \emph{Technometrics}, \bold{34}(1), 38--45.
 
-  Schabenberger, O. (2004),``Mixed Model Influence
-  Diagnostics,'' in \emph{Proceedings of the Twenty-Ninth
-  SAS Users Group International Conference}, SAS Users
-  Group International.
+  Schabenberger, O. (2004) Mixed Model Influence
+  Diagnostics, in \emph{Proceedings of the Twenty-Ninth SAS
+  Users Group International Conference}, SAS Users Group
+  International.
 }
 \seealso{
   \code{\link{leverage.mer}},
   \code{\link{cooks.distance.mer}}
-  \code{\link{mdffits.mer}}, \code{\link{covtrace.mer}},
-  \code{\link{rvc.mer}}
+  \code{\link{mdffits.mer}}, \code{\link{rvc.mer}}
 }
 \keyword{models}
 \keyword{regression}

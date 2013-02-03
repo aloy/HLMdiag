@@ -1,13 +1,31 @@
 \name{varcomp.mer}
 \alias{varcomp.mer}
-\title{Extracting vector of variance components}
+\title{Extracting variance components}
 \usage{
   varcomp.mer(object)
 }
 \arguments{
   \item{object}{a fitted model object of class \code{mer}.}
 }
-\description{
-  Extracting vector of variance components
+\value{
+  A named vector is returned. \code{sigma2} denotes the
+  residual variance. The other variance components are
+  names \code{D**} where the trailing digits specify the of
+  that variance component in the covariance matrix of the
+  random effects.
 }
+\description{
+  This function extracts the variance components from a
+  mixed/hierarchical linear model fit using \code{lmer}.
+}
+\examples{
+data(sleepstudy, package = "lme4")
+fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+varcomp.mer(fm1)
+}
+\author{
+  Adam Loy \email{aloy@iastate.edu}
+}
+\keyword{models}
+\keyword{regression}
 

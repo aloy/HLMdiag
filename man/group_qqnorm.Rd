@@ -1,6 +1,6 @@
 \name{group_qqnorm}
 \alias{group_qqnorm}
-\title{Plotting numerous normal q-q plots on same plot}
+\title{Overlaying normal Q-Q plots}
 \usage{
   group_qqnorm(x, group, line = NULL, alpha_point = 1,
     alpha_line = 1, ...)
@@ -28,16 +28,17 @@
 \description{
   This function will plot multiple normal q-q plots on the
   same plot. This will be particulary useful when comparing
-  the distrubtion between groups. As differing slopes would
-  indicate the normal distributions for the groups do not
-  share a common slope.
+  the distrubtion between groups. In this situation,
+  significantly different slopes would indicate the normal
+  distributions for the groups do not share a common
+  standard deviation.
 }
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
 \references{
-  Hilden-Minton, J. A. (1995), ``Mulilevel Diagnostics for
-  Mixed and Hierarchical Linear Models,'' Ph.D. thesis,
+  Hilden-Minton, J. A. (1995) Mulilevel Diagnostics for
+  Mixed and Hierarchical Linear Models, Ph.D. thesis,
   University of California Los Angeles.
 }
 

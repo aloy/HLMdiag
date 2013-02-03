@@ -1,7 +1,7 @@
 \name{leverage.mer}
 \alias{leverage}
 \alias{leverage.mer}
-\title{Leverage for mixed/hierarchical linear models}
+\title{Leverage for HLMs}
 \usage{
   \method{leverage}{mer} (object, level, ...)
 }
@@ -9,7 +9,7 @@
   \item{object}{fitted object of class \code{mer}}
 
   \item{level}{the level at which the leverage should be
-  calculated; either 1 for observation level leverage or
+  calculated: either 1 for observation level leverage or
   the name of the grouping factor (as defined in
   \code{flist} of the \code{mer} object) for group level
   leverage. \code{leverage} assumes that the grouping
@@ -20,24 +20,30 @@
   \item{...}{do not use}
 }
 \description{
-  This function calculates the leverage of a
-  mixed/hierarchical model fit by \code{lmer}.
+  This function calculates the leverage of a hierarchical
+  linear model fit by \code{lmer}.
+}
+\examples{
+data(sleepstudy, package = 'lme4')
+fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# Observation level leverage
+lev1 <- leverage.mer(fm, level = 1)
+head(lev1)
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
 }
 \references{
-  Nobre, J. S., & Singer, J. M. (2011).  Leverage analysis
-  for linear mixed models.  \emph{Journal of Applied
-  Statistics}, 38(5), 1063--1072.
-
-  Demidenko, E., & Stukel, T. A. (2005).  Influence
-  analysis for linear mixed-effects models.
-  \emph{Statistics in Medicine}, 24(6), 893--909.
+  Demidenko, E., & Stukel, T. A. (2005) Influence analysis
+  for linear mixed-effects models.  \emph{Statistics in
+  Medicine}, \bold{24}(6), 893--909.
 }
 \seealso{
   \code{\link{cooks.distance.mer}},
   \code{\link{mdffits.mer}}, \code{\link{covratio.mer}},
   \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 }
+\keyword{models}
+\keyword{regression}
 

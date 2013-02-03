@@ -1,12 +1,12 @@
-#' Identifying unusual points
-#'
-#' This function will identify the unusual points found when
-#' looking at the plot comparing the shrinkage estimates and
-#' the random coefficients found through OLS.
-#'
-#' @param formula a formula that can be used with \code{lm()}
-#' @param identify the percentage of points to identify as unusual
-#' @author Adam Loy \email{aloy@@istate.edu}
+# Identifying unusual points
+#
+# This function will identify the unusual points found when
+# looking at the plot comparing the shrinkage estimates and
+# the random coefficients found through OLS.
+#
+# @param formula a formula that can be used with \code{lm()}
+# @param identify the percentage of points to identify as unusual
+# @author Adam Loy \email{aloy@@istate.edu}
 identify_resid <- function(eb, ols, identify){
 #	model <- lm(formula = formula)
 	yhat <- eb

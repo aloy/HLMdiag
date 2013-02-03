@@ -5,28 +5,44 @@
 \alias{diagnostics}
 \alias{mdffits.case_delete}
 \alias{rvc.case_delete}
-\title{Calculating diagnostics for two-level hierarchical linear models.}
+\title{Calculating influence diagnostics for HLMs.}
 \usage{
-  diagnostics(delete)
+  diagnostics(object)
+
+  cooks.distance.case_delete(model, ...)
+
+  mdffits.case_delete(object, ...)
+
+  covtrace.case_delete(object, ...)
+
+  covratio.case_delete(object, ...)
+
+  rvc.case_delete(object, ...)
 }
 \arguments{
-  \item{delete}{an object containing the output returned by
+  \item{object}{an object containing the output returned by
   \code{case_delete()}}
+
+  \item{model}{an object containing the output returned by
+  \code{case_delete()}. This is only named differently to
+  agree with the generic.}
+
+  \item{...}{do not use}
 }
 \description{
   This group of functions is used to compute deletion
-  diagnostics for a two-level normal hierarchical model at
-  both levels of the model.
+  diagnostics for a hierarchical linear model based on the
+  building blocks returned by \code{case_delete}.
 }
 \details{
-  The primary function if \code{diagnostics} which returns
+  The primary function is \code{diagnostics} which returns
   either a list or data frame of influence measures
-  depending on whether \code{type = "both"} or if only one
-  aspect of the model is selected. If \code{type = "both"},
-  then a list with Cook's distance, MDFFITS, COVTRACE, and
-  COVRATIO are returned for the fixed effects and relative
-  variance change (RVC) is returned for the variance
-  components.
+  depending on whether \code{type = "both"} (\code{list})
+  or if only one aspect of the model is selected
+  (\code{data.frame}). If \code{type = "both"}, then a list
+  with Cook's distance, MDFFITS, COVTRACE, and COVRATIO are
+  returned for the fixed effects and relative variance
+  change (RVC) is returned for the variance components.
 
   The methods \code{cooks.distance}, \code{mdffits},
   \code{covtrace}, \code{covratio}, and \code{rvc} can be
@@ -34,34 +50,43 @@
   diagnostic quantities from an object of class
   \code{case_delete}.
 }
-\examples{
-data(Oxboys, package = 'mlmRev')
-fm <- lmer(formula = height ~ age + I(age^2) + (age + I(age^2)| Subject), data = Oxboys)
-fmDel <- case_delete(model = fm, group = TRUE, type = "both")
-fmDiag <- diagnostics(model = fm, delete = fmDel)
-
-\dontrun{
-library(mlmRev)
-exm1 <- lmer(normexam ~ standLRT + sex + schgend + (1 | school), data = Exam)
-exm1DEL <- case_delete(model = exm1, group = TRUE, type = "both")
-exm1DIAG <- diagnostics(model = exm1, delete = exm1DEL)
+\note{
+  The results provided by this function will give exact
+  values of the diagnostics; however, these are
+  computationally very slow. Approximate versions of
+  \code{cooks.distance}, \code{mdffits}, \code{covtrace},
+  \code{covratio} are implemented in HLMdiag, and can be
+  called directly on the \code{mer} object.
 }
+\examples{
+data(sleepstudy, package = 'lme4')
+fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# Subject level deletion and diagnostics
+subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
+subject.diag <- diagnostics(subject.del)
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
 }
 \references{
-  Christensen, R., Pearson, L.M., and Johnson, W. (1992),
-  ``Case-Deletion Diagnostics for Mixed Models,''
-  \emph{Technometrics}, 34, 38 -- 45.
+  Christensen, R., Pearson, L.M., and Johnson, W. (1992)
+  ``Case-Deletion Diagnostics for Mixed Models,
+  \emph{Technometrics}, \bold{34}, 38 -- 45.
 
-  Dillane, D. (2005), ``Deletion Diagnostics for the Linear
+  Dillane, D. (2005), Deletion Diagnostics for the Linear
   Mixed Model,'' Ph.D. thesis, Trinity College Dublin.
 
-  Schabenberger, O. (2004),``Mixed Model Influence
-  Diagnostics,'' in \emph{Proceedings of the Twenty-Ninth
-  SAS Users Group International Conference}, SAS Users
-  Group International.
+  Schabenberger, O. (2004) Mixed Model Influence
+  Diagnostics, in \emph{Proceedings of the Twenty-Ninth SAS
+  Users Group International Conference}, SAS Users Group
+  International.
+}
+\seealso{
+  \code{\link{leverage.mer}},
+  \code{\link{cooks.distance.mer}},
+  \code{\link{mdffits.mer}}, \code{\link{covratio.mer}},
+  \code{\link{covtrace.mer}}
 }
 \keyword{models}
 \keyword{regression}

@@ -1,9 +1,14 @@
 \name{cooks.distance.mer}
 \alias{cooks.distance}
 \alias{cooks.distance.mer}
-\title{Cook's distance for mixed/hierarchical linear models}
+\alias{mdffits}
+\alias{mdffits.mer}
+\title{Influence on fixed effects of HLMs}
 \usage{
   \method{cooks.distance}{mer} (model, group = NULL,
+    delete = NULL, ...)
+
+  \method{mdffits}{mer} (object, group = NULL,
     delete = NULL, ...)
 }
 \arguments{
@@ -13,36 +18,70 @@
   cases will be deleted.  If \code{group = NULL}, then
   individual cases will be deleted.}
 
-  \item{delete}{index of individual cases to be deleted.
-  For higher level units specified in this manner, the
-  \code{group} parameter must also be specified.  If
-  \code{delete = NULL} then all cases are iteratively
-  deleted.}
+  \item{delete}{index of individual cases to be deleted. To
+  delete specific observations the row number must be
+  specified. To delete higher level units the group ID and
+  \code{group} parameter must be specified. If \code{delete
+  = NULL} then all cases are iteratively deleted.}
 
   \item{...}{do not use}
+
+  \item{object}{fitted object of class \code{mer}}
 }
 \description{
-  This function calculates Cook's distance for the fixed
-  effects parameters for a mixed/hierarchical model fit by
-  \code{lmer}.
+  These functions calculate measures of the change in the
+  fixed effects estimates based on the deletetion of an
+  observation, or group of observations, for a hierarchical
+  linear model fit using \code{lmer}.
+}
+\details{
+  Both Cook's distance and MDFFITS measure the change in
+  the fixed effects estimates based on the deletion of a
+  subset of observations. The key difference between the
+  two diagnostics is that Cook's distance uses the
+  variance-covariance matrix for the fixed effects from the
+  original model while MDFFITS uses the variance-covariance
+  matrix from the deleted model.
+}
+\note{
+  Because MDFFITS requires the calculation of the
+  variance-covarinace matrix for the fixed effects for
+  every model, it will be slower.
+}
+\examples{
+data(Exam, package = 'mlmRev')
+fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+
+# Cook's distance for individual observations
+cd.lev1 <- cooks.distance(fm)
+
+# Cook's distance for each school
+cd.school <- cooks.distance(fm, group = "school")
+
+# Cook's distance when school 1 is deleted
+cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
+# MDFFITS  for individual observations
+m1 <- mdffits(fm)
+
+# MDFFITS for each school
+m.school <- mdffits(fm, group = "school")
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}
 }
 \references{
-  Christensen, R., Pearson, L., & Johnson, W. (1992).
+  Christensen, R., Pearson, L., & Johnson, W. (1992)
   Case-deletion diagnostics for mixed models.
-  \emph{Technometrics}, 34(1), 38--45.
+  \emph{Technometrics}, \bold{34}(1), 38--45.
 
-  Schabenberger, O. (2004),``Mixed Model Influence
-  Diagnostics,'' in \emph{Proceedings of the Twenty-Ninth
-  SAS Users Group International Conference}, SAS Users
-  Group International.
+  Schabenberger, O. (2004) Mixed Model Influence
+  Diagnostics, in \emph{Proceedings of the Twenty-Ninth SAS
+  Users Group International Conference}, SAS Users Group
+  International.
 }
 \seealso{
-  \code{\link{leverage.mer}}, \code{\link{mdffits.mer}},
-  \code{\link{covratio.mer}}, \code{\link{covtrace.mer}},
-  \code{\link{rvc.mer}}
+  \code{\link{leverage.mer}}, \code{\link{covratio.mer}},
+  \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 }
 \keyword{models}
 \keyword{regression}

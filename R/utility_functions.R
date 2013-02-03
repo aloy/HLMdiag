@@ -1,14 +1,7 @@
-#'Reorganizing Z matrix
-#'
-#'This function reorganizes the Z matrix obtained from an \code{mer} object
-#'into the block form discussed by Demidenko (2004). Currently, this function
-#'assumes there is only one level and that units are nested.
-#'
-#'
-#'@param object a fitted model object of class \code{mer}.
-#'@author Adam Loy \email{aloy@@iastate.edu}
-#'@references Demidenko, E. (2004). Mixed Models: Theory and Applications.  New
-#'York, Wiley.
+# Reorganizing Z matrix
+# This function reorganizes the Z matrix obtained from an \code{mer} object
+# into the block form discussed by Demidenko (2004). Currently, this function
+# assumes there is only one level and that units are nested.
 BlockZ <- function(object) {
   Z <- getME(object, "Z")
   
@@ -24,9 +17,24 @@ BlockZ <- function(object) {
   return(Z %*% perm.mat)
 }
 
-#' Extracting vector of variance components
+#' Extracting variance components
+#' 
+#' This function extracts the variance components from a mixed/hierarchical
+#' linear model fit using \code{lmer}. 
+#' 
+#' @return A named vector is returned. \code{sigma2} denotes the residual
+#' variance. The other variance components are names \code{D**} where the
+#' trailing digits specify the of that variance component in the covariance
+#' matrix of the random effects.
 #' 
 #' @param object a fitted model object of class \code{mer}.
+#' @author Adam Loy \email{aloy@@iastate.edu}
+#' @keywords models regression
+#' @export
+#' @examples
+#' data(sleepstudy, package = "lme4") 
+#' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' varcomp.mer(fm1)
 varcomp.mer <- function(object) {
   vc  <- VarCorr(object)
   sig <- attr(vc, "sc")
@@ -46,9 +54,8 @@ varcomp.mer <- function(object) {
   return(res)
 }
 
-#' Checking if matrix is diagonal
-#' 
-#' @param mat a matrix
+# Checking if matrix is diagonal 
+# @param mat a matrix
 isDiagonal <- function(mat, tol = 1e-10) {
   if( !isSymmetric(mat) ) return( FALSE )
   else { 
@@ -57,9 +64,8 @@ isDiagonal <- function(mat, tol = 1e-10) {
   }
 }
 
-#' Extracting/calculating key matrices from mer object
-#' 
-#' @param model an mer object
+# Extracting/calculating key matrices from mer object 
+# @param model an mer object
 .mer_matrices <- function(model) {
   Y <- model@y
   X <- getME(model, "X")
@@ -90,4 +96,25 @@ isDiagonal <- function(mat, tol = 1e-10) {
   return( list(Y = Y, X = X, n = n, ngrps = ngrps, flist = flist,
                sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
                M = M, P = P) )
+}
+
+# 'se.ranef' is a copy of function in arm package. This is copied to ensure
+# that is available to all users. This should not be exported.
+se.ranef <- function (object) 
+{
+  se.bygroup <- ranef(object, postVar = TRUE)
+  n.groupings <- length(se.bygroup)
+  for (m in 1:n.groupings) {
+    vars.m <- attr(se.bygroup[[m]], "postVar")
+    K <- dim(vars.m)[1]
+    J <- dim(vars.m)[3]
+    se.bygroup[[m]] <- array(NA, c(J, K))
+    for (j in 1:J) {
+      se.bygroup[[m]][j, ] <- sqrt(diag(as.matrix(vars.m[, 
+                                                         , j])))
+    }
+    names.full <- dimnames(se.bygroup)
+    dimnames(se.bygroup[[m]]) <- list(names.full[[1]], names.full[[2]])
+  }
+  return(se.bygroup)
 }

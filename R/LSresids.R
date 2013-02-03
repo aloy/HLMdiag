@@ -1,21 +1,26 @@
-#' Calculating case-level (level-1) least squares residuals
+#' Calculating least squares residuals
 #'
-#' This function calculates the case-level least squares residuals
+#' This function calculates least squares (LS) residuals
 #' found by fitting separate LS regression models to each case.
+#' For examples see the documentation for \code{HLMresid}.
 #'
 #' @param object an object of class \code{mer}.
-#' @param level which residuals should be plotted: 1 for within-group
-#' residuals or the name of the grouping factor (as defined in \code{flist} of the 
+#' @param level which residuals should be extracted: 1 for case-level
+#' residuals or the name of a grouping factor (as defined in \code{flist} of the 
 #' \code{mer} object) for between-group residuals.
 #' @param sim optional argument giving the data frame used for LS residuals. This
-#'  is used mainly for when dealing with simulations.
+#'  is used mainly when dealing with simulations.
 #' @param standardize if \code{TRUE} the standardized level-1
 #' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
 #' the semi-standardized level-1 residuals will be returned.
 #' @author Adam Loy \email{aloy@@istate.edu}
+#' @references 
+#' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
+#' linear models. University of California Los Angeles.
 #' @export
+#' @seealso \code{\link{HLMresid}}
 #' @keywords models regression
-LSresids <- function(object, level, sim = NULL, standardize = NULL){
+LSresids <- function(object, level, sim = NULL, standardize = FALSE){
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
@@ -24,8 +29,8 @@ LSresids <- function(object, level, sim = NULL, standardize = NULL){
     stop("LSresids has not yet been implemented for models with 
           crossed random effects")
   }
-  if(!is.null(standardize) && !standardize %in% c(TRUE, "semi")) {
-    stop("standardize can only be specified to be TRUE or 'semi' .")
+  if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
+    stop("standardize can only be specified to be logical or 'semi' .")
   }
   
   fixed <- as.character( fixform( formula(object) ) )

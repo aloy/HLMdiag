@@ -27,6 +27,7 @@
 \examples{
 data(Exam, package = 'mlmRev')
 sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam)
+confint(sepLM)
 }
 \references{
   Douglas Bates, Martin Maechler and Ben Bolker (2011).
