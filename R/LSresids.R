@@ -36,7 +36,7 @@ LSresids <- function(object, level, sim = NULL, standardize = FALSE){
   fixed <- as.character( fixform( formula(object) ) )
 	
 	data <- object@frame
-	if(!is.null(sim)){data[,response] <- sim}
+	if(!is.null(sim)){data[,fixed[2]] <- sim}
 	
 	if(level == 1){
 		# fitting a separate LS regression model to each group
@@ -63,7 +63,7 @@ LSresids <- function(object, level, sim = NULL, standardize = FALSE){
 			semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
 			semi.std.resid[is.infinite(semi.std.resid)] <- NaN
 	
-			return.df <- cbind(return.df, hat = h, semi.std.resid = semi.std.resid)
+			return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
 		}
     
 		if(!is.null(standardize) && standardize == TRUE){
