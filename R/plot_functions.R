@@ -73,9 +73,12 @@ dotplot_diag <- function(x, index, data, cutoff,
   } else{
     if(missing(index)) index <- factor(seq(1, nrow(data)))
   }
+  
   name <- match.arg(name)
   x <- eval(substitute(x), data, parent.frame())
   index <- eval(substitute(index), data, parent.frame())
+  
+  if(class(x) %in% c("fixef.dd", "vcov.dd")) x <- as.numeric(x)
   
   if(modify == FALSE) {
     p <- qplot(x = reorder(index, x, identity), y = x, geom = "blank", ... )
