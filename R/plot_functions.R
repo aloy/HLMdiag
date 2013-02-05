@@ -9,12 +9,13 @@
 #' adding customized axis labels you will need to flip the usage of 
 #' \code{xlab} and \code{ylab}.
 #'
-#' @param data an object containing the output from \code{diagnostics()}.
-#' @param type the part of the model the diagnostic corresponds to, either 
-#' \code{"fixef"} or \code{"varcomp"}.
-#' @param name specification of which diagnostic to plot 
-#' (either COOKSD, MDFFITS, COVTRACE, COVRATIO, or rvc).
-#' @param cutoff value specifying unusual values of the diagnostic
+#' @param x values of the diagnostic of interest
+#' @param index index of \code{x}
+#' @param data data frame to use (optional)
+#' @param cutoff value(s) specifying the boundary for unusual values of the diagnostic
+#' @param name what diagnostic is being plotted 
+#' (one of "cooks.distance", "mdffits", "covratio", "covtrace", "rvc", or "leverage").
+#' this is used to for the calculation of "internal" cutoffs
 #' @param modify if \code{TRUE} will produce a space-saving modification
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
@@ -23,53 +24,101 @@
 #' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #'
 #' # Subject level deletion and diagnostics
-#' subject.del  <- case_delete(model = fm, group = "Subject", type = "fixef")
+#' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 #' subject.diag <- diagnostics(subject.del)
 #' 
-#' dotplot_diag(data = subject.diag, type = "fixef", name = "COOKSD", 
-#'              cutoff = "internal", modify = TRUE, xlab = "Subject", 
-#'              ylab = "Cook's Distance") 
-#' dotplot_diag(data = subject.diag, type = "fixef", name = "COOKSD", 
-#'              cutoff = "internal", modify = FALSE, xlab = "Subject", 
-#'              ylab = "Cook's Distance")
+#' dotplot_diag(x = COOKSD, index = IDS, data = subject.diag[["fixef_diag"]], 
+#'              name = "cooks.distance", modify = FALSE, 
+#'              xlab = "Subject", ylab = "Cook's Distance")
+#' 
+#' dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]], 
+#'              name = "rvc", modify = TRUE, cutoff = "internal", 
+#'              xlab = "Subject", ylab = "Relative Variance Change")
 #' @export
 #' @keywords hplot
-dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL, 
+dotplot_diag <- function(x, index, data, cutoff, 
+                         name = c("cooks.distance", "mdffits", "covratio",
+                                  "covtrace", "rvc", "leverage"),
                          modify = FALSE, ... ){
-  type <- match.arg(type)
-  if(class(data) == "list"){ data <- data[[paste(type,"_diag", sep = "")]] }
-
-  if(modify == FALSE) p <- qplot(x = reorder(IDS, get(name)), y = get(name), 
-                                 data = data, geom = "blank", ... )
+  
+  if(!is.logical(modify)) stop("modify should be either TRUE or FALSE")
+  
+  if(modify & missing(cutoff)){
+    stop("a cutoff should be specified if modify = TRUE")
+  }
+  
+  if(modify & missing(name)){
+    stop("a name should be specified if modify = TRUE")
+  }
+  
+  if(!missing(cutoff)){
+    if( !is.numeric(cutoff) && cutoff != "internal" ){
+      stop("cutoff should be numeric or 'internal'")
+    }
+  } else{
+    cutoff <- NULL
+  }
+  
+  if(!missing(name)){
+    if(!name %in% c("cooks.distance", "mdffits", "covratio",
+                    "covtrace", "rvc", "leverage")) {
+      stop("name should be one of 'cooks.distance', 'mdffits', 'covratio', 
+         'covtrace', 'rvc', 'leverage'")
+    }
+  }
+  
+  if(missing(data)) {
+    data <- data.frame() 
+    if(missing(index)) index <- factor(seq(1, length(x)))
+  } else{
+    if(missing(index)) index <- factor(seq(1, nrow(data)))
+  }
+  name <- match.arg(name)
+  x <- eval(substitute(x), data, parent.frame())
+  index <- eval(substitute(index), data, parent.frame())
+  
+  if(modify == FALSE) {
+    p <- qplot(x = reorder(index, x, identity), y = x, geom = "blank", ... )
+  }
   
   if(!is.null(cutoff)){
-    if(!is.numeric(cutoff)){cutoff <- internal_cutoff(data=data, type=type, name=name)}
+    
+    if(!is.numeric(cutoff)) cutoff <- internal_cutoff(x = x, name = name)
 
     if(is.numeric(cutoff)){
-      if(type != "varcomp" & name != "COVRATIO"){
-        data$extreme <- with(data, get(name) > cutoff)
+      if( !name %in% c("covratio", "rvc") ){
+        
+        extreme <-  x > cutoff
 
         if(modify == TRUE){
-          levels(data$IDS)[levels(data$IDS) %in% data$IDS[which(data$extreme == FALSE)]] <- "within cutoff"
-          p <- qplot(x = reorder(IDS, get(name)), y = get(name), data = data, 
-                     geom = "blank", ... )
+          levels(index)[levels(index) %in% index[which(extreme == FALSE)]] <- "within cutoff"
+          p <- qplot(x = reorder(index, x, mean), y = x, geom = "blank", ... )
         }
 
-        if(sum(data$extreme) > 0){
-          p <- p + geom_point(data = subset(data, extreme == TRUE), 
-                              colour = I("red"), shape = 17) +
-            geom_text(data = subset(data, extreme == TRUE), 
-                      aes(label = IDS, hjust=.5, vjust=1.5, size=3))
+        if( sum(extreme) > 0 ){
+          p <- p +
+            geom_point(aes( x = index[which(extreme == TRUE)],
+                            y = x[which(extreme == TRUE)]),
+                       colour = I("red"), shape = 17, inherit.aes = FALSE) +
+            geom_text(aes(x = index[which(extreme == TRUE)],
+                          y = x[which(extreme == TRUE)],
+                          label = index[which(extreme == TRUE)], 
+                          hjust=.5, vjust=1.5, size=3),
+                      inherit.aes = FALSE)
         }
 
 		ver <- as.numeric_version(packageVersion("ggplot2"))
 		if(ver >= as.numeric_version("0.9.2")) {
-        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+        	p + geom_point(aes(x = index[which(extreme == FALSE)],
+        	               y = x[which(extreme == FALSE)]), 
+                         colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
               	theme(legend.position = "none") +
                 coord_flip()
       	} else{
-        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+        	p + geom_point(aes(x = index[which(extreme == FALSE)],
+        	               y = x[which(extreme == FALSE)]), 
+                         colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
               	opts(legend.position = "none") +
                 coord_flip()      			
@@ -77,27 +126,38 @@ dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL
     }
 
       else{
-        data$extreme <- with(data, get(name) < cutoff[1] | get(name) > cutoff[2])
+        extreme <- x < cutoff[1] | x > cutoff[2]
 
         if(modify == TRUE){
-          levels(data$IDS)[levels(data$IDS) %in% data$IDS[which(data$extreme == FALSE)]] <- "within cutoff"
-          p <- qplot(x = reorder(IDS, get(name)), y = get(name), data = data, geom = "blank", ... )
-        }
-        
-        if(sum(data$extreme) > 0){
-          p <- p + geom_point(data = subset(data, extreme == TRUE), colour = I("red"), shape = 17) +
-            geom_text(data = subset(data, extreme == TRUE), aes(label = IDS, hjust=.5, vjust=1.5, size=3))
+          levels(index)[levels(index) %in% index[which(extreme == FALSE)]] <- "within cutoff"
+          p <- qplot(x = reorder(index, x, mean), y = x, geom = "blank", ... )
+          
+          if(sum(extreme) > 0){
+            p <- p + 
+              geom_point(aes(x = index[which(extreme == TRUE)],
+                             y = x[which(extreme == TRUE)]), 
+                         colour = I("red"), shape = 17, inherit.aes = FALSE) +
+              geom_text(aes(x = index[which(extreme == TRUE)],
+                            y = x[which(extreme == TRUE)], 
+                            label = index[which(extreme == TRUE)], 
+                            hjust=.5, vjust=1.5, size=3),
+                        inherit.aes = FALSE)
+          } 
         }
 
 		    ver <- as.numeric_version(packageVersion("ggplot2"))
 		    if(ver >= as.numeric_version("0.9.2")) {
-        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+        	p + geom_point(aes(x = index[which(extreme == FALSE)],
+                             y = x[which(extreme == FALSE)]), 
+                         colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
             	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
                 theme(legend.position = "none") +
                 coord_flip()	
         } else{
-        	p + geom_point(data = subset(data, extreme == FALSE), colour = I("blue")) + 
+        	p + geom_point(aes(x = index[which(extreme == FALSE)],
+        	               y = x[which(extreme == FALSE)]), 
+                         colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
             	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
                 opts(legend.position = "none") +
@@ -122,21 +182,18 @@ dotplot_diag <- function(data, type = c("fixef", "varcomp"), name, cutoff = NULL
 # to specify unusual values of the diagnostic of interest relative
 # to the vector of diagnostics.
 #
-# @param data an object containing the output from \code{diagnostics()}
-# @param type the part of the model the diagnostic corresponds to, either \code{"fixef"} or \code{"varcomp"}.
-# @param name specification of which diagnostic to plot (either COOKSD, MDFFITS, COVTRACE, COVRATIO, or rvc).
-# @author Adam Loy \email{aloy@@istate.edu}
-internal_cutoff <- function(data, type, name){
-  series <- data[, name]
-  q3 <- quantile(series, p=0.75)
-  series.iqr <- IQR(series)
+# @param x a vector
+# @param name specification of which diagnostic to plot
+internal_cutoff <- function(x, name){
+  q3 <- quantile(x, p=0.75)
+  x.iqr <- IQR(x)
 	
-  if(name == "COVRATIO" | type == "varcomp"){
-    q1 <- quantile(series, p=0.25)
-    cutoff <- c(lower = q1 - 3*series.iqr, upper = q3 + 3*series.iqr)	
+  if(name %in% c("covratio", "rvc")){
+    q1 <- quantile(x, p=0.25)
+    cutoff <- c(lower = q1 - 3 * x.iqr, upper = q3 + 3 * x.iqr)	
   }
 	
-  else{cutoff <- q3 + 3*series.iqr}
+  else{cutoff <- q3 + 3 * x.iqr}
 	
   return(cutoff)	
 }

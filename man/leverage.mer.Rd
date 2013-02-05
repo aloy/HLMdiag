@@ -1,8 +1,11 @@
-\name{leverage.mer}
+\name{leverage.default}
 \alias{leverage}
+\alias{leverage.default}
 \alias{leverage.mer}
 \title{Leverage for HLMs}
 \usage{
+  \method{leverage}{default} (object, ...)
+
   \method{leverage}{mer} (object, level, ...)
 }
 \arguments{
@@ -28,7 +31,7 @@ data(sleepstudy, package = 'lme4')
 fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Observation level leverage
-lev1 <- leverage.mer(fm, level = 1)
+lev1 <- leverage(fm, level = 1)
 head(lev1)
 }
 \author{

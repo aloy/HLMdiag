@@ -4,6 +4,9 @@ leverage <- function(object, ...){
 }
 
 #' @export
+#' @rdname leverage.mer
+#' @method leverage default
+#' @S3method leverage default
 leverage.default <- function(object, ...){
   stop(paste("there is no leverage() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -15,23 +18,12 @@ covratio <- function(object, ...){
 }
 
 #' @export
+#' @rdname covratio.mer
+#' @method covratio default
+#' @S3method covratio default
 covratio.default <- function(object, ...){
   stop(paste("there is no covratio() method for objects of class",
              paste(class(object), collapse=", ")))
-}
-
-#' @export
-covratio.lm <- function(object, ...){
-  function (object, infl = lm.influence(object, do.coef = FALSE), 
-            res = weighted.residuals(object)) 
-  {
-    n <- nrow(qr.lm(object)$qr)
-    p <- object$rank
-    omh <- 1 - infl$hat
-    e.star <- res/(infl$sigma * sqrt(omh))
-    e.star[is.infinite(e.star)] <- NaN
-    1/(omh * (((n - p - 1) + e.star^2)/(n - p))^p)
-  }
 }
 
 #' @export
@@ -40,6 +32,9 @@ covtrace <- function(object, ...){
 }
 
 #' @export
+#' @rdname covratio.mer
+#' @method covtrace default
+#' @S3method covtrace default
 covtrace.default <- function(object, ...){
   stop(paste("there is no covtrace() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -51,6 +46,9 @@ mdffits <- function(object, ...){
 }
 
 #' @export
+#' @rdname cooks.distance.mer
+#' @method mdffits default
+#' @S3method mdffits default
 mdffits.default <- function(object, ...){
   stop(paste("there is no mdffits() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -62,6 +60,9 @@ rvc <- function(object, ...){
 }
 
 #' @export
+#' @rdname rvc.mer
+#' @method rvc default
+#' @S3method rvc default
 rvc.default <- function(object, ...){
   stop(paste("there is no rvc() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -100,7 +101,7 @@ rvc.default <- function(object, ...){
 #' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Observation level leverage
-#' lev1 <- leverage.mer(fm, level = 1)
+#' lev1 <- leverage(fm, level = 1)
 #' head(lev1)
 leverage.mer <- function(object, level, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
@@ -269,10 +270,6 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
 print.fixef.dd <- function(x, ...) {
   attributes(x) <- NULL
   print(x, ...)
-}
-
-plot.fixef.dd <- function(x, ...) {
-  
 }
 
 print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }

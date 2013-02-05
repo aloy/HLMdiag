@@ -50,6 +50,13 @@
 #' \code{\link{qqline}} (\code{\link{ggplot_qqnorm}}).
 #' 
 #' @useDynLib HLMdiag
+#' @import lme4
+#' @import Matrix
+#' # @import methods
+#' @import ply
+#' @import reshape2
+#' @importFrom stats4 coef, confint, plot
+#' @importFrom stats cooks.distance, covratio
 #' @docType package
 #' @name HLMdiag
 #' @aliases HLMdiag package-HLMdiag

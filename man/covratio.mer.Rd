@@ -1,10 +1,16 @@
-\name{covratio.mer}
+\name{covratio.default}
 \alias{covratio}
+\alias{covratio.default}
 \alias{covratio.mer}
 \alias{covtrace}
+\alias{covtrace.default}
 \alias{covtrace.mer}
 \title{Influence on precision of fixed effects in HLMs}
 \usage{
+  \method{covratio}{default} (object, ...)
+
+  \method{covtrace}{default} (object, ...)
+
   \method{covratio}{mer} (object, group = NULL,
     delete = NULL, ...)
 

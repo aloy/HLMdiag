@@ -9,15 +9,15 @@
 \usage{
   diagnostics(object)
 
-  cooks.distance.case_delete(model, ...)
+  \method{cooks.distance}{case_delete} (model, ...)
 
-  mdffits.case_delete(object, ...)
+  \method{mdffits}{case_delete} (object, ...)
 
-  covtrace.case_delete(object, ...)
+  \method{covtrace}{case_delete} (object, ...)
 
-  covratio.case_delete(object, ...)
+  \method{covratio}{case_delete} (object, ...)
 
-  rvc.case_delete(object, ...)
+  \method{rvc}{case_delete} (object, ...)
 }
 \arguments{
   \item{object}{an object containing the output returned by

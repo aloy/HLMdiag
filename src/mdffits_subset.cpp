@@ -13,7 +13,7 @@ extern "C" SEXP mdffitsSubset(SEXP index, SEXP X_, SEXP P_,
 
   int n = grpInd.size(), p = X.n_cols;
   int ii;
-  arma::mat Pa, Na, XNaX;
+  arma::mat Pa, Na, XNaXinv, XNaX;
   arma::colvec cdd;
   Rcpp::NumericVector mdffits ( n );
   Rcpp::List beta_cdd ( n );
@@ -22,8 +22,13 @@ extern "C" SEXP mdffitsSubset(SEXP index, SEXP X_, SEXP P_,
     arma::uvec ind = grpInd[ii];
 
     Pa = P.submat(ind, ind);
+/*
     Na = Vinv - Vinv.cols(ind) * inv( Vinv.submat(ind, ind) ) * Vinv.rows(ind);
     XNaX = Xt * Na * X;
+*/
+	
+	XNaXinv = XVXinv + XVXinv * Xt * Vinv.cols(ind) * inv(Pa) * Vinv.rows(ind) * X * XVXinv;
+	XNaX = inv(XNaXinv);
 
     cdd = XVXinv * Xt * Vinv.cols(ind) * inv(Pa) * Vinv.rows(ind) * e;
     mdffits[ii] = arma::as_scalar( trans(cdd) * XNaX * cdd ) / p;

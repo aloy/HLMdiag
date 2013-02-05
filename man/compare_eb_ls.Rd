@@ -8,12 +8,15 @@
 \arguments{
   \item{eb}{a matrix of random effects}
 
-  \item{ols}{a matrix of the LS estimates found using
+  \item{ols}{a matrix of the OLS estimates found using
   \code{random_ls_coef}}
 
-  \item{identify}{identify the percentage of points to
-  identify as unusual, \code{FALSE} if you do not want the
-  points identified.}
+  \item{identify}{the percentage of points to identify as
+  unusual, \code{FALSE} if you do not want the points
+  identified.}
+
+  \item{silent}{logical: should the list of data frames
+  used to make the plots be supressed.}
 
   \item{...}{other arguments to be passed to
   \code{qplot()}}

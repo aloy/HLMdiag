@@ -6,9 +6,11 @@
 #'
 #'
 #'@param eb a matrix of random effects
-#'@param ols a matrix of the LS estimates found using \code{random_ls_coef}
-#'@param identify identify the percentage of points to identify as unusual,
+#'@param ols a matrix of the OLS estimates found using \code{random_ls_coef}
+#'@param identify the percentage of points to identify as unusual,
 #'\code{FALSE} if you do not want the points identified.
+#'@param silent logical: should the list of data frames used to make the plots
+#' be supressed.
 #'@param ... other arguments to be passed to \code{qplot()}
 #'@author Adam Loy \email{aloy@@istate.edu}
 #'@examples

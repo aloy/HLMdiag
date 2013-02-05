@@ -1,10 +1,13 @@
-\name{cooks.distance.mer}
+\name{mdffits.default}
 \alias{cooks.distance}
 \alias{cooks.distance.mer}
 \alias{mdffits}
+\alias{mdffits.default}
 \alias{mdffits.mer}
 \title{Influence on fixed effects of HLMs}
 \usage{
+  \method{mdffits}{default} (object, ...)
+
   \method{cooks.distance}{mer} (model, group = NULL,
     delete = NULL, ...)
 

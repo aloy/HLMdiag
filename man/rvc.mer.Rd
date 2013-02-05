@@ -1,8 +1,11 @@
-\name{rvc.mer}
+\name{rvc.default}
 \alias{rvc}
+\alias{rvc.default}
 \alias{rvc.mer}
 \title{Relative variance change for mixed/hierarchical linear models}
 \usage{
+  \method{rvc}{default} (object, ...)
+
   \method{rvc}{mer} (object, group = NULL, delete = NULL,
     ...)
 }

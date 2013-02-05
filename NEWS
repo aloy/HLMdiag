@@ -17,8 +17,10 @@ NEW FEATURES
 * `case_delete` and other deletion functions now allow for the user to 
 manually specify a subset to delete.
 
-OTHER USER-VISIBLE CHANGES:
+OTHER USER-VISIBLE CHANGES
 
+* changes to the arguments of `dotplot_diag` to accomodate a more general
+usage.
 * `diagnostics` no longer requires a `model` parameter to be specified.
 * A `delete` parameter has been added to `case_delete` to allow for manual
 specification of a subset that should be deleted.
