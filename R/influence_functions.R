@@ -132,19 +132,28 @@ leverage.mer <- function(object, level, ...) {
   xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(object, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
-  H2 <- ZDZt %*% (Diagonal( n = n ) - H1)
+  H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
   
   diag.H1 <- diag(H1)
   diag.H2 <- diag(H2)
+  diag.H2.uc <- diag(ZDZt) / attr(vc, "sc")^2
   
   if(level == 1) {
-    lev1 <- data.frame(fixef = diag.H1, ranef =  diag.H2)
-    class(lev1) <- "leverage"
+    lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 
+                       ranef =  diag.H2, ranef.uc = diag.H2.uc)
+#     class(lev1) <- "leverage"
   } else {
     flist   <- data.frame( getME(object, "flist")[, level] )
-    grp.lev <- data.frame( fixef = aggregate(diag.H1, flist, mean)[,2], 
-                           ranef = aggregate(diag.H2, flist, mean)[,2] )
-    class(grp.lev) <- "leverage"
+    
+    grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
+    grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
+    grp.lev.ranef.uc <- aggregate(diag.H2.uc, flist, mean)[,2]
+    
+    grp.lev <- data.frame( overall = grp.lev.fixef + grp.lev.ranef,
+                           fixef = grp.lev.fixef, 
+                           ranef = grp.lev.ranef,
+                           ranef.uc = grp.lev.ranef.uc)
+#     class(grp.lev) <- "leverage"
   }
   
   if(level == 1) return(lev1)
