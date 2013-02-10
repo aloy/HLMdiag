@@ -9,11 +9,11 @@
 #'
 #'@param model the original hierarchical model fit using \code{lmer()}
 #'@param group a variable used to define the group for which cases will be
-#'deleted.  If this is left \code{NULL}, then the function will delete
+#'deleted.  If this is left \code{NULL} (default), then the function will delete
 #'individual observations.
 #'@param type the part of the model for which you are obtaining deletion
 #'diagnostics: the fixed effects (\code{"fixef"}), variance components
-#'(\code{"varcomp"}), or \code{"both"}.
+#'(\code{"varcomp"}), or \code{"both"} (default).
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
 #'specified.  If \code{delete = NULL} then all cases are iteratively deleted.

@@ -20,9 +20,14 @@
 }
 \description{
   This function will construct a normal quantile-quantile
-  plot within the \code{ggplot} framework.
+  plot within the \code{ggplot} framework. It combines the
+  functionality of \code{qqnorm} and \code{qqline}.
 }
 \author{
   Adam Loy \email{aloy@istate.edu}
 }
+\seealso{
+  \link{\code{qqnorm}}, \link{\code{qqline}}
+}
+\keyword{hplot}
 

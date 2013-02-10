@@ -31,6 +31,12 @@
 
   \item{object}{fitted object of class \code{mer}}
 }
+\value{
+  Both functions return a numeric vector (or single value
+  if \code{delete} has been specified) with attribute
+  \code{beta_cdd} giving the difference between the full
+  and deleted parameter estimates.
+}
 \description{
   These functions calculate measures of the change in the
   fixed effects estimates based on the deletetion of an
@@ -42,14 +48,14 @@
   the fixed effects estimates based on the deletion of a
   subset of observations. The key difference between the
   two diagnostics is that Cook's distance uses the
-  variance-covariance matrix for the fixed effects from the
-  original model while MDFFITS uses the variance-covariance
-  matrix from the deleted model.
+  covariance matrix for the fixed effects from the original
+  model while MDFFITS uses the covariance matrix from the
+  deleted model.
 }
 \note{
   Because MDFFITS requires the calculation of the
-  variance-covarinace matrix for the fixed effects for
-  every model, it will be slower.
+  covarinace matrix for the fixed effects for every model,
+  it will be slower.
 }
 \examples{
 data(Exam, package = 'mlmRev')

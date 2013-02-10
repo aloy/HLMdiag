@@ -26,12 +26,12 @@
   \item{alpha_line}{alpha value specified for the lines}
 }
 \description{
-  This function will plot multiple normal q-q plots on the
-  same plot. This will be particulary useful when comparing
-  the distrubtion between groups. In this situation,
-  significantly different slopes would indicate the normal
-  distributions for the groups do not share a common
-  standard deviation.
+  This function will overlay multiple normal q-q plots on
+  the same plot. This will be particulary useful when
+  comparing the distrubtion between groups. In this
+  situation, significantly different slopes would indicate
+  the normal distributions for the groups do not share a
+  common standard deviation.
 }
 \author{
   Adam Loy \email{aloy@istate.edu}
@@ -41,4 +41,5 @@
   Mixed and Hierarchical Linear Models, Ph.D. thesis,
   University of California Los Angeles.
 }
+\keyword{hplot}
 

@@ -2,7 +2,7 @@
 \alias{rvc}
 \alias{rvc.default}
 \alias{rvc.mer}
-\title{Relative variance change for mixed/hierarchical linear models}
+\title{Relative variance change for hierarchical linear models}
 \usage{
   \method{rvc}{default} (object, ...)
 
@@ -40,8 +40,7 @@
 }
 \description{
   This function calculates the relative variance change
-  (RVC) of mixed/hierarchical linear models fit via
-  \code{lmer}.
+  (RVC) of hierarchical linear models fit via \code{lmer}.
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}

@@ -1,16 +1,16 @@
 #' Dot plots for influence diagnostics
 #'
-#' This is a function that can be used to create modified dotplots for the
+#' This is a function that can be used to create (modified) dotplots for the
 #' diagnostic measures.  The plot allows the user to understand the distribution
 #' of the diagnostic measure and visually identify unusual cases.
 #' 
 #' @note
-#' The resulting plot is uses \code{coord_flip} to rotate the plot, so when
+#' The resulting plot uses \code{coord_flip} to rotate the plot, so when
 #' adding customized axis labels you will need to flip the usage of 
 #' \code{xlab} and \code{ylab}.
 #'
 #' @param x values of the diagnostic of interest
-#' @param index index of \code{x}
+#' @param index index (IDs) of \code{x} values
 #' @param data data frame to use (optional)
 #' @param cutoff value(s) specifying the boundary for unusual values of the diagnostic
 #' @param name what diagnostic is being plotted 

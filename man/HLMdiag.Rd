@@ -43,12 +43,12 @@
 
   HLMdiag provides \code{\link{covratio}} and
   \code{\link{covtrace}} to assess the influence of subsets
-  of observations on the fixed effects.
+  of observations on the precision of the fixed effects.
 
   Influence on variance components
 
   HLMdiag's \code{\link{rvc}} calculates the relative
-  variance change to assess the influenc of subsets of
+  variance change to assess the influence of subsets of
   observations on the variance components.
 
   \bold{Graphics}

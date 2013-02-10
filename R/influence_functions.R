@@ -86,10 +86,37 @@ rvc.default <- function(object, ...){
 #'   thus, if IDs are repeated within each unit, unique IDs must be generated 
 #'   by the user prior to use of \code{leverage}.
 #' @param ... do not use
+#' @details Demidenko and Stukel (2005) describe leverage for mixed (hierarchical)
+#' linear models as being the sum of two components, a leverage associated with the 
+#' fixed (\eqn{H_1}) and a leverage associated with the random effects (\eqn{H_2}) where
+#' \deqn{H_1 = X (X^\prime V^{-1} X)^{-1} X^\prime V^{-1}}
+#' and
+#' \deqn{H_2 = ZDZ^{\prime} V^{-1} (I - H_1)}
+#' Nobre and Singer (2011) propose using
+#' \deqn{H_2^* = ZDZ^{\prime}}
+#' as the random effects leverage as it does not rely on the fixed effects.
+#' 
+#' For individual observations \code{leverage} uses the diagonal elements of the 
+#' above matrices as the measure of leverage. For higher-level units, 
+#' \code{leverage} uses the mean trace of the above matrices associated with each
+#' higher-level unit.
+#' @return \code{leverage returns a data frame with the following columns:}
+#' \describe{
+#'   \item{\code{overall}}{The overall leverage, i.e. \eqn{H = H_1 + H_2}.}
+#'   \item{\code{fixef}}{The leverage corresponding to the fixed effects.}
+#'   \item{\code{ranef}}{The leverage corresponding to the random effects 
+#'     proposed by Demidenko and Stukel (2005).}
+#'   \item{\code{ranef.uc}}{The (unconfounded) leverage corresponding to the 
+#'     random effects proposed by Nobre and Stinger (2005).}
+#' }
 #' @references 
 #'   Demidenko, E., & Stukel, T. A. (2005) 
 #'   Influence analysis for linear mixed-effects models. 
 #'   \emph{Statistics in Medicine}, \bold{24}(6), 893--909.
+#'   
+#'   Nobre, J. S., & Singer, J. M. (2011) 
+#'   Leverage analysis for linear mixed  models. 
+#'   \emph{Journal of Applied Statistics}, \bold{38}(5), 1063--1072.
 #' @author Adam Loy \email{aloy@@iastate.edu}
 #' @keywords models regression
 #' @export
@@ -171,13 +198,17 @@ leverage.mer <- function(object, level, ...) {
 #' Both Cook's distance and MDFFITS measure the change in the 
 #' fixed effects estimates based on the deletion of a subset of observations. 
 #' The key difference between the two diagnostics is that Cook's distance uses
-#' the variance-covariance matrix for the fixed effects from the original
-#' model while MDFFITS uses the variance-covariance matrix from the deleted 
+#' the covariance matrix for the fixed effects from the original
+#' model while MDFFITS uses the covariance matrix from the deleted 
 #' model. 
 #' 
 #' @note
-#' Because MDFFITS requires the calculation of the variance-covarinace matrix
+#' Because MDFFITS requires the calculation of the covarinace matrix
 #' for the fixed effects for every model, it will be slower.
+#' 
+#' @return Both functions return a numeric vector (or single value if 
+#' \code{delete} has been specified) with attribute \code{beta_cdd} giving
+#' the difference between the full and deleted parameter estimates.
 #'
 #'@export
 #'@method cooks.distance mer
@@ -345,14 +376,14 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 
 #' Influence on precision of fixed effects in HLMs
 #'
-#' These function calculate measures of the change in the variance-covariance
+#' These functions calculate measures of the change in the covariance
 #' matrices for the fixed effects based on the deletetion of an
 #' observation, or group of observations, for a hierarchical 
 #' linear model fit using \code{lmer}.
 #' 
 #' @details
 #'  Both the covariance ratio (\code{covratio}) and the covariance trace
-#'  (\code{covtrace}) measure the change in the variance-covariance matrix
+#'  (\code{covtrace}) measure the change in the covariance matrix
 #'  of the fixed effects based on the deletion of a subset of observations.
 #'  The key difference is how the variance covariance matrices are compared:
 #'  \code{covratio} compares the ratio of the determinants while \code{covtrace}
@@ -488,10 +519,10 @@ covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
   return(res)
 }
 
-#' Relative variance change for mixed/hierarchical linear models
+#' Relative variance change for hierarchical linear models
 #' 
 #' This function calculates the relative variance change (RVC) of
-#' mixed/hierarchical linear models fit via \code{lmer}.
+#' hierarchical linear models fit via \code{lmer}.
 #' 
 #' @export
 #' @method rvc mer

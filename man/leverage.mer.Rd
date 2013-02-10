@@ -22,9 +22,37 @@
 
   \item{...}{do not use}
 }
+\value{
+  \code{leverage returns a data frame with the following
+  columns:} \describe{ \item{\code{overall}}{The overall
+  leverage, i.e. \eqn{H = H_1 + H_2}.}
+  \item{\code{fixef}}{The leverage corresponding to the
+  fixed effects.} \item{\code{ranef}}{The leverage
+  corresponding to the random effects proposed by Demidenko
+  and Stukel (2005).} \item{\code{ranef.uc}}{The
+  (unconfounded) leverage corresponding to the random
+  effects proposed by Nobre and Stinger (2005).} }
+}
 \description{
   This function calculates the leverage of a hierarchical
   linear model fit by \code{lmer}.
+}
+\details{
+  Demidenko and Stukel (2005) describe leverage for mixed
+  (hierarchical) linear models as being the sum of two
+  components, a leverage associated with the fixed
+  (\eqn{H_1}) and a leverage associated with the random
+  effects (\eqn{H_2}) where \deqn{H_1 = X (X^\prime V^{-1}
+  X)^{-1} X^\prime V^{-1}} and \deqn{H_2 = ZDZ^{\prime}
+  V^{-1} (I - H_1)} Nobre and Singer (2011) propose using
+  \deqn{H_2^* = ZDZ^{\prime}} as the random effects
+  leverage as it does not rely on the fixed effects.
+
+  For individual observations \code{leverage} uses the
+  diagonal elements of the above matrices as the measure of
+  leverage. For higher-level units, \code{leverage} uses
+  the mean trace of the above matrices associated with each
+  higher-level unit.
 }
 \examples{
 data(sleepstudy, package = 'lme4')
@@ -41,6 +69,10 @@ head(lev1)
   Demidenko, E., & Stukel, T. A. (2005) Influence analysis
   for linear mixed-effects models.  \emph{Statistics in
   Medicine}, \bold{24}(6), 893--909.
+
+  Nobre, J. S., & Singer, J. M. (2011) Leverage analysis
+  for linear mixed models.  \emph{Journal of Applied
+  Statistics}, \bold{38}(5), 1063--1072.
 }
 \seealso{
   \code{\link{cooks.distance.mer}},

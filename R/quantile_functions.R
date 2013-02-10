@@ -14,7 +14,8 @@
 #' Constructing a normal quantile-quantile plot
 #'
 #' This function will construct a normal quantile-quantile plot within the
-#' \code{ggplot} framework.
+#' \code{ggplot} framework. It combines the functionality of \code{qqnorm} and
+#' \code{qqline}.
 #' 
 #' 
 #' @param x a numeric vector
@@ -25,6 +26,8 @@
 #' given for the \code{qqPlot} function in the \code{car} package.
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
+#' @keywords hplot
+#' @seealso \link{\code{qqnorm}}, \link{\code{qqline}}
 ggplot_qqnorm <- function(x, line = NULL, ...){
   p <- .sampleQuantiles(x)
   theory <- qnorm(p = p)
@@ -61,7 +64,7 @@ qqlineInfo <- function(x){
 
 #' Overlaying normal Q-Q plots
 #'
-#' This function will plot multiple normal q-q plots on the same plot. This
+#' This function will overlay multiple normal q-q plots on the same plot. This
 #' will be particulary useful when comparing the distrubtion between groups.
 #' In this situation, significantly different slopes would indicate the normal 
 #' distributions for the groups do not share a common standard deviation.
@@ -80,6 +83,7 @@ qqlineInfo <- function(x){
 #' Mulilevel Diagnostics for Mixed and Hierarchical Linear Models,
 #' Ph.D. thesis, University of California Los Angeles. 
 #' @export
+#' @keywords hplot
 group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1, ...){
 	# Finding the slope and intercept for each group
 	qq.list <- split(x, group)

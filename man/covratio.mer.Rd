@@ -40,21 +40,19 @@
   returned corresponding to the deleted subset specified.
 }
 \description{
-  These function calculate measures of the change in the
-  variance-covariance matrices for the fixed effects based
-  on the deletetion of an observation, or group of
-  observations, for a hierarchical linear model fit using
-  \code{lmer}.
+  These functions calculate measures of the change in the
+  covariance matrices for the fixed effects based on the
+  deletetion of an observation, or group of observations,
+  for a hierarchical linear model fit using \code{lmer}.
 }
 \details{
   Both the covariance ratio (\code{covratio}) and the
   covariance trace (\code{covtrace}) measure the change in
-  the variance-covariance matrix of the fixed effects based
-  on the deletion of a subset of observations.  The key
-  difference is how the variance covariance matrices are
-  compared: \code{covratio} compares the ratio of the
-  determinants while \code{covtrace} compares the ratio of
-  the traces.
+  the covariance matrix of the fixed effects based on the
+  deletion of a subset of observations.  The key difference
+  is how the variance covariance matrices are compared:
+  \code{covratio} compares the ratio of the determinants
+  while \code{covtrace} compares the ratio of the traces.
 }
 \examples{
 data(Exam, package = 'mlmRev')

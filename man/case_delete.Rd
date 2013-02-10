@@ -10,14 +10,14 @@
   \code{lmer()}}
 
   \item{group}{a variable used to define the group for
-  which cases will be deleted.  If this is left
-  \code{NULL}, then the function will delete individual
+  which cases will be deleted.  If this is left \code{NULL}
+  (default), then the function will delete individual
   observations.}
 
   \item{type}{the part of the model for which you are
   obtaining deletion diagnostics: the fixed effects
   (\code{"fixef"}), variance components (\code{"varcomp"}),
-  or \code{"both"}.}
+  or \code{"both"} (default).}
 
   \item{delete}{index of individual cases to be deleted.
   For higher level units specified in this manner, the

@@ -1,10 +1,9 @@
 #' Calculating residuals from HLMs
 #'
 #' \code{HLMresid} is a function that extracts residuals
-#' from a mixed/hierarchical linear models fit
-#' using \code{lmer}. That is, it is a function that
-#' will extract residuals from \code{mer} objects
-#' in a unified framework.
+#' from a hierarchical linear model fit
+#' using \code{lmer}. That is, it is a unified framework that
+#' extracts/calculates residuals from \code{mer} objects.
 #' 
 #' This function extracts residuals from the model, 
 #' and can extract residuals
@@ -18,12 +17,15 @@
 #' @param level which residuals should be extracted: 1 for within-group (case-level)
 #' residuals, the name of a grouping factor (as defined in \code{flist} of the 
 #' \code{mer} object) for between-group residuals, or \code{marginal}.
-#' @param type how are the residuals predicted: either \code{"EB"} or \code{"LS"}. 
+#' @param type how are the residuals predicted: either \code{"EB"} or \code{"LS"}
+#'   (the default is \code{"EB"}). 
 #' @param sim optional argument giving the data frame used for LS residuals. This
 #'  is used mainly for dealing with simulations.
-#' @param standardize if \code{TRUE} the standardized level-1
-#' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
-#' the semi-standardized level-1 residuals will be returned.
+#' @param standardize if \code{level = TRUE} the standardized
+#' residuals will also be returned; if \code{level = "semi"} then
+#' the semi-standardized level-1 residuals will be returned. Note that
+#' for higher-level residuals of \code{type = "LS"},  \code{standardize = TRUE} 
+#' does not result in standardized residuals as they have not been implemented.
 #' @details The \code{HLMresid} function provides a wrapper that will extract
 #' residuals from a fitted \code{mer} object. The function provides access to 
 #' residual quantities already made available by the functions \code{resid} and
@@ -31,17 +33,18 @@
 #' residuals that can be extracted.
 #' \describe{
 #' \item{raw level-1 residuals}{These are equivalent to the residuals extracted
-#' by \code{resid}. Use \code{level = 1}, \code{type = "EB"}, and 
-#' \code{standardize = FALSE}. You can also set \code{type = "LS"} for LS residuals
+#' by \code{resid} is \code{level = 1}, \code{type = "EB"}, and 
+#' \code{standardize = FALSE} is specified. 
+#' You can also specify \code{type = "LS"} for LS residuals
 #' that are not equivalent to those from \code{resid}.}
-#' \item{standardized level-1 residuals}{Use\code{level = 1}, and 
+#' \item{standardized level-1 residuals}{Specify \code{level = 1}, and 
 #' \code{standardize = TRUE}. This works with both \code{type = "EB"} or \code{"LS"}.}
-#' \item{standardized level-1 residuals}{Use\code{level = 1}, \code{type = "LS"} and 
-#' \code{standardize = TRUE}}
+#' \item{semi-standardized level-1 residuals}{Specify \code{level = 1}, \code{type = "LS"} and 
+#' \code{standardize = "semi"}.}
 #' \item{raw group level residuals}{These are equivalent to extracting the 
 #' predicted random effects for a given group using \code{ranef}. Set 
 #' \code{level} to a grouping factor name and \code{type = "EB"}. \code{type = "LS"}
-#' can be specified, though this is less common.}
+#' can also be specified, though this is less common.}
 #' \item{standardized group level residuals}{Set 
 #' \code{level} to a grouping factor name, \code{type = "EB"}, and 
 #' \code{standardized = TRUE}. This will not produce standardized residuals for

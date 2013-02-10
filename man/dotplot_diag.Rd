@@ -9,7 +9,7 @@
 \arguments{
   \item{x}{values of the diagnostic of interest}
 
-  \item{index}{index of \code{x}}
+  \item{index}{index (IDs) of \code{x} values}
 
   \item{data}{data frame to use (optional)}
 
@@ -28,15 +28,15 @@
   \code{qplot()}}
 }
 \description{
-  This is a function that can be used to create modified
+  This is a function that can be used to create (modified)
   dotplots for the diagnostic measures.  The plot allows
   the user to understand the distribution of the diagnostic
   measure and visually identify unusual cases.
 }
 \note{
-  The resulting plot is uses \code{coord_flip} to rotate
-  the plot, so when adding customized axis labels you will
-  need to flip the usage of \code{xlab} and \code{ylab}.
+  The resulting plot uses \code{coord_flip} to rotate the
+  plot, so when adding customized axis labels you will need
+  to flip the usage of \code{xlab} and \code{ylab}.
 }
 \examples{
 data(sleepstudy, package = 'lme4')
