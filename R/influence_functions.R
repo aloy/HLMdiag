@@ -140,6 +140,10 @@ leverage.mer <- function(object, level, ...) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
+  if(!object@dims["LMM"]){
+    stop("leverage is currently not implemented for GLMMs or NLMMs.")
+  }
+  
   X <- getME(object, "X")
   # Z <- BlockZ(object)
   
@@ -256,7 +260,7 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
     }
   }
   if(!model@dims["LMM"]){
-    stop("cooks.distance is currently not implemented for GLMMs.")
+    stop("cooks.distance is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
@@ -336,7 +340,7 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
     }
   }
   if(!object@dims["LMM"]){
-    stop("mdffits is currently not implemented for GLMMs.")
+    stop("mdffits is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
@@ -437,7 +441,7 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
     }
   }
   if(!object@dims["LMM"]){
-    stop("covratio is currently not implemented for GLMMs.")
+    stop("covratio is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model

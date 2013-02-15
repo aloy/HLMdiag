@@ -22,6 +22,9 @@
 #' @keywords models regression
 LSresids <- function(object, level, sim = NULL, standardize = FALSE){
   if(!is(object, "mer")) stop("object must be of class 'mer'")
+  if(!object@dims["LMM"]){
+    stop("LSresids is currently not implemented for GLMMs or NLMMs.")
+  }
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
