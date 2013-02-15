@@ -16,7 +16,8 @@
 #' @param name what diagnostic is being plotted 
 #' (one of "cooks.distance", "mdffits", "covratio", "covtrace", "rvc", or "leverage").
 #' this is used to for the calculation of "internal" cutoffs
-#' @param modify if \code{TRUE} will produce a space-saving modification
+#' @param modify specifies the \code{geom} to be used to produce a 
+#' space-saving modification: either "dotplot" or "boxplot"
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
 #' @examples 
@@ -32,7 +33,11 @@
 #'              xlab = "Subject", ylab = "Cook's Distance")
 #' 
 #' dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]], 
-#'              name = "rvc", modify = TRUE, cutoff = "internal", 
+#'              name = "rvc", modify = "dotplot", cutoff = "internal", 
+#'              xlab = "Subject", ylab = "Relative Variance Change")
+#'              
+#' dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]], 
+#'              name = "rvc", modify = "boxplot", cutoff = "internal", 
 #'              xlab = "Subject", ylab = "Relative Variance Change")
 #' @export
 #' @keywords hplot
@@ -40,15 +45,19 @@ dotplot_diag <- function(x, index, data, cutoff,
                          name = c("cooks.distance", "mdffits", "covratio",
                                   "covtrace", "rvc", "leverage"),
                          modify = FALSE, ... ){
+
+#   if(!is.logical(modify)) stop("modify should be either TRUE or FALSE")
   
-  if(!is.logical(modify)) stop("modify should be either TRUE or FALSE")
-  
-  if(modify & missing(cutoff)){
-    stop("a cutoff should be specified if modify = TRUE")
+  if(!modify %in% c(FALSE, "boxplot", "dotplot")) {
+    stop("modify should be FALSE or either 'boxplot' or 'dotplot'")
   }
   
-  if(modify & missing(name)){
-    stop("a name should be specified if modify = TRUE")
+  if(modify != FALSE & missing(cutoff)){
+    stop("a cutoff should be specified if a modified dotplot is requested")
+  }
+  
+  if(modify != FALSE & missing(name)){
+    stop("a name should be specified if a modified dotplot is requested")
   }
   
   if(!missing(cutoff)){
@@ -93,9 +102,24 @@ dotplot_diag <- function(x, index, data, cutoff,
         
         extreme <-  x > cutoff
 
-        if(modify == TRUE){
+        if(modify != FALSE){
           levels(index)[levels(index) %in% index[which(extreme == FALSE)]] <- "within cutoff"
           p <- qplot(x = reorder(index, x, mean), y = x, geom = "blank", ... )
+          
+          if(modify == "boxplot"){
+            p <- p + geom_boxplot(aes(x = index[which(extreme == FALSE)],
+                                      y = x[which(extreme == FALSE)]), 
+                                  inherit.aes = FALSE)
+          }
+          if(modify == "dotplot"){
+            p <- p  + geom_point(aes(x = index[which(extreme == FALSE)],
+                                     y = x[which(extreme == FALSE)]), 
+                                 colour = I("blue"), inherit.aes = FALSE)
+          }
+        } else {
+          p <- p  + geom_point(aes(x = index[which(extreme == FALSE)],
+                                   y = x[which(extreme == FALSE)]), 
+                               colour = I("blue"), inherit.aes = FALSE)
         }
 
         if( sum(extreme) > 0 ){
@@ -112,28 +136,52 @@ dotplot_diag <- function(x, index, data, cutoff,
 
 		ver <- as.numeric_version(packageVersion("ggplot2"))
 		if(ver >= as.numeric_version("0.9.2")) {
-        	p + geom_point(aes(x = index[which(extreme == FALSE)],
-        	               y = x[which(extreme == FALSE)]), 
-                         colour = I("blue"), inherit.aes = FALSE) + 
-          		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
-              	theme(legend.position = "none") +
-                coord_flip()
+#         	p + geom_point(aes(x = index[which(extreme == FALSE)],
+#         	               y = x[which(extreme == FALSE)]), 
+#                          colour = I("blue"), inherit.aes = FALSE) + 
+#           		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+#               	theme(legend.position = "none") +
+#                 coord_flip()
+		  p + geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+		    theme(legend.position = "none") +
+		    coord_flip()
+		  
       	} else{
-        	p + geom_point(aes(x = index[which(extreme == FALSE)],
-        	               y = x[which(extreme == FALSE)]), 
-                         colour = I("blue"), inherit.aes = FALSE) + 
-          		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
-              	opts(legend.position = "none") +
-                coord_flip()      			
+#         	p + geom_point(aes(x = index[which(extreme == FALSE)],
+#         	               y = x[which(extreme == FALSE)]), 
+#                          colour = I("blue"), inherit.aes = FALSE) + 
+#           		geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+#               	opts(legend.position = "none") +
+#                 coord_flip()      			
+          p + geom_hline(aes(yintercept = cutoff), colour=I("red")) +
+            opts(legend.position = "none") + 
+            coord_flip()
       	}
     }
 
       else{
         extreme <- x < cutoff[1] | x > cutoff[2]
 
-        if(modify == TRUE){
+        if(modify != FALSE){
           levels(index)[levels(index) %in% index[which(extreme == FALSE)]] <- "within cutoff"
           p <- qplot(x = reorder(index, x, mean), y = x, geom = "blank", ... )
+          
+          if(modify == "boxplot"){
+            p <- p + geom_boxplot(aes(x = index[which(extreme == FALSE)],
+                                      y = x[which(extreme == FALSE)]), 
+                                  inherit.aes = FALSE)
+          }
+          if(modify == "dotplot"){
+            p <- p  + geom_point(aes(x = index[which(extreme == FALSE)],
+                                     y = x[which(extreme == FALSE)]), 
+                                 colour = I("blue"), inherit.aes = FALSE)
+          }
+        } else {
+          p <- p  + geom_point(aes(x = index[which(extreme == FALSE)],
+                                   y = x[which(extreme == FALSE)]), 
+                               colour = I("blue"), inherit.aes = FALSE)
+        }
+        
           
           if(sum(extreme) > 0){
             p <- p + 
@@ -150,17 +198,19 @@ dotplot_diag <- function(x, index, data, cutoff,
 
 		    ver <- as.numeric_version(packageVersion("ggplot2"))
 		    if(ver >= as.numeric_version("0.9.2")) {
-        	p + geom_point(aes(x = index[which(extreme == FALSE)],
-                             y = x[which(extreme == FALSE)]), 
-                         colour = I("blue"), inherit.aes = FALSE) + 
+        	p + 
+#             geom_point(aes(x = index[which(extreme == FALSE)],
+#                              y = x[which(extreme == FALSE)]), 
+#                          colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
             	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
                 theme(legend.position = "none") +
                 coord_flip()	
         } else{
-        	p + geom_point(aes(x = index[which(extreme == FALSE)],
-        	               y = x[which(extreme == FALSE)]), 
-                         colour = I("blue"), inherit.aes = FALSE) + 
+        	p + 
+#             geom_point(aes(x = index[which(extreme == FALSE)],
+#         	               y = x[which(extreme == FALSE)]), 
+#                          colour = I("blue"), inherit.aes = FALSE) + 
           		geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) + 
             	geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) + 
                 opts(legend.position = "none") +
@@ -169,7 +219,6 @@ dotplot_diag <- function(x, index, data, cutoff,
         
       }
     }
-  }	
 
   else{
     p + geom_point() + coord_flip()

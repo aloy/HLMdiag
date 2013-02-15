@@ -27,7 +27,7 @@
 #' @param ... other arguments to be passed to \code{qplot()}
 #' @author Adam Loy \email{aloy@@istate.edu}
 #' @keywords hplot
-#' @seealso \link{\code{qqnorm}}, \link{\code{qqline}}
+#' @seealso \code{\link{qqnorm}}, \code{\link{qqline}}
 ggplot_qqnorm <- function(x, line = NULL, ...){
   p <- .sampleQuantiles(x)
   theory <- qnorm(p = p)

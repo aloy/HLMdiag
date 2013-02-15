@@ -13,6 +13,7 @@
 #' be supressed.
 #'@param ... other arguments to be passed to \code{qplot()}
 #'@author Adam Loy \email{aloy@@istate.edu}
+#'@export
 #'@examples
 #'
 #'wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)

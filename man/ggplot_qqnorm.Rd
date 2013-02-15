@@ -27,7 +27,7 @@
   Adam Loy \email{aloy@istate.edu}
 }
 \seealso{
-  \link{\code{qqnorm}}, \link{\code{qqline}}
+  \code{\link{qqnorm}}, \code{\link{qqline}}
 }
 \keyword{hplot}
 

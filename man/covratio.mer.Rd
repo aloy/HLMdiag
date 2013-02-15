@@ -52,7 +52,7 @@
   deletion of a subset of observations.  The key difference
   is how the variance covariance matrices are compared:
   \code{covratio} compares the ratio of the determinants
-  while \code{covtrace} compares the trace of the ratio.
+  while \code{covtrace} compares the ratio of the traces.
 }
 \examples{
 data(Exam, package = 'mlmRev')

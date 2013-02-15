@@ -21,8 +21,9 @@
   "rvc", or "leverage"). this is used to for the
   calculation of "internal" cutoffs}
 
-  \item{modify}{if \code{TRUE} will produce a space-saving
-  modification}
+  \item{modify}{specifies the \code{geom} to be used to
+  produce a space-saving modification: either "dotplot" or
+  "boxplot"}
 
   \item{...}{other arguments to be passed to
   \code{qplot()}}
@@ -51,7 +52,11 @@ dotplot_diag(x = COOKSD, index = IDS, data = subject.diag[["fixef_diag"]],
              xlab = "Subject", ylab = "Cook's Distance")
 
 dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]],
-             name = "rvc", modify = TRUE, cutoff = "internal",
+             name = "rvc", modify = "dotplot", cutoff = "internal",
+             xlab = "Subject", ylab = "Relative Variance Change")
+
+dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]],
+             name = "rvc", modify = "boxplot", cutoff = "internal",
              xlab = "Subject", ylab = "Relative Variance Change")
 }
 \author{
