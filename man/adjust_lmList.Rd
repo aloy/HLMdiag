@@ -30,9 +30,9 @@ sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam
 confint(sepLM)
 }
 \references{
-  Douglas Bates, Martin Maechler and Ben Bolker (2011).
+  Douglas Bates, Martin Maechler and Ben Bolker (2012).
   lme4: Linear mixed-effects models using S4 classes. R
-  package version 0.999375-42.
+  package version 0.999999-0.
 }
 \seealso{
   \code{\link[lme4]{lmList}, \link[stats]{lm}}

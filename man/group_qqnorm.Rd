@@ -19,14 +19,14 @@
   "quantile"} will fit lines through the first and third
   quartiles.}
 
-  \item{...}{other arguments to be passed to ggplot}
+  \item{...}{other arguments to be passed to \code{ggplot}}
 
   \item{alpha_point}{alpha value specified for the points}
 
   \item{alpha_line}{alpha value specified for the lines}
 }
 \description{
-  This function will overlay multiple normal q-q plots on
+  This function will overlay multiple normal Q-Q plots on
   the same plot. This will be particulary useful when
   comparing the distrubtion between groups. In this
   situation, significantly different slopes would indicate

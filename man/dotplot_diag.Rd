@@ -14,16 +14,20 @@
   \item{data}{data frame to use (optional)}
 
   \item{cutoff}{value(s) specifying the boundary for
-  unusual values of the diagnostic}
+  unusual values of the diagnostic. The cutoff(s) can
+  either be supplied by the user, or automatically
+  calculated using measures of internal scaling if
+  \code{cutoff = "internal"}}
 
   \item{name}{what diagnostic is being plotted (one of
-  "cooks.distance", "mdffits", "covratio", "covtrace",
-  "rvc", or "leverage"). this is used to for the
-  calculation of "internal" cutoffs}
+  \code{"cooks.distance"}, \code{"mdffits"},
+  \code{"covratio"}, \code{"covtrace"}, \code{"rvc"}, or
+  \code{"leverage"}). this is used to for the calculation
+  of "internal" cutoffs}
 
   \item{modify}{specifies the \code{geom} to be used to
-  produce a space-saving modification: either "dotplot" or
-  "boxplot"}
+  produce a space-saving modification: either
+  \code{"dotplot"} or \code{"boxplot"}}
 
   \item{...}{other arguments to be passed to
   \code{qplot()}}

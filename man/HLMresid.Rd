@@ -21,13 +21,13 @@
   for LS residuals. This is used mainly for dealing with
   simulations.}
 
-  \item{standardize}{if \code{level = TRUE} the
-  standardized residuals will also be returned; if
-  \code{level = "semi"} then the semi-standardized level-1
-  residuals will be returned. Note that for higher-level
-  residuals of \code{type = "LS"}, \code{standardize =
-  TRUE} does not result in standardized residuals as they
-  have not been implemented.}
+  \item{standardize}{if \code{standardize = TRUE} the
+  standardized residuals will be returned; if
+  \code{standardize = "semi"} then the semi-standardized
+  level-1 residuals will be returned. Note that for
+  higher-level residuals of \code{type = "LS"},
+  \code{standardize = TRUE} does not result in standardized
+  residuals as they have not been implemented.}
 }
 \description{
   \code{HLMresid} is a function that extracts residuals
@@ -49,7 +49,7 @@
   \code{ranef}, but adds additional functionality. Below is
   a list of types of residuals that can be extracted.
   \describe{ \item{raw level-1 residuals}{These are
-  equivalent to the residuals extracted by \code{resid} is
+  equivalent to the residuals extracted by \code{resid} if
   \code{level = 1}, \code{type = "EB"}, and
   \code{standardize = FALSE} is specified. You can also
   specify \code{type = "LS"} for LS residuals that are not

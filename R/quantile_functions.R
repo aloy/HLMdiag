@@ -11,10 +11,10 @@
 	return(p)
 }
 
-#' Constructing a normal quantile-quantile plot
+#' Constructing a normal Q-Q plot
 #'
-#' This function will construct a normal quantile-quantile plot within the
-#' \code{ggplot} framework. It combines the functionality of \code{qqnorm} and
+#' This function will construct a normal Q-Q plot within the
+#' \code{ggplot2} framework. It combines the functionality of \code{qqnorm} and
 #' \code{qqline}.
 #' 
 #' 
@@ -64,7 +64,7 @@ qqlineInfo <- function(x){
 
 #' Overlaying normal Q-Q plots
 #'
-#' This function will overlay multiple normal q-q plots on the same plot. This
+#' This function will overlay multiple normal Q-Q plots on the same plot. This
 #' will be particulary useful when comparing the distrubtion between groups.
 #' In this situation, significantly different slopes would indicate the normal 
 #' distributions for the groups do not share a common standard deviation.
@@ -74,7 +74,7 @@ qqlineInfo <- function(x){
 #' @param line the method used to fit reference lines. If no reference lines are desired,
 #' leave the value as \code{NULL}. \code{line = "rlm"} will use robust regression to fit
 #' reference lines. \code{line = "quantile"} will fit lines through the first and third quartiles.
-#' @param ... other arguments to be passed to ggplot
+#' @param ... other arguments to be passed to \code{ggplot}
 #' @param alpha_point alpha value specified for the points
 #' @param alpha_line alpha value specified for the lines
 #' @author Adam Loy \email{aloy@@istate.edu}

@@ -23,15 +23,15 @@
   \item{...}{do not use}
 }
 \value{
-  \code{leverage returns a data frame with the following
-  columns:} \describe{ \item{\code{overall}}{The overall
+  \code{leverage} returns a data frame with the following
+  columns: \describe{ \item{\code{overall}}{The overall
   leverage, i.e. \eqn{H = H_1 + H_2}.}
   \item{\code{fixef}}{The leverage corresponding to the
   fixed effects.} \item{\code{ranef}}{The leverage
   corresponding to the random effects proposed by Demidenko
   and Stukel (2005).} \item{\code{ranef.uc}}{The
   (unconfounded) leverage corresponding to the random
-  effects proposed by Nobre and Stinger (2005).} }
+  effects proposed by Nobre and Singer (2011).} }
 }
 \description{
   This function calculates the leverage of a hierarchical
@@ -61,6 +61,10 @@ fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 # Observation level leverage
 lev1 <- leverage(fm, level = 1)
 head(lev1)
+
+# Group level leverage
+lev2 <- leverage(fm, level = "Subject")
+head(lev2)
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}

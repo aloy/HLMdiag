@@ -100,14 +100,14 @@ rvc.default <- function(object, ...){
 #' above matrices as the measure of leverage. For higher-level units, 
 #' \code{leverage} uses the mean trace of the above matrices associated with each
 #' higher-level unit.
-#' @return \code{leverage returns a data frame with the following columns:}
+#' @return \code{leverage} returns a data frame with the following columns:
 #' \describe{
 #'   \item{\code{overall}}{The overall leverage, i.e. \eqn{H = H_1 + H_2}.}
 #'   \item{\code{fixef}}{The leverage corresponding to the fixed effects.}
 #'   \item{\code{ranef}}{The leverage corresponding to the random effects 
 #'     proposed by Demidenko and Stukel (2005).}
 #'   \item{\code{ranef.uc}}{The (unconfounded) leverage corresponding to the 
-#'     random effects proposed by Nobre and Stinger (2005).}
+#'     random effects proposed by Nobre and Singer (2011).}
 #' }
 #' @references 
 #'   Demidenko, E., & Stukel, T. A. (2005) 
@@ -130,6 +130,10 @@ rvc.default <- function(object, ...){
 #' # Observation level leverage
 #' lev1 <- leverage(fm, level = 1)
 #' head(lev1)
+#' 
+#' # Group level leverage
+#' lev2 <- leverage(fm, level = "Subject")
+#' head(lev2)
 leverage.mer <- function(object, level, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(object@dims[["nest"]] == 0) {
@@ -207,7 +211,7 @@ leverage.mer <- function(object, level, ...) {
 #' model. 
 #' 
 #' @note
-#' Because MDFFITS requires the calculation of the covarinace matrix
+#' Because MDFFITS requires the calculation of the covariance matrix
 #' for the fixed effects for every model, it will be slower.
 #' 
 #' @return Both functions return a numeric vector (or single value if 
@@ -229,7 +233,7 @@ leverage.mer <- function(object, level, ...) {
 #'@author Adam Loy \email{aloy@@iastate.edu}
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992) 
-#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}(1), 
+#' Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}, 
 #' 38--45.
 #'   
 #' Schabenberger, O. (2004) Mixed Model Influence Diagnostics,
@@ -391,7 +395,7 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'  of the fixed effects based on the deletion of a subset of observations.
 #'  The key difference is how the variance covariance matrices are compared:
 #'  \code{covratio} compares the ratio of the determinants while \code{covtrace}
-#'  compares the ratio of the traces. 
+#'  compares the trace of the ratio. 
 #'  
 #'@export
 #'@method covratio mer
@@ -523,7 +527,7 @@ covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
   return(res)
 }
 
-#' Relative variance change for hierarchical linear models
+#' Relative variance change for HLMs
 #' 
 #' This function calculates the relative variance change (RVC) of
 #' hierarchical linear models fit via \code{lmer}.

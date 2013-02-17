@@ -158,8 +158,8 @@ pooledSD <- function(x, ...)
 #'@param pool a logical value that indicates whether the pooled standard
 #'deviation/error should be used.
 #'@seealso \code{\link[lme4]{lmList}, \link[stats]{lm}}
-#'@references Douglas Bates, Martin Maechler and Ben Bolker (2011). lme4:
-#'Linear mixed-effects models using S4 classes. R package version 0.999375-42.
+#'@references Douglas Bates, Martin Maechler and Ben Bolker (2012). lme4:
+#'Linear mixed-effects models using S4 classes. R package version 0.999999-0.
 #'@examples
 #'
 #' data(Exam, package = 'mlmRev')

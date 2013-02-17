@@ -54,7 +54,7 @@
 }
 \note{
   Because MDFFITS requires the calculation of the
-  covarinace matrix for the fixed effects for every model,
+  covariance matrix for the fixed effects for every model,
   it will be slower.
 }
 \examples{
@@ -81,7 +81,7 @@ m.school <- mdffits(fm, group = "school")
 \references{
   Christensen, R., Pearson, L., & Johnson, W. (1992)
   Case-deletion diagnostics for mixed models.
-  \emph{Technometrics}, \bold{34}(1), 38--45.
+  \emph{Technometrics}, \bold{34}, 38--45.
 
   Schabenberger, O. (2004) Mixed Model Influence
   Diagnostics, in \emph{Proceedings of the Twenty-Ninth SAS

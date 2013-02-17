@@ -1,6 +1,6 @@
 \name{ggplot_qqnorm}
 \alias{ggplot_qqnorm}
-\title{Constructing a normal quantile-quantile plot}
+\title{Constructing a normal Q-Q plot}
 \usage{
   ggplot_qqnorm(x, line = NULL, ...)
 }
@@ -19,9 +19,9 @@
   \code{qplot()}}
 }
 \description{
-  This function will construct a normal quantile-quantile
-  plot within the \code{ggplot} framework. It combines the
-  functionality of \code{qqnorm} and \code{qqline}.
+  This function will construct a normal Q-Q plot within the
+  \code{ggplot2} framework. It combines the functionality
+  of \code{qqnorm} and \code{qqline}.
 }
 \author{
   Adam Loy \email{aloy@istate.edu}

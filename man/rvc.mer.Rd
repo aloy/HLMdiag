@@ -2,7 +2,7 @@
 \alias{rvc}
 \alias{rvc.default}
 \alias{rvc.mer}
-\title{Relative variance change for hierarchical linear models}
+\title{Relative variance change for HLMs}
 \usage{
   \method{rvc}{default} (object, ...)
 
