@@ -36,6 +36,8 @@ LSresids <- function(object, level, sim = NULL, standardize = FALSE){
     stop("standardize can only be specified to be logical or 'semi' .")
   }
   
+  LS.resid <- NULL # Make codetools happy
+  
   fixed <- as.character( fixform( formula(object) ) )
 	
 	data <- object@frame

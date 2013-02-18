@@ -303,6 +303,7 @@ setMethod("confint", signature(object = "adjust_lmList"),
 setMethod("plot", signature(x = "adjust_lmList.confint"),
 	function(x, y, ...){
 		stopifnot(require("ggplot2"))
+    group <- intervals <- NULL # Make codetools happy
 		cis <- as(x, "array")
 		df <- adply(cis, c(1, 2, 3), identity)
 		colnames(df) <- c("group", "end", "what", "intervals")

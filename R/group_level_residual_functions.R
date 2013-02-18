@@ -23,6 +23,7 @@
 #'compare_eb_ls(eb = rancoef.eb, ols = rancoef.ols, identify = 0.01)
 #'
 compare_eb_ls <- function(eb, ols, identify = FALSE, silent = TRUE, ...){
+  unusual <- ids <- NULL # Make codetools happy
 	ret <- NULL
 	for(i in 1:dim(ols)[2]){
 	p <- qplot(x = eb[,i], y = ols[,i], geom = "point", main = colnames(eb)[i], 

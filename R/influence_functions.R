@@ -279,6 +279,8 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
     stop("cooks.distance is currently not implemented for GLMMs or NLMMs.")
   }
   
+  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
+  
   # Extract key pieces of the model
   mats <- .mer_matrices(model)
   
@@ -367,6 +369,8 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!object@dims["LMM"]){
     stop("mdffits is currently not implemented for GLMMs or NLMMs.")
   }
+  
+  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
   
   # Extract key pieces of the model
   mats <- .mer_matrices(object)

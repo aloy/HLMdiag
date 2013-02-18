@@ -85,7 +85,10 @@ qqlineInfo <- function(x){
 #' @export
 #' @keywords hplot
 group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1, ...){
-	# Finding the slope and intercept for each group
+	
+  p <- theory <- yp <- intercept <- slope <- NULL # Make codetools happy
+  
+  # Finding the slope and intercept for each group
 	qq.list <- split(x, group)
 	if(is.null(line) == FALSE){
 		if(line == "quantile"){

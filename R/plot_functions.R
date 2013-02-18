@@ -197,7 +197,7 @@ dotplot_diag <- function(x, index, data, cutoff,
                             hjust=.5, vjust=1.5, size=3),
                         inherit.aes = FALSE)
           } 
-        }
+        
 
 		    ver <- as.numeric_version(packageVersion("ggplot2"))
 		    if(ver >= as.numeric_version("0.9.2")) {
@@ -219,6 +219,8 @@ dotplot_diag <- function(x, index, data, cutoff,
                 opts(legend.position = "none") +
                 coord_flip()		        	
        }
+        
+      }
         
       }
     }
