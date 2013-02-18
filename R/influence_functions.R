@@ -244,6 +244,16 @@ leverage.mer <- function(object, level, ...) {
 #' @seealso \code{\link{leverage.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 #' @examples 
+#' data(sleepstudy, package = 'lme4')
+#' ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' 
+#' # Cook's distance for individual observations
+#' ss.cd.lev1 <- cooks.distance(ss)
+#' 
+#' # Cook's distance for each Subject
+#' ss.cd.subject <- cooks.distance(ss, group = "Subject")
+#' 
+#' \dontrun{
 #' data(Exam, package = 'mlmRev')
 #' fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 #' 
@@ -255,6 +265,8 @@ leverage.mer <- function(object, level, ...) {
 #' 
 #' # Cook's distance when school 1 is deleted
 #' cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
+#' 
+#' }
 #' 
 cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
@@ -330,12 +342,21 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' @aliases mdffits
 #' @param object fitted object of class \code{mer}
 #' @examples
-#'   
+#' 
+#' # MDFFITS  for individual observations
+#' ss.m1 <- mdffits(ss)
+#' 
+#' # MDFFITS for each Subject
+#' ss.m.subject <- mdffits(ss, group = "Subject")
+#' 
+#' \dontrun{  
+#' 
 #' # MDFFITS  for individual observations
 #' m1 <- mdffits(fm)
 #' 
 #' # MDFFITS for each school
 #' m.school <- mdffits(fm, group = "school")
+#' }
 mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
@@ -429,6 +450,18 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 #' \code{\link{mdffits.mer}}, \code{\link{rvc.mer}}
 #'  
 #' @examples
+#' 
+#' #' data(sleepstudy, package = 'lme4')
+#' ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' 
+#' # covratio for individual observations
+#' ss.cr1 <- covratio(ss)
+#' 
+#' # covratio for subject-level deletion
+#' ss.cr2 <- covratio(ss, group = "Subject")
+#' 
+#' \dontrun{
+#' ## A larger example
 #' data(Exam, package = 'mlmRev')
 #' fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 #' 
@@ -437,6 +470,7 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 #' 
 #' # covratio for school-level deletion
 #' cr2 <- covratio(fm, group = "school")
+#' }
 covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
@@ -484,11 +518,21 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'@S3method covtrace mer
 #'@aliases covtrace
 #' @examples
+#' 
+#' # covtrace for individual observations
+#' ss.ct1 <- covtrace(ss)
+#' 
+#' # covtrace for subject-level deletion
+#' ss.ct2 <- covtrace(ss, group = "Subject")
+#' 
+#' \dontrun{
+#' ## Returning to the larger example
 #' # covtrace for individual observations
 #' ct1 <- covtrace(fm)
 #' 
 #' # covtrace for school-level deletion
 #' ct2 <- covtrace(fm, group = "school")
+#' }
 covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {

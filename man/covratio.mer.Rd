@@ -55,6 +55,17 @@
   while \code{covtrace} compares the trace of the ratio.
 }
 \examples{
+#' data(sleepstudy, package = 'lme4')
+ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# covratio for individual observations
+ss.cr1 <- covratio(ss)
+
+# covratio for subject-level deletion
+ss.cr2 <- covratio(ss, group = "Subject")
+
+\dontrun{
+## A larger example
 data(Exam, package = 'mlmRev')
 fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 
@@ -63,11 +74,21 @@ cr1 <- covratio(fm)
 
 # covratio for school-level deletion
 cr2 <- covratio(fm, group = "school")
+}
+# covtrace for individual observations
+ss.ct1 <- covtrace(ss)
+
+# covtrace for subject-level deletion
+ss.ct2 <- covtrace(ss, group = "Subject")
+
+\dontrun{
+## Returning to the larger example
 # covtrace for individual observations
 ct1 <- covtrace(fm)
 
 # covtrace for school-level deletion
 ct2 <- covtrace(fm, group = "school")
+}
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}

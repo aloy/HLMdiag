@@ -58,6 +58,16 @@
   it will be slower.
 }
 \examples{
+data(sleepstudy, package = 'lme4')
+ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# Cook's distance for individual observations
+ss.cd.lev1 <- cooks.distance(ss)
+
+# Cook's distance for each Subject
+ss.cd.subject <- cooks.distance(ss, group = "Subject")
+
+\dontrun{
 data(Exam, package = 'mlmRev')
 fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 
@@ -69,11 +79,22 @@ cd.school <- cooks.distance(fm, group = "school")
 
 # Cook's distance when school 1 is deleted
 cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
+
+}
+# MDFFITS  for individual observations
+ss.m1 <- mdffits(ss)
+
+# MDFFITS for each Subject
+ss.m.subject <- mdffits(ss, group = "Subject")
+
+\dontrun{
+
 # MDFFITS  for individual observations
 m1 <- mdffits(fm)
 
 # MDFFITS for each school
 m.school <- mdffits(fm, group = "school")
+}
 }
 \author{
   Adam Loy \email{aloy@iastate.edu}

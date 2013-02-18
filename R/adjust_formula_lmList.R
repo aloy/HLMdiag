@@ -309,8 +309,8 @@ setMethod("plot", signature(x = "adjust_lmList.confint"),
 		p <- ggplot(df, aes(x = group, y = intervals))
 		p + geom_line() +
 			geom_errorbar(aes(ymin = intervals, ymax = intervals)) + 
-			facet_wrap( ~ what, nrow = 1, scale = "free") + 
-			coord_flip() + ylab(NULL)
+			facet_wrap( ~ what, nrow = 1, scales = "free") #+ 
+# 			coord_flip() + ylab(NULL)
 	}
 )
 
