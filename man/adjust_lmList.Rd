@@ -39,4 +39,3 @@ confint(sepLM)
 }
 \keyword{models}
 \keyword{regression}
-
