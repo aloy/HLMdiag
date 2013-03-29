@@ -127,7 +127,11 @@ HLMresid <- function(object, level, type = "EB", sim = NULL, standardize = FALSE
 		}
 		if(type == "EB"){
 			if(standardize == TRUE) {
-			  return( resid(object) / sigma(object) )
+        
+        mats <- .mer_matrices(object)
+        p_diag <- diag(mats$P)
+        
+			  return( resid(object) / ( sigma(object) * sqrt(p_diag) ) )
 			} else{
 			  return(resid(object))
 			}
