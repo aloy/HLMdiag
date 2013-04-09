@@ -2,7 +2,7 @@ Version 0.2.2
 -------------------------------------------------------------------------
 * Changed the standardization of the EB level-1 residuals in `HLMresid` 
 to a more appropriate definition: e / var(\hat{e}).
-
+* Updated dependency to lme4_0.999999-0.
 
 
 Version 0.2.1 

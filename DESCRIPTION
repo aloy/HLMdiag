@@ -12,7 +12,7 @@ Description: A suite of diagnostic tools for hierarchical
     convenience functions and graphics for residual analysis. The package
     assumes that models were fit using the lme4 package.
 Depends:
-    lme4,
+    lme4 (== 0.999999-0),
     ggplot2
 Imports:
     stats,
