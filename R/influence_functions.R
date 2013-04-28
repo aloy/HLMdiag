@@ -693,6 +693,47 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
 }
 
 
+#'@export
+#'@rdname covratio.mer
+#'@method covratio lmerMod
+#'@S3method covratio lmerMod
+covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
+  if(!is.null(group)) {
+    if(!group %in% names(getME(object, "flist"))) {
+      stop(paste(group, "is not a valid grouping factor for this model."))
+    }
+  }
+  if(!isLMM(object)){
+    stop("covratio is currently not implemented for GLMMs or NLMMs.")
+  }
+  
+  # Extract key pieces of the model
+  mats <- .lmerMod_matrices(object)
+  
+  if( !is.null(group) ){
+    grp.names <- unique( mats$flist[[group]] )
+    
+    if( is.null(delete) ){
+      del.index <- lapply(1:mats$ngrps[group], 
+                          function(x) {
+                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                          })
+    } else{
+      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+    }
+  } else{
+    if( is.null(delete) ){
+      del.index <- split(0:(mats$n-1), 0:(mats$n-1))
+    } else { del.index <- list( delete - 1 ) }
+  }
+  
+  res <- .Call("covratioCalc", index = del.index, X_ = mats$X, P_ = mats$P, 
+               Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
+               PACKAGE = "HLMdiag")
+  
+  class(res) <- "vcov.dd"
+  return(res)
+}
 
 #'@export
 #'@rdname covratio.mer
