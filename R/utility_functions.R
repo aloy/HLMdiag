@@ -98,6 +98,41 @@ isDiagonal <- function(mat, tol = 1e-10) {
                M = M, P = P) )
 }
 
+# Extracting/calculating key matrices from mer object 
+# @param model an lmerMod object
+.lmerMod_matrices <- function(model) {
+  Y <- model@resp$y
+  X <- getME(model, "X")
+  
+  n <- length(Y)
+  
+  flist <- getME(model, "flist")
+  ngrps <- sapply(flist, function(x) length(levels(x)))
+  
+  # Constructing V = Cov(Y)
+  sig0 <- sigma(model)
+  
+  ZDZt <- sig0^2 * crossprod( getME(model, "A") )
+  R    <- Diagonal( n = n, x = sig0^2 )
+  V    <- Diagonal(n) + ZDZt
+  
+  # Inverting V
+  V.chol <- chol( V )
+  Vinv   <- chol2inv( V.chol )
+  
+  # Calculating P
+  XVXinv <- solve( t(X) %*% Vinv %*% X )
+  VinvX  <- Vinv %*% X
+  M      <- VinvX %*% XVXinv %*% t(VinvX)
+  P      <- .Call("cxxmatsub", as.matrix(Vinv), as.matrix(M), 
+                  PACKAGE = "HLMdiag")
+  
+  return( list(Y = Y, X = X, n = n, ngrps = ngrps, flist = flist,
+               sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
+               M = M, P = P) )
+  
+}
+
 # 'se.ranef' is a copy of function in arm package. This is copied to ensure
 # that is available to all users. This should not be exported.
 se.ranef <- function (object) 
@@ -117,4 +152,13 @@ se.ranef <- function (object)
     dimnames(se.bygroup[[m]]) <- list(names.full[[1]], names.full[[2]])
   }
   return(se.bygroup)
+}
+
+#' Checking whether an LMM is nested
+isNestedModel <- function(object) {
+  fl   <- object@flist
+  fnms <- names(fl)
+  RVAL <- all(sapply(seq_along(fl)[-1], function(i) isNested(fl[[i-1]], fl[[i]])))
+  
+  return(RVAL)
 }

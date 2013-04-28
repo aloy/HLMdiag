@@ -13,6 +13,10 @@
 #' an upward residual analysis during model
 #' exploration/checking.
 #'
+#' @export
+#' @method HLMresid mer
+#' @S3method HLMresid mer
+#' @aliases HLMresid
 #' @param object an object of class \code{mer}.
 #' @param level which residuals should be extracted: 1 for within-group (case-level)
 #' residuals, the name of a grouping factor (as defined in \code{flist} of the 
@@ -88,8 +92,7 @@
 #' # marginal residuals
 #' mr <- HLMresid(object = fm1, level = "marginal")
 #' cholr <- HLMresid(object = fm1, level = "marginal", standardize = TRUE) # Cholesky residuals
-HLMresid <- function(object, level, type = "EB", sim = NULL, standardize = FALSE){
-  if(!is(object, "mer")) stop("object must be of class 'mer'")
+HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = FALSE){
   if(!level %in% c(1, names(object@flist), "marginal")) {
     stop("level can only be 1, a grouping factor from the fitted model,
          or marginal.")
