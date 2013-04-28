@@ -876,3 +876,13 @@ rvc.mer <- function(object, group = NULL, delete = NULL, ...) {
     delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
     return( rvc(delete) )
 }
+
+
+#' @export
+#' @rdname rvc.mer
+#' @method rvc lmerMod
+#' @S3method rvc lmerMod
+rvc.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
+  delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
+  return( rvc(delete) )
+}
