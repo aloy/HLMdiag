@@ -195,6 +195,69 @@ leverage.mer <- function(object, level, ...) {
   if(level != 1) return(grp.lev)
 }
 
+#' @export
+#' @rdname leverage.mer
+#' @method leverage mer
+#' @S3method leverage mer
+leverage.lmerMod <- function(object, level, ...) {
+  if(!isNestedModel(object)) {
+    stop("leverage.mer has not yet been implemented for models with 
+         crossed random effects")
+  }
+  if(!level %in% c( 1, names(getME(object, "flist")))) {
+    stop("level can only be 1 or a grouping factor from the fitted model.")
+  }
+  
+  if(!isLMM(object)){
+    stop("leverage is currently not implemented for GLMMs or NLMMs.")
+  }
+  
+  X <- getME(object, "X")
+  # Z <- BlockZ(object)
+  
+  n     <- nrow(X)
+#  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
+  ngrps <- unname( summary(object)$ngrps )
+  
+  vc   <- VarCorr(object)
+  # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( getME(object, "A") )
+  R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
+  
+  V      <- ZDZt + R
+  V.chol <- chol( V )
+  Vinv   <- chol2inv( V.chol )
+  
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(object, "RX"))
+  
+  H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
+  H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
+  
+  diag.H1 <- diag(H1)
+  diag.H2 <- diag(H2)
+  diag.H2.uc <- diag(ZDZt) / attr(vc, "sc")^2
+  
+  if(level == 1) {
+    lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 
+                       ranef =  diag.H2, ranef.uc = diag.H2.uc)
+    #     class(lev1) <- "leverage"
+  } else {
+    flist   <- data.frame( getME(object, "flist")[[level]] )
+    
+    grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
+    grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
+    grp.lev.ranef.uc <- aggregate(diag.H2.uc, flist, mean)[,2]
+    
+    grp.lev <- data.frame( overall = grp.lev.fixef + grp.lev.ranef,
+                           fixef = grp.lev.fixef, 
+                           ranef = grp.lev.ranef,
+                           ranef.uc = grp.lev.ranef.uc)
+    #     class(grp.lev) <- "leverage"
+  }
+  
+  if(level == 1) return(lev1)
+  if(level != 1) return(grp.lev)
+  }
 
 #' Influence on fixed effects of HLMs
 #'
@@ -329,6 +392,71 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
   return(res)
 }
 
+#' @export
+#' @rdname cooks.distance.mer
+#' @method cooks.distance lmerMod
+#' @S3method cooks.distance lmerMod
+cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
+  if(!is.null(group)) {
+    if(!group %in% names(getME(model, "flist"))) {
+      stop(paste(group, "is not a valid grouping factor for this model."))
+    }
+  }
+  if(!isLMM(model)){
+    stop("cooks.distance is currently not implemented for GLMMs or NLMMs.")
+  }
+  
+  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
+  
+  # Extract key pieces of the model
+  mats <- .lmerMod_matrices(model)
+  
+  betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  
+  # Obtaining the building blocks
+  if(is.null(group) & is.null(delete)) {
+    calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
+                         Vinv_ = as.matrix(mats$Vinv), 
+                         XVXinv_ = as.matrix(mats$XVXinv), 
+                         beta_ = as.matrix(betaHat), PACKAGE = "HLMdiag")
+    res <- calc.cooksd[[1]]
+    attr(res, "beta_cdd") <- calc.cooksd[[2]]
+  }
+  
+  else{
+    e <- with(mats, Y - X %*% betaHat)
+    
+    if( !is.null(group) ){
+      grp.names <- unique( mats$flist[[group]] )
+      
+      if( is.null(delete) ){
+        del.index <- lapply(1:mats$ngrps[group], 
+                            function(x) {
+                              ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            })
+      } else{
+        del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      }
+    } else{
+      del.index <- list( delete - 1 )
+    }
+    
+    calc.cooksd <- .Call("cooksdSubset", index = del.index, 
+                         X_ = as.matrix(mats$X), 
+                         P_ = as.matrix(mats$P), 
+                         Vinv_ = as.matrix(mats$Vinv), 
+                         XVXinv_ = as.matrix(mats$XVXinv), 
+                         e_ = as.numeric(e), PACKAGE = "HLMdiag")
+    
+    res <- calc.cooksd[[1]]
+    attr(res, "beta_cdd") <- calc.cooksd[[2]] 
+  }
+  
+  class(res) <- "fixef.dd"
+  return(res)
+}
+
+
 print.fixef.dd <- function(x, ...) {
   attributes(x) <- NULL
   print(x, ...)
@@ -406,6 +534,56 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
   return(res)
 }
 
+
+#' @export
+#' @rdname cooks.distance.mer
+#' @method mdffits lmerMod
+#' @S3method mdffits lmerMod
+mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
+  if(!is.null(group)) {
+    if(!group %in% names(getME(object, "flist"))) {
+      stop(paste(group, "is not a valid grouping factor for this model."))
+    }
+  }
+  if(!isLMM(object)){
+    stop("mdffits is currently not implemented for GLMMs or NLMMs.")
+  }
+  
+  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
+  
+  # Extract key pieces of the model
+  mats <- .lmerMod_matrices(object)
+  
+  betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  e <- with(mats, Y - X %*% betaHat)
+  
+  if( !is.null(group) ){
+    grp.names <- unique( mats$flist[[group]] )
+    
+    if( is.null(delete) ){
+      del.index <- lapply(1:mats$ngrps[group], 
+                          function(x) {
+                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                          })
+    } else{
+      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+    }
+  } else{
+    if( is.null(delete) ){
+      del.index <- split(0:(mats$n-1), 0:(mats$n-1))
+    } else { del.index <- list( delete - 1 ) }
+  }
+  
+  calc.mdffits <- .Call("mdffitsSubset", index = del.index, X_ = mats$X, 
+                        P_ = mats$P, Vinv_ = as.matrix(mats$Vinv), 
+                        XVXinv_ = as.matrix(mats$XVXinv), 
+                        e_ = as.numeric(e), PACKAGE = "HLMdiag")
+  res <- calc.mdffits[[1]]
+  attr(res, "beta_cdd") <- calc.mdffits[[2]] 
+  
+  class(res) <- "fixef.dd"
+  return(res)
+}
 
 #' Influence on precision of fixed effects in HLMs
 #'
