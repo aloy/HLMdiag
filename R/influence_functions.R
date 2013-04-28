@@ -197,8 +197,8 @@ leverage.mer <- function(object, level, ...) {
 
 #' @export
 #' @rdname leverage.mer
-#' @method leverage mer
-#' @S3method leverage mer
+#' @method leverage lmerMod
+#' @S3method leverage lmerMod
 leverage.lmerMod <- function(object, level, ...) {
   if(!isNestedModel(object)) {
     stop("leverage.mer has not yet been implemented for models with 

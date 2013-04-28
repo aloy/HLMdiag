@@ -1,12 +1,15 @@
 \name{leverage.default}
 \alias{leverage}
 \alias{leverage.default}
+\alias{leverage.lmerMod}
 \alias{leverage.mer}
 \title{Leverage for HLMs}
 \usage{
   \method{leverage}{default} (object, ...)
 
   \method{leverage}{mer} (object, level, ...)
+
+  \method{leverage}{lmerMod} (object, level, ...)
 }
 \arguments{
   \item{object}{fitted object of class \code{mer}}

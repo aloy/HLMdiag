@@ -1,8 +1,16 @@
-\name{case_delete}
+\name{case_delete.default}
 \alias{case_delete}
-\title{Case Deletion for \code{mer} objects}
+\alias{case_delete.default}
+\alias{case_delete.lmerMod}
+\alias{case_delete.mer}
+\title{Case Deletion for \code{mer}/\code{lmerMod} objects}
 \usage{
-  case_delete(model, group = NULL,
+  \method{case_delete}{default} (model, ...)
+
+  \method{case_delete}{mer} (model, group = NULL,
+    type = c("both", "fixef", "varcomp"), delete = NULL)
+
+  \method{case_delete}{lmerMod} (model, group = NULL,
     type = c("both", "fixef", "varcomp"), delete = NULL)
 }
 \arguments{

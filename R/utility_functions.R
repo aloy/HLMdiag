@@ -154,7 +154,7 @@ se.ranef <- function (object)
   return(se.bygroup)
 }
 
-#' Checking whether an LMM is nested
+# Checking whether an LMM is nested
 isNestedModel <- function(object) {
   fl   <- object@flist
   fnms <- names(fl)

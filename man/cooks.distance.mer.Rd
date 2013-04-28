@@ -1,8 +1,10 @@
 \name{mdffits.default}
 \alias{cooks.distance}
+\alias{cooks.distance.lmerMod}
 \alias{cooks.distance.mer}
 \alias{mdffits}
 \alias{mdffits.default}
+\alias{mdffits.lmerMod}
 \alias{mdffits.mer}
 \title{Influence on fixed effects of HLMs}
 \usage{
@@ -11,7 +13,13 @@
   \method{cooks.distance}{mer} (model, group = NULL,
     delete = NULL, ...)
 
+  \method{cooks.distance}{lmerMod} (model, group = NULL,
+    delete = NULL, ...)
+
   \method{mdffits}{mer} (object, group = NULL,
+    delete = NULL, ...)
+
+  \method{mdffits}{lmerMod} (object, group = NULL,
     delete = NULL, ...)
 }
 \arguments{

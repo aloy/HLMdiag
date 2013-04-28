@@ -20,7 +20,10 @@ case_delete.default <- function(model, ...){
 #'numerous levels of the model, the function will need to be called multiple
 #'times, specifying the group (level) of interest each time.
 #'
-#'
+#' @export
+#' @method case_delete mer
+#' @S3method case_delete mer
+#' @aliases case_delete
 #'@param model the original hierarchical model fit using \code{lmer()}
 #'@param group a variable used to define the group for which cases will be
 #'deleted.  If this is left \code{NULL} (default), then the function will delete

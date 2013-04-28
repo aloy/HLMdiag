@@ -1,6 +1,7 @@
 \name{rvc.default}
 \alias{rvc}
 \alias{rvc.default}
+\alias{rvc.lmerMod}
 \alias{rvc.mer}
 \title{Relative variance change for HLMs}
 \usage{
@@ -8,6 +9,9 @@
 
   \method{rvc}{mer} (object, group = NULL, delete = NULL,
     ...)
+
+  \method{rvc}{lmerMod} (object, group = NULL,
+    delete = NULL, ...)
 }
 \arguments{
   \item{object}{fitted object of class \code{mer}}

@@ -1,9 +1,17 @@
-\name{HLMresid}
+\name{HLMresid.default}
 \alias{HLMresid}
+\alias{HLMresid.default}
+\alias{HLMresid.lmerMod}
+\alias{HLMresid.mer}
 \title{Calculating residuals from HLMs}
 \usage{
-  HLMresid(object, level, type = "EB", sim = NULL,
-    standardize = FALSE)
+  \method{HLMresid}{default} (object, ...)
+
+  \method{HLMresid}{mer} (object, level, type = "EB",
+    sim = NULL, standardize = FALSE)
+
+  \method{HLMresid}{lmerMod} (object, level, type = "EB",
+    sim = NULL, standardize = FALSE)
 }
 \arguments{
   \item{object}{an object of class \code{mer}.}
