@@ -187,7 +187,7 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL, standardize
   }
   
   if(level == "marginal"){
-    mr <- object@y - getME(object, "X") %*% fixef(object)
+    mr <- object@resp$y - getME(object, "X") %*% fixef(object)
     if(standardize == TRUE){
       sig0 <- sigma(object)
       ZDZt <- sig0^2 * crossprod( getME(object, "A") )
