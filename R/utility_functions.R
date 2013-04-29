@@ -158,7 +158,7 @@ se.ranef <- function (object)
 isNestedModel <- function(object) {
   fl   <- object@flist
   fnms <- names(fl)
-  RVAL <- all(sapply(seq_along(fl)[-1], function(i) isNested(fl[[i-1]], fl[[i]])))
+  RVAL <- all(sapply(seq_along(fl)[-1], function(i) lme4:::isNested(fl[[i-1]], fl[[i]])))
   
   return(RVAL)
 }
