@@ -316,9 +316,9 @@ setMethod("plot", signature(x = "adjust_lmList.confint"),
 )
 
 
-#' @export
-setMethod("formula", signature(x = "adjust_lmList"),
-          function(x, ...) x@call[["formula"]])
+# #' @export
+# setMethod("formula", signature(x = "adjust_lmList"),
+#           function(x, ...) x@call[["formula"]])
 
 # To ensure compatibility across the lme4 development versions
 modelFormula <- function(form)

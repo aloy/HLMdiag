@@ -34,7 +34,7 @@ export(rvc.default)
 export(varcomp.mer)
 
 exportClasses("adjust_lmList")
-exportMethods("coef", "confint", "formula", "plot", "show")
+exportMethods("coef", "confint", "plot", "show")
 
 S3method(HLMresid, mer)
 S3method(HLMresid, lmerMod)
