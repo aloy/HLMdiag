@@ -319,3 +319,60 @@ setMethod("plot", signature(x = "adjust_lmList.confint"),
 #' @export
 setMethod("formula", signature(x = "adjust_lmList"),
           function(x, ...) x@call[["formula"]])
+
+# To ensure compatibility across the lme4 development versions
+modelFormula <- function(form)
+{
+  if (class(form) != "formula" || length(form) != 3)
+    stop("formula must be a two-sided formula object")
+  rhs <- form[[3]]
+  if (class(rhs) != "call" || rhs[[1]] != as.symbol('|'))
+    stop("rhs of formula must be a conditioning expression")
+  form[[3]] <- rhs[[2]]
+  list(model = form, groups = rhs[[3]])
+}
+
+# To ensure compatibility across the lme4 development versions
+setMethod("lmList", signature(formula = "formula", data = "data.frame"),
+          function(formula, data, family, subset, weights,
+                   na.action, offset, pool, ...)
+          {
+            mCall <- mf <- match.call()           
+            m <- match(c("family", "data", "subset", "weights",
+                         "na.action", "offset"), names(mf), 0)
+            mf <- mf[c(1, m)]
+            ## substitute `+' for `|' in the formula
+            mf$formula <- subbars(formula) 
+            mf$x <- mf$model <- mf$y <- mf$family <- NULL
+            mf$drop.unused.levels <- TRUE
+            mf[[1]] <- as.name("model.frame")
+            frm <- eval(mf, parent.frame())
+            mform <- modelFormula(formula)
+            if (missing(family)) {
+              val <- lapply(split(frm, eval(mform$groups, frm)),
+                            function(dat, formula)
+                            {
+                              ans <- try({
+                                data <- as.data.frame(dat)
+                                lm(formula, data)
+                              })
+                              if (inherits(ans, "try-error"))
+                                NULL
+                              else ans
+                            }, formula = mform$model)
+            } else {
+              val <- lapply(split(frm, eval(mform$groups, frm)),
+                            function(dat, formula, family)
+                            {
+                              ans <- try({
+                                data <- as.data.frame(dat)
+                                glm(formula, family, data)
+                              })
+                              if (inherits(ans, "try-error"))
+                                NULL
+                              else ans
+                            }, formula = mform$model, family = family)
+            }
+            if (missing(pool)) pool <- TRUE
+            new("lmList", val, call = mCall, pool = pool)
+          })
