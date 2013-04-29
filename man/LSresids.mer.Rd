@@ -1,4 +1,5 @@
 \name{LSresids.default}
+\alias{LSresids}
 \alias{LSresids.default}
 \alias{LSresids.lmerMod}
 \alias{LSresids.mer}
@@ -7,10 +8,10 @@
   \method{LSresids}{default} (object, ...)
 
   \method{LSresids}{mer} (object, level, sim = NULL,
-    standardize = FALSE)
+    standardize = FALSE, ...)
 
   \method{LSresids}{lmerMod} (object, level, sim = NULL,
-    standardize = FALSE)
+    standardize = FALSE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{mer}.}
@@ -28,6 +29,8 @@
   level-1 residuals will also be returned (if \code{level =
   1}); if \code{"semi"} then the semi-standardized level-1
   residuals will be returned.}
+
+  \item{...}{do not use}
 }
 \description{
   This function calculates least squares (LS) residuals

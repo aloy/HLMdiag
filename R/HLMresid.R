@@ -44,6 +44,7 @@ HLMresid.default <- function(object, ...){
 #' the semi-standardized level-1 residuals will be returned. Note that
 #' for higher-level residuals of \code{type = "LS"},  \code{standardize = TRUE} 
 #' does not result in standardized residuals as they have not been implemented.
+#' @param ... do not use
 #' @details The \code{HLMresid} function provides a wrapper that will extract
 #' residuals from a fitted \code{mer} object. The function provides access to 
 #' residual quantities already made available by the functions \code{resid} and
@@ -106,7 +107,7 @@ HLMresid.default <- function(object, ...){
 #' # marginal residuals
 #' mr <- HLMresid(object = fm1, level = "marginal")
 #' cholr <- HLMresid(object = fm1, level = "marginal", standardize = TRUE) # Cholesky residuals
-HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = FALSE){
+HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = FALSE, ...){
   if(!level %in% c(1, names(object@flist), "marginal")) {
     stop("level can only be 1, a grouping factor from the fitted model,
          or marginal.")
@@ -176,7 +177,8 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
 #' @rdname HLMresid.mer
 #' @method HLMresid lmerMod
 #' @S3method HLMresid lmerMod
-HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL, standardize = FALSE){
+HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL, 
+                             standardize = FALSE, ...){
   if(!level %in% c(1, names(object@flist), "marginal")) {
     stop("level can only be 1, a grouping factor from the fitted model,
          or marginal.")

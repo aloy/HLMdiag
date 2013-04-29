@@ -34,6 +34,7 @@ case_delete.default <- function(model, ...){
 #'@param delete index of individual cases to be deleted.  For higher level
 #'units specified in this manner, the \code{group} parameter must also be
 #'specified.  If \code{delete = NULL} then all cases are iteratively deleted.
+#' @param ... do not use
 #'@return a list with the following compontents:
 #' \describe{
 #'   \item{\code{fixef.original}}{the original fixed effects estimates}
@@ -73,7 +74,7 @@ case_delete.default <- function(model, ...){
 #' delSubset <- case_delete(model = fm, group = "Subject", type = "both", delete = 308:310)
 #'
 case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), 
-                        delete = NULL){
+                        delete = NULL, ...){
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!model@dims["LMM"]){
     stop("case_delete is currently only implemented for mixed/hierarchical models.")
@@ -262,7 +263,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
 #' @method case_delete lmerMod
 #' @S3method case_delete lmerMod
 case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), 
-                            delete = NULL){
+                            delete = NULL, ...){
   if(!isNestedModel(model)){
     stop("case_delete is currently only implemented for mixed/hierarchical models.")
   }

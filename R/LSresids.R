@@ -20,6 +20,7 @@ LSresids.default <- function(object, ...){
 #' @export
 #' @method LSresids mer
 #' @S3method LSresids mer
+#' @aliases LSresids
 #' @param object an object of class \code{mer}.
 #' @param level which residuals should be extracted: 1 for case-level
 #' residuals or the name of a grouping factor (as defined in \code{flist} of the 
@@ -29,6 +30,7 @@ LSresids.default <- function(object, ...){
 #' @param standardize if \code{TRUE} the standardized level-1
 #' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
 #' the semi-standardized level-1 residuals will be returned.
+#' @param ... do not use
 #' @author Adam Loy \email{aloy@@istate.edu}
 #' @references 
 #' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
@@ -36,7 +38,7 @@ LSresids.default <- function(object, ...){
 #' @export
 #' @seealso \code{\link{HLMresid}}
 #' @keywords models regression
-LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE){
+LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!object@dims["LMM"]){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
   }
@@ -168,7 +170,7 @@ fixform <- function (term)
 #' @rdname LSresids.mer
 #' @method LSresids lmerMod
 #' @S3method LSresids lmerMod
-LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE){
+LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!isLMM(object)){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
   }

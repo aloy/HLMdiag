@@ -8,10 +8,10 @@
   \method{HLMresid}{default} (object, ...)
 
   \method{HLMresid}{mer} (object, level, type = "EB",
-    sim = NULL, standardize = FALSE)
+    sim = NULL, standardize = FALSE, ...)
 
   \method{HLMresid}{lmerMod} (object, level, type = "EB",
-    sim = NULL, standardize = FALSE)
+    sim = NULL, standardize = FALSE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{mer}.}
@@ -36,6 +36,8 @@
   higher-level residuals of \code{type = "LS"},
   \code{standardize = TRUE} does not result in standardized
   residuals as they have not been implemented.}
+
+  \item{...}{do not use}
 }
 \description{
   \code{HLMresid} is a function that extracts residuals
