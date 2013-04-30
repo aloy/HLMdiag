@@ -65,7 +65,7 @@ qqlineInfo <- function(x){
 #' Overlaying normal Q-Q plots
 #'
 #' This function will overlay multiple normal Q-Q plots on the same plot. This
-#' will be particulary useful when comparing the distrubtion between groups.
+#' will be particulary useful when comparing the distribution between groups.
 #' In this situation, significantly different slopes would indicate the normal 
 #' distributions for the groups do not share a common standard deviation.
 #'

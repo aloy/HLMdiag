@@ -23,7 +23,8 @@
     delete = NULL, ...)
 }
 \arguments{
-  \item{model}{fitted model of class \code{mer}}
+  \item{model}{fitted model of class \code{mer} or
+  \code{lmerMod}}
 
   \item{group}{variable used to define the group for which
   cases will be deleted.  If \code{group = NULL}, then
@@ -37,7 +38,8 @@
 
   \item{...}{do not use}
 
-  \item{object}{fitted object of class \code{mer}}
+  \item{object}{fitted object of class \code{mer} or
+  \code{lmerMod}}
 }
 \value{
   Both functions return a numeric vector (or single value

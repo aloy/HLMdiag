@@ -3,7 +3,6 @@
 \alias{adjust_lmList-class}
 \alias{coef,adjust_lmList-method}
 \alias{confint,adjust_lmList-method}
-\alias{formula,adjust_lmList-method}
 \alias{plot,adjust_lmList.confint,ANY-method}
 \alias{show,adjust_lmList-method}
 \title{Class \code{"adjust_lmList"}}
@@ -28,8 +27,6 @@ Class \code{"\linkS4class{vector}"}, by class "list", distance 2.
 }
 \section{Methods}{
   \describe{
-  \item{formula}{\code{signature(x = "adjust_lmList")}: extracts the formula
-      	from an adjust_lmList object.}
     \item{coef}{\code{signature(object = "adjust_lmList")}: extracts the model 
 		coefficients from the individually fit models.}
     \item{confint}{\code{signature(object = "adjust_lmList")}: computes confidence 

@@ -26,7 +26,8 @@
     delete = NULL, ...)
 }
 \arguments{
-  \item{object}{fitted object of class \code{mer}}
+  \item{object}{fitted object of class \code{mer} or
+  \code{lmerMod}}
 
   \item{group}{variable used to define the group for which
   cases will be deleted.  If \code{group = NULL}, then

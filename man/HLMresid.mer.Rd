@@ -14,7 +14,8 @@
     sim = NULL, standardize = FALSE, ...)
 }
 \arguments{
-  \item{object}{an object of class \code{mer}.}
+  \item{object}{an object of class \code{mer} or
+  \code{lmerMod}.}
 
   \item{level}{which residuals should be extracted: 1 for
   within-group (case-level) residuals, the name of a
@@ -43,7 +44,8 @@
   \code{HLMresid} is a function that extracts residuals
   from a hierarchical linear model fit using \code{lmer}.
   That is, it is a unified framework that
-  extracts/calculates residuals from \code{mer} objects.
+  extracts/calculates residuals from \code{mer} or
+  \code{lmerMod} objects.
 }
 \details{
   This function extracts residuals from the model, and can
@@ -53,17 +55,17 @@
   analysis during model exploration/checking.
 
   The \code{HLMresid} function provides a wrapper that will
-  extract residuals from a fitted \code{mer} object. The
-  function provides access to residual quantities already
-  made available by the functions \code{resid} and
-  \code{ranef}, but adds additional functionality. Below is
-  a list of types of residuals that can be extracted.
-  \describe{ \item{raw level-1 residuals}{These are
-  equivalent to the residuals extracted by \code{resid} if
-  \code{level = 1}, \code{type = "EB"}, and
-  \code{standardize = FALSE} is specified. You can also
-  specify \code{type = "LS"} for LS residuals that are not
-  equivalent to those from \code{resid}.}
+  extract residuals from a fitted \code{mer} or
+  \code{lmerMod} object. The function provides access to
+  residual quantities already made available by the
+  functions \code{resid} and \code{ranef}, but adds
+  additional functionality. Below is a list of types of
+  residuals that can be extracted. \describe{ \item{raw
+  level-1 residuals}{These are equivalent to the residuals
+  extracted by \code{resid} if \code{level = 1}, \code{type
+  = "EB"}, and \code{standardize = FALSE} is specified. You
+  can also specify \code{type = "LS"} for LS residuals that
+  are not equivalent to those from \code{resid}.}
   \item{standardized level-1 residuals}{Specify \code{level
   = 1}, and \code{standardize = TRUE}. This works with both
   \code{type = "EB"} or \code{"LS"}.}

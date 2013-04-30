@@ -14,7 +14,8 @@
     standardize = FALSE, ...)
 }
 \arguments{
-  \item{object}{an object of class \code{mer}.}
+  \item{object}{an object of class \code{mer} or
+  \code{lmerMod}.}
 
   \item{level}{which residuals should be extracted: 1 for
   case-level residuals or the name of a grouping factor (as

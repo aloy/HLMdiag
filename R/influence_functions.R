@@ -78,7 +78,7 @@ rvc.default <- function(object, ...){
 #' @method leverage mer
 #' @S3method leverage mer
 #' @aliases leverage
-#' @param object fitted object of class \code{mer}
+#' @param object fitted object of class \code{mer} of \code{lmerMod}
 #' @param level the level at which the leverage should be calculated: either
 #'   1 for observation level leverage or the name of the grouping factor 
 #'   (as defined in \code{flist} of the \code{mer} object) for group level
@@ -285,7 +285,7 @@ leverage.lmerMod <- function(object, level, ...) {
 #'@method cooks.distance mer
 #'@S3method cooks.distance mer
 #'@aliases cooks.distance
-#'@param model fitted model of class \code{mer}
+#'@param model fitted model of class \code{mer} or \code{lmerMod}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
@@ -470,7 +470,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' @method mdffits mer
 #' @S3method mdffits mer
 #' @aliases mdffits
-#' @param object fitted object of class \code{mer}
+#' @param object fitted object of class \code{mer} or \code{lmerMod}
 #' @examples
 #' 
 #' # MDFFITS  for individual observations
@@ -604,7 +604,7 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #'@method covratio mer
 #'@S3method covratio mer
 #'@aliases covratio
-#'@param object fitted object of class \code{mer}
+#'@param object fitted object of class \code{mer} or \code{lmerMod}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
@@ -845,7 +845,7 @@ covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #' @method rvc mer
 #' @S3method rvc mer
 #' @aliases rvc
-#'@param object fitted object of class \code{mer}
+#'@param object fitted object of class \code{mer} or \code{lmerMod}
 #'@param group variable used to define the group for which cases will be
 #'deleted.  If \code{group = NULL}, then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 

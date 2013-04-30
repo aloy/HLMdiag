@@ -18,7 +18,7 @@
 #' @param name what diagnostic is being plotted 
 #' (one of \code{"cooks.distance"}, \code{"mdffits"}, \code{"covratio"}, 
 #' \code{"covtrace"}, \code{"rvc"}, or \code{"leverage"}).
-#' this is used to for the calculation of "internal" cutoffs
+#' this is used for the calculation of "internal" cutoffs
 #' @param modify specifies the \code{geom} to be used to produce a 
 #' space-saving modification: either \code{"dotplot"} or \code{"boxplot"}
 #' @param ... other arguments to be passed to \code{qplot()}

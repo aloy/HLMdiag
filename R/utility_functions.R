@@ -27,7 +27,7 @@ BlockZ <- function(object) {
 #' trailing digits specify the of that variance component in the covariance
 #' matrix of the random effects.
 #' 
-#' @param object a fitted model object of class \code{mer}.
+#' @param object a fitted model object of class \code{mer} or \code{lmerMod}.
 #' @author Adam Loy \email{aloy@@iastate.edu}
 #' @keywords models regression
 #' @export

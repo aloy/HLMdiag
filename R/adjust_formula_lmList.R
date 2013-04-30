@@ -316,7 +316,7 @@ setMethod("plot", signature(x = "adjust_lmList.confint"),
 )
 
 
-# #' @export
+
 # setMethod("formula", signature(x = "adjust_lmList"),
 #           function(x, ...) x@call[["formula"]])
 

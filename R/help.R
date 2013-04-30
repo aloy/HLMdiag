@@ -19,7 +19,7 @@
 #' 
 #' Influence on fitted values
 #' 
-#' HLMdiag provides a \code{\link{leverage}} that calculated the influence
+#' HLMdiag provides \code{\link{leverage}} that calculates the influence
 #' that observations/groups have on the fitted values (leverage). 
 #' For mixed/hierarchical models leverage can be decomposed into two parts: the 
 #' fixed part and the random part. We refer the user to the references

@@ -12,7 +12,8 @@
   \method{leverage}{lmerMod} (object, level, ...)
 }
 \arguments{
-  \item{object}{fitted object of class \code{mer}}
+  \item{object}{fitted object of class \code{mer} of
+  \code{lmerMod}}
 
   \item{level}{the level at which the leverage should be
   calculated: either 1 for observation level leverage or

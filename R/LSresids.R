@@ -21,7 +21,7 @@ LSresids.default <- function(object, ...){
 #' @method LSresids mer
 #' @S3method LSresids mer
 #' @aliases LSresids
-#' @param object an object of class \code{mer}.
+#' @param object an object of class \code{mer} or \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for case-level
 #' residuals or the name of a grouping factor (as defined in \code{flist} of the 
 #' \code{mer} object) for between-group residuals.

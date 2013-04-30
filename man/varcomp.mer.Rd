@@ -5,7 +5,8 @@
   varcomp.mer(object)
 }
 \arguments{
-  \item{object}{a fitted model object of class \code{mer}.}
+  \item{object}{a fitted model object of class \code{mer}
+  or \code{lmerMod}.}
 }
 \value{
   A named vector is returned. \code{sigma2} denotes the

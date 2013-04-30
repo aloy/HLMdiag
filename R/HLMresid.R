@@ -17,7 +17,7 @@ HLMresid.default <- function(object, ...){
 #' \code{HLMresid} is a function that extracts residuals
 #' from a hierarchical linear model fit
 #' using \code{lmer}. That is, it is a unified framework that
-#' extracts/calculates residuals from \code{mer} objects.
+#' extracts/calculates residuals from \code{mer} or \code{lmerMod} objects.
 #' 
 #' This function extracts residuals from the model, 
 #' and can extract residuals
@@ -31,7 +31,7 @@ HLMresid.default <- function(object, ...){
 #' @method HLMresid mer
 #' @S3method HLMresid mer
 #' @aliases HLMresid
-#' @param object an object of class \code{mer}.
+#' @param object an object of class \code{mer} or \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for within-group (case-level)
 #' residuals, the name of a grouping factor (as defined in \code{flist} of the 
 #' \code{mer} object) for between-group residuals, or \code{marginal}.
@@ -46,7 +46,8 @@ HLMresid.default <- function(object, ...){
 #' does not result in standardized residuals as they have not been implemented.
 #' @param ... do not use
 #' @details The \code{HLMresid} function provides a wrapper that will extract
-#' residuals from a fitted \code{mer} object. The function provides access to 
+#' residuals from a fitted \code{mer} or \code{lmerMod} object. 
+#' The function provides access to 
 #' residual quantities already made available by the functions \code{resid} and
 #' \code{ranef}, but adds additional functionality. Below is a list of types of
 #' residuals that can be extracted.
