@@ -18,7 +18,7 @@ covratio <- function(object, ...){
 }
 
 #' @export
-#' @rdname covratio.mer
+#' @rdname covratio
 #' @method covratio default
 #' @S3method covratio default
 covratio.default <- function(object, ...){
@@ -32,7 +32,7 @@ covtrace <- function(object, ...){
 }
 
 #' @export
-#' @rdname covratio.mer
+#' @rdname covratio
 #' @method covtrace default
 #' @S3method covtrace default
 covtrace.default <- function(object, ...){
@@ -46,7 +46,7 @@ mdffits <- function(object, ...){
 }
 
 #' @export
-#' @rdname cooks.distance.mer
+#' @rdname cooks.distance
 #' @method mdffits default
 #' @S3method mdffits default
 mdffits.default <- function(object, ...){
@@ -282,6 +282,7 @@ leverage.lmerMod <- function(object, level, ...) {
 #' the difference between the full and deleted parameter estimates.
 #'
 #'@export
+#'@rdname cooks.distance
 #'@method cooks.distance mer
 #'@S3method cooks.distance mer
 #'@aliases cooks.distance
@@ -393,7 +394,7 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
 }
 
 #' @export
-#' @rdname cooks.distance.mer
+#' @rdname cooks.distance
 #' @method cooks.distance lmerMod
 #' @S3method cooks.distance lmerMod
 cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
@@ -466,7 +467,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 
 
 #' @export
-#' @rdname cooks.distance.mer
+#' @rdname cooks.distance
 #' @method mdffits mer
 #' @S3method mdffits mer
 #' @aliases mdffits
@@ -536,7 +537,7 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 
 
 #' @export
-#' @rdname cooks.distance.mer
+#' @rdname cooks.distance
 #' @method mdffits lmerMod
 #' @S3method mdffits lmerMod
 mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
@@ -601,6 +602,7 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #'  compares the trace of the ratio. 
 #'  
 #'@export
+#' @rdname covratio
 #'@method covratio mer
 #'@S3method covratio mer
 #'@aliases covratio
@@ -694,7 +696,7 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
 
 
 #'@export
-#'@rdname covratio.mer
+#'@rdname covratio
 #'@method covratio lmerMod
 #'@S3method covratio lmerMod
 covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
@@ -736,7 +738,7 @@ covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 }
 
 #'@export
-#'@rdname covratio.mer
+#'@rdname covratio
 #'@method covtrace mer
 #'@S3method covtrace mer
 #'@aliases covtrace
@@ -796,7 +798,7 @@ covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
 
 
 #'@export
-#'@rdname covratio.mer
+#'@rdname covratio
 #'@method covtrace lmerMod
 #'@S3method covtrace lmerMod
 covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
