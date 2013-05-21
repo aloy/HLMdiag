@@ -1,8 +1,8 @@
 Package: HLMdiag
 Type: Package
 Title: Diagnostic tools for hierarchical (multilevel) linear models
-Version: 0.2.2
-Date: 2013-4-30
+Version: 0.2.3
+Date: 2013-5-21
 Author: Adam Loy <aloy@iastate.edu>
 Maintainer: Adam Loy <aloy@iastate.edu>
 Description: A suite of diagnostic tools for hierarchical
@@ -42,3 +42,4 @@ Collate:
     'help.R'
     'influence_functions.R'
     'utility_functions.R'
+    'rotate_ranefs.R'
