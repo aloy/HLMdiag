@@ -43,3 +43,4 @@ Collate:
     'influence_functions.R'
     'utility_functions.R'
     'rotate_ranefs.R'
+    'data.R'

@@ -22,10 +22,11 @@ rotate_ranef.default <- function(object, ...){
 #' @method rotate_ranef mer
 #' @S3method rotate_ranef mer
 #' @aliases rotate_ranef
-#' @param .mod
-#' @param .L
-#' @param s
-#' @param .varimax
+#' @param .mod an object of class \code{mer} or \code{lmerMod}.
+#' @param .L a matrix defining which combination of random effects are of interest.
+#' @param s the dimension of the subspace of interest.
+#' @param .varimax if \code{.varimax = TRUE} than the raw varimax rotation 
+#'   will be applied to the resulting rotation.
 rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE) {
   y <- .mod@y
   X <- getME(.mod, "X")
