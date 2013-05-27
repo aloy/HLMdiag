@@ -43,4 +43,6 @@ Collate:
     'influence_functions.R'
     'utility_functions.R'
     'rotate_ranefs.R'
-    'data.R'
+    'autism.R'
+    'ahd.R'
+    'radon.R'
