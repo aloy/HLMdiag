@@ -10,7 +10,7 @@
 # @param formula a linear formula that is used by \code{lmList()} e.g. y ~ x1 + x2 + ... + xn | g
 # @param data the model frame from the model fit by \code{lmer()}
 # @return a list containing the adjusted formulas
-# @author Adam Loy \email{aloy@@iastate.edu}
+# @author Adam Loy \email{loyad01@@gmail.com}
 # @keywords models regression
 problem_factor_groups <- function(formula, data){
 	form <- formula(formula)
@@ -302,7 +302,7 @@ setMethod("confint", signature(object = "adjust_lmList"),
 #' @export
 setMethod("plot", signature(x = "adjust_lmList.confint"),
 	function(x, y, ...){
-		stopifnot(require("ggplot2"))
+# 		stopifnot(require("ggplot2"))
     group <- intervals <- NULL # Make codetools happy
 		cis <- as(x, "array")
 		df <- adply(cis, c(1, 2, 3), identity)

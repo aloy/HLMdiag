@@ -2,9 +2,9 @@ Package: HLMdiag
 Type: Package
 Title: Diagnostic tools for hierarchical (multilevel) linear models
 Version: 0.2.3
-Date: 2013-5-21
-Author: Adam Loy <aloy@iastate.edu>
-Maintainer: Adam Loy <aloy@iastate.edu>
+Date: 2013-10-5
+Author: Adam Loy <loyad01@gmail.com>
+Maintainer: Adam Loy <loyad01@gmail.com>
 Description: A suite of diagnostic tools for hierarchical
     (multilevel) linear models. The package offers
     not only leverage and traditional deletion diagnostics (Cook's
@@ -12,9 +12,10 @@ Description: A suite of diagnostic tools for hierarchical
     convenience functions and graphics for residual analysis. The package
     assumes that models were fit using the lme4 package.
 Depends:
-    lme4 (>= 0.999999-0),
-    ggplot2
+    R (>= 2.15.0),
+    lme4 (>= 1.0)
 Imports:
+    ggplot2,
     stats,
     stats4,
     methods,

@@ -34,7 +34,7 @@
   common standard deviation.
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Hilden-Minton, J. A. (1995) Mulilevel Diagnostics for

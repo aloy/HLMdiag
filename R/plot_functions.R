@@ -22,7 +22,7 @@
 #' @param modify specifies the \code{geom} to be used to produce a 
 #' space-saving modification: either \code{"dotplot"} or \code{"boxplot"}
 #' @param ... other arguments to be passed to \code{qplot()}
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @examples 
 #' data(sleepstudy, package = 'lme4')
 #' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)

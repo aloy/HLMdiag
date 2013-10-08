@@ -11,7 +11,6 @@ Encoding: UTF-8
 
 RnwWeave: knitr
 LaTeX: pdfLaTeX
-RootDocument: 
 
 BuildType: Package
-PackageInstallArgs: --no-multiarch
+PackageInstallArgs: --no-multiarch --with-keep.source

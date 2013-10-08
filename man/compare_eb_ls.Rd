@@ -34,6 +34,6 @@ rancoef.ols <- coef(wages.sepLM)
 compare_eb_ls(eb = rancoef.eb, ols = rancoef.ols, identify = 0.01)
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 

@@ -28,7 +28,7 @@
 #'
 #' @aliases cooks.distance.case_delete mdffits.case_delete covtrace.case_delete covratio.case_delete rvc.case_delete
 #' @param object an object containing the output returned by \code{case_delete()}
-#' @author Adam Loy \email{aloy@@iastate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @keywords models regression
 #' @references Christensen, R., Pearson, L.M., and Johnson, W. (1992)
 #' ``Case-Deletion Diagnostics for Mixed Models, \emph{Technometrics},

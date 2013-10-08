@@ -31,7 +31,7 @@ LSresids.default <- function(object, ...){
 #' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
 #' the semi-standardized level-1 residuals will be returned.
 #' @param ... do not use
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @references 
 #' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
 #' linear models. University of California Los Angeles.

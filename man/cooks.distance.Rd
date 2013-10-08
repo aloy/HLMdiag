@@ -107,7 +107,7 @@ m.school <- mdffits(fm, group = "school")
 }
 }
 \author{
-  Adam Loy \email{aloy@iastate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Christensen, R., Pearson, L., & Johnson, W. (1992)

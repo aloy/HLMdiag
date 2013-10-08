@@ -76,7 +76,7 @@ HLMresid.default <- function(object, ...){
 #' and \code{standardize = TRUE}.}
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @export
 #' @keywords models regression
 #' @seealso \code{\link{LSresids}}, \code{\link{resid}}, \code{\link{ranef}}

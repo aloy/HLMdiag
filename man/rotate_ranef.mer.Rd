@@ -5,13 +5,13 @@
 \alias{rotate_ranef.mer}
 \title{Calculate s-dimensional rotated random effects}
 \usage{
-  \method{rotate_ranef}{default} (object, ...)
+  \method{rotate_ranef}{default} (.mod, ...)
 
   \method{rotate_ranef}{mer} (.mod, .L, s = NULL,
-    .varimax = FALSE)
+    .varimax = FALSE, ...)
 
   \method{rotate_ranef}{lmerMod} (.mod, .L, s = NULL,
-    .varimax = FALSE)
+    .varimax = FALSE, ...)
 }
 \arguments{
   \item{.mod}{an object of class \code{mer} or
@@ -25,6 +25,8 @@
   \item{.varimax}{if \code{.varimax = TRUE} than the raw
   varimax rotation will be applied to the resulting
   rotation.}
+
+  \item{...}{do not use}
 }
 \description{
   This function calculates reduced dimensional rotated
@@ -32,5 +34,8 @@
   residuals from other levels of the model so that
   distributional assessment of the resulting random effects
   is possible.
+}
+\author{
+  Adam Loy \email{loyad01@gmail.com}
 }
 

@@ -25,7 +25,7 @@ fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 varcomp.mer(fm1)
 }
 \author{
-  Adam Loy \email{aloy@iastate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \keyword{models}
 \keyword{regression}

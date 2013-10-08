@@ -64,7 +64,7 @@ dotplot_diag(x = sigma2, , index = IDS, data = subject.diag[["varcomp_diag"]],
              xlab = "Subject", ylab = "Relative Variance Change")
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \keyword{hplot}
 

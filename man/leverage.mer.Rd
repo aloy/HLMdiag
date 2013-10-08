@@ -71,7 +71,7 @@ lev2 <- leverage(fm, level = "Subject")
 head(lev2)
 }
 \author{
-  Adam Loy \email{aloy@iastate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Demidenko, E., & Stukel, T. A. (2005) Influence analysis

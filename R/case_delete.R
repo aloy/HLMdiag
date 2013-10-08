@@ -50,7 +50,7 @@ case_delete.default <- function(model, ...){
 #' \item{\code{varcomp.delete}}{a list of the estimated variance components obtained after
 #'      case deletion}
 #' }
-#'@author Adam Loy \email{aloy@@istate.edu}
+#'@author Adam Loy \email{loyad01@@gmail.com}
 #' @keywords models regression
 #'@references Christensen, R., Pearson, L.M., and Johnson, W. (1992)
 #'Case-Deletion Diagnostics for Mixed Models, \emph{Technometrics}, \bold{34}, 38

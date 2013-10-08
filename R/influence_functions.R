@@ -117,7 +117,7 @@ rvc.default <- function(object, ...){
 #'   Nobre, J. S., & Singer, J. M. (2011) 
 #'   Leverage analysis for linear mixed  models. 
 #'   \emph{Journal of Applied Statistics}, \bold{38}(5), 1063--1072.
-#' @author Adam Loy \email{aloy@@iastate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @keywords models regression
 #' @export
 #' @seealso \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
@@ -294,7 +294,7 @@ leverage.lmerMod <- function(object, level, ...) {
 #'units the group ID and \code{group} parameter must be specified.
 #' If \code{delete = NULL} then all cases are iteratively deleted.
 #' @param ... do not use
-#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@author Adam Loy \email{loyad01@@gmail.com}
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992) 
 #' Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}, 
@@ -619,7 +619,7 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #' 
 #' If \code{delete} is specified then a single value is returned corresponding
 #' to the deleted subset specified.
-#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@author Adam Loy \email{loyad01@@gmail.com}
 #'@references
 #' Christensen, R., Pearson, L., & Johnson, W. (1992) 
 #' Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}(1), 
@@ -865,7 +865,7 @@ covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #' componenets are named \code{D**} where the trailing digits give the
 #' position in the covariance matrix of the random effects.
 #' 
-#'@author Adam Loy \email{aloy@@iastate.edu}
+#'@author Adam Loy \email{loyad01@@gmail.com}
 #'@references
 #' Dillane, D. (2005) Deletion Diagnostics for the Linear Mixed Model. 
 #' Ph.D. thesis, Trinity College Dublin

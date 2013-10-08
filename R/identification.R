@@ -6,7 +6,7 @@
 #
 # @param formula a formula that can be used with \code{lm()}
 # @param identify the percentage of points to identify as unusual
-# @author Adam Loy \email{aloy@@istate.edu}
+# @author Adam Loy \email{loyad01@@gmail.com}
 identify_resid <- function(eb, ols, identify){
 #	model <- lm(formula = formula)
 	yhat <- eb

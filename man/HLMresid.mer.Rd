@@ -112,7 +112,7 @@ mr <- HLMresid(object = fm1, level = "marginal")
 cholr <- HLMresid(object = fm1, level = "marginal", standardize = TRUE) # Cholesky residuals
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Hilden-Minton, J. (1995) Multilevel diagnostics for mixed

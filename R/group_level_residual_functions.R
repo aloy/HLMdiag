@@ -12,7 +12,7 @@
 #'@param silent logical: should the list of data frames used to make the plots
 #' be supressed.
 #'@param ... other arguments to be passed to \code{qplot()}
-#'@author Adam Loy \email{aloy@@istate.edu}
+#'@author Adam Loy \email{loyad01@@gmail.com}
 #'@export
 #'@examples
 #'

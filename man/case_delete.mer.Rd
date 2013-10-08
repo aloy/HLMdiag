@@ -80,7 +80,7 @@ del308 <- case_delete(model = fm, group = "Subject", type = "both", delete = 308
 delSubset <- case_delete(model = fm, group = "Subject", type = "both", delete = 308:310)
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Christensen, R., Pearson, L.M., and Johnson, W. (1992)

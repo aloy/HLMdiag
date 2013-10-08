@@ -28,7 +28,7 @@ BlockZ <- function(object) {
 #' matrix of the random effects.
 #' 
 #' @param object a fitted model object of class \code{mer} or \code{lmerMod}.
-#' @author Adam Loy \email{aloy@@iastate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @keywords models regression
 #' @export
 #' @examples
@@ -157,8 +157,8 @@ se.ranef <- function (object)
 # Checking whether an LMM is nested
 isNestedModel <- function(object) {
   fl   <- object@flist
-  fnms <- names(fl)
-  RVAL <- all(sapply(seq_along(fl)[-1], function(i) lme4:::isNested(fl[[i-1]], fl[[i]])))
+  fnms <- names(fl) 
+  RVAL <- all(sapply(seq_along(fl)[-1], function(i) lme4::isNested(fl[[i-1]], fl[[i]])))
   
   return(RVAL)
 }

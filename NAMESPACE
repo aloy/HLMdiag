@@ -1,8 +1,9 @@
 useDynLib(HLMdiag)
 
+import(ggplot2)
 import(Matrix)
 import(lme4)
-## import(methods)
+import(methods)
 import(plyr)
 import(reshape2)
 importFrom(stats, cooks.distance, covratio)

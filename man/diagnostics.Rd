@@ -67,7 +67,7 @@ subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 subject.diag <- diagnostics(subject.del)
 }
 \author{
-  Adam Loy \email{aloy@iastate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Christensen, R., Pearson, L.M., and Johnson, W. (1992)

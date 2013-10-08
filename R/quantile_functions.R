@@ -4,7 +4,7 @@
 #' data vector provided.
 #'
 #' @param x a numeric vector
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 .sampleQuantiles <- function(x){
 	i <- 1:length(x)
 	p <- (i - .5)/length(x)
@@ -25,7 +25,7 @@
 #' through the first and third quartiles. These options are the same as those
 #' given for the \code{qqPlot} function in the \code{car} package.
 #' @param ... other arguments to be passed to \code{qplot()}
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @keywords hplot
 #' @seealso \code{\link{qqnorm}}, \code{\link{qqline}}
 ggplot_qqnorm <- function(x, line = NULL, ...){
@@ -77,7 +77,7 @@ qqlineInfo <- function(x){
 #' @param ... other arguments to be passed to \code{ggplot}
 #' @param alpha_point alpha value specified for the points
 #' @param alpha_line alpha value specified for the lines
-#' @author Adam Loy \email{aloy@@istate.edu}
+#' @author Adam Loy \email{loyad01@@gmail.com}
 #' @references 
 #' Hilden-Minton, J. A. (1995) 
 #' Mulilevel Diagnostics for Mixed and Hierarchical Linear Models,

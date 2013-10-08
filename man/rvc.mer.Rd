@@ -48,7 +48,7 @@
   (RVC) of hierarchical linear models fit via \code{lmer}.
 }
 \author{
-  Adam Loy \email{aloy@iastate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \references{
   Dillane, D. (2005) Deletion Diagnostics for the Linear

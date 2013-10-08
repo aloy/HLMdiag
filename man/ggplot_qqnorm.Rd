@@ -24,7 +24,7 @@
   of \code{qqnorm} and \code{qqline}.
 }
 \author{
-  Adam Loy \email{aloy@istate.edu}
+  Adam Loy \email{loyad01@gmail.com}
 }
 \seealso{
   \code{\link{qqnorm}}, \code{\link{qqline}}

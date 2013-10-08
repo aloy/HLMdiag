@@ -1,14 +1,14 @@
 #' @export
-rotate_ranef <- function(object, ...){
-  UseMethod("rotate_ranef", object)
+rotate_ranef <- function(.mod, ...){
+  UseMethod("rotate_ranef", .mod)
 }
 
 #' @export
 #' @rdname rotate_ranef.mer
 #' @method rotate_ranef default
-rotate_ranef.default <- function(object, ...){
+rotate_ranef.default <- function(.mod, ...){
   stop(paste("there is no rotate_ranef() method for objects of class",
-             paste(class(object), collapse=", ")))
+             paste(class(.mod), collapse=", ")))
 }
 
 #' Calculate s-dimensional rotated random effects
@@ -27,7 +27,9 @@ rotate_ranef.default <- function(object, ...){
 #' @param s the dimension of the subspace of interest.
 #' @param .varimax if \code{.varimax = TRUE} than the raw varimax rotation 
 #'   will be applied to the resulting rotation.
-rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE) {
+#' @param ... do not use
+#' @author Adam Loy \email{loyad01@@gmail.com}
+rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@y
   X <- getME(.mod, "X")
   Z <- BlockZ(.mod)
@@ -49,7 +51,8 @@ rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE) {
   XVXinv <- solve( t(X) %*% Vinv %*% X )
   VinvX  <- Vinv %*% X
   M      <- VinvX %*% XVXinv %*% t(VinvX)
-  P      <- cxxmatsub(as.matrix(Vinv), as.matrix(M))
+  P      <- .Call("cxxmatsub", BB = as.matrix(Vinv), CC = as.matrix(M), 
+                  PACKAGE = "HLMdiag")
   
   betahat <- solve(t(X) %*% Vinv %*% X) %*% t(X) %*% Vinv %*% y
   mr <- y - X %*% betahat
@@ -75,7 +78,7 @@ rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE) {
 #' @rdname rotate_ranef.mer
 #' @method rotate_ranef lmerMod
 #' @S3method rotate_ranef lmerMod
-rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE) {
+rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@resp$y
   X <- getME(.mod, "X")
   Z <- getME(.mod, "Z")
@@ -96,7 +99,8 @@ rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE) {
   XVXinv <- solve( t(X) %*% Vinv %*% X )
   VinvX  <- Vinv %*% X
   M      <- VinvX %*% XVXinv %*% t(VinvX)
-  P      <- cxxmatsub(as.matrix(Vinv), as.matrix(M))
+  P      <- .Call("cxxmatsub", BB = as.matrix(Vinv), CC = as.matrix(M), 
+                  PACKAGE = "HLMdiag")
   
   betahat <- solve(t(X) %*% Vinv %*% X) %*% t(X) %*% Vinv %*% y
   mr <- y - X %*% betahat
@@ -138,3 +142,50 @@ mcrotate <- function(A, B, s) {
   
   return(W)
 }
+
+
+# #' @export
+# #' @rdname rotate_ranef.mer
+# #' @method rotate_ranef lme
+# #' @S3method rotate_ranef lme
+# rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
+#   y <- .mod@resp$y
+#   X <- getME(.mod, "X")
+#   Z <- getME(.mod, "Z")
+#   
+#   n <- nrow(X)
+#   p <- ncol(X)
+#   ngrps <- unname( summary(.mod)@ngrps )
+#   
+#   vc <- VarCorr(.mod)
+#   Di <- bdiag( VarCorr(.mod) ) / (unname(attr(vc, "sc")))^2
+#   D  <- kronecker( Diagonal(ngrps), Di )
+#   
+#   zdzt <- crossprod( getME(.mod, "A") )
+#   V  <- Diagonal( n ) + zdzt
+#   V.chol <- chol( V )
+#   Vinv  <- chol2inv( V.chol ) 
+#   
+#   XVXinv <- solve( t(X) %*% Vinv %*% X )
+#   VinvX  <- Vinv %*% X
+#   M      <- VinvX %*% XVXinv %*% t(VinvX)
+#   P      <- cxxmatsub(as.matrix(Vinv), as.matrix(M))
+#   
+#   betahat <- solve(t(X) %*% Vinv %*% X) %*% t(X) %*% Vinv %*% y
+#   mr <- y - X %*% betahat
+#   
+#   bvec <- D %*% t(Z) %*% Vinv %*% mr
+#   
+#   pzdl <- P %*% Z %*% D %*% .L
+#   A <- crossprod( pzdl )
+#   B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
+#   W <- try( mcrotate(A, B, s) )
+#   if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
+#   
+#   if( .varimax == TRUE) {
+#     W <- try( varimax(W, normalize = FALSE)$loadings )
+#     if( class(W) == "try-error" ) W <- NA 
+#   }
+#   
+#   return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
+# }
