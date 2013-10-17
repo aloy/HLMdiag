@@ -109,7 +109,7 @@ group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1,
 	
 	# Defining the quantiles of interest for each group
 	group.quant <- data.frame(x = x, group = group)
-	group.quant <- ddply(group.quant, .(group), transform, p = HLMdiag:::.sampleQuantiles(x), yp = sort(x))
+	group.quant <- ddply(group.quant, .(group), transform, p = .sampleQuantiles(x), yp = sort(x))
 	group.quant <- ddply(group.quant, .(group), transform, theory = qnorm(p = p))
 	
 	# Plotting
