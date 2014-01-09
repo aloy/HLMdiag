@@ -54,6 +54,7 @@ varcomp.mer <- function(object) {
   return(res)
 }
 
+
 # Checking if matrix is diagonal 
 # @param mat a matrix
 isDiagonal <- function(mat, tol = 1e-10) {
@@ -114,7 +115,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
   ZDZt <- sig0^2 * crossprod( getME(model, "A") )
   R    <- Diagonal( n = n, x = sig0^2 )
-  V    <- Diagonal(n) + ZDZt
+  V    <- R + ZDZt
   
   # Inverting V
   V.chol <- chol( V )
@@ -130,6 +131,43 @@ isDiagonal <- function(mat, tol = 1e-10) {
   return( list(Y = Y, X = X, n = n, ngrps = ngrps, flist = flist,
                sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
                M = M, P = P) )
+  
+}
+
+# Extracting/calculating key matrices from lme object 
+# @param model an lme object
+.lme_matrices <- function(model) {
+  design.info <- extract.lmeDesign(model)
+  
+  Y <- design.info$y
+  X <- design.info$X
+  Z <- Matrix( design.info$Z )
+  
+  D <- Matrix( design.info$Vr )
+  
+  n <- length(Y)
+  
+  flist <- model$groups
+  ngrps <- sapply(flist, function(x) length(levels(x)))
+  
+  # Constructing V = Cov(Y)
+  sig0 <- model$sigma
+  V    <- sig0^2 * .extractV.lme(model)
+  
+  # Inverting V
+  V.chol <- chol( V )
+  Vinv   <- chol2inv( V.chol )
+  
+  # Calculating P
+  XVXinv <- solve( t(X) %*% Vinv %*% X )
+  VinvX  <- Vinv %*% X
+  M      <- VinvX %*% XVXinv %*% t(VinvX)
+  P      <- .Call("cxxmatsub", as.matrix(Vinv), as.matrix(M), 
+                  PACKAGE = "HLMdiag")
+  
+  return( list(Y = Y, X = X, Z = Z, n = n, ngrps = ngrps, flist = flist,
+               sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
+               M = M, P = P, D = D) )
   
 }
 
@@ -156,12 +194,18 @@ se.ranef <- function (object)
 
 # Checking whether an LMM is nested
 isNestedModel <- function(object) {
-  fl   <- object@flist
-  fnms <- names(fl) 
-  RVAL <- all(sapply(seq_along(fl)[-1], function(i) lme4::isNested(fl[[i-1]], fl[[i]])))
+  cl <- class(object)
+  if(cl == "lme") {
+    RVAL <- TRUE
+  } else {
+    fl   <- object@flist
+    fnms <- names(fl) 
+    RVAL <- all(sapply(seq_along(fl)[-1], function(i) lme4::isNested(fl[[i-1]], fl[[i]])))
+  }
   
   return(RVAL)
 }
+
 
 # Extract the residual covariance matrix from an lme object
 .extractR.lme <- function(lme.fit) {

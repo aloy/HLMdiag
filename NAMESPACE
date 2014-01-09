@@ -11,6 +11,8 @@ import(reshape2)
 importFrom(stats, cooks.distance, covratio)
 importFrom(stats4, coef, confint, plot)
 importFrom(MASS, rlm)
+importFrom(RLRsim, extract.lmeDesign)
+importFrom(ape, varcomp)
 
 export(adjust_lmList)
 export(compare_eb_ls)
