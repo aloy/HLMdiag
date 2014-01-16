@@ -134,42 +134,42 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
 }
 
-# Extracting/calculating key matrices from lme object 
-# @param model an lme object
-.lme_matrices <- function(model) {
-  design.info <- extract.lmeDesign(model)
+# # Extracting/calculating key matrices from lme object 
+# # @param model an lme object
+# .lme_matrices <- function(model) {
+  # design.info <- extract.lmeDesign(model)
   
-  Y <- design.info$y
-  X <- design.info$X
-  Z <- Matrix( design.info$Z )
+  # Y <- design.info$y
+  # X <- design.info$X
+  # Z <- Matrix( design.info$Z )
   
-  D <- Matrix( design.info$Vr )
+  # D <- Matrix( design.info$Vr )
   
-  n <- length(Y)
+  # n <- length(Y)
   
-  flist <- model$groups
-  ngrps <- sapply(flist, function(x) length(levels(x)))
+  # flist <- model$groups
+  # ngrps <- sapply(flist, function(x) length(levels(x)))
   
-  # Constructing V = Cov(Y)
-  sig0 <- model$sigma
-  V    <- sig0^2 * .extractV.lme(model)
+  # # Constructing V = Cov(Y)
+  # sig0 <- model$sigma
+  # V    <- sig0^2 * .extractV.lme(model)
   
-  # Inverting V
-  V.chol <- chol( V )
-  Vinv   <- chol2inv( V.chol )
+  # # Inverting V
+  # V.chol <- chol( V )
+  # Vinv   <- chol2inv( V.chol )
   
-  # Calculating P
-  XVXinv <- solve( t(X) %*% Vinv %*% X )
-  VinvX  <- Vinv %*% X
-  M      <- VinvX %*% XVXinv %*% t(VinvX)
-  P      <- .Call("cxxmatsub", as.matrix(Vinv), as.matrix(M), 
-                  PACKAGE = "HLMdiag")
+  # # Calculating P
+  # XVXinv <- solve( t(X) %*% Vinv %*% X )
+  # VinvX  <- Vinv %*% X
+  # M      <- VinvX %*% XVXinv %*% t(VinvX)
+  # P      <- .Call("cxxmatsub", as.matrix(Vinv), as.matrix(M), 
+                  # PACKAGE = "HLMdiag")
   
-  return( list(Y = Y, X = X, Z = Z, n = n, ngrps = ngrps, flist = flist,
-               sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
-               M = M, P = P, D = D) )
+  # return( list(Y = Y, X = X, Z = Z, n = n, ngrps = ngrps, flist = flist,
+               # sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
+               # M = M, P = P, D = D) )
   
-}
+# }
 
 # 'se.ranef' is a copy of function in arm package. This is copied to ensure
 # that is available to all users. This should not be exported.
@@ -207,52 +207,52 @@ isNestedModel <- function(object) {
 }
 
 
-# Extract the residual covariance matrix from an lme object
-.extractR.lme <- function(lme.fit) {
-  n <- length( getResponse(lme.fit) )
-  if (length(lme.fit$group) > 1) {
-    stop("not implemented for multiple levels of nesting")
-  } 
-  else{
-    ugroups <- unique(lme.fit$groups[[1]])
-    if (!is.null(lme.fit$modelStruct$corStruct)) {
-      V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
-    }
-    else V <- Diagonal(n)
-  }
-  if (!is.null(lme.fit$modelStruct$varStruct)) 
-    sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
-  else sds <- rep(1, n)
-  sds <- lme.fit$sigma * sds
-  cond.var <- t(V * sds) * sds
+# # Extract the residual covariance matrix from an lme object
+# .extractR.lme <- function(lme.fit) {
+  # n <- length( getResponse(lme.fit) )
+  # if (length(lme.fit$group) > 1) {
+    # stop("not implemented for multiple levels of nesting")
+  # } 
+  # else{
+    # ugroups <- unique(lme.fit$groups[[1]])
+    # if (!is.null(lme.fit$modelStruct$corStruct)) {
+      # V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
+    # }
+    # else V <- Diagonal(n)
+  # }
+  # if (!is.null(lme.fit$modelStruct$varStruct)) 
+    # sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
+  # else sds <- rep(1, n)
+  # sds <- lme.fit$sigma * sds
+  # cond.var <- t(V * sds) * sds
   
-  return(cond.var / lme.fit$sigma^2)
-}
+  # return(cond.var / lme.fit$sigma^2)
+# }
 
-# Extract the marginal covariance matrix, V, for an lme object
-.extractV.lme <- function(lme.fit) {
-  n <- length( getResponse(lme.fit) )
-  if (length(lme.fit$group) > 1) {
-    stop("not implemented for multiple levels of nesting")
-  } 
-  else{
-    ugroups <- unique(lme.fit$groups[[1]])
-    if (!is.null(lme.fit$modelStruct$corStruct)) {
-      V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
-    }
-    else V <- Diagonal(n)
-  }
-  if (!is.null(lme.fit$modelStruct$varStruct)) 
-    sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
-  else sds <- rep(1, n)
-  #   sds <- lme.fit$sigma * sds
-  cond.var <- t(V * sds) * sds
+# # Extract the marginal covariance matrix, V, for an lme object
+# .extractV.lme <- function(lme.fit) {
+  # n <- length( getResponse(lme.fit) )
+  # if (length(lme.fit$group) > 1) {
+    # stop("not implemented for multiple levels of nesting")
+  # } 
+  # else{
+    # ugroups <- unique(lme.fit$groups[[1]])
+    # if (!is.null(lme.fit$modelStruct$corStruct)) {
+      # V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
+    # }
+    # else V <- Diagonal(n)
+  # }
+  # if (!is.null(lme.fit$modelStruct$varStruct)) 
+    # sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
+  # else sds <- rep(1, n)
+  # #   sds <- lme.fit$sigma * sds
+  # cond.var <- t(V * sds) * sds
   
-  mod.mats <- extract.lmeDesign(lme.fit)
-  D <- Matrix( mod.mats$Vr )
-  Z <- Matrix( mod.mats$Z )
+  # mod.mats <- extract.lmeDesign(lme.fit)
+  # D <- Matrix( mod.mats$Vr )
+  # Z <- Matrix( mod.mats$Z )
   
-  RES <- cond.var + Z %*% D %*% t(Z)
+  # RES <- cond.var + Z %*% D %*% t(Z)
   
-  return(RES)
-}
+  # return(RES)
+# }

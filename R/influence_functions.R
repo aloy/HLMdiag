@@ -457,75 +457,75 @@ cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
   return(res)
 }
 
-#' @export
-#' @rdname cooks.distance
-#' @method cooks.distance lme
-#' @S3method cooks.distance lme
-cooks.distance.lme <- function(model, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(model$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
-    }
-  }
-  if (any("nlme" == class(model))) 
-    stop("not implemented for \"nlme\" objects")
+# #' @export
+# #' @rdname cooks.distance
+# #' @method cooks.distance lme
+# #' @S3method cooks.distance lme
+# cooks.distance.lme <- function(model, group = NULL, delete = NULL, ...) {
+  # if(!is.null(group)) {
+    # if(!group %in% names(model$groups)) {
+      # stop(paste(group, "is not a valid grouping factor for this model."))
+    # }
+  # }
+  # if (any("nlme" == class(model))) 
+    # stop("not implemented for \"nlme\" objects")
   
-  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
+  # XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
   
-  # Extract key pieces of the model
-  mats <- .lme_matrices(model)
+  # # Extract key pieces of the model
+  # mats <- .lme_matrices(model)
   
-  betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  # betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
-  # Obtaining the building blocks
-  if(is.null(group) & is.null(delete)) {
-    calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
-                         Vinv_ = as.matrix(mats$Vinv), 
-                         XVXinv_ = as.matrix(mats$XVXinv), 
-                         beta_ = as.matrix(betaHat), PACKAGE = "HLMdiag")
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]]
-  }
+  # # Obtaining the building blocks
+  # if(is.null(group) & is.null(delete)) {
+    # calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
+                         # Vinv_ = as.matrix(mats$Vinv), 
+                         # XVXinv_ = as.matrix(mats$XVXinv), 
+                         # beta_ = as.matrix(betaHat), PACKAGE = "HLMdiag")
+    # res <- calc.cooksd[[1]]
+    # attr(res, "beta_cdd") <- calc.cooksd[[2]]
+  # }
   
-  else{
-    e <- with(mats, Y - X %*% betaHat)
+  # else{
+    # e <- with(mats, Y - X %*% betaHat)
     
-    if( !is.null(group) ){
-      grp.names <- unique( mats$flist[[group]] )
+    # if( !is.null(group) ){
+      # grp.names <- unique( mats$flist[[group]] )
       
-      if( is.null(delete) ){
-        del.index <- lapply(1:mats$ngrps[group], 
-                            function(x) {
-                              ind <- which(mats$flist[[group]] == grp.names[x]) - 1
-                            })
-      } else{
-        del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
-      }
-    } else{
-      del.index <- list( delete - 1 )
-    }
+      # if( is.null(delete) ){
+        # del.index <- lapply(1:mats$ngrps[group], 
+                            # function(x) {
+                              # ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            # })
+      # } else{
+        # del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      # }
+    # } else{
+      # del.index <- list( delete - 1 )
+    # }
     
-    calc.cooksd <- .Call("cooksdSubset", index = del.index, 
-                         X_ = as.matrix(mats$X), 
-                         P_ = as.matrix(mats$P), 
-                         Vinv_ = as.matrix(mats$Vinv), 
-                         XVXinv_ = as.matrix(mats$XVXinv), 
-                         e_ = as.numeric(e), PACKAGE = "HLMdiag")
+    # calc.cooksd <- .Call("cooksdSubset", index = del.index, 
+                         # X_ = as.matrix(mats$X), 
+                         # P_ = as.matrix(mats$P), 
+                         # Vinv_ = as.matrix(mats$Vinv), 
+                         # XVXinv_ = as.matrix(mats$XVXinv), 
+                         # e_ = as.numeric(e), PACKAGE = "HLMdiag")
     
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]] 
-  }
+    # res <- calc.cooksd[[1]]
+    # attr(res, "beta_cdd") <- calc.cooksd[[2]] 
+  # }
   
-  class(res) <- "fixef.dd"
-  return(res)
-}
+  # class(res) <- "fixef.dd"
+  # return(res)
+# }
 
-print.fixef.dd <- function(x, ...) {
-  attributes(x) <- NULL
-  print(x, ...)
-}
+# print.fixef.dd <- function(x, ...) {
+  # attributes(x) <- NULL
+  # print(x, ...)
+# }
 
-print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
+# print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 
 
 #' @export
@@ -650,55 +650,55 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 
 
 
-#' @export
-#' @rdname cooks.distance
-#' @method mdffits lme
-#' @S3method mdffits lme
-mdffits.lme <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(object$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
-    }
-  }
-  if (any("nlme" == class(object))) 
-    stop("not implemented for \"nlme\" objects")
+# #' @export
+# #' @rdname cooks.distance
+# #' @method mdffits lme
+# #' @S3method mdffits lme
+# mdffits.lme <- function(object, group = NULL, delete = NULL, ...) {
+  # if(!is.null(group)) {
+    # if(!group %in% names(object$groups)) {
+      # stop(paste(group, "is not a valid grouping factor for this model."))
+    # }
+  # }
+  # if (any("nlme" == class(object))) 
+    # stop("not implemented for \"nlme\" objects")
   
   
-  XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
+  # XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
   
-  # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  # # Extract key pieces of the model
+  # mats <- .lme_matrices(object)
   
-  betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
-  e <- with(mats, Y - X %*% betaHat)
+  # betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  # e <- with(mats, Y - X %*% betaHat)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  # if( !is.null(group) ){
+    # grp.names <- unique( mats$flist[[group]] )
     
-    if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
-                          function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
-                          })
-    } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
-    }
-  } else{
-    if( is.null(delete) ){
-      del.index <- split(0:(mats$n-1), 0:(mats$n-1))
-    } else { del.index <- list( delete - 1 ) }
-  }
+    # if( is.null(delete) ){
+      # del.index <- lapply(1:mats$ngrps[group], 
+                          # function(x) {
+                            # ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                          # })
+    # } else{
+      # del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+    # }
+  # } else{
+    # if( is.null(delete) ){
+      # del.index <- split(0:(mats$n-1), 0:(mats$n-1))
+    # } else { del.index <- list( delete - 1 ) }
+  # }
   
-  calc.mdffits <- .Call("mdffitsSubset", index = del.index, X_ = mats$X, 
-                        P_ = mats$P, Vinv_ = as.matrix(mats$Vinv), 
-                        XVXinv_ = as.matrix(mats$XVXinv), 
-                        e_ = as.numeric(e), PACKAGE = "HLMdiag")
-  res <- calc.mdffits[[1]]
-  attr(res, "beta_cdd") <- calc.mdffits[[2]] 
+  # calc.mdffits <- .Call("mdffitsSubset", index = del.index, X_ = mats$X, 
+                        # P_ = mats$P, Vinv_ = as.matrix(mats$Vinv), 
+                        # XVXinv_ = as.matrix(mats$XVXinv), 
+                        # e_ = as.numeric(e), PACKAGE = "HLMdiag")
+  # res <- calc.mdffits[[1]]
+  # attr(res, "beta_cdd") <- calc.mdffits[[2]] 
   
-  class(res) <- "fixef.dd"
-  return(res)
-}
+  # class(res) <- "fixef.dd"
+  # return(res)
+# }
 
 #' Influence on precision of fixed effects in HLMs
 #'
@@ -852,46 +852,46 @@ covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 }
 
 
-#'@export
-#'@rdname covratio
-#'@method covratio lme
-#'@S3method covratio lme
-covratio.lme <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(object$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
-    }
-  }
-  if (any("nlme" == class(object))) 
-    stop("not implemented for \"nlme\" objects")
+# #'@export
+# #'@rdname covratio
+# #'@method covratio lme
+# #'@S3method covratio lme
+# covratio.lme <- function(object, group = NULL, delete = NULL, ...) {
+  # if(!is.null(group)) {
+    # if(!group %in% names(object$groups)) {
+      # stop(paste(group, "is not a valid grouping factor for this model."))
+    # }
+  # }
+  # if (any("nlme" == class(object))) 
+    # stop("not implemented for \"nlme\" objects")
   
-  # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  # # Extract key pieces of the model
+  # mats <- .lme_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  # if( !is.null(group) ){
+    # grp.names <- unique( mats$flist[[group]] )
     
-    if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
-                          function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
-                          })
-    } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
-    }
-  } else{
-    if( is.null(delete) ){
-      del.index <- split(0:(mats$n-1), 0:(mats$n-1))
-    } else { del.index <- list( delete - 1 ) }
-  }
+    # if( is.null(delete) ){
+      # del.index <- lapply(1:mats$ngrps[group], 
+                          # function(x) {
+                            # ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                          # })
+    # } else{
+      # del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+    # }
+  # } else{
+    # if( is.null(delete) ){
+      # del.index <- split(0:(mats$n-1), 0:(mats$n-1))
+    # } else { del.index <- list( delete - 1 ) }
+  # }
   
-  res <- .Call("covratioCalc", index = del.index, X_ = mats$X, P_ = mats$P, 
-               Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
-               PACKAGE = "HLMdiag")
+  # res <- .Call("covratioCalc", index = del.index, X_ = mats$X, P_ = mats$P, 
+               # Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
+               # PACKAGE = "HLMdiag")
   
-  class(res) <- "vcov.dd"
-  return(res)
-}
+  # class(res) <- "vcov.dd"
+  # return(res)
+# }
 
 
 #'@export
@@ -997,45 +997,45 @@ covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 
 
 
-#'@export
-#'@rdname covratio
-#'@method covtrace lme
-#'@S3method covtrace lme
-covtrace.lme <- function(object, group = NULL, delete = NULL, ...) {
-    if(!is.null(group)) {
-      if(!group %in% names(object$groups)) {
-        stop(paste(group, "is not a valid grouping factor for this model."))
-      }
-    }
-    if (any("nlme" == class(object))) 
-      stop("not implemented for \"nlme\" objects")
+# #'@export
+# #'@rdname covratio
+# #'@method covtrace lme
+# #'@S3method covtrace lme
+# covtrace.lme <- function(object, group = NULL, delete = NULL, ...) {
+    # if(!is.null(group)) {
+      # if(!group %in% names(object$groups)) {
+        # stop(paste(group, "is not a valid grouping factor for this model."))
+      # }
+    # }
+    # if (any("nlme" == class(object))) 
+      # stop("not implemented for \"nlme\" objects")
   
-  # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  # # Extract key pieces of the model
+  # mats <- .lme_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  # if( !is.null(group) ){
+    # grp.names <- unique( mats$flist[[group]] )
     
-    if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
-                          function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
-                          })
-    } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
-    }
-  } else{
-    if( is.null(delete) ){
-      del.index <- split(0:(mats$n-1), 0:(mats$n-1))
-    } else { del.index <- list( delete - 1 ) }
-  }
+    # if( is.null(delete) ){
+      # del.index <- lapply(1:mats$ngrps[group], 
+                          # function(x) {
+                            # ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                          # })
+    # } else{
+      # del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+    # }
+  # } else{
+    # if( is.null(delete) ){
+      # del.index <- split(0:(mats$n-1), 0:(mats$n-1))
+    # } else { del.index <- list( delete - 1 ) }
+  # }
   
-  res <- .Call("covtraceCalc", index = del.index, X_ = mats$X, P_ = mats$P, 
-               Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
-               PACKAGE = "HLMdiag")
+  # res <- .Call("covtraceCalc", index = del.index, X_ = mats$X, P_ = mats$P, 
+               # Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
+               # PACKAGE = "HLMdiag")
   
-  return(res)
-}
+  # return(res)
+# }
 
 
 #' Relative variance change for HLMs
@@ -1089,72 +1089,72 @@ rvc.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   return( rvc(delete) )
 }
 
-#' @export
-#' @rdname rvc.mer
-#' @method rvc lme
-#' @S3method rvc lme
-rvc.lme <- function(object, group = NULL, delete = NULL, ...) {
-  delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
-  return( rvc(delete) )
-}
+# #' @export
+# #' @rdname rvc.mer
+# #' @method rvc lme
+# #' @S3method rvc lme
+# rvc.lme <- function(object, group = NULL, delete = NULL, ...) {
+  # delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
+  # return( rvc(delete) )
+# }
 
 
 
-#' @export
-#' @rdname leverage.mer
-#' @method leverage lme
-#' @S3method leverage lme
-leverage.lme <- function(object, level, ...) {
-  if(!isNestedModel(object)) {
-    stop("leverage.mer has not yet been implemented for models with 
-         crossed random effects")
-  }
-  if(!level %in% c( 1, names(object$groups) )) {
-    stop("level can only be 1 or a grouping factor from the fitted model.")
-  }
+# #' @export
+# #' @rdname leverage.mer
+# #' @method leverage lme
+# #' @S3method leverage lme
+# leverage.lme <- function(object, level, ...) {
+  # if(!isNestedModel(object)) {
+    # stop("leverage.mer has not yet been implemented for models with 
+         # crossed random effects")
+  # }
+  # if(!level %in% c( 1, names(object$groups) )) {
+    # stop("level can only be 1 or a grouping factor from the fitted model.")
+  # }
   
-  mats <- .lme_matrices(object)
+  # mats <- .lme_matrices(object)
   
-  X <- mats$X
-  # Z <- BlockZ(object)
+  # X <- mats$X
+  # # Z <- BlockZ(object)
   
-  n     <- nrow(X)
-  #  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
-  ngrps <- unname( summary(object)$ngrps )
+  # n     <- nrow(X)
+  # #  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
+  # ngrps <- unname( summary(object)$ngrps )
   
-  D <- mats$D
-  Z <- mats$Z
-  ZDZt <- object$sigma^2 * Z %*% D %*% t(Z)
+  # D <- mats$D
+  # Z <- mats$Z
+  # ZDZt <- object$sigma^2 * Z %*% D %*% t(Z)
   
-  Vinv   <- mats$Vinv
+  # Vinv   <- mats$Vinv
   
-  xvix.inv <- mats$XVXinv
+  # xvix.inv <- mats$XVXinv
   
-  H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
-  H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
+  # H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
+  # H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
   
-  diag.H1 <- diag(H1)
-  diag.H2 <- diag(H2)
-  diag.H2.uc <- diag(ZDZt)
+  # diag.H1 <- diag(H1)
+  # diag.H2 <- diag(H2)
+  # diag.H2.uc <- diag(ZDZt)
   
-  if(level == 1) {
-    lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 
-                       ranef =  diag.H2, ranef.uc = diag.H2.uc)
-    #     class(lev1) <- "leverage"
-  } else {
-    flist   <- data.frame( object$groups[[level]] )
+  # if(level == 1) {
+    # lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 
+                       # ranef =  diag.H2, ranef.uc = diag.H2.uc)
+    # #     class(lev1) <- "leverage"
+  # } else {
+    # flist   <- data.frame( object$groups[[level]] )
     
-    grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
-    grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
-    grp.lev.ranef.uc <- aggregate(diag.H2.uc, flist, mean)[,2]
+    # grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
+    # grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
+    # grp.lev.ranef.uc <- aggregate(diag.H2.uc, flist, mean)[,2]
     
-    grp.lev <- data.frame( overall = grp.lev.fixef + grp.lev.ranef,
-                           fixef = grp.lev.fixef, 
-                           ranef = grp.lev.ranef,
-                           ranef.uc = grp.lev.ranef.uc)
-    #     class(grp.lev) <- "leverage"
-  }
+    # grp.lev <- data.frame( overall = grp.lev.fixef + grp.lev.ranef,
+                           # fixef = grp.lev.fixef, 
+                           # ranef = grp.lev.ranef,
+                           # ranef.uc = grp.lev.ranef.uc)
+    # #     class(grp.lev) <- "leverage"
+  # }
   
-  if(level == 1) return(lev1)
-  if(level != 1) return(grp.lev)
-  }
+  # if(level == 1) return(lev1)
+  # if(level != 1) return(grp.lev)
+  # }

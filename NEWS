@@ -1,3 +1,8 @@
+Version 0.2.4
+=============
+* Added citation for the JSS paper
+* Fixed a bug with the calculation of Cook's distance
+
 Version 0.2.3
 =============
 * Added a function to calculate rotated random effects

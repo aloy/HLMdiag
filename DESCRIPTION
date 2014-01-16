@@ -1,8 +1,8 @@
 Package: HLMdiag
 Type: Package
 Title: Diagnostic tools for hierarchical (multilevel) linear models
-Version: 0.2.3
-Date: 2013-10-17
+Version: 0.2.4
+Date: 2014-1-16
 Author: Adam Loy <loyad01@gmail.com>
 Maintainer: Adam Loy <loyad01@gmail.com>
 Description: A suite of diagnostic tools for hierarchical
@@ -12,7 +12,7 @@ Description: A suite of diagnostic tools for hierarchical
     convenience functions and graphics for residual analysis. The package
     assumes that models were fit using the lme4 package.
 Depends:
-    R (>= 2.15.0)
+    R (>= 2.15.0), lme4 (>= 1.0)
 Imports:
     ggplot2 (>= 0.9.2),
     stats,
@@ -26,8 +26,6 @@ LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
     WWGbook,
-    lme4 (>= 1.0),
-    nlme
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
