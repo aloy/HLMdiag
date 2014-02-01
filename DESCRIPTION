@@ -1,8 +1,8 @@
 Package: HLMdiag
 Type: Package
 Title: Diagnostic tools for hierarchical (multilevel) linear models
-Version: 0.2.4
-Date: 2014-1-16
+Version: 0.2.5
+Date: 2014-1-30
 Author: Adam Loy <loyad01@gmail.com>
 Maintainer: Adam Loy <loyad01@gmail.com>
 Description: A suite of diagnostic tools for hierarchical
@@ -21,11 +21,12 @@ Imports:
     plyr,
     reshape2,
     MASS,
-    Matrix
+    Matrix,
+    Rcpp
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
-    WWGbook,
+    WWGbook
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
