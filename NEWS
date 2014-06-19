@@ -1,3 +1,17 @@
+Version 0.3.0
+=============
+DEVELOPMENT
+* Influence diagnostics in HLMdiag 0.3.0 are available for modles fit using
+the `lmer` function in lme4` or the `lme` function in `nlme`.
+
+NEW FEATURES
+
+OTHER USER-VISIBLE CHANGES
+
+Version 0.2.5
+=============
+* Fixed a compatibility issue with Rcpp
+
 Version 0.2.4
 =============
 * Added citation for the JSS paper
