@@ -144,43 +144,43 @@ mcrotate <- function(A, B, s) {
 }
 
 
-# #' @export
-# #' @rdname rotate_ranef.mer
-# #' @method rotate_ranef lme
-# #' @S3method rotate_ranef lme
-# rotate_ranef.lme <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
-  # design.info <- extract.lmeDesign(.mod)
+#' @export
+#' @rdname rotate_ranef.mer
+#' @method rotate_ranef lme
+#' @S3method rotate_ranef lme
+rotate_ranef.lme <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
+  design.info <- extract.lmeDesign(.mod)
   
-  # y <- design.info$y
-  # X <- design.info$X
-  # Z <- Matrix( design.info$Z )
-  # D <- Matrix( design.info$Vr )
+  y <- design.info$y
+  X <- design.info$X
+  Z <- Matrix( design.info$Z )
+  D <- Matrix( design.info$Vr )
   
-  # V  <- .extractV.lme( .mod )
-  # V.chol <- chol( V )
-  # Vinv  <- chol2inv( V.chol ) 
+  V  <- .extractV.lme( .mod )
+  V.chol <- chol( V )
+  Vinv  <- chol2inv( V.chol ) 
   
-  # XVXinv <- solve( t(X) %*% Vinv %*% X )
-  # VinvX  <- Vinv %*% X
-  # M      <- VinvX %*% XVXinv %*% t(VinvX)
-  # P      <- .Call("cxxmatsub", BB = as.matrix(Vinv), CC = as.matrix(M), 
-                  # PACKAGE = "HLMdiag")
+  XVXinv <- solve( t(X) %*% Vinv %*% X )
+  VinvX  <- Vinv %*% X
+  M      <- VinvX %*% XVXinv %*% t(VinvX)
+  P      <- .Call("cxxmatsub", BB = as.matrix(Vinv), CC = as.matrix(M), 
+                  PACKAGE = "HLMdiag")
   
-  # betahat <- solve(t(X) %*% Vinv %*% X) %*% t(X) %*% Vinv %*% y
-  # mr <- y - X %*% betahat
+  betahat <- solve(t(X) %*% Vinv %*% X) %*% t(X) %*% Vinv %*% y
+  mr <- y - X %*% betahat
   
-  # bvec <- D %*% t(Z) %*% Vinv %*% mr
+  bvec <- D %*% t(Z) %*% Vinv %*% mr
   
-  # pzdl <- P %*% Z %*% D %*% .L
-  # A <- crossprod( pzdl )
-  # B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
-  # W <- try( mcrotate(A, B, s) )
-  # if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
+  pzdl <- P %*% Z %*% D %*% .L
+  A <- crossprod( pzdl )
+  B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
+  W <- try( mcrotate(A, B, s) )
+  if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
   
-  # if( .varimax == TRUE) {
-    # W <- try( varimax(W, normalize = FALSE)$loadings )
-    # if( class(W) == "try-error" ) W <- NA 
-  # }
+  if( .varimax == TRUE) {
+    W <- try( varimax(W, normalize = FALSE)$loadings )
+    if( class(W) == "try-error" ) W <- NA 
+  }
   
-  # return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
-# }
+  return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
+}
