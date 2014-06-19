@@ -1,16 +1,3 @@
-#' Calculating quantiles
-#'
-#' This function will summarize the quantiles that are found within the
-#' data vector provided.
-#'
-#' @param x a numeric vector
-#' @author Adam Loy \email{loyad01@@gmail.com}
-.sampleQuantiles <- function(x){
-	i <- 1:length(x)
-	p <- (i - .5)/length(x)
-	return(p)
-}
-
 #' Constructing a normal Q-Q plot
 #'
 #' This function will construct a normal Q-Q plot within the
@@ -29,7 +16,7 @@
 #' @keywords hplot
 #' @seealso \code{\link{qqnorm}}, \code{\link{qqline}}
 ggplot_qqnorm <- function(x, line = NULL, ...){
-  p <- .sampleQuantiles(x)
+  p <- ppoints(x)
   theory <- qnorm(p = p)
   yp <- sort(x)
   ret <- qplot(x = theory, y = yp, xlab = "Theoretical Quantiles", 
@@ -96,7 +83,7 @@ group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1,
 		}
 		if(line == "rlm"){
 			qq.coefs <- lapply(qq.list, function(j){
-				p <- .sampleQuantiles(j)
+				p <- ppoints(j)
 				theory <- qnorm(p = p)
 				yp <- sort(j)
 				coef(rlm(yp ~ theory))
