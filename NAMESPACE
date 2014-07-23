@@ -44,6 +44,7 @@ exportMethods("coef", "confint", "plot", "show")
 
 S3method(rotate_ranef, mer)
 S3method(rotate_ranef, lmerMod)
+S3method(rotate_ranef, lme)
 S3method(HLMresid, mer)
 S3method(HLMresid, lmerMod)
 S3method(LSresids, mer)

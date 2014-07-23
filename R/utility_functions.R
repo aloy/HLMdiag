@@ -248,7 +248,7 @@ isNestedModel <- function(object) {
   #   sds <- lme.fit$sigma * sds
   cond.var <- t(V * sds) * sds
   
-  mod.mats <- extract.lmeDesign(lme.fit)
+  mod.mats <- .extract.lmeDesign(lme.fit)
   D <- Matrix( mod.mats$Vr )
   Z <- Matrix( mod.mats$Z )
   
