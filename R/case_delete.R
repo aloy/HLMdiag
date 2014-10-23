@@ -151,7 +151,9 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
     if( is.null(delete) ){
       data.delete <- split(model@frame, model@frame[, group])
       data.delete <- lapply(data.delete, function(df){
-        data.delete[[ unique( df[, group ] ) ]] <- NULL
+        index <- unique( df[, group ] )
+        if(class(index) != "character") index <- as.character(index)
+        data.delete[[ index ]] <- NULL
         do.call('rbind', data.delete)
       })
       
@@ -339,7 +341,9 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
     if( is.null(delete) ){
       data.delete <- split(model@frame, model@frame[, group])
       data.delete <- lapply(data.delete, function(df){
-        data.delete[[ unique( df[, group ] ) ]] <- NULL
+        index <- unique( df[, group ] )
+        if(class(index) != "character") index <- as.character(index)
+        data.delete[[ index ]] <- NULL
         do.call('rbind', data.delete)
       })
       

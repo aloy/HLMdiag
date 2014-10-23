@@ -1,12 +1,23 @@
 Version 0.3.0
 =============
 DEVELOPMENT
-* Influence diagnostics in HLMdiag 0.3.0 are available for modles fit using
+
+* Influence diagnostics in HLMdiag 0.3.0 are available for models fit using
 the `lmer` function in lme4` or the `lme` function in `nlme`.
+* HLMdiag no longer loads lme4 automatically (see above for the reason).
+* 
 
 NEW FEATURES
 
-OTHER USER-VISIBLE CHANGES
+* The `rotate_ranef` function has been added. This function rotates the random effects
+in an effort to find the least confounded residuals for distributional assessment.
+
+BUG FIXES
+
+* `case_delete` was fixed so that numeric group labels work properly, which fixes an issue
+with `rvc`.
+* Fixed an issue with `group_qqnorm`, by using `ppoints` rather than `.SampleQuantiles`.
+
 
 Version 0.2.5
 =============
