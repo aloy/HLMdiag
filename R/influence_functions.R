@@ -1135,7 +1135,7 @@ leverage.lme <- function(object, level, ...) {
   
   diag.H1 <- diag(H1)
   diag.H2 <- diag(H2)
-  diag.H2.uc <- diag(ZDZt)
+  diag.H2.uc <- diag(ZDZt) / object$sigma^2
   
   if(level == 1) {
     lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 

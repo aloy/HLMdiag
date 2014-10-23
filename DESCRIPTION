@@ -22,7 +22,8 @@ Imports:
     reshape2,
     MASS,
     Matrix,
-    Rcpp
+    Rcpp,
+    RLRsim
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
