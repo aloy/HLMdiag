@@ -29,6 +29,10 @@ rotate_ranef.default <- function(.mod, ...){
 #'   will be applied to the resulting rotation.
 #' @param ... do not use
 #' @author Adam Loy \email{loyad01@@gmail.com}
+#' @references
+#' Loy, A. & Hofmann, H. (in press). Are you Normal? 
+#' The Problem of Confounded Residual Structures in Hierarchical Linear Models.
+#' \emph{Journal of Computational and Graphical Statistics}.
 rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@y
   X <- getME(.mod, "X")
