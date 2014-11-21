@@ -71,8 +71,11 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
 	
 		# creating a data frame of the residuals, fitted values, and model frames
 		ls.data <- lapply(ls.models, model.frame)
+		res.data <- do.call('rbind', ls.data)
 		
-		row.order <- as.numeric(unlist(lapply(ls.data, function(x) row.names(x))))
+		row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
+
+# 		row.order <- as.numeric(unlist(lapply(ls.data, function(x) row.names(x))))
 		
 		return.df <- data.frame(LS.resid = unlist(ls.residuals), 
                             fitted = unlist(ls.fitted))
@@ -95,9 +98,10 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
       return.df <- cbind(return.df, std.resid = ls.rstandard)
 		}
 		
-		return.df <- return.df[order(row.order),]
+# 		return.df <- return.df[order(row.order),]
 		return.df <- cbind(data, return.df)
-		
+    rownames(return.df) <- row.order
+
 		return(return.df)
 	}
 	
@@ -203,8 +207,9 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     
     # creating a data frame of the residuals, fitted values, and model frames
     ls.data <- lapply(ls.models, model.frame)
+    res.data <- do.call('rbind', ls.data)
     
-    row.order <- as.numeric(unlist(lapply(ls.data, function(x) row.names(x))))
+    row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
     
     return.df <- data.frame(LS.resid = unlist(ls.residuals), 
                             fitted = unlist(ls.fitted))
@@ -227,8 +232,8 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       return.df <- cbind(return.df, std.resid = ls.rstandard)
     }
     
-    return.df <- return.df[order(row.order),]
-    return.df <- cbind(data, return.df)
+    return.df <- cbind(res.data, return.df)
+    rownames(return.df) <- row.order
     
     return(return.df)
   }

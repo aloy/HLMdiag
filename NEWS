@@ -14,7 +14,7 @@ effects in an effort to find the least confounded residuals for distributional
 assessment.
 
 BUG FIXES
-
+* `LSresids` was fixed for an issue with the order of the resulting data frame.
 * `case_delete` was fixed so that numeric group labels work properly, which fixes an issue
 with `rvc`.
 * Fixed an issue with `group_qqnorm`, by using `ppoints` rather than `.SampleQuantiles`.
