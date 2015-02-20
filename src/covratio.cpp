@@ -10,7 +10,7 @@ extern "C" SEXP covratioCalc(SEXP index, SEXP X_, SEXP P_,
 	
 	arma::mat Xt = trans(X);
 	
-	int n = grpInd.size(), p = X.n_cols;
+	int n = grpInd.size();
 	int ii;
 	arma::mat Pa, XNaXinv;
 	Rcpp::NumericVector covratio ( n );
