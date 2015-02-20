@@ -4,7 +4,6 @@ importFrom(ggplot2, qplot, geom_boxplot, geom_point, theme, coord_flip,
            geom_hline, geom_text, geom_abline, aes, ggplot, geom_line, 
           geom_errorbar, facet_wrap, geom_smooth, xlab, ylab)
 import(Matrix)
-import(lme4)
 import(methods)
 import(plyr)
 import(reshape2)
