@@ -376,4 +376,4 @@ lmList <- function (formula, data, family, subset, weights, na.action, offset, p
             }
             if (missing(pool)) pool <- TRUE
             new("lmList", val, call = mCall, pool = pool)
-          })
+          }
