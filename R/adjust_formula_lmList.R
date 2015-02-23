@@ -333,10 +333,11 @@ modelFormula <- function(form)
 }
 
 # To ensure compatibility across the lme4 development versions
-setMethod("lmList", signature(formula = "formula", data = "data.frame"),
-          function(formula, data, family, subset, weights,
-                   na.action, offset, pool, ...)
-          {
+# setMethod("lmList", signature(formula = "formula", data = "data.frame"),
+#           function(formula, data, family, subset, weights,
+#                    na.action, offset, pool, ...)
+
+lmList <- function (formula, data, family, subset, weights, na.action, offset, pool, ...) {
             mCall <- mf <- match.call()           
             m <- match(c("family", "data", "subset", "weights",
                          "na.action", "offset"), names(mf), 0)
