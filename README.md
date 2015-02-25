@@ -22,4 +22,4 @@ If you would like to download the development version of `HLMdiag`, I would reco
 
     # install.packages("devtools")
     library(devtools)
-    install_github("HLMdiag", username = "aloy")
+    install_github("aloy/HLMdiag")
