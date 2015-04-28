@@ -280,7 +280,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
   
   type <- match.arg(type) #default is "both"
   if( is.null(group) ){ # SINGLE CASE DELETION DIAGNOSTICS
-    n <- model@dims[["n"]]
+    n <- getME(model, "n")
     modframe <- model@frame
     
     if( is.null(delete) ) {
