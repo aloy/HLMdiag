@@ -18,6 +18,7 @@ BUG FIXES
 * `case_delete` was fixed so that numeric group labels work properly, which fixes an issue
 with `rvc`.
 * Fixed an issue with `group_qqnorm`, by using `ppoints` rather than `.SampleQuantiles`.
+* Fixed an issue with `case_delete.lmerMod`, to use the `getME()` function to extract `n`.
 
 
 Version 0.2.5
