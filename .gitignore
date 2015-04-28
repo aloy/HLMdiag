@@ -32,3 +32,7 @@
 .Rproj.user
 
 *.history
+
+*.o
+
+src/HLMdiag.so
