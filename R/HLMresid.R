@@ -129,7 +129,7 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
       V      <- R + ZDZt
       V.chol <- chol( V )
       
-      Lt <- solve(t(chol(V.chol)))
+      Lt <- solve(t(V.chol))
       
       return(as.numeric(Lt %*% mr))
       
@@ -199,7 +199,7 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
       V      <- R + ZDZt
       V.chol <- chol( V )
       
-      Lt <- solve(t(chol(V.chol)))
+      Lt <- solve(t(V.chol))
       
       return(as.numeric(Lt %*% mr))
       
