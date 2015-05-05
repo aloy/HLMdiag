@@ -19,6 +19,7 @@ BUG FIXES
 with `rvc`.
 * Fixed an issue with `group_qqnorm`, by using `ppoints` rather than `.SampleQuantiles`.
 * Fixed an issue with `case_delete.lmerMod`, to use the `getME()` function to extract `n`.
+* A bug in the calculation of the Cholesky residuals was fixed (thanks to Harry Hiemstra for reporting the bug and the fix)
 
 
 Version 0.2.5
