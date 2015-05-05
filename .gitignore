@@ -36,3 +36,5 @@
 *.o
 
 src/HLMdiag.so
+
+.RData

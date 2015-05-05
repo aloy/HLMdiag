@@ -128,9 +128,8 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
       R      <- Diagonal( n = n, x = sig0^2 )
       V      <- R + ZDZt
       V.chol <- chol( V )
-      Vinv   <- chol2inv( V.chol )
       
-      Lt <- solve(t(chol(Vinv)))
+      Lt <- solve(t(chol(V.chol)))
       
       return(as.numeric(Lt %*% mr))
       
@@ -199,9 +198,8 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
       R      <- Diagonal( n = n, x = sig0^2 )
       V      <- R + ZDZt
       V.chol <- chol( V )
-      Vinv   <- chol2inv( V.chol )
       
-      Lt <- solve(t(chol(Vinv)))
+      Lt <- solve(t(chol(V.chol)))
       
       return(as.numeric(Lt %*% mr))
       
