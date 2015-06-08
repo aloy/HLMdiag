@@ -138,7 +138,10 @@ pooledSD <- function(x, ...)
     val
 }
 
-
+#' @export
+adjust_lmList <- function(object, data, pool){
+  UseMethod("adjust_lmList", object)
+}
 
 
 #'Fitting Common Models via \code{lm}
@@ -166,20 +169,21 @@ pooledSD <- function(x, ...)
 #' sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam)
 #' confint(sepLM)
 #'
-adjust_lmList <- function(formula, data, pool){
-	options(show.error.messages = FALSE)
-	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
-	options(show.error.messages = TRUE)
+adjust_lmList.formula <- function(object, data, pool){
+# 	options(show.error.messages = FALSE)
+# 	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
+  lmList_result <- lmList(formula = object, data = data)
+#   options(show.error.messages = TRUE)
 	orig_names <- names(lmList_result)
 	check_results <- unlist(lapply(lmList_result, is.null))
-	form <- formula(formula)
+	form <- formula(object)
 	g <- deparse(form[[3]][[3]]) 
 	ngroups <- length(unique(data[,g]))
 	
 	if(sum(check_results) != 0){ #return(lmList_result)
 	
 	#else{
-		new_formulas <- adjust_formula_lmList(formula, data)
+		new_formulas <- adjust_formula_lmList(object, data)
 		problem_cases <- as.numeric(which(check_results == TRUE))
 		#print(problem_cases)
 		split_data <- split(data, data[,g])
@@ -189,54 +193,58 @@ adjust_lmList <- function(formula, data, pool){
 		}
 		
 	}
-	#class(lmList_result) <- "adjust_lmList"
+	class(lmList_result) <- "adjust_lmList"
 	if(missing(pool)) pool <- TRUE
-	lmList_result <- new("adjust_lmList", lmList_result, call = match.call(), pool = pool)
+	#lmList_result <- new("adjust_lmList", lmList_result, call = match.call(), pool = pool)
 	attr(lmList_result, "names") <- orig_names
+  attr(lmList_result,"call") <- match.call()
 	lmList_result
 }
 
 
-setClass("adjust_lmList", representation(call = "call", pool = "logical"), contains = "list")
+# setClass("adjust_lmList", representation(call = "call", pool = "logical"), contains = "list")
+# 
+# setClass("adjust_lmList.confint", contains = "array")
 
-setClass("adjust_lmList.confint", contains = "array")
 
+# #' @export
+# setMethod("adjust_lmList", signature(formula = "formula", data = "data.frame"),
+# 	function(formula, data, pool){
+# 	  #   options(show.error.messages = FALSE)
+# 	  # 	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
+# 	  lmList_result <- lmList(formula = formula, data = data)
+# 	  #   options(show.error.messages = TRUE)
+# 	  orig_names <- names(lmList_result)
+# 		check_results <- unlist(lapply(lmList_result, is.null))
+# 		form <- formula(formula)
+# 		g <- deparse(form[[3]][[3]]) 
+# 		ngroups <- length(unique(data[,g]))
+# 	
+# 		if(sum(check_results) != 0){ #return(lmList_result)
+# 	
+# 		#else{
+# 			new_formulas <- adjust_formula_lmList(formula, data)
+# 			problem_cases <- as.numeric(which(check_results == TRUE))
+# 			#print(problem_cases)
+# 			split_data <- split(data, data[,g])
+# 			
+# 			for(i in problem_cases){
+# 				lmList_result[[i]] <- lm(formula = new_formulas[[i]], data = split_data[[i]])
+# 			}
+# 		
+# 		}
+# 		#class(lmList_result) <- "adjust_lmList"
+# 		if(missing(pool)) pool <- TRUE
+# 		lmList_result <- new("adjust_lmList", lmList_result, call = match.call(), pool = pool)
+# 		attr(lmList_result, "names") <- orig_names
+# 		lmList_result
+# 	})
 
 #' @export
-setMethod("adjust_lmList", signature(formula = "formula", data = "data.frame"),
-	function(formula, data, pool){
-		options(show.error.messages = FALSE)
-		lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
-		options(show.error.messages = TRUE)
-		orig_names <- names(lmList_result)
-		check_results <- unlist(lapply(lmList_result, is.null))
-		form <- formula(formula)
-		g <- deparse(form[[3]][[3]]) 
-		ngroups <- length(unique(data[,g]))
-	
-		if(sum(check_results) != 0){ #return(lmList_result)
-	
-		#else{
-			new_formulas <- adjust_formula_lmList(formula, data)
-			problem_cases <- as.numeric(which(check_results == TRUE))
-			#print(problem_cases)
-			split_data <- split(data, data[,g])
-			
-			for(i in problem_cases){
-				lmList_result[[i]] <- lm(formula = new_formulas[[i]], data = split_data[[i]])
-			}
-		
-		}
-		#class(lmList_result) <- "adjust_lmList"
-		if(missing(pool)) pool <- TRUE
-		lmList_result <- new("adjust_lmList", lmList_result, call = match.call(), pool = pool)
-		attr(lmList_result, "names") <- orig_names
-		lmList_result
-	})
-
-#' @export
-setMethod("coef", signature(object = "adjust_lmList"),
-	function(object){
+#' @method coef adjust_lmList
+#' @S3method coef adjust_lmList
+# setMethod("coef", signature(object = "adjust_lmList"),
+coef.adjust_lmList <- 	function(object){
 			coefs <- lapply(object, coef)
 			non.null <- !unlist(lapply(coefs, is.null))
 			if(sum(non.null) > 0){
@@ -248,22 +256,27 @@ setMethod("coef", signature(object = "adjust_lmList"),
 			#effectNames <- names(coefs)
 			}
 			coefs
-	})
+	}
+# )
 
 
 #' @export
-setMethod("show", signature(object = "adjust_lmList"), 
-	function(object){
-		cat("Call:", deparse(object@call), "\n")
+#' @method print adjust_lmList
+#' @S3method print adjust_lmList
+# setMethod("show", signature(object = "adjust_lmList"), 
+print.adjust_lmList <- 	function(object){
+		cat("Call:", deparse(attr(object, "call")), "\n")
 		cat("Coefficients:\n")
 		invisible(print(coef(object)))
-	})
-	
+	}
+# )
 
 
 #' @export
-setMethod("confint", signature(object = "adjust_lmList"),
-	function(object, parm, level = 0.95, pool = NULL, ...){
+#' @method confint adjust_lmList
+#' @S3method confint adjust_lmList
+# setMethod("confint", signature(object = "adjust_lmList"),
+confint.adjust_lmList <- function(object, parm, level = 0.95, pool = NULL, ...){
 		#if(length(object < 1))
 		#	return(new("adjust_lmList.confint", array(numeric(0), c(0,0,0))))
 		coefs <- coef(object)
@@ -294,26 +307,29 @@ setMethod("confint", signature(object = "adjust_lmList"),
 				}
 			}
 		}
-		new("adjust_lmList.confint", aperm(val, c(3, 2, 1)))
-	}, valueClass = "adjust_lmList.confint"
-)
+		class(val) <- "adjust_lmList.confint"
+    val
+	} #, valueClass = "adjust_lmList.confint"
+# )
 
 
 #' @export
-setMethod("plot", signature(x = "adjust_lmList.confint"),
-	function(x, y, ...){
+#' @method plot adjust_lmList.confint
+#' @S3method plot adjust_lmList.confint
+# setMethod("plot", signature(x = "adjust_lmList.confint"),
+plot.adjust_lmList.confint <-	function(x, y, ...){
 # 		stopifnot(require("ggplot2"))
     group <- intervals <- NULL # Make codetools happy
 		cis <- as(x, "array")
 		df <- adply(cis, c(1, 2, 3), identity)
-		colnames(df) <- c("group", "end", "what", "intervals")
+		colnames(df) <- c("what", "end", "group", "intervals")
 		p <- ggplot(df, aes(x = group, y = intervals))
 		p + geom_line() +
 			geom_errorbar(aes(ymin = intervals, ymax = intervals)) + 
-			facet_wrap( ~ what, nrow = 1, scales = "free") #+ 
+			facet_wrap( ~ what, nrow = 1, scales = "free")
 # 			coord_flip() + ylab(NULL)
 	}
-)
+# )
 
 
 
@@ -321,59 +337,59 @@ setMethod("plot", signature(x = "adjust_lmList.confint"),
 #           function(x, ...) x@call[["formula"]])
 
 # To ensure compatibility across the lme4 development versions
-modelFormula <- function(form)
-{
-  if (class(form) != "formula" || length(form) != 3)
-    stop("formula must be a two-sided formula object")
-  rhs <- form[[3]]
-  if (class(rhs) != "call" || rhs[[1]] != as.symbol('|'))
-    stop("rhs of formula must be a conditioning expression")
-  form[[3]] <- rhs[[2]]
-  list(model = form, groups = rhs[[3]])
-}
+# modelFormula <- function(form)
+# {
+#   if (class(form) != "formula" || length(form) != 3)
+#     stop("formula must be a two-sided formula object")
+#   rhs <- form[[3]]
+#   if (class(rhs) != "call" || rhs[[1]] != as.symbol('|'))
+#     stop("rhs of formula must be a conditioning expression")
+#   form[[3]] <- rhs[[2]]
+#   list(model = form, groups = rhs[[3]])
+# }
 
 # To ensure compatibility across the lme4 development versions
 # setMethod("lmList", signature(formula = "formula", data = "data.frame"),
 #           function(formula, data, family, subset, weights,
 #                    na.action, offset, pool, ...)
 
-lmList <- function (formula, data, family, subset, weights, na.action, offset, pool, ...) {
-            mCall <- mf <- match.call()           
-            m <- match(c("family", "data", "subset", "weights",
-                         "na.action", "offset"), names(mf), 0)
-            mf <- mf[c(1, m)]
-            ## substitute `+' for `|' in the formula
-            mf$formula <- subbars(formula) 
-            mf$x <- mf$model <- mf$y <- mf$family <- NULL
-            mf$drop.unused.levels <- TRUE
-            mf[[1]] <- as.name("model.frame")
-            frm <- eval(mf, parent.frame())
-            mform <- modelFormula(formula)
-            if (missing(family)) {
-              val <- lapply(split(frm, eval(mform$groups, frm)),
-                            function(dat, formula)
-                            {
-                              ans <- try({
-                                data <- as.data.frame(dat)
-                                lm(formula, data)
-                              })
-                              if (inherits(ans, "try-error"))
-                                NULL
-                              else ans
-                            }, formula = mform$model)
-            } else {
-              val <- lapply(split(frm, eval(mform$groups, frm)),
-                            function(dat, formula, family)
-                            {
-                              ans <- try({
-                                data <- as.data.frame(dat)
-                                glm(formula, family, data)
-                              })
-                              if (inherits(ans, "try-error"))
-                                NULL
-                              else ans
-                            }, formula = mform$model, family = family)
-            }
-            if (missing(pool)) pool <- TRUE
-            new("lmList", val, call = mCall, pool = pool)
-          }
+# lmList <- function (formula, data, family, subset, weights, na.action, offset, pool, ...) {
+#             mCall <- mf <- match.call()           
+#             m <- match(c("family", "data", "subset", "weights",
+#                          "na.action", "offset"), names(mf), 0)
+#             mf <- mf[c(1, m)]
+#             ## substitute `+' for `|' in the formula
+#             mf$formula <- subbars(formula) 
+#             mf$x <- mf$model <- mf$y <- mf$family <- NULL
+#             mf$drop.unused.levels <- TRUE
+#             mf[[1]] <- as.name("model.frame")
+#             frm <- eval(mf, parent.frame())
+#             mform <- modelFormula(formula)
+#             if (missing(family)) {
+#               val <- lapply(split(frm, eval(mform$groups, frm)),
+#                             function(dat, formula)
+#                             {
+#                               ans <- try({
+#                                 data <- as.data.frame(dat)
+#                                 lm(formula, data)
+#                               })
+#                               if (inherits(ans, "try-error"))
+#                                 NULL
+#                               else ans
+#                             }, formula = mform$model)
+#             } else {
+#               val <- lapply(split(frm, eval(mform$groups, frm)),
+#                             function(dat, formula, family)
+#                             {
+#                               ans <- try({
+#                                 data <- as.data.frame(dat)
+#                                 glm(formula, family, data)
+#                               })
+#                               if (inherits(ans, "try-error"))
+#                                 NULL
+#                               else ans
+#                             }, formula = mform$model, family = family)
+#             }
+#             if (missing(pool)) pool <- TRUE
+#             new("lmList", val, call = mCall, pool = pool)
+#           }
