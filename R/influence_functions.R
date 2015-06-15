@@ -140,7 +140,7 @@ leverage.mer <- function(object, level, ...) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(getME(object, "flist")))) {
+  if(!level %in% c( 1, names(lme4::getME(object, "flist")))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
@@ -148,23 +148,23 @@ leverage.mer <- function(object, level, ...) {
     stop("leverage is currently not implemented for GLMMs or NLMMs.")
   }
   
-  X <- getME(object, "X")
+  X <- lme4::getME(object, "X")
   # Z <- BlockZ(object)
   
   n     <- nrow(X)
   nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
   ngrps <- unname( summary(object)@ngrps )
   
-  vc   <- VarCorr(object)
+  vc   <- lme4::VarCorr(object)
   # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
-  ZDZt <- attr(vc, "sc")^2 * crossprod( getME(object, "A") )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(object, "A") )
   R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
   
   V      <- ZDZt + R
   V.chol <- chol( V )
   Vinv   <- chol2inv( V.chol )
   
-  xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(object, "RX"))
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(object, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
   H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
@@ -178,7 +178,7 @@ leverage.mer <- function(object, level, ...) {
                        ranef =  diag.H2, ranef.uc = diag.H2.uc)
 #     class(lev1) <- "leverage"
   } else {
-    flist   <- data.frame( getME(object, "flist")[, level] )
+    flist   <- data.frame( lme4::getME(object, "flist")[, level] )
     
     grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
     grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
@@ -204,31 +204,31 @@ leverage.lmerMod <- function(object, level, ...) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(getME(object, "flist")))) {
+  if(!level %in% c( 1, names(lme4::getME(object, "flist")))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
-  if(!isLMM(object)){
+  if(!lme4::isLMM(object)){
     stop("leverage is currently not implemented for GLMMs or NLMMs.")
   }
   
-  X <- getME(object, "X")
+  X <- lme4::getME(object, "X")
   # Z <- BlockZ(object)
   
   n     <- nrow(X)
 #  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
   ngrps <- unname( summary(object)$ngrps )
   
-  vc   <- VarCorr(object)
+  vc   <- lme4::VarCorr(object)
   # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
-  ZDZt <- attr(vc, "sc")^2 * crossprod( getME(object, "A") )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(object, "A") )
   R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
   
   V      <- ZDZt + R
   V.chol <- chol( V )
   Vinv   <- chol2inv( V.chol )
   
-  xvix.inv <- attr(vc, "sc")^2 * chol2inv(getME(object, "RX"))
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(object, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
   H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
@@ -242,7 +242,7 @@ leverage.lmerMod <- function(object, level, ...) {
                        ranef =  diag.H2, ranef.uc = diag.H2.uc)
     #     class(lev1) <- "leverage"
   } else {
-    flist   <- data.frame( getME(object, "flist")[[level]] )
+    flist   <- data.frame( lme4::getME(object, "flist")[[level]] )
     
     grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
     grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
@@ -335,7 +335,7 @@ leverage.lmerMod <- function(object, level, ...) {
 cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(model, "flist"))) {
+    if(!group %in% names(lme4::getME(model, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
@@ -399,11 +399,11 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
 #' @S3method cooks.distance lmerMod
 cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
   if(!is.null(group)) {
-    if(!group %in% names(getME(model, "flist"))) {
+    if(!group %in% names(lme4::getME(model, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!isLMM(model)){
+  if(!lme4::isLMM(model)){
     stop("cooks.distance is currently not implemented for GLMMs or NLMMs.")
   }
   
@@ -553,7 +553,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
@@ -604,11 +604,11 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 #' @S3method mdffits lmerMod
 mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!isLMM(object)){
+  if(!lme4::isLMM(object)){
     stop("mdffits is currently not implemented for GLMMs or NLMMs.")
   }
   
@@ -772,7 +772,7 @@ mdffits.lme <- function(object, group = NULL, delete = NULL, ...) {
 covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
@@ -815,11 +815,11 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'@S3method covratio lmerMod
 covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!isLMM(object)){
+  if(!lme4::isLMM(object)){
     stop("covratio is currently not implemented for GLMMs or NLMMs.")
   }
   
@@ -918,7 +918,7 @@ covratio.lme <- function(object, group = NULL, delete = NULL, ...) {
 covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
@@ -960,11 +960,11 @@ covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'@S3method covtrace lmerMod
 covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   if(!is.null(group)) {
-    if(!group %in% names(getME(object, "flist"))) {
+    if(!group %in% names(lme4::getME(object, "flist"))) {
       stop(paste(group, "is not a valid grouping factor for this model."))
     }
   }
-  if(!isLMM(object)){
+  if(!lme4::isLMM(object)){
     stop("covtrace is currently not implemented for GLMMs or NLMMs.")
   }
   

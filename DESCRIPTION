@@ -17,14 +17,14 @@ Depends:
 Imports:
     ggplot2 (>= 0.9.2),
     stats,
-    stats4,
     methods,
     plyr,
     reshape2,
     MASS,
     Matrix,
-    Rcpp,
-    RLRsim
+    RLRsim,
+    mgcv,
+    MASS
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,

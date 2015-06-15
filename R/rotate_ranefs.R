@@ -35,15 +35,15 @@ rotate_ranef.default <- function(.mod, ...){
 #' \emph{Journal of Computational and Graphical Statistics}.
 rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@y
-  X <- getME(.mod, "X")
+  X <- lme4::getME(.mod, "X")
   Z <- BlockZ(.mod)
   
   n <- nrow(X)
   p <- ncol(X)
   ngrps <- unname( summary(.mod)@ngrps )
   
-  vc <- VarCorr(.mod)
-  Di <- bdiag( VarCorr(.mod) ) / (unname(attr(vc, "sc")))^2
+  vc <- lme4::VarCorr(.mod)
+  Di <- bdiag( lme4::VarCorr(.mod) ) / (unname(attr(vc, "sc")))^2
   D  <- kronecker( Diagonal(ngrps), Di )
   
   Aslot <- .mod@A # ZDZ'
@@ -84,18 +84,18 @@ rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
 #' @S3method rotate_ranef lmerMod
 rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@resp$y
-  X <- getME(.mod, "X")
-  Z <- getME(.mod, "Z")
+  X <- lme4::getME(.mod, "X")
+  Z <- lme4::getME(.mod, "Z")
   
   n <- nrow(X)
   p <- ncol(X)
   ngrps <- unname( summary(.mod)$ngrps )
   
-  vc <- VarCorr(.mod)
-  Di <- bdiag( VarCorr(.mod) ) / (unname(attr(vc, "sc")))^2
+  vc <- lme4::VarCorr(.mod)
+  Di <- bdiag( lme4::VarCorr(.mod) ) / (unname(attr(vc, "sc")))^2
   D  <- kronecker( Diagonal(ngrps), Di )
   
-  zdzt <- crossprod( getME(.mod, "A") )
+  zdzt <- crossprod( lme4::getME(.mod, "A") )
   V  <- Diagonal( n ) + zdzt
   V.chol <- chol( V )
   Vinv  <- chol2inv( V.chol ) 

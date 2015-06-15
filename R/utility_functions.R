@@ -3,11 +3,11 @@
 # into the block form discussed by Demidenko (2004). Currently, this function
 # assumes there is only one level and that units are nested.
 BlockZ <- function(object) {
-  Z <- getME(object, "Z")
+  Z <- lme4::getME(object, "Z")
   
   grp.size <- table(object@flist)
   ngrps <- length(grp.size)
-  nranef <- dim(ranef(object)[[1]])[2]
+  nranef <- dim(lme4::ranef(object)[[1]])[2]
   
   base.ord <- seq(from = 1, by = ngrps, length.out = nranef)
   ord <- base.ord + rep(0:(ngrps - 1), each = nranef)
@@ -36,7 +36,7 @@ BlockZ <- function(object) {
 #' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' varcomp.mer(fm1)
 varcomp.mer <- function(object) {
-  vc  <- VarCorr(object)
+  vc  <- lme4::VarCorr(object)
   sig <- attr(vc, "sc")
   vc.mat <- bdiag(vc)
   
@@ -69,19 +69,19 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # @param model an mer object
 .mer_matrices <- function(model) {
   Y <- model@y
-  X <- getME(model, "X")
+  X <- lme4::getME(model, "X")
   
   n <- length(Y)
   
-  flist <- getME(model, "flist")
+  flist <- lme4::getME(model, "flist")
   ngrps <- sapply(flist, function(x) length(levels(x)))
   
   # Constructing V = Cov(Y)
-  sig0 <- sigma(model)
+  sig0 <- lme4::sigma(model)
   
-  ZDZt <- sig0^2 * crossprod( getME(model, "A") )
+  ZDZt <- sig0^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = sig0^2 )
-  V    <- Diagonal(n) + ZDZt
+  V    <- R + ZDZt
   
   # Inverting V
   V.chol <- chol( V )
@@ -103,17 +103,17 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # @param model an lmerMod object
 .lmerMod_matrices <- function(model) {
   Y <- model@resp$y
-  X <- getME(model, "X")
+  X <- lme4::getME(model, "X")
   
   n <- length(Y)
   
-  flist <- getME(model, "flist")
+  flist <- lme4::getME(model, "flist")
   ngrps <- sapply(flist, function(x) length(levels(x)))
   
   # Constructing V = Cov(Y)
-  sig0 <- sigma(model)
+  sig0 <- lme4::sigma(model)
   
-  ZDZt <- sig0^2 * crossprod( getME(model, "A") )
+  ZDZt <- sig0^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = sig0^2 )
   V    <- R + ZDZt
   
@@ -175,7 +175,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # that is available to all users. This should not be exported.
 se.ranef <- function (object) 
 {
-  se.bygroup <- ranef(object, postVar = TRUE)
+  se.bygroup <- lme4::ranef(object, postVar = TRUE)
   n.groupings <- length(se.bygroup)
   for (m in 1:n.groupings) {
     vars.m <- attr(se.bygroup[[m]], "postVar")
@@ -209,19 +209,19 @@ isNestedModel <- function(object) {
 
 # Extract the residual covariance matrix from an lme object
 .extractR.lme <- function(lme.fit) {
-  n <- length( getResponse(lme.fit) )
+  n <- length( nlme::getResponse(lme.fit) )
   if (length(lme.fit$group) > 1) {
     stop("not implemented for multiple levels of nesting")
   } 
   else{
     ugroups <- unique(lme.fit$groups[[1]])
     if (!is.null(lme.fit$modelStruct$corStruct)) {
-      V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
+      V <- Matrix( nlme::corMatrix(lme.fit$modelStruct$corStruct) )
     }
     else V <- Diagonal(n)
   }
   if (!is.null(lme.fit$modelStruct$varStruct)) 
-    sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
+    sds <- 1/nlme::varWeights(lme.fit$modelStruct$varStruct)
   else sds <- rep(1, n)
   sds <- lme.fit$sigma * sds
   cond.var <- t(V * sds) * sds
@@ -231,19 +231,19 @@ isNestedModel <- function(object) {
 
 # Extract the marginal covariance matrix, V, for an lme object
 .extractV.lme <- function(lme.fit) {
-  n <- length( getResponse(lme.fit) )
+  n <- length( nlme::getResponse(lme.fit) )
   if (length(lme.fit$group) > 1) {
     stop("not implemented for multiple levels of nesting")
   } 
   else{
     ugroups <- unique(lme.fit$groups[[1]])
     if (!is.null(lme.fit$modelStruct$corStruct)) {
-      V <- Matrix( corMatrix(lme.fit$modelStruct$corStruct) )
+      V <- Matrix( nlme::corMatrix(lme.fit$modelStruct$corStruct) )
     }
     else V <- Diagonal(n)
   }
   if (!is.null(lme.fit$modelStruct$varStruct)) 
-    sds <- 1/varWeights(lme.fit$modelStruct$varStruct)
+    sds <- 1/nlme::varWeights(lme.fit$modelStruct$varStruct)
   else sds <- rep(1, n)
   #   sds <- lme.fit$sigma * sds
   cond.var <- t(V * sds) * sds

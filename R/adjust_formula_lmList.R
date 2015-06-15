@@ -172,7 +172,7 @@ adjust_lmList <- function(object, data, pool){
 adjust_lmList.formula <- function(object, data, pool){
 # 	options(show.error.messages = FALSE)
 # 	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)
-  lmList_result <- lmList(formula = object, data = data)
+  lmList_result <- lme4::lmList(formula = object, data = data)
 #   options(show.error.messages = TRUE)
 	orig_names <- names(lmList_result)
 	check_results <- unlist(lapply(lmList_result, is.null))

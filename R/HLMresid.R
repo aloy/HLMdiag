@@ -119,10 +119,10 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
   }
 	
 	if(level == "marginal"){
-		mr <- object@y - getME(object, "X") %*% fixef(object)
+		mr <- object@y - lme4::getME(object, "X") %*% lme4::fixef(object)
     if(standardize == TRUE){
-      sig0 <- sigma(object)
-      ZDZt <- sig0^2 * crossprod( getME(object, "A") )
+      sig0 <- lme4::sigma(object)
+      ZDZt <- sig0^2 * crossprod( lme4::getME(object, "A") )
       n    <- nrow(ZDZt)
       
       R      <- Diagonal( n = n, x = sig0^2 )
@@ -149,9 +149,9 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
         mats <- .mer_matrices(object)
         p_diag <- diag(mats$P)
         
-			  return( resid(object) / ( sigma(object) * sqrt(p_diag) ) )
+			  return( lme4::resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
 			} else{
-			  return(resid(object))
+			  return(lme4::resid(object))
 			}
 		}
 	}
@@ -162,11 +162,11 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
 		}
 		if(type == "EB"){
       if(standardize == TRUE) {
-        re <- ranef(object)[[level]]
+        re <- lme4::ranef(object)[[level]]
         se.re <- se.ranef(object)[[level]]
         return(re / se.re)
       } else{
-        return(ranef(object)[[level]])
+        return(lme4::ranef(object)[[level]])
       }
 		}
 	}
@@ -189,10 +189,10 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
   }
   
   if(level == "marginal"){
-    mr <- object@resp$y - getME(object, "X") %*% fixef(object)
+    mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
     if(standardize == TRUE){
-      sig0 <- sigma(object)
-      ZDZt <- sig0^2 * crossprod( getME(object, "A") )
+      sig0 <- lme4::sigma(object)
+      ZDZt <- sig0^2 * crossprod( lme4::getME(object, "A") )
       n    <- nrow(ZDZt)
       
       R      <- Diagonal( n = n, x = sig0^2 )
@@ -219,9 +219,9 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
         mats <- .lmerMod_matrices(object)
         p_diag <- diag(mats$P)
         
-        return( resid(object) / ( sigma(object) * sqrt(p_diag) ) )
+        return( lme4::resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
       } else{
-        return(resid(object))
+        return(lme4::resid(object))
       }
     }
   }
@@ -232,11 +232,11 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
     }
     if(type == "EB"){
       if(standardize == TRUE) {
-        re <- ranef(object)[[level]]
+        re <- lme4::ranef(object)[[level]]
         se.re <- se.ranef(object)[[level]]
         return(re / se.re)
       } else{
-        return(ranef(object)[[level]])
+        return(lme4::ranef(object)[[level]])
       }
     }
   }

@@ -64,7 +64,7 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
 		# fitting a separate LS regression model to each group
 		form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
 	
-		ls.models <- adjust_lmList(formula = formula(form), data = data)
+		ls.models <- adjust_lmList(object = formula(form), data = data)
 		
 		ls.residuals <- lapply(ls.models, resid)
 		ls.fitted <- lapply(ls.models, fitted)
@@ -107,7 +107,7 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
 	
 	if(level != 1){
     n.ranefs <- length(names(object@flist))
-		ranef_names <- names( ranef(object)[[level]] )
+		ranef_names <- names( lme4::ranef(object)[[level]] )
 		
 		form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     
@@ -115,15 +115,15 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
       gform <- fixform( formula(object) )
       global.model <- lm(formula = formula(gform), data = data)
       
-      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      ls.models <- adjust_lmList(object = formula(form), data = data)
       ls.resid <- coef(ls.models)[,ranef_names] - coef(global.model)[ranef_names]
       
     } else{ # For 'intermediate' level unit
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
       gform <- paste(fixed[2], fixed[1], fixed[3], "|", higher.level)
-      global.model <- adjust_lmList(formula = formula(gform), data = data)
+      global.model <- adjust_lmList(object = formula(gform), data = data)
       
-      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      ls.models <- adjust_lmList(object = formula(form), data = data)
       
       # matching lower level units to higer level units
       units.mat <- unique(object@flist)
@@ -175,7 +175,7 @@ fixform <- function (term)
 #' @method LSresids lmerMod
 #' @S3method LSresids lmerMod
 LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...){
-  if(!isLMM(object)){
+  if(!lme4::isLMM(object)){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
   }
   if(!level %in% c(1, names(object@flist))) {
@@ -200,7 +200,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     # fitting a separate LS regression model to each group
     form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
     
-    ls.models <- adjust_lmList(formula = formula(form), data = data)
+    ls.models <- adjust_lmList(object = formula(form), data = data)
     
     ls.residuals <- lapply(ls.models, resid)
     ls.fitted <- lapply(ls.models, fitted)
@@ -240,7 +240,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   
   if(level != 1){
     n.ranefs <- length(names(object@flist))
-    ranef_names <- names( ranef(object)[[level]] )
+    ranef_names <- names( lme4::ranef(object)[[level]] )
     
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     
@@ -248,15 +248,15 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       gform <- fixform( formula(object) )
       global.model <- lm(formula = formula(gform), data = data)
       
-      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      ls.models <- adjust_lmList(object = formula(form), data = data)
       ls.resid <- coef(ls.models)[,ranef_names] - coef(global.model)[ranef_names]
       
     } else{ # For 'intermediate' level unit
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
       gform <- paste(fixed[2], fixed[1], fixed[3], "|", higher.level)
-      global.model <- adjust_lmList(formula = formula(gform), data = data)
+      global.model <- adjust_lmList(object = formula(gform), data = data)
       
-      ls.models <- adjust_lmList(formula = formula(form), data = data)
+      ls.models <- adjust_lmList(object = formula(form), data = data)
       
       # matching lower level units to higer level units
       units.mat <- unique(object@flist)
