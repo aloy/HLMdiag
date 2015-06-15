@@ -120,7 +120,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
           vcov.delete[[i]]  <- as.matrix(vcov(model.delete))
         }
         
-        fitted.delete[[i]] <- data.frame(deleted = i, model.delete@frame, lme4::fitted(model.delete))
+        fitted.delete[[i]] <- data.frame(deleted = i, model.delete@frame, fitted(model.delete))
         
       }
     }
@@ -137,7 +137,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
         ranef.delete   <- lme4::ranef(model.delete)
         if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
       }
-      fitted.delete  <- lme4::fitted(model.delete)
+      fitted.delete  <- fitted(model.delete)
     }
   }
 
@@ -185,14 +185,14 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
       if(type %in% c("both", "fixef")){
         fixef.delete <- lapply(model.delete, lme4::fixef)
         
-        vcov.delete <- lapply(model.delete, lme4::vcov)
+        vcov.delete <- lapply(model.delete, vcov)
         vcov.delete <- lapply(vcov.delete, as.matrix)
       }
       
       
       fitted.delete <- lapply(model.delete, function(x){
         data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
-                   x@frame, lme4::fitted(x))
+                   x@frame, fitted(x))
       })
     }
     else{
@@ -201,7 +201,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
       
       if(type %in% c("both", "fixef")) {
         fixef.delete   <- lme4::fixef(model.delete)
-        vcov.delete    <-  as.matrix(lme4::vcov(model.delete))
+        vcov.delete    <-  as.matrix(vcov(model.delete))
       }
       
       if(type %in% c("both", "varcomp")) {
@@ -209,7 +209,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
         ranef.delete   <- lme4::ranef(model.delete)
         if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
       }
-      fitted.delete  <- lme4::fitted(model.delete)
+      fitted.delete  <- fitted(model.delete)
     }
     
     
@@ -244,7 +244,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
   ranef.original <- lme4::ranef(model)
   if(length(ranef.original) == 1) ranef.original <- ranef.original[[1]]
 
-  vcov.original <- as.matrix(lme4::vcov(model))
+  vcov.original <- as.matrix(vcov(model))
   varcomp.original <- varcomp.mer(model)
 
   val <- list(fixef.original = fixef.original, ranef.original = ranef.original,
@@ -307,10 +307,10 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
         
         if(type %in% c("both", "fixef")){
           fixef.delete[[i]] <- c(deleted = i, lme4::fixef(model.delete))
-          vcov.delete[[i]]  <- as.matrix(lme4::vcov(model.delete))
+          vcov.delete[[i]]  <- as.matrix(vcov(model.delete))
         }
         
-        fitted.delete[[i]] <- data.frame(deleted = i, model.delete@frame, lme4::fitted(model.delete))
+        fitted.delete[[i]] <- data.frame(deleted = i, model.delete@frame, fitted(model.delete))
         
       }
     }
@@ -319,7 +319,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
       
       if(type %in% c("both", "fixef")) {
         fixef.delete   <- lme4::fixef(model.delete)
-        vcov.delete    <- as.matrix(lme4::vcov(model.delete))
+        vcov.delete    <- as.matrix(vcov(model.delete))
       }
       
       if(type %in% c("both", "varcomp")) {
@@ -327,7 +327,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
         ranef.delete   <- lme4::ranef(model.delete)
         if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
       }
-      fitted.delete  <- lme4::fitted(model.delete)
+      fitted.delete  <- fitted(model.delete)
     }
   }
   
@@ -375,14 +375,14 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
       if(type %in% c("both", "fixef")){
         fixef.delete <- lapply(model.delete, lme4::fixef)
         
-        vcov.delete <- lapply(model.delete, lme4::vcov)
+        vcov.delete <- lapply(model.delete, vcov)
         vcov.delete <- lapply(vcov.delete, as.matrix)
       }
       
       
       fitted.delete <- lapply(model.delete, function(x){
         data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
-                   x@frame, lme4::fitted(x))
+                   x@frame, fitted(x))
       })
     }
     else{
@@ -391,7 +391,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
       
       if(type %in% c("both", "fixef")) {
         fixef.delete   <- lme4::fixef(model.delete)
-        vcov.delete    <-  as.matrix(lme4::vcov(model.delete))
+        vcov.delete    <-  as.matrix(vcov(model.delete))
       }
       
       if(type %in% c("both", "varcomp")) {
@@ -399,7 +399,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
         ranef.delete   <- lme4::ranef(model.delete)
         if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
       }
-      fitted.delete  <- lme4::fitted(model.delete)
+      fitted.delete  <- fitted(model.delete)
     }
     
     
@@ -434,7 +434,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
   ranef.original <- lme4::ranef(model)
   if(length(ranef.original) == 1) ranef.original <- ranef.original[[1]]
   
-  vcov.original <- as.matrix(lme4::vcov(model))
+  vcov.original <- as.matrix(vcov(model))
   varcomp.original <- varcomp.mer(model)
   
   val <- list(fixef.original = fixef.original, ranef.original = ranef.original,

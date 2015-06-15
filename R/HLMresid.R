@@ -149,9 +149,9 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
         mats <- .mer_matrices(object)
         p_diag <- diag(mats$P)
         
-			  return( lme4::resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
+			  return( resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
 			} else{
-			  return(lme4::resid(object))
+			  return(resid(object))
 			}
 		}
 	}
@@ -219,9 +219,9 @@ HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL,
         mats <- .lmerMod_matrices(object)
         p_diag <- diag(mats$P)
         
-        return( lme4::resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
+        return( resid(object) / ( lme4::sigma(object) * sqrt(p_diag) ) )
       } else{
-        return(lme4::resid(object))
+        return(resid(object))
       }
     }
   }
