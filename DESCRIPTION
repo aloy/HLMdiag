@@ -17,7 +17,6 @@ Depends:
 Imports:
     ggplot2 (>= 0.9.2),
     stats,
-    methods,
     plyr,
     reshape2,
     MASS,
