@@ -244,7 +244,7 @@ adjust_lmList.formula <- function(object, data, pool){
 #' @method coef adjust_lmList
 #' @S3method coef adjust_lmList
 # setMethod("coef", signature(object = "adjust_lmList"),
-coef.adjust_lmList <- 	function(object){
+coef.adjust_lmList <- 	function(object, ...){
 			coefs <- lapply(object, coef)
 			non.null <- !unlist(lapply(coefs, is.null))
 			if(sum(non.null) > 0){
@@ -264,10 +264,10 @@ coef.adjust_lmList <- 	function(object){
 #' @method print adjust_lmList
 #' @S3method print adjust_lmList
 # setMethod("show", signature(object = "adjust_lmList"), 
-print.adjust_lmList <- 	function(object){
-		cat("Call:", deparse(attr(object, "call")), "\n")
+print.adjust_lmList <- 	function(x, ...){
+		cat("Call:", deparse(attr(x, "call")), "\n")
 		cat("Coefficients:\n")
-		invisible(print(coef(object)))
+		invisible(print(coef(x)))
 	}
 # )
 

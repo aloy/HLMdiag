@@ -23,8 +23,7 @@ Imports:
     MASS,
     Matrix,
     RLRsim,
-    mgcv,
-    MASS
+    mgcv
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
