@@ -1,4 +1,4 @@
-# HLMdiag
+# HLMdiag [![Build Status](https://travis-ci.org/aloy/HLMdiag.svg?branch=master)](https://travis-ci.org/aloy/HLMdiag)
 
 Up to now diagnostics for mixed and hierarchical models have required much programming by 
 the analyst, especially if one desires influence diagnostics. 
