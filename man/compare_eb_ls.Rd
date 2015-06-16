@@ -25,6 +25,7 @@ estimate appears on the horizontal axis and the LS estimate appears on the
 vertical axis.
 }
 \examples{
+library(lme4)
 wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)
 wages.sepLM <- adjust_lmList(lnw ~ exper | id, data = wages)
 rancoef.eb <- coef(wages.fm1)$id

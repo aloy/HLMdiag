@@ -39,7 +39,7 @@ adding customized axis labels you will need to flip the usage of
 \code{xlab} and \code{ylab}.
 }
 \examples{
-data(sleepstudy, package = 'lme4')
+library(lme4)
 fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Subject level deletion and diagnostics

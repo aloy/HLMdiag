@@ -56,7 +56,7 @@ versions of \code{cooks.distance}, \code{mdffits}, \code{covtrace},
 the \code{mer} object.
 }
 \examples{
-data(sleepstudy, package = 'lme4')
+library(lme4)
 fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Subject level deletion and diagnostics

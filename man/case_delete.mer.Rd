@@ -57,6 +57,7 @@ numerous levels of the model, the function will need to be called multiple
 times, specifying the group (level) of interest each time.
 }
 \examples{
+library(lme4)
 data(sleepstudy, package = 'lme4')
 fm <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 

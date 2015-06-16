@@ -36,7 +36,11 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
 \examples{
 str(wages)
 summary(wages)
+
+\dontrun{
+library(lme4)
 lmer(lnw ~ exper + (exper | id), data = wages)
+}
 }
 \references{
   Singer, J. D. and Willett, J. B. (2003), \emph{Applied
