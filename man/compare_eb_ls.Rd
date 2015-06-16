@@ -29,8 +29,8 @@ library(lme4)
 wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)
 wages.sepLM <- adjust_lmList(lnw ~ exper | id, data = wages)
 rancoef.eb <- coef(wages.fm1)$id
-rancoef.ols <- coef(wages.sepLM)
-compare_eb_ls(eb = rancoef.eb, ols = rancoef.ols, identify = 0.01)
+rancoef.ols <- coef(wages.sepLM) # note diff. length than rancoef.eb
+compare_eb_ls(eb = rancoef.eb[rownames(rancoef.ols),], ols = rancoef.ols, identify = 0.01)
 }
 \author{
 Adam Loy \email{loyad01@gmail.com}
