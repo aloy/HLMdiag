@@ -84,7 +84,7 @@ and \code{standardize = TRUE}.}
 Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
 \examples{
-library(lme4)
+data(sleepstudy, package = "lme4")
 fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 
 # level-1 residuals

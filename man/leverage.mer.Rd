@@ -60,7 +60,7 @@ above matrices as the measure of leverage. For higher-level units,
 higher-level unit.
 }
 \examples{
-library(lme4)
+data(sleepstudy, package = 'lme4')
 fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Observation level leverage

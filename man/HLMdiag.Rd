@@ -8,8 +8,8 @@
 \title{Diagnostic tools for hierarchical (multilevel) linear models}
 \description{
 HLMdiag provides a suite of diagnostic tools for hierarchical
-(multilevel) linear models fit using \code{\link[lme4]{lmer}} or 
-\code{\link[nlme]{lme}}. These tools are grouped below by purpose.
+(multilevel) linear models fit using \code{\link{lmer}}.
+These tools are grouped below by purpose.
 See the help documentation for additional information
 about each function.
 }

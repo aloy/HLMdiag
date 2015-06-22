@@ -20,7 +20,7 @@ This function extracts the variance components from a mixed/hierarchical
 linear model fit using \code{lmer}.
 }
 \examples{
-library(lme4)
+data(sleepstudy, package = "lme4")
 fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 varcomp.mer(fm1)
 }
