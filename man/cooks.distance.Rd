@@ -64,6 +64,7 @@ Because MDFFITS requires the calculation of the covariance matrix
 for the fixed effects for every model, it will be slower.
 }
 \examples{
+library(lme4)
 data(sleepstudy, package = 'lme4')
 ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
