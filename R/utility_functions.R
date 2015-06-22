@@ -77,7 +77,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   ngrps <- sapply(flist, function(x) length(levels(x)))
   
   # Constructing V = Cov(Y)
-  sig0 <- lme4::sigma(model)
+  sig0 <- lme4::getME(model, "sigma")
   
   ZDZt <- sig0^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = sig0^2 )
@@ -111,7 +111,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   ngrps <- sapply(flist, function(x) length(levels(x)))
   
   # Constructing V = Cov(Y)
-  sig0 <- lme4::sigma(model)
+  sig0 <- lme4::getME(model, "sigma")
   
   ZDZt <- sig0^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = sig0^2 )
