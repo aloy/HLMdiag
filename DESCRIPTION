@@ -49,3 +49,5 @@ Collate:
     'autism.R'
     'ahd.R'
     'radon.R'
+URL: https://github.com/aloy/HLMdiag
+BugReports: https://github.com/aloy/HLMdiag/issues
