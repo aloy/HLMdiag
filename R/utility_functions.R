@@ -238,7 +238,8 @@ isNestedModel <- function(object) {
   else{
     ugroups <- unique(lme.fit$groups[[1]])
     if (!is.null(lme.fit$modelStruct$corStruct)) {
-      V <- Matrix( nlme::corMatrix(lme.fit$modelStruct$corStruct) )
+      cmat <- nlme::corMatrix(lme.fit$modelStruct$corStruct)
+      V <- bdiag( nlme::corMatrix(lme.fit$modelStruct$corStruct) )
     }
     else V <- Diagonal(n)
   }

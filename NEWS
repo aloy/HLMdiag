@@ -1,3 +1,9 @@
+Version 0.3.2
+=============
+
+BUG FIXES
+* `.extractV.lme` (and thus `.lme_matrices`) was fixed to work with more complex covariance structures fit via nlme.
+
 Version 0.3.0
 =============
 DEVELOPMENT
