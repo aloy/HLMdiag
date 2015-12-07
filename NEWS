@@ -1,8 +1,9 @@
-Version 0.3.2
+Version 0.3.1
 =============
 
 BUG FIXES
 * `.extractV.lme` (and thus `.lme_matrices`) was fixed to work with more complex covariance structures fit via nlme.
+* Updated package to work with the most recent version of `ggplot2`
 
 Version 0.3.0
 =============
