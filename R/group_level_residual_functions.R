@@ -46,8 +46,8 @@ compare_eb_ls <- function(eb, ols, identify = FALSE, silent = TRUE, ...){
 			#ret <- list(ret, subset(extreme, unusual == TRUE))
 			ret <- list(ret, extreme)
 		}
-	oask <- devAskNewPage(TRUE)
-        on.exit(devAskNewPage(oask))
+	oask <- grDevices::devAskNewPage(TRUE)
+        on.exit(grDevices::devAskNewPage(oask))
 	print(p)
 	}
 	
