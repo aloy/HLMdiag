@@ -8,7 +8,8 @@
 There were no ERRORs, WARNINGs, or NOTEs in R 3.2.2 or R-devel.
 
 ## Resubmission
-Added the following to the NAMESPACE to eliminate notes
+This is a resubmission. In this version I have 
+added the following to the NAMESPACE to eliminate notes:
 
 importFrom("grDevices", "devAskNewPage")
 importFrom("methods", "as", "is")
