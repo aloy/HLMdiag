@@ -1,32 +1,47 @@
+#' @export
+HLMaugment <- function(object, ...){
+  UseMethod("HLMaugment", object)
+}
+
 #' Calculating residuals from HLMs
 #'
-#' \code{HLMaugment} is a function that extracts residuals
-#' from a hierarchical linear model fit
-#' using \code{lmer}. That is, it is a unified framework that
-#' extracts/calculates residuals from \code{mer} or \code{lmerMod} objects.
+#' \code{HLMaugment} takes a hierarchical linear model fit as a
+#' \code{lmerMod} object and adds information about each observation's 
+#' residuals and predicted values.
 #' 
-#' This function extracts residuals from the model, 
-#' using least squares (LS) and Empirical 
-#' Bayes (EB) methods. This unified framework
-#' enables the analyst to more easily conduct
-#' an upward residual analysis during model
-#' exploration/checking.
+#' This function extract residuals and fitted values from the model, using least
+#' squares (LS) and Empirical Bayes (EB) methods, and appends them to the model
+#' data. This unified framework enables the analyst to more easily conduct an
+#' upward residual analysis during model exploration/checking.
 #'
 #' @export
-#' @method HLMresid mer
-#' @S3method HLMresid mer
-#' @aliases HLMresid
+#' @rdname HLMaugment
+#' @method HLMaugment lmerMod
+#' @S3method HLMaugment lmerMod
+#' @aliases HLMaugment
 #' @param object an object of class \code{lmerMod}.
-#' @param sim optional argument giving the data frame used for LS residuals. This
-#'  is used mainly for dealing with simulations.
-#' @param standardize if \code{standardize = TRUE} the standardized
-#' residuals will be returned; if \code{standardize = "semi"} then
-#' the semi-standardized level-1 residuals will be returned. 
+#' @param level which residuals should be extracted: 1 for within-group
+#'   (case-level) residuals, the name of a grouping factor (as defined in
+#'   \code{flist} of the \code{lmerMod} object) for between-group residuals
+#' @param standardize if \code{standardize = TRUE} the standardized residuals
+#'   will be returned; if \code{standardize = "semi"} then the semi-standardized
+#'   level-1 residuals will be returned
+#' @param sim optional argument giving the data frame used for LS residuals.
+#'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{HLMaugment} function provides a wrapper that will extract
-#' residuals from a fitted \code{mer} or \code{lmerMod} object.  
+#' residuals and predicted values from a fitted \code{lmerMod} object. 
+#' The function provides access to 
+#' residual quantities already made available by the functions \code{resid},
+#' \code{predict}, and \code{ranef}, but adds additional functionality. Below is
+#' a list of types of residuals and predicted values that are extracted.
+#' \describe{
+#' \item{raw level-1 residuals}{These are equivalent to the residuals extracted
+#' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
+#' \code{standardize = FALSE} is specified. 
+#' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 
-HLMaugment <- function(object, level = 1, standardize = FALSE, sim = NULL) {
+HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   # LS Residuals
   ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
   
@@ -60,7 +75,7 @@ HLMaugment <- function(object, level = 1, standardize = FALSE, sim = NULL) {
   
   # Fitted Values
   Xbeta  <- data.frame(Xbeta = predict(object, re.form = ~0))
-  XbetaZb <- data.frame(XbetaZb = getME(object, "mu"))
+  XbetaZb <- data.frame(XbetaZb = lme4::getME(object, "mu"))
   
   # Marginal Residuals
   mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
