@@ -2,20 +2,26 @@
 HLMaugment <- function(object, ...){
   UseMethod("HLMaugment", object)
 }
-
+#' @export
+#' @rdname HLMaugment.lmerMod
+#' @method HLMaugment default
+#' @S3method HLMaugment default
+HLMaugment.default <- function(object, ...){
+  stop(paste("there is no HLMaugment() method for objects of class",
+             paste(class(object), collapse=", ")))
+}
 #' Calculating residuals from HLMs
 #'
 #' \code{HLMaugment} takes a hierarchical linear model fit as a
 #' \code{lmerMod} object and adds information about each observation's 
 #' residuals and predicted values.
 #' 
-#' This function extract residuals and fitted values from the model, using least
-#' squares (LS) and Empirical Bayes (EB) methods, and appends them to the model
-#' data. This unified framework enables the analyst to more easily conduct an
-#' upward residual analysis during model exploration/checking.
+#' This function extract residuals and predicted values from the model, using
+#' least squares (LS) and Empirical Bayes (EB) methods, and appends them to the
+#' model data. This unified framework enables the analyst to more easily conduct
+#' an upward residual analysis during model exploration/checking.
 #'
 #' @export
-#' @rdname HLMaugment
 #' @method HLMaugment lmerMod
 #' @S3method HLMaugment lmerMod
 #' @aliases HLMaugment
@@ -40,7 +46,6 @@ HLMaugment <- function(object, ...){
 #' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
 #' \code{standardize = FALSE} is specified. 
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-
 HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   # LS Residuals
   ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
@@ -95,12 +100,12 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     mar.resid <- data.frame(mar.resid = mr[,1])
   }
   
-  return.tbl <- tibble(object@frame,
-                       ls.resid,
-                       EB.resid,
-                       Xbeta,
-                       XbetaZb,
-                       mar.resid)
+  return.tbl <- tibble::tibble(object@frame,
+                               ls.resid,
+                               EB.resid,
+                               Xbeta,
+                               XbetaZb,
+                               mar.resid)
   # It might make sense to use tibbles earlier as well, I had issues with
   # renaming the LS columns.
   
