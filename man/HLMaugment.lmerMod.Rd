@@ -32,5 +32,23 @@ This is used mainly for dealing with simulations.}
 residuals and predicted values.
 }
 \details{
+This function extract residuals and predicted values from the model, using
+least squares (LS) and Empirical Bayes (EB) methods, and appends them to the
+model data. This unified framework enables the analyst to more easily conduct
+an upward residual analysis during model exploration/checking.
 
+The \code{HLMaugment} function provides a wrapper that will extract
+residuals and predicted values from a fitted \code{lmerMod} object. 
+The function provides access to 
+residual quantities already made available by the functions \code{resid},
+\code{predict}, and \code{ranef}, but adds additional functionality. Below is
+a list of types of residuals and predicted values that are extracted and
+appended to the model data.
+\describe{
+\item{raw level-1 LS residuals}{These are equivalent to the residuals extracted
+by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
+\code{standardize = FALSE} is specified. }
+\item{level-1 LS fitted values}{The predicted values }
+}
+Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
