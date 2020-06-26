@@ -111,9 +111,9 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
   return.tbl <- tibble::tibble(object@frame,
                                ls.resid,
                                EB.resid,
-                               Xbeta,
                                XbetaZb,
-                               mar.resid)
+                               mar.resid,
+                               Xbeta)
   # It might make sense to use tibbles earlier as well, I had issues with
   # renaming the LS columns.
   
