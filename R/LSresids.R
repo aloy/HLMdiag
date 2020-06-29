@@ -207,6 +207,30 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     
     # creating a data frame of the residuals, fitted values, and model frames
     ls.data <- lapply(ls.models, model.frame)
+    
+    #JACK CODE
+    temp <- rep(NA, length(ls.data))
+    for(i in 1:length(ls.data)){
+      temp[i] <- ncol(ls.data[i][[1]])
+    }
+    index <- which(temp != max(temp))
+    if(!is.null(index)){
+      col.full <- names(ls.data[-index][[1]]) 
+      # it appears if one factor is missing, they all are missing, but the
+      # appoach below assumes that not all of the groups are missing the same
+      # data
+      col.missing <- rep(NA, length(index))
+      for(i in 1:length(index)){
+        col.missing[i] <- list(col.full[!col.full %in% names(ls.data[index[i]][[1]])])
+      } 
+      for(i in 1:length(index)){
+        index2 <- which(data[names(object@flist)[1]] == names(ls.data)[index[i]])
+        ls.data[index[i]][[1]] <- cbind(ls.data[index[i]][[1]], 
+                                        data[index2,][col.missing[[i]]])
+      }
+    }
+    #END JACK CODE
+    
     res.data <- do.call('rbind', ls.data)
     
     row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
