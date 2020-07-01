@@ -42,20 +42,27 @@ HLMaugment.default <- function(object, ...){
 #' The function provides access to 
 #' residual quantities already made available by the functions \code{resid},
 #' \code{predict}, and \code{ranef}, but adds additional functionality. Below is
-#' a list of types of residuals and predicted values that are extracted.
+#' a list of types of residuals and predicted values that are extracted and
+#' appended to the model data.
 #' \describe{
-#' \item{raw level-1 residuals}{These are equivalent to the residuals extracted
+#' \item{raw level-1 LS residuals}{These are equivalent to the residuals extracted
 #' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
+<<<<<<< HEAD
 #' \code{standardize = FALSE} is specified. 
 #' }}
+=======
+#' \code{standardize = FALSE} is specified. }
+#' \item{level-1 LS fitted values}{The predicted values }
+#' }
+>>>>>>> 3db3864a25c7bac5b78695b47d2057e52bb01bb0
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   # LS Residuals
   ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+  ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
   
   if (standardize == FALSE) {
-    ls.resid <- data.frame(LS.resid = ls.resid["LS.resid"], 
-                           LS.fitted = ls.resid["fitted"])
+    ls.resid <- data.frame(ls.resid["LS.resid"], ls.resid["fitted"])
     names(ls.resid) <- c("LS.resid", "LS.fitted")
     
   } else if (standardize == TRUE) {
@@ -66,6 +73,7 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     ls.resid <- data.frame(ls.resid["semi.std.resid"], ls.resid["fitted"])
     names(ls.resid) <- c("semi.LS.resid", "LS.fitted")
   }
+  
   # we should refine what LSresids returns to match EB method
   # I am unsure if the above code works when a sim argument is passed in
   
@@ -106,9 +114,9 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
   return.tbl <- tibble::tibble(object@frame,
                                ls.resid,
                                EB.resid,
-                               Xbeta,
                                XbetaZb,
-                               mar.resid)
+                               mar.resid,
+                               Xbeta)
   # It might make sense to use tibbles earlier as well, I had issues with
   # renaming the LS columns.
   

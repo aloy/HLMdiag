@@ -42,11 +42,13 @@ residuals and predicted values from a fitted \code{lmerMod} object.
 The function provides access to 
 residual quantities already made available by the functions \code{resid},
 \code{predict}, and \code{ranef}, but adds additional functionality. Below is
-a list of types of residuals and predicted values that are extracted.
+a list of types of residuals and predicted values that are extracted and
+appended to the model data.
 \describe{
-\item{raw level-1 residuals}{These are equivalent to the residuals extracted
+\item{raw level-1 LS residuals}{These are equivalent to the residuals extracted
 by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
-\code{standardize = FALSE} is specified. 
-}}
+\code{standardize = FALSE} is specified. }
+\item{level-1 LS fitted values}{The predicted values }
+}
 Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
