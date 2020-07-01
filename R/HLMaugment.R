@@ -2,6 +2,7 @@
 HLMaugment <- function(object, ...){
   UseMethod("HLMaugment", object)
 }
+
 #' @export
 #' @rdname HLMaugment.lmerMod
 #' @method HLMaugment default
@@ -10,6 +11,7 @@ HLMaugment.default <- function(object, ...){
   stop(paste("there is no HLMaugment() method for objects of class",
              paste(class(object), collapse=", ")))
 }
+
 #' Calculating residuals from HLMs
 #'
 #' \code{HLMaugment} takes a hierarchical linear model fit as a
@@ -45,6 +47,7 @@ HLMaugment.default <- function(object, ...){
 #' \item{raw level-1 residuals}{These are equivalent to the residuals extracted
 #' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
 #' \code{standardize = FALSE} is specified. 
+#' }}
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   # LS Residuals
