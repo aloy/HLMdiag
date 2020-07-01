@@ -47,14 +47,9 @@ HLMaugment.default <- function(object, ...){
 #' \describe{
 #' \item{raw level-1 LS residuals}{These are equivalent to the residuals extracted
 #' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
-<<<<<<< HEAD
-#' \code{standardize = FALSE} is specified. 
-#' }}
-=======
 #' \code{standardize = FALSE} is specified. }
 #' \item{level-1 LS fitted values}{The predicted values }
 #' }
->>>>>>> 3db3864a25c7bac5b78695b47d2057e52bb01bb0
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   # LS Residuals
