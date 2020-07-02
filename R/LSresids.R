@@ -203,7 +203,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     suppressWarnings(ls.models <- adjust_lmList(object = formula(form), data = data))
     if (!is.null(attr(ls.models, which = "warningMsg"))) {
        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
-It is recommended to use EB residuals for this model.")
+It is recommended to use EB (.resid) residuals for this model.")
     }
     
     ls.residuals <- lapply(ls.models, resid)
@@ -213,12 +213,12 @@ It is recommended to use EB residuals for this model.")
     ls.data <- lapply(ls.models, model.frame)
     
     # BEGIN JACK CODE
-    temp <- rep(NA, length(ls.data))
+    temp <- rep(NA, length(ls.data)) # how many coeff for each group
     for(i in 1:length(ls.data)){
       temp[i] <- ncol(ls.data[i][[1]])
     }
-    index <- which(temp != max(temp))
-    if(length(index) > 0){
+    index <- which(temp != max(temp)) # which groups are deficient
+    if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
       #col.full <- names(ls.data[-index][[1]]) 
       #col.missing <- rep(NA, length(index))
       #for(i in 1:length(index)){
@@ -251,7 +251,6 @@ It is recommended to use EB residuals for this model.")
       h <- unlist(ls.hat)
       semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
       semi.std.resid[is.infinite(semi.std.resid)] <- NaN
-      
       # Catching earlier NAs
       for (i in 1:length(semi.std.resid)){
         if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
@@ -263,7 +262,6 @@ It is recommended to use EB residuals for this model.")
     if(!is.null(standardize) && standardize == TRUE){
       ls.rstandard <- unlist(lapply(ls.models, rstandard))
       ls.rstandard[is.infinite(ls.rstandard)] <- NaN
-      
       # Catching earlier NAs
       for (i in 1:length(ls.rstandard)){
         if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
