@@ -52,68 +52,129 @@ HLMaugment.default <- function(object, ...){
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
-  # LS Residuals
-  ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
-  ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
   
-  if (standardize == FALSE) {
-    ls.resid <- data.frame(ls.resid["LS.resid"], ls.resid["fitted"])
-    names(ls.resid) <- c("LS.resid", "LS.fitted")
-    
-  } else if (standardize == TRUE) {
-    ls.resid <- data.frame(ls.resid["std.resid"], ls.resid["fitted"])
-    names(ls.resid) <- c("std.LS.resid", "LS.fitted")
-    
-  } else {
-    ls.resid <- data.frame(ls.resid["semi.std.resid"], ls.resid["fitted"])
-    names(ls.resid) <- c("semi.LS.resid", "LS.fitted")
+  if(!level %in% c(1, names(object@flist))) {
+    stop("level can only be 1 or a grouping factor from the fitted model.")
+  }
+    if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
+    stop("standardize can only be specified to be logical or 'semi'.")
   }
   
-  # we should refine what LSresids returns to match EB method
-  # I am unsure if the above code works when a sim argument is passed in
-  
-  # EB Residuals
-  if (standardize == TRUE) {
-    mats <- .lmerMod_matrices(object)
-    p_diag <- diag(mats$P)
-    EB.resid <- data.frame(std.EB.resid = 
-                             resid(object) / ( lme4::getME(object, "sigma") * sqrt(p_diag) ))
+  if(level == 1) { 
+    # LS Residuals
+    ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+    ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     
-  } else {
-    EB.resid <- data.frame(EB.resid = resid(object))
+    if (standardize == FALSE) {
+      ls.resid <- data.frame(ls.resid["LS.resid"], ls.resid["fitted"])
+      names(ls.resid) <- c(".ls.resid", ".ls.fitted")
+      
+    } else if (standardize == TRUE) {
+      ls.resid <- data.frame(ls.resid["std.resid"], ls.resid["fitted"])
+      names(ls.resid) <- c(".std.ls.resid", ".ls.fitted")
+      
+    } else {
+      ls.resid <- data.frame(ls.resid["semi.std.resid"], ls.resid["fitted"])
+      names(ls.resid) <- c(".semi.ls.resid", ".ls.fitted")
+    }
+    
+    # we should refine what LSresids returns to match EB method
+    # I am unsure if the above code works when a sim argument is passed in
+    
+    # EB Residuals
+    if (standardize == TRUE) {
+      mats <- .lmerMod_matrices(object)
+      p_diag <- diag(mats$P)
+      eb.resid <- data.frame(.std.resid = 
+                               resid(object) / ( lme4::getME(object, "sigma") * sqrt(p_diag) ))
+      
+    } else {
+      eb.resid <- data.frame(.resid = resid(object))
+    }
+    # EB Fitted
+    eb.fitted <- data.frame(.fitted = lme4::getME(object, "mu"))
+    
+    # Marginal Residuals
+    mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
+    if (standardize == TRUE) {
+      sig0 <- lme4::getME(object, "sigma")
+      ZDZt <- sig0^2 * crossprod( lme4::getME(object, "A") )
+      n    <- nrow(ZDZt)
+      
+      R      <- Diagonal( n = n, x = sig0^2 )
+      V      <- R + ZDZt
+      V.chol <- chol( V )
+      
+      Lt <- solve(t(V.chol))
+      mar.resid <- data.frame(.std.mar.resid = (Lt %*% mr)[,1])
+      
+    } else {
+      mar.resid <- data.frame(.mar.resid = mr[,1])
+    }
+    # Marginal Fitted
+    mar.fitted  <- data.frame(.mar.fitted = predict(object, re.form = ~0))
+    
+    # Assemble Tibble
+    return.tbl <- tibble::tibble(object@frame,
+                                 eb.resid,
+                                 eb.fitted,
+                                 ls.resid,
+                                 mar.resid,
+                                 mar.fitted)
+    return(return.tbl)
   }
-  # note that "semi" is not implemented for EB
   
-  # Fitted Values
-  Xbeta  <- data.frame(Xbeta = predict(object, re.form = ~0))
-  XbetaZb <- data.frame(XbetaZb = lme4::getME(object, "mu"))
-  
-  # Marginal Residuals
-  mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
-  if (standardize == TRUE) {
-    sig0 <- lme4::getME(object, "sigma")
-    ZDZt <- sig0^2 * crossprod( lme4::getME(object, "A") )
-    n    <- nrow(ZDZt)
+  if (level %in% names(object@flist)) {
+    # LS Residuals
+    ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+    if (standardize == TRUE) {
+      ls.names <- paste0(".std.ls.", names(ls.resid))
+    } else {
+      ls.names <- paste0(".ls.", names(ls.resid))
+    }
     
-    R      <- Diagonal( n = n, x = sig0^2 )
-    V      <- R + ZDZt
-    V.chol <- chol( V )
+    # EB Residuals
+    eb.resid <- lme4::ranef(object)[[level]]
+    groups <- rownames(eb.resid)
+    if (standardize == TRUE) {
+      se.re <- se.ranef(object)[[level]]
+      eb.resid <- eb.resid/se.re
+      eb.names <- paste0(".std.ranef.", names(eb.resid))
+    } else {
+      eb.names <- paste0(".ranef.", names(eb.resid))
+    }
     
-    Lt <- solve(t(V.chol))
-    mar.resid <- data.frame(std.mar.resid = (Lt %*% mr)[,1])
+    # Grab level 2 variables
+    # adjust_lmList method
+    lvl1_vars <- NULL
+    index <- NULL
+    fixed <- as.character(fixform( formula(object) ) )
+    form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
+    try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
+        silent = TRUE)
+    if(!is.null(lvl1_vars)){
+      lvl1_vars <- unique(unlist(purrr::map(lvl1_vars, all.names)))
+      index <- which(!names(object@frame) %in% lvl1_vars)
+    }
+    if (length(index) > 1) { 
+      # there are lvl 2 variables
+      group_vars <- unique(object@frame[,index])
+      
+      if(!is.character(group_vars[,level])) {
+        group_vars[,level] <- as.character(group_vars[,level])
+      }
     
-  } else {
-    mar.resid <- data.frame(mar.resid = mr[,1])
+      suppressMessages(return.tbl <- tibble(groups, eb.resid, ls.resid, .name_repair = "universal"))
+      names(return.tbl) <- c(level, eb.names, ls.names)
+      returb.tbl <- tibble(left_join(group_vars, return.tbl))
+
+      return(return.tbl)
+      
+    } else {                 
+      # there are no lvl 2 variables
+      suppressMessages(return.tbl <- tibble(groups, eb.resid, ls.resid, .name_repair = "universal"))
+      names(return.tbl) <- c(level, eb.names, ls.names)
+      return(return.tbl)
+    }
   }
-  
-  return.tbl <- tibble::tibble(object@frame,
-                               ls.resid,
-                               EB.resid,
-                               XbetaZb,
-                               mar.resid,
-                               Xbeta)
-  # It might make sense to use tibbles earlier as well, I had issues with
-  # renaming the LS columns.
-  
-  return(return.tbl)
 }
