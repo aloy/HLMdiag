@@ -129,6 +129,7 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
   if (level %in% names(object@flist)) {
     # LS Residuals
     ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+    ls.resid <- janitor::clean_names(ls.resid)
     if (standardize == TRUE) {
       ls.names <- paste0(".std.ls.", names(ls.resid))
     } else {
@@ -137,6 +138,7 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     
     # EB Residuals
     eb.resid <- lme4::ranef(object)[[level]]
+    eb.resid <- janitor::clean_names(eb.resid)
     groups <- rownames(eb.resid)
     if (standardize == TRUE) {
       se.re <- se.ranef(object)[[level]]
@@ -149,33 +151,34 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     # Grab level 2 variables
     # adjust_lmList method
     lvl1_vars <- NULL
-    index <- NULL
     fixed <- as.character(fixform( formula(object) ) )
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
+    form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
         silent = TRUE)
-    if(!is.null(lvl1_vars)){
+    
+    if(is.null(lvl1_vars)){
+      # model is too simple, adjust_formula fails
+      suppressMessages(return.tbl <- tibble::tibble(
+        groups, eb.resid, ls.resid, .name_repair = "universal"))
+      names(return.tbl) <- c(level, eb.names, ls.names)
+      
+      return(return.tbl)
+      
+    } else {
       lvl1_vars <- unique(unlist(purrr::map(lvl1_vars, all.names)))
       index <- which(!names(object@frame) %in% lvl1_vars)
-    }
-    if (length(index) > 1) { 
-      # there are lvl 2 variables
-      group_vars <- unique(object@frame[,index])
-      
+      #use select in dplyr
+      group_vars <- object@frame %>%
+        dplyr::select(index)
       if(!is.character(group_vars[,level])) {
         group_vars[,level] <- as.character(group_vars[,level])
       }
-    
-      suppressMessages(return.tbl <- tibble(groups, eb.resid, ls.resid, .name_repair = "universal"))
+      suppressMessages(return.tbl <- tibble::tibble(
+        groups, eb.resid, ls.resid, .name_repair = "universal"))
       names(return.tbl) <- c(level, eb.names, ls.names)
-      returb.tbl <- tibble(left_join(group_vars, return.tbl))
-
-      return(return.tbl)
+      return.tbl <- tibble::tibble(
+        unique(dplyr::left_join(group_vars, return.tbl)))
       
-    } else {                 
-      # there are no lvl 2 variables
-      suppressMessages(return.tbl <- tibble(groups, eb.resid, ls.resid, .name_repair = "universal"))
-      names(return.tbl) <- c(level, eb.names, ls.names)
       return(return.tbl)
     }
   }
