@@ -80,9 +80,6 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
       names(ls.resid) <- c(".semi.ls.resid", ".ls.fitted")
     }
     
-    # we should refine what LSresids returns to match EB method
-    # I am unsure if the above code works when a sim argument is passed in
-    
     # EB Residuals
     if (standardize == TRUE) {
       mats <- .lmerMod_matrices(object)
@@ -150,8 +147,14 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     
     # Grab level 2 variables
     # adjust_lmList method
+    g <- level
+    if(stringr::str_detect(level, ":")) {
+      vars <- stringr::str_split(level, ":")[[1]]
+      g <- vars[which(!vars %in% names(object@flist))]
+    }
+    
     lvl1_vars <- NULL
-    fixed <- as.character(fixform( formula(object) ) )
+    fixed <- as.character(lme4::nobars( formula(object)))
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
         silent = TRUE)
@@ -170,8 +173,8 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
       #use select in dplyr
       group_vars <- object@frame %>%
         dplyr::select(index)
-      if(!is.character(group_vars[,level])) {
-        group_vars[,level] <- as.character(group_vars[,level])
+      if(!is.character(group_vars[,g])) {
+        group_vars[,g] <- as.character(group_vars[,g])
       }
       suppressMessages(return.tbl <- tibble::tibble(
         groups, eb.resid, ls.resid, .name_repair = "universal"))

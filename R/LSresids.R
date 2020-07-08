@@ -195,15 +195,16 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   
   data <- object@frame
   if(!is.null(sim)){data[,fixed[2]] <- sim}
-  
-  if(stringr::str_detect(level, ":")) {
-    vars <- stringr::str_split(level, ":")[[1]]
-    group_var <- vars[which(!vars %in% names(object@flist))]
-  }
 
   if(level == 1){
+    group_var <- names(object@flist)[1]
+    if(stringr::str_detect(names(object@flist)[1], ":")) {
+      vars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
+      group_var <- vars[which(!vars %in% names(object@flist))]
+    }
+    
     # fitting a separate LS regression model to each group
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
+    form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
     
     suppressWarnings(ls.models <- adjust_lmList(object = formula(form), data = data))
     if (!is.null(attr(ls.models, which = "warningMsg"))) {
@@ -270,10 +271,9 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     n.ranefs <- length(names(object@flist))
     ranef_names <- names( lme4::ranef(object)[[level]] )
     
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
-    
-    if( level == names(object@flist)[n.ranefs] ) { # For highest level unit
-      # JACK CODE
+    if(level == names(object@flist)[n.ranefs]) { #highest level
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+      
       suppressWarnings(ls.models <- lme4::lmList(formula = formula(form), data = data))
       if (!is.null(attr(ls.models, which = "warningMsg"))) {
         warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
@@ -282,31 +282,28 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       if(standardize == "semi") standardize <- FALSE
       ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
       ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
-      # END JACK CODE
       
-    } else{ # For 'intermediate' level unit
+      return(ls.resid)
+      
+    } else { #middle level
+      #group by specified level + 1
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
-      gform <- paste(fixed[2], fixed[1], fixed[3], "|", higher.level)
-      global.model <- adjust_lmList(object = formula(gform), data = data)
+      split_data <- split(data, data[,higher.level])
       
-      ls.models <- adjust_lmList(object = formula(form), data = data)
+      #for each group use ranef as above
+      vars <- stringr::str_split(level, ":")[[1]]
+      g <- vars[which(!vars %in% names(object@flist))]
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", g) 
       
-      # matching lower level units to higer level units
-      units.mat <- unique(object@flist)
-      n.higher.level <- table(units.mat[higher.level])
+      #recombine data frame
+      purrr::map(split_data, 
+                 lme4::lmList(formula = formula(form), data = eval(.)[[1]]))
       
-      global.coefs <- rep(unlist(coef(global.model)[ranef_names]), 
-                          times = n.higher.level)
-      ls.resid <- coef(ls.models)[,ranef_names] - global.coefs
-      
-      #ls.models <- lmList(formula = formula(form), data = data)
-      #ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
-      #ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
-      #ls.resid$group <- row.names(coef(ls.models))
+      lme4::lmList(formula = formula(form), data = split_data[[1]])
+     
+      (split_data[1])$Central
+        
+        split_data[1][[1]]
     }
-    
-    colnames(ls.resid) <- ranef_names
-    
-    return(ls.resid)
   }
-  }
+}
