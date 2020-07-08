@@ -1,22 +1,22 @@
 #' @export
-HLMaugment <- function(object, ...){
-  UseMethod("HLMaugment", object)
+hlm_resid <- function(object, ...){
+  UseMethod("hlm_resid", object)
 }
 
 
 #' @export
-#' @rdname HLMaugment.lmerMod
-#' @method HLMaugment default
-#' @S3method HLMaugment default
-HLMaugment.default <- function(object, ...){
-  stop(paste("there is no HLMaugment() method for objects of class",
+#' @rdname hlm_resid.lmerMod
+#' @method hlm_resid default
+#' @S3method hlm_resid default
+hlm_resid.default <- function(object, ...){
+  stop(paste("there is no hlm_resid() method for objects of class",
              paste(class(object), collapse=", ")))
 }
 
 
 #' Calculating residuals from HLMs
 #'
-#' \code{HLMaugment} takes a hierarchical linear model fit as a
+#' \code{hlm_resid} takes a hierarchical linear model fit as a
 #' \code{lmerMod} object and adds information about each observation's 
 #' residuals and predicted values.
 #' 
@@ -26,9 +26,9 @@ HLMaugment.default <- function(object, ...){
 #' an upward residual analysis during model exploration/checking.
 #'
 #' @export
-#' @method HLMaugment lmerMod
-#' @S3method HLMaugment lmerMod
-#' @aliases HLMaugment
+#' @method hlm_resid lmerMod
+#' @S3method hlm_resid lmerMod
+#' @aliases hlm_resid
 #' @param object an object of class \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for within-group
 #'   (case-level) residuals, the name of a grouping factor (as defined in
@@ -39,7 +39,7 @@ HLMaugment.default <- function(object, ...){
 #' @param sim optional argument giving the data frame used for LS residuals.
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
-#' @details The \code{HLMaugment} function provides a wrapper that will extract
+#' @details The \code{hlm_resid} function provides a wrapper that will extract
 #' residuals and predicted values from a fitted \code{lmerMod} object. 
 #' The function provides access to 
 #' residual quantities already made available by the functions \code{resid},
@@ -53,7 +53,7 @@ HLMaugment.default <- function(object, ...){
 #' \item{level-1 LS fitted values}{The predicted values }
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
+hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
