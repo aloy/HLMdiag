@@ -190,24 +190,45 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   }
   
   LS.resid <- NULL # Make codetools happy
-  
-  fixed <- as.character( fixform( formula(object) ) )
+
+  fixed <- as.character(lme4::nobars( formula(object)))
   
   data <- object@frame
   if(!is.null(sim)){data[,fixed[2]] <- sim}
   
+  if(stringr::str_detect(level, ":")) {
+    vars <- stringr::str_split(level, ":")[[1]]
+    group_var <- vars[which(!vars %in% names(object@flist))]
+  }
+
   if(level == 1){
     # fitting a separate LS regression model to each group
     form <- paste(fixed[2], fixed[1], fixed[3], "|", names(object@flist)[1])
     
-    ls.models <- adjust_lmList(object = formula(form), data = data)
+    suppressWarnings(ls.models <- adjust_lmList(object = formula(form), data = data))
+    if (!is.null(attr(ls.models, which = "warningMsg"))) {
+       warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
+  It is recommended to use EB (.resid) residuals for this model.")
+    }
     
     ls.residuals <- lapply(ls.models, resid)
     ls.fitted <- lapply(ls.models, fitted)
     
     # creating a data frame of the residuals, fitted values, and model frames
     ls.data <- lapply(ls.models, model.frame)
-    res.data <- do.call('rbind', ls.data)
+    
+    # force the rank deficient entries to NA
+    temp <- rep(NA, length(ls.data)) # how many coeff for each group
+    for(i in 1:length(ls.data)){
+      temp[i] <- ncol(ls.data[i][[1]])
+    }
+    index <- which(temp != max(temp)) # which groups are deficient
+    if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
+      for(i in 1:length(index)){
+        ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
+        ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
+      }
+    }
     
     row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
     
@@ -221,6 +242,10 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       h <- unlist(ls.hat)
       semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
       semi.std.resid[is.infinite(semi.std.resid)] <- NaN
+      # Catching earlier NAs
+      for (i in 1:length(semi.std.resid)){
+        if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
+      }
       
       return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
     }
@@ -228,11 +253,14 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     if(!is.null(standardize) && standardize == TRUE){
       ls.rstandard <- unlist(lapply(ls.models, rstandard))
       ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+      # Catching earlier NAs
+      for (i in 1:length(ls.rstandard)){
+        if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
+      }
       
       return.df <- cbind(return.df, std.resid = ls.rstandard)
     }
-    
-    return.df <- cbind(res.data, return.df)
+
     rownames(return.df) <- row.order
     
     return(return.df)
@@ -245,11 +273,16 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     
     if( level == names(object@flist)[n.ranefs] ) { # For highest level unit
-      gform <- fixform( formula(object) )
-      global.model <- lm(formula = formula(gform), data = data)
-      
-      ls.models <- adjust_lmList(object = formula(form), data = data)
-      ls.resid <- coef(ls.models)[,ranef_names] - coef(global.model)[ranef_names]
+      # JACK CODE
+      suppressWarnings(ls.models <- lme4::lmList(formula = formula(form), data = data))
+      if (!is.null(attr(ls.models, which = "warningMsg"))) {
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
+  It is recommended to use EB (.ranef) group level residuals for this model.")
+      }
+      if(standardize == "semi") standardize <- FALSE
+      ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
+      ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      # END JACK CODE
       
     } else{ # For 'intermediate' level unit
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
@@ -266,9 +299,12 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
                           times = n.higher.level)
       ls.resid <- coef(ls.models)[,ranef_names] - global.coefs
       
+      #ls.models <- lmList(formula = formula(form), data = data)
+      #ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
+      #ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      #ls.resid$group <- row.names(coef(ls.models))
     }
     
-    ls.resid <- as.data.frame(ls.resid)
     colnames(ls.resid) <- ranef_names
     
     return(ls.resid)

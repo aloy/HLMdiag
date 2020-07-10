@@ -175,7 +175,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # that is available to all users. This should not be exported.
 se.ranef <- function (object) 
 {
-  se.bygroup <- lme4::ranef(object, postVar = TRUE)
+  se.bygroup <- lme4::ranef(object, condVar = TRUE)
   n.groupings <- length(se.bygroup)
   for (m in 1:n.groupings) {
     vars.m <- attr(se.bygroup[[m]], "postVar")

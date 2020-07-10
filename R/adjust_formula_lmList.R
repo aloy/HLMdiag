@@ -17,6 +17,7 @@ problem_factor_groups <- function(formula, data){
 	model_frame <- data
 	
 	g <- deparse(form[[3]][[3]])
+	g <- strsplit(g, split = ":")[[1]][1] # This fails when (1|Lvl3) + (Lvl3:Lvl2)
 	ngroups <- length(unique(data[,g]))
 	y <- deparse(form[[2]])
 	xs <- setdiff(names(model_frame), c(deparse(form[[2]]), g))
@@ -178,6 +179,7 @@ adjust_lmList.formula <- function(object, data, pool){
 	check_results <- unlist(lapply(lmList_result, is.null))
 	form <- formula(object)
 	g <- deparse(form[[3]][[3]]) 
+	g <- strsplit(g, split = ":")[[1]][1] # This fails when (1|Lvl3) + (Lvl3:Lvl2)
 	ngroups <- length(unique(data[,g]))
 	
 	if(sum(check_results) != 0){ #return(lmList_result)
