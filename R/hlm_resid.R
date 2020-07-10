@@ -1,22 +1,22 @@
 #' @export
-HLMaugment <- function(object, ...){
-  UseMethod("HLMaugment", object)
+hlm_resid <- function(object, ...){
+  UseMethod("hlm_resid", object)
 }
 
 
 #' @export
-#' @rdname HLMaugment.lmerMod
-#' @method HLMaugment default
-#' @S3method HLMaugment default
-HLMaugment.default <- function(object, ...){
-  stop(paste("there is no HLMaugment() method for objects of class",
+#' @rdname hlm_resid.lmerMod
+#' @method hlm_resid default
+#' @S3method hlm_resid default
+hlm_resid.default <- function(object, ...){
+  stop(paste("there is no hlm_resid() method for objects of class",
              paste(class(object), collapse=", ")))
 }
 
 
 #' Calculating residuals from HLMs
 #'
-#' \code{HLMaugment} takes a hierarchical linear model fit as a
+#' \code{hlm_resid} takes a hierarchical linear model fit as a
 #' \code{lmerMod} object and adds information about each observation's 
 #' residuals and predicted values.
 #' 
@@ -26,9 +26,9 @@ HLMaugment.default <- function(object, ...){
 #' an upward residual analysis during model exploration/checking.
 #'
 #' @export
-#' @method HLMaugment lmerMod
-#' @S3method HLMaugment lmerMod
-#' @aliases HLMaugment
+#' @method hlm_resid lmerMod
+#' @S3method hlm_resid lmerMod
+#' @aliases hlm_resid
 #' @param object an object of class \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for within-group
 #'   (case-level) residuals, the name of a grouping factor (as defined in
@@ -39,7 +39,7 @@ HLMaugment.default <- function(object, ...){
 #' @param sim optional argument giving the data frame used for LS residuals.
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
-#' @details The \code{HLMaugment} function provides a wrapper that will extract
+#' @details The \code{hlm_resid} function provides a wrapper that will extract
 #' residuals and predicted values from a fitted \code{lmerMod} object. 
 #' The function provides access to 
 #' residual quantities already made available by the functions \code{resid},
@@ -53,7 +53,7 @@ HLMaugment.default <- function(object, ...){
 #' \item{level-1 LS fitted values}{The predicted values }
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
+hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
@@ -63,7 +63,7 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
   }
   
   if(level == 1) { 
-    # LS Residuals
+    # LS Residuals and Fitted
     ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
     ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     
@@ -79,9 +79,6 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
       ls.resid <- data.frame(ls.resid["semi.std.resid"], ls.resid["fitted"])
       names(ls.resid) <- c(".semi.ls.resid", ".ls.fitted")
     }
-    
-    # we should refine what LSresids returns to match EB method
-    # I am unsure if the above code works when a sim argument is passed in
     
     # EB Residuals
     if (standardize == TRUE) {
@@ -127,15 +124,6 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
   }
   
   if (level %in% names(object@flist)) {
-    # LS Residuals
-    ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
-    ls.resid <- janitor::clean_names(ls.resid)
-    if (standardize == TRUE) {
-      ls.names <- paste0(".std.ls.", names(ls.resid))
-    } else {
-      ls.names <- paste0(".ls.", names(ls.resid))
-    }
-    
     # EB Residuals
     eb.resid <- lme4::ranef(object)[[level]]
     eb.resid <- janitor::clean_names(eb.resid)
@@ -148,10 +136,26 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
       eb.names <- paste0(".ranef.", names(eb.resid))
     }
     
+    # LS Residuals
+    ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+    ls.resid <- ls.resid[match(groups, ls.resid$group),] # fix order
+    ls.resid <- janitor::clean_names(ls.resid)
+    if (standardize == TRUE) {
+      ls.names <- paste0(".std.ls.", names(ls.resid))
+    } else {
+      ls.names <- paste0(".ls.", names(ls.resid))
+    }
+    
     # Grab level 2 variables
     # adjust_lmList method
+    g <- level
+    if(stringr::str_detect(level, ":")) {
+      vars <- stringr::str_split(level, ":")[[1]]
+      g <- vars[which(!vars %in% names(object@flist))]
+    }
+    
     lvl1_vars <- NULL
-    fixed <- as.character(fixform( formula(object) ) )
+    fixed <- as.character(lme4::nobars( formula(object)))
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
     try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
         silent = TRUE)
@@ -159,7 +163,7 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
     if(is.null(lvl1_vars)){
       # model is too simple, adjust_formula fails
       suppressMessages(return.tbl <- tibble::tibble(
-        groups, eb.resid, ls.resid, .name_repair = "universal"))
+        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
       names(return.tbl) <- c(level, eb.names, ls.names)
       
       return(return.tbl)
@@ -170,16 +174,74 @@ HLMaugment.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NUL
       #use select in dplyr
       group_vars <- object@frame %>%
         dplyr::select(index)
-      if(!is.character(group_vars[,level])) {
-        group_vars[,level] <- as.character(group_vars[,level])
+      if(!is.character(group_vars[,g])) {
+        group_vars[,g] <- as.character(group_vars[,g])
       }
       suppressMessages(return.tbl <- tibble::tibble(
-        groups, eb.resid, ls.resid, .name_repair = "universal"))
+        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
       names(return.tbl) <- c(level, eb.names, ls.names)
       return.tbl <- tibble::tibble(
         unique(dplyr::left_join(group_vars, return.tbl)))
       
       return(return.tbl)
     }
+
+      # Grab level specific variables
+      # lmList method
+      fixed <- as.character(lme4::nobars( formula(object)))
+      n.ranefs <- length(names(object@flist))
+      ranef_names <- names( lme4::ranef(object)[[level]] )
+      
+      
+      if(level == names(object@flist)[n.ranefs]){ # highest level
+        form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+        
+        # Use lmList
+        g.list <- lme4::lmList(formula(form), data = object@frame)
+       
+        # Checking if all of the values for a coef are NAs
+        g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
+        g.names <- names(g.index)
+        
+        # Match that index back to object@frame
+        g.exp <- stringr::str_c(g.names, collapse = "|")
+        g.index.frame <- which( 
+          stringr::str_detect(g.exp, names(object@frame)))
+        g.vars <- object@frame %>%
+          dplyr::select(level, g.index.frame)
+        g.vars <- unique(g.vars)
+        
+        # Assemble data frame
+        return.tbl <- tibble::tibble(
+          groups, eb.resid, ls.resid[,-1], .name_repair = "universal")
+        names(return.tbl) <- c(level, eb.names, ls.names[-1])
+        return.tbl <- tibble::tibble(
+          unique(dplyr::left_join(g.vars, return.tbl)))
+        
+      } else { # inner level
+        # Extract correct grouping variable
+        level.var <- stringr::str_split(level, ":")[[1]]
+        level.var <- level.var[which(!level.var %in% names(object@flist))]
+        form <- paste(fixed[2], fixed[1], fixed[3], "|", level.var)
+        
+        # Use lmList
+        g.list <- lme4::lmList(formula(form), data = object@frame)
+        
+        # Checking if all of the values for a coef are NAs
+        g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
+        g.names <- names(g.index)
+        
+        # Match that index back to object@frame
+        higher.level <- names(object@flist[which(names(object@flist) == level) + 1])
+        g.exp <- stringr::str_c(g.names, collapse = "|")    
+        g.index.frame <- which( 
+          stringr::str_detect(g.exp, names(object@frame)))
+        g.vars <- object@frame %>%
+          dplyr::select(level.var, higher.level, g.index.frame)
+        g.vars <- unique(g.vars)
+        
+        
+      }
+    
   }
 }
