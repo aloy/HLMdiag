@@ -31,9 +31,12 @@ case_delete.default <- function(model, ...){
 #'@param type the part of the model for which you are obtaining deletion
 #'diagnostics: the fixed effects (\code{"fixef"}), variance components
 #'(\code{"varcomp"}), or \code{"both"} (default).
-#'@param delete index of individual cases to be deleted.  For higher level
-#'units specified in this manner, the \code{group} parameter must also be
-#'specified.  If \code{delete = NULL} then all cases are iteratively deleted.
+#'(\code{"varcomp"}), or \code{"both"} (default).
+#'@param delete numeric index of individual cases to be deleted. If the \code{group} parameter 
+#'is specified, \code{delete} may also take the form of a character vector consisting of group 
+#'names as they appear in \code{flist}. It is possible to set \code{group} and delete individual
+#'cases from different groups using \code{delete}, so numeric indices should be double checked 
+#'to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.
 #' @param ... do not use
 #'@return a list with the following compontents:
 #' \describe{
@@ -314,7 +317,10 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
         
       }
     }
-    else {
+    else { 
+      if (!is.numeric(delete)) {
+        stop("For individual case deletion, the delete parameter should be a numeric vector")
+      }
       model.delete   <- lme4::lmer(formula = formula(model), data = model@frame[-delete,])
       
       if(type %in% c("both", "fixef")) {
@@ -339,23 +345,24 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
     
     
     if( is.null(delete) ){
-      data.delete <- split(model@frame, model@frame[, group])
-      data.delete <- lapply(data.delete, function(df){
-        index <- unique( df[, group ] )
-        if(class(index) != "character") index <- as.character(index)
-        data.delete[[ index ]] <- NULL
-        do.call('rbind', data.delete)
+    
+      data.delete <- split(model@frame, flist[group])
+      data.delete <- lapply(data.delete, function(df) {
+        df <- dplyr::anti_join(model@frame, df, by = names(model@frame))
       })
       
-      model.delete <- lapply(data.delete, lme4::lmer, formula = formula(model))
       
       
+      model.delete <- lapply(data.delete, lme4::lmer, formula = formula(model)) #original 
+    
+     
       if(length(flist) == 1) {
         ranef.delete <- lapply(model.delete, function(x){
           data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
                      id = rownames(lme4::ranef(x)[[1]]), lme4::ranef(x)[[1]])
-        })
+        }) 
       }
+      
       else{
         ranef.delete  <- lapply(model.delete, lme4::ranef)
         deleted.group <- rownames(lme4::ranef(model)[[group]])
@@ -378,16 +385,39 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
         vcov.delete <- lapply(model.delete, vcov)
         vcov.delete <- lapply(vcov.delete, as.matrix)
       }
-      
-      
-      fitted.delete <- lapply(model.delete, function(x){
-        data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
-                   x@frame, fitted(x))
+     
+      fitted.delete <- lapply(model.delete, function(x) {
+        data.frame(deleted = setdiff(model@flist[[group]], x@flist[[group]]), x@frame, fitted(x))
       })
     }
+    
     else{
-      index <- !model@frame[,group] %in% delete
+      deleted_levels <- NULL
+      
+      if(is.numeric(delete)) {
+        index <- rep(TRUE, length(flist[[group]]))
+        index[delete] <- FALSE
+        deleted_levels <- as.vector(flist[[group]][delete])
+      }
+      else if (is.character(delete)) {
+        for (i in 1:length(delete)) {
+          if(!delete[i] %in% flist[[group]]) {
+            stop(paste(delete[i], "is not a valid group name to delete for this model. Names should follow the same format as in model@flist[[group]]. An example of an acceptable group name is:", model@flist[[group]][1]))
+          }
+        }
+        index <- unlist(lapply(list(delete), function(s) {
+          s <- !as.vector(model@flist[[group]]) %in% s
+        }))
+      }
+      else {
+        stop("Delete must either be a numeric or character vector.")
+      }
+     
       model.delete   <- lme4::lmer(formula = formula(model), data = model@frame[index,])
+      
+      if (sum(deleted_levels %in% model.delete@flist[[group]]) > 0) {
+        warning("Group parameter is specified, but deleted cases do not encompass entire groups")
+      }
       
       if(type %in% c("both", "fixef")) {
         fixef.delete   <- lme4::fixef(model.delete)
