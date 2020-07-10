@@ -98,6 +98,10 @@ diagnostics <- function(object){
 #' @method cooks.distance case_delete
 cooks.distance.case_delete <- function(model, ...){
   p <- length(model$fixef.original)
+  
+  if (colnames(model$fixef.delete)[1] == "deleted") {
+    model$fixef.delete <- model$fixef.delete[,-1]
+  }
 
   if(is(model$fixef.delete, "matrix")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
@@ -122,6 +126,10 @@ cooks.distance.case_delete <- function(model, ...){
 #' @method mdffits case_delete
 mdffits.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
+  
+  if (colnames(object$fixef.delete)[1] == "deleted") {
+    object$fixef.delete <- object$fixef.delete[,-1]
+  }
 
   if(is(object$fixef.delete, "matrix")) {
     groups <- rownames(object$fixef.delete, do.NULL = FALSE, prefix = "")
