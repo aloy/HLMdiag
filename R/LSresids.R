@@ -282,28 +282,44 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       if(standardize == "semi") standardize <- FALSE
       ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
       ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
+                     ls.resid)
       
       return(ls.resid)
       
     } else { #middle level
-      #group by specified level + 1
+      # group by (specified level + 1)
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
       split_data <- split(data, data[,higher.level])
       
-      #for each group use ranef as above
+      # for each group use ranef as above
       vars <- stringr::str_split(level, ":")[[1]]
       g <- vars[which(!vars %in% names(object@flist))]
       form <- paste(fixed[2], fixed[1], fixed[3], "|", g) 
       
-      #recombine data frame
-      purrr::map(split_data, 
-                 lme4::lmList(formula = formula(form), data = eval(.)[[1]]))
+      # recombine data frame
+      ls.models <- purrr::map(split_data,
+                        ~lme4::lmList(formula = formula(form), data = .x))
       
-      lme4::lmList(formula = formula(form), data = split_data[[1]])
+      # to fix the order 
+      row.order <- purrr::map(ls.models, ~row.names(coef(.x)))
+      row.order2 <- c()
+      for (i in names(ls.models)) {
+        row.order2 <- append(row.order2, 
+                             stringr::str_c(row.order[[i]], i, sep = ":"))
+      }
+      
+      # get the ranef
+      ls.ranef <- purrr::map(ls.models, 
+                        ~lme4::ranef(.x, standard = standardize)[ranef_names])
      
-      (split_data[1])$Central
-        
-        split_data[1][[1]]
+      # reconstruct the data frame with group id
+      ls.resid <- tibble::tibble(
+        group = row.order2,
+        purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
+
+      
+      return(ls.resid)
     }
   }
 }

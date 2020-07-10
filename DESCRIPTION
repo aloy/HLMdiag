@@ -52,3 +52,4 @@ Collate:
     'radon.R'
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
+RoxygenNote: 7.1.0
