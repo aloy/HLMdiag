@@ -148,43 +148,43 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL
     
     # Grab level 2 variables
     # adjust_lmList method
-    g <- level
-    if(stringr::str_detect(level, ":")) {
-      vars <- stringr::str_split(level, ":")[[1]]
-      g <- vars[which(!vars %in% names(object@flist))]
-    }
-    
-    lvl1_vars <- NULL
-    fixed <- as.character(lme4::nobars( formula(object)))
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
-    try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
-        silent = TRUE)
-    
-    if(is.null(lvl1_vars)){
-      # model is too simple, adjust_formula fails
-      suppressMessages(return.tbl <- tibble::tibble(
-        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
-      names(return.tbl) <- c(level, eb.names, ls.names)
-      
-      return(return.tbl)
-      
-    } else {
-      lvl1_vars <- unique(unlist(purrr::map(lvl1_vars, all.names)))
-      index <- which(!names(object@frame) %in% lvl1_vars)
-      #use select in dplyr
-      group_vars <- object@frame %>%
-        dplyr::select(index)
-      if(!is.character(group_vars[,g])) {
-        group_vars[,g] <- as.character(group_vars[,g])
-      }
-      suppressMessages(return.tbl <- tibble::tibble(
-        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
-      names(return.tbl) <- c(level, eb.names, ls.names)
-      return.tbl <- tibble::tibble(
-        unique(dplyr::left_join(group_vars, return.tbl)))
-      
-      return(return.tbl)
-    }
+    #g <- level
+    #if(stringr::str_detect(level, ":")) {
+    #  vars <- stringr::str_split(level, ":")[[1]]
+    #  g <- vars[which(!vars %in% names(object@flist))]
+    #}
+    #
+    #lvl1_vars <- NULL
+    #fixed <- as.character(lme4::nobars( formula(object)))
+    #form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+    #try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
+    #    silent = TRUE)
+    #
+    #if(is.null(lvl1_vars)){
+    #  # model is too simple, adjust_formula fails
+    #  suppressMessages(return.tbl <- tibble::tibble(
+    #    groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
+    #  names(return.tbl) <- c(level, eb.names, ls.names)
+    #  
+    #  return(return.tbl)
+    #  
+    #} else {
+    #  lvl1_vars <- unique(unlist(purrr::map(lvl1_vars, all.names)))
+    #  index <- which(!names(object@frame) %in% lvl1_vars)
+    #  #use select in dplyr
+    #  group_vars <- object@frame %>%
+    #    dplyr::select(index)
+    #  if(!is.character(group_vars[,g])) {
+    #    group_vars[,g] <- as.character(group_vars[,g])
+    #  }
+    #  suppressMessages(return.tbl <- tibble::tibble(
+    #    groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
+    #  names(return.tbl) <- c(level, eb.names, ls.names)
+    #  return.tbl <- tibble::tibble(
+    #    unique(dplyr::left_join(group_vars, return.tbl)))
+    #  
+    #  return(return.tbl)
+    #}
 
       # Grab level specific variables
       # lmList method
@@ -218,6 +218,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL
         return.tbl <- tibble::tibble(
           unique(dplyr::left_join(g.vars, return.tbl)))
         
+        return(return.tbl)
+        
       } else { # inner level
         # Extract correct grouping variable
         level.var <- stringr::str_split(level, ":")[[1]]
@@ -240,6 +242,9 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL
           dplyr::select(level.var, higher.level, g.index.frame)
         g.vars <- unique(g.vars)
         
+        # HERE I want to add a column to the above data frame that concatenates
+        # the string stored in g.var[level] with the string stored in
+        # g.var[higher.level] seperated by a colon.
         
       }
     
