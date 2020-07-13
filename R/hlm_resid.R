@@ -34,20 +34,19 @@ hlm_resid.default <- function(object, ...){
 #'   (case-level) residuals, the name of a grouping factor (as defined in
 #'   \code{flist} of the \code{lmerMod} object) for between-group residuals
 #' @param standardize if \code{standardize = TRUE} the standardized residuals
-#'   will be returned; if \code{standardize = "semi"} then the semi-standardized
-#'   level-1 residuals will be returned
+#'   will be returned for any group; if \code{standardize = "semi"} then the
+#'   semi-standardized level-1 residuals will be returned
 #' @param sim optional argument giving the data frame used for LS residuals.
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{hlm_resid} function provides a wrapper that will extract
 #' residuals and predicted values from a fitted \code{lmerMod} object. 
-#' The function provides access to 
-#' residual quantities already made available by the functions \code{resid},
-#' \code{predict}, and \code{ranef}, but adds additional functionality. Below is
-#' a list of types of residuals and predicted values that are extracted and
-#' appended to the model data.
+#' The function provides access to residual quantities already made available by
+#' the functions \code{resid}, \code{predict}, and \code{ranef}, but adds
+#' additional functionality. Below is a list of types of residuals and predicted
+#' values that are extracted and appended to the model data.
 #' \describe{
-#' \item{raw level-1 LS residuals}{These are equivalent to the residuals extracted
+#' \item{level-1 residuals}{These are equivalent to the residuals extracted
 #' by \code{resid} if \code{level = 1}, \code{type = "EB"}, and 
 #' \code{standardize = FALSE} is specified. }
 #' \item{level-1 LS fitted values}{The predicted values }
@@ -56,7 +55,8 @@ hlm_resid.default <- function(object, ...){
 hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL, ...) {
   
   if(!level %in% c(1, names(object@flist))) {
-    stop("level can only be 1 or a grouping factor from the fitted model.")
+    stop("level can only be 1 or the following grouping factors from the fitted model: \n", 
+         stringr::str_c(names(object@flist), collapse = ", "))
   }
     if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi'.")
@@ -146,107 +146,87 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, sim = NULL
       ls.names <- paste0(".ls.", names(ls.resid))
     }
     
-    # Grab level 2 variables
-    # adjust_lmList method
-    #g <- level
-    #if(stringr::str_detect(level, ":")) {
-    #  vars <- stringr::str_split(level, ":")[[1]]
-    #  g <- vars[which(!vars %in% names(object@flist))]
-    #}
-    #
-    #lvl1_vars <- NULL
-    #fixed <- as.character(lme4::nobars( formula(object)))
-    #form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
-    #try(lvl1_vars <- adjust_formula_lmList(formula(form), object@frame),
-    #    silent = TRUE)
-    #
-    #if(is.null(lvl1_vars)){
-    #  # model is too simple, adjust_formula fails
-    #  suppressMessages(return.tbl <- tibble::tibble(
-    #    groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
-    #  names(return.tbl) <- c(level, eb.names, ls.names)
-    #  
-    #  return(return.tbl)
-    #  
-    #} else {
-    #  lvl1_vars <- unique(unlist(purrr::map(lvl1_vars, all.names)))
-    #  index <- which(!names(object@frame) %in% lvl1_vars)
-    #  #use select in dplyr
-    #  group_vars <- object@frame %>%
-    #    dplyr::select(index)
-    #  if(!is.character(group_vars[,g])) {
-    #    group_vars[,g] <- as.character(group_vars[,g])
-    #  }
-    #  suppressMessages(return.tbl <- tibble::tibble(
-    #    groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
-    #  names(return.tbl) <- c(level, eb.names, ls.names)
-    #  return.tbl <- tibble::tibble(
-    #    unique(dplyr::left_join(group_vars, return.tbl)))
-    #  
-    #  return(return.tbl)
-    #}
-
-      # Grab level specific variables
-      # lmList method
-      fixed <- as.character(lme4::nobars( formula(object)))
-      n.ranefs <- length(names(object@flist))
-      ranef_names <- names( lme4::ranef(object)[[level]] )
-      
-      
-      if(level == names(object@flist)[n.ranefs]){ # highest level
-        form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
-        
-        # Use lmList
-        g.list <- lme4::lmList(formula(form), data = object@frame)
-       
-        # Checking if all of the values for a coef are NAs
-        g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
-        g.names <- names(g.index)
-        
-        # Match that index back to object@frame
-        g.exp <- stringr::str_c(g.names, collapse = "|")
-        g.index.frame <- which( 
-          stringr::str_detect(g.exp, names(object@frame)))
-        g.vars <- object@frame %>%
-          dplyr::select(level, g.index.frame)
-        g.vars <- unique(g.vars)
-        
-        # Assemble data frame
-        return.tbl <- tibble::tibble(
-          groups, eb.resid, ls.resid[,-1], .name_repair = "universal")
-        names(return.tbl) <- c(level, eb.names, ls.names[-1])
-        return.tbl <- tibble::tibble(
-          unique(dplyr::left_join(g.vars, return.tbl)))
-        
-        return(return.tbl)
-        
-      } else { # inner level
-        # Extract correct grouping variable
-        level.var <- stringr::str_split(level, ":")[[1]]
-        level.var <- level.var[which(!level.var %in% names(object@flist))]
-        form <- paste(fixed[2], fixed[1], fixed[3], "|", level.var)
-        
-        # Use lmList
-        g.list <- lme4::lmList(formula(form), data = object@frame)
-        
-        # Checking if all of the values for a coef are NAs
-        g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
-        g.names <- names(g.index)
-        
-        # Match that index back to object@frame
-        higher.level <- names(object@flist[which(names(object@flist) == level) + 1])
-        g.exp <- stringr::str_c(g.names, collapse = "|")    
-        g.index.frame <- which( 
-          stringr::str_detect(g.exp, names(object@frame)))
-        g.vars <- object@frame %>%
-          dplyr::select(level.var, higher.level, g.index.frame)
-        g.vars <- unique(g.vars)
-        
-        # HERE I want to add a column to the above data frame that concatenates
-        # the string stored in g.var[level] with the string stored in
-        # g.var[higher.level] seperated by a colon.
-        
-      }
+    # Grab level specific variables
+    fixed <- as.character(lme4::nobars( formula(object)))
+    n.ranefs <- length(names(object@flist))
+    ranef_names <- names( lme4::ranef(object)[[level]] )
     
+    
+    if(level == names(object@flist)[n.ranefs]){ # highest level
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+      
+      # Use lmList
+      suppressWarnings(g.list <- lme4::lmList(formula(form), data = object@frame))
+     
+      # Checking if all of the values for a coef are NAs
+      g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
+      g.names <- names(g.index)
+      # get rid of interaction terms
+      g.names <- g.names[-which(stringr::str_detect(g.names, ":"))] 
+      
+      # Match that index back to object@frame
+      g.exp <- stringr::str_c(g.names, collapse = "|")
+      g.index.frame <- which( 
+        stringr::str_detect(g.exp, names(object@frame)))
+      g.vars <- object@frame %>%
+        dplyr::select(level, g.index.frame)
+      g.vars <- unique(g.vars)
+      
+      # Assemble data frame
+      return.tbl <- suppressMessages(tibble::tibble(
+        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
+      names(return.tbl) <- c(level, eb.names, ls.names[-1])
+      if(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])){
+        g.vars[level][[1]] <- as.character(g.vars[level][[1]])
+        return.tbl[level][[1]] <- as.character(return.tbl[level][[1]])
+      }
+      return.tbl <- tibble::tibble(
+        unique(suppressMessages(dplyr::left_join(g.vars, return.tbl))))
+      
+      return(return.tbl)
+      
+    } else { # inner level
+      # Extract correct grouping variable
+      level.var <- stringr::str_split(level, ":")[[1]]
+      level.var <- level.var[which(!level.var %in% names(object@flist))]
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", level.var)
+      
+      # Use lmList
+      g.list <- suppressWarnings(lme4::lmList(formula(form), data = object@frame))
+      
+      # Checking if all of the values for a coef are NAs
+      g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
+      g.names <- names(g.index)
+      # remove interaction terms
+      g.names <- g.names[-which(stringr::str_detect(g.names, ":"))] 
+      
+      # Match that index back to object@frame
+      higher.level <- names(object@flist[which(names(object@flist) == level) + 1])
+      g.exp <- stringr::str_c(g.names, collapse = "|")    
+      g.index.frame <- which( 
+        stringr::str_detect(g.exp, names(object@frame)))
+      g.vars <- object@frame %>%
+        dplyr::select(level.var, higher.level, g.index.frame)
+      g.vars <- unique(g.vars)
+      
+      # Ok i kinda cheat here, add the group variable
+      g.vars$group <- rep(NA, nrow(g.vars))
+      for (i in 1:nrow(g.vars)){
+        g.vars$group[i] <- stringr::str_c(g.vars[level.var][i,], 
+                                      g.vars[higher.level][i,], sep = ":")
+      }
+      g.vars <- g.vars %>%
+        select(ncol(g.vars), 1:(ncol(g.vars)-1))
+      
+      # Assemble data frame
+      return.tbl <- suppressMessages(tibble::tibble(
+        groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
+      names(return.tbl) <- c("group", eb.names, ls.names[-1])
+      return.tbl <- tibble::tibble(
+        unique(suppressMessages(dplyr::left_join(g.vars, return.tbl))))
+        
+      return(return.tbl)
+      
+      }
+    }
   }
-}
