@@ -31,7 +31,6 @@ case_delete.default <- function(model, ...){
 #'@param type the part of the model for which you are obtaining deletion
 #'diagnostics: the fixed effects (\code{"fixef"}), variance components
 #'(\code{"varcomp"}), or \code{"both"} (default).
-#'(\code{"varcomp"}), or \code{"both"} (default).
 #'@param delete numeric index of individual cases to be deleted. If the \code{group} parameter 
 #'is specified, \code{delete} may also take the form of a character vector consisting of group 
 #'names as they appear in \code{flist}. It is possible to set \code{group} and delete individual
