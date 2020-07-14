@@ -80,7 +80,7 @@ rvc.default <- function(object, ...){
 #' @aliases leverage
 #' @param object fitted object of class \code{mer} of \code{lmerMod}
 #' @param level the level at which the leverage should be calculated: either
-#'   1 for observation level leverage or the name of the grouping factor 
+#'   1 for observation level leverage (default) or the name of the grouping factor 
 #'   (as defined in \code{flist} of the \code{mer} object) for group level
 #'   leverage. \code{leverage} assumes that the grouping factors are unique;
 #'   thus, if IDs are repeated within each unit, unique IDs must be generated 
@@ -199,7 +199,7 @@ leverage.mer <- function(object, level, ...) {
 #' @rdname leverage.mer
 #' @method leverage lmerMod
 #' @S3method leverage lmerMod
-leverage.lmerMod <- function(object, level, ...) {
+leverage.lmerMod <- function(object, level = 1, ...) {
   if(!isNestedModel(object)) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
@@ -287,8 +287,8 @@ leverage.lmerMod <- function(object, level, ...) {
 #'@S3method cooks.distance mer
 #'@aliases cooks.distance
 #'@param model fitted model of class \code{mer} or \code{lmerMod}
-#'@param group variable used to define the group for which cases will be
-#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param level variable used to define the group for which cases will be
+#'deleted.  If \code{level = 1} (default), then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
 #' observations the row number must be specified. To delete higher level
 #'units the group ID and \code{group} parameter must be specified.
@@ -315,7 +315,7 @@ leverage.lmerMod <- function(object, level, ...) {
 #' ss.cd.lev1 <- cooks.distance(ss)
 #' 
 #' # Cook's distance for each Subject
-#' ss.cd.subject <- cooks.distance(ss, group = "Subject")
+#' ss.cd.subject <- cooks.distance(ss, level = "Subject")
 #' 
 #' \dontrun{
 #' data(Exam, package = 'mlmRev')
@@ -325,10 +325,10 @@ leverage.lmerMod <- function(object, level, ...) {
 #' cd.lev1 <- cooks.distance(fm)
 #' 
 #' # Cook's distance for each school
-#' cd.school <- cooks.distance(fm, group = "school")
+#' cd.school <- cooks.distance(fm, level = "school")
 #' 
 #' # Cook's distance when school 1 is deleted
-#' cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
+#' cd.school1 <- cooks.distance(fm, level = "school", delete = 1)
 #' 
 #' }
 #' 
@@ -397,10 +397,14 @@ cooks.distance.mer <- function(model, group = NULL, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method cooks.distance lmerMod
 #' @S3method cooks.distance lmerMod
-cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(lme4::getME(model, "flist"))) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if(!lme4::isLMM(model)){
@@ -415,7 +419,7 @@ cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
   # Obtaining the building blocks
-  if(is.null(group) & is.null(delete)) {
+  if(is.null(level) & is.null(delete)) {
     calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
@@ -427,16 +431,16 @@ cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
   else{
     e <- with(mats, Y - X %*% betaHat)
     
-    if( !is.null(group) ){
-      grp.names <- unique( mats$flist[[group]] )
+    if( !is.null(level) ){
+      grp.names <- unique( mats$flist[[level]] )
       
       if( is.null(delete) ){
-        del.index <- lapply(1:mats$ngrps[group], 
+        del.index <- lapply(1:mats$ngrps[level], 
                             function(x) {
-                              ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                              ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                             })
       } else{
-        del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+        del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
       }
     } else{
       del.index <- list( delete - 1 )
@@ -461,10 +465,14 @@ cooks.distance.lmerMod <- function(model, group = NULL, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method cooks.distance lme
 #' @S3method cooks.distance lme
-cooks.distance.lme <- function(model, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(model$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+cooks.distance.lme <- function(model, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(model$groups)) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if (any("nlme" == class(model))) 
@@ -478,7 +486,7 @@ cooks.distance.lme <- function(model, group = NULL, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
   # Obtaining the building blocks
-  if(is.null(group) & is.null(delete)) {
+  if(level != 1 & is.null(delete)) {
     calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
@@ -490,16 +498,16 @@ cooks.distance.lme <- function(model, group = NULL, delete = NULL, ...) {
   else{
     e <- with(mats, Y - X %*% betaHat)
     
-    if( !is.null(group) ){
-      grp.names <- unique( mats$flist[[group]] )
+    if( level != 1 ){
+      grp.names <- unique( mats$flist[[level]] )
       
       if( is.null(delete) ){
-        del.index <- lapply(1:mats$ngrps[group], 
+        del.index <- lapply(1:mats$ngrps[level], 
                             function(x) {
-                              ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                              ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                             })
       } else{
-        del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+        del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
       }
     } else{
       del.index <- list( delete - 1 )
@@ -602,10 +610,14 @@ mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method mdffits lmerMod
 #' @S3method mdffits lmerMod
-mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(lme4::getME(object, "flist"))) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+mdffits.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(lme4::getME(object, "flist"))) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if(!lme4::isLMM(object)){
@@ -620,16 +632,16 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
     }
   } else{
     if( is.null(delete) ){
@@ -654,10 +666,14 @@ mdffits.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method mdffits lme
 #' @S3method mdffits lme
-mdffits.lme <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(object$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(object$groups)) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if (any("nlme" == class(object))) 
@@ -672,16 +688,16 @@ mdffits.lme <- function(object, group = NULL, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
     }
   } else{
     if( is.null(delete) ){
@@ -813,10 +829,14 @@ covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'@rdname covratio
 #'@method covratio lmerMod
 #'@S3method covratio lmerMod
-covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(lme4::getME(object, "flist"))) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(lme4::getME(object, "flist"))) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if(!lme4::isLMM(object)){
@@ -826,13 +846,13 @@ covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lmerMod_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
       del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
@@ -856,10 +876,14 @@ covratio.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #'@rdname covratio
 #'@method covratio lme
 #'@S3method covratio lme
-covratio.lme <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(object$groups)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+covratio.lme <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(object$groups)) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if (any("nlme" == class(object))) 
@@ -868,16 +892,16 @@ covratio.lme <- function(object, group = NULL, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lme_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
     }
   } else{
     if( is.null(delete) ){
@@ -958,10 +982,14 @@ covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
 #'@rdname covratio
 #'@method covtrace lmerMod
 #'@S3method covtrace lmerMod
-covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
-  if(!is.null(group)) {
-    if(!group %in% names(lme4::getME(object, "flist"))) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(level != 1) {
+    if(!level %in% names(lme4::getME(object, "flist"))) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
   if(!lme4::isLMM(object)){
@@ -971,16 +999,16 @@ covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lmerMod_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
     }
   } else{
     if( is.null(delete) ){
@@ -1001,10 +1029,14 @@ covtrace.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #'@rdname covratio
 #'@method covtrace lme
 #'@S3method covtrace lme
-covtrace.lme <- function(object, group = NULL, delete = NULL, ...) {
-    if(!is.null(group)) {
-      if(!group %in% names(object$groups)) {
-        stop(paste(group, "is not a valid grouping factor for this model."))
+covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+    if(level != 1) {
+      if(!level %in% names(object$groups)) {
+        stop(paste(level, "is not a valid grouping factor for this model."))
       }
     }
     if (any("nlme" == class(object))) 
@@ -1013,16 +1045,16 @@ covtrace.lme <- function(object, group = NULL, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lme_matrices(object)
   
-  if( !is.null(group) ){
-    grp.names <- unique( mats$flist[[group]] )
+  if( level != 1 ){
+    grp.names <- unique( mats$flist[[level]] )
     
     if( is.null(delete) ){
-      del.index <- lapply(1:mats$ngrps[group], 
+      del.index <- lapply(1:mats$ngrps[level], 
                           function(x) {
-                            ind <- which(mats$flist[[group]] == grp.names[x]) - 1
+                            ind <- which(mats$flist[[level]] == grp.names[x]) - 1
                           })
     } else{
-      del.index <- list( which(mats$flist[[group]] %in% delete) - 1 )
+      del.index <- list( which(mats$flist[[level]] %in% delete) - 1 )
     }
   } else{
     if( is.null(delete) ){
@@ -1084,8 +1116,12 @@ rvc.mer <- function(object, group = NULL, delete = NULL, ...) {
 #' @rdname rvc.mer
 #' @method rvc lmerMod
 #' @S3method rvc lmerMod
-rvc.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
-  delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
+rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  delete <- case_delete(object, level = level, type = "varcomp", delete = delete)
   return( rvc(delete) )
 }
 
@@ -1093,8 +1129,11 @@ rvc.lmerMod <- function(object, group = NULL, delete = NULL, ...) {
 #' @rdname rvc.mer
 #' @method rvc lme
 #' @S3method rvc lme
-rvc.lme <- function(object, group = NULL, delete = NULL, ...) {
-  delete <- case_delete(object, group = group, type = "varcomp", delete = delete)
+rvc.lme <- function(object, level = 1, delete = NULL, ...) {
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  delete <- case_delete(object, level = level, type = "varcomp", delete = delete)
   return( rvc(delete) )
 }
 
@@ -1104,7 +1143,7 @@ rvc.lme <- function(object, group = NULL, delete = NULL, ...) {
 #' @rdname leverage.mer
 #' @method leverage lme
 #' @S3method leverage lme
-leverage.lme <- function(object, level, ...) {
+leverage.lme <- function(object, level = 1, ...) {
   if(!isNestedModel(object)) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
