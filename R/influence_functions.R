@@ -355,7 +355,7 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
   # Obtaining the building blocks
-  if(level != 1 & is.null(delete)) {
+  if(level == 1 & is.null(delete)) {
     calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
@@ -423,7 +423,7 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
   # Obtaining the building blocks
-  if(is.null(level) & is.null(delete)) {
+  if(level == 1 & is.null(delete)) {
     calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
@@ -435,7 +435,7 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   else{
     e <- with(mats, Y - X %*% betaHat)
     
-    if( !is.null(level) ){
+    if( level != 1 ){
       grp.names <- unique( mats$flist[[level]] )
       
       if( is.null(delete) ){
@@ -490,7 +490,7 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   
   # Obtaining the building blocks
-  if(level != 1 & is.null(delete)) {
+  if(level == 1 & is.null(delete)) {
     calc.cooksd <- .Call("cooksdObs", y_ = mats$Y, X_ = as.matrix(mats$X), 
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
