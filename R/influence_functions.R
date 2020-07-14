@@ -548,7 +548,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' ss.m1 <- mdffits(ss)
 #' 
 #' # MDFFITS for each Subject
-#' ss.m.subject <- mdffits(ss, group = "Subject")
+#' ss.m.subject <- mdffits(ss, level = "Subject")
 #' 
 #' \dontrun{  
 #' 
@@ -556,7 +556,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' m1 <- mdffits(fm)
 #' 
 #' # MDFFITS for each school
-#' m.school <- mdffits(fm, group = "school")
+#' m.school <- mdffits(fm, level = "school")
 #' }
 mdffits.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
@@ -737,8 +737,8 @@ mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
 #'@S3method covratio mer
 #'@aliases covratio
 #'@param object fitted object of class \code{mer} or \code{lmerMod}
-#'@param group variable used to define the group for which cases will be
-#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param level variable used to define the group for which cases will be
+#'deleted.  If \code{level = 1} (default), then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
 #' observations the row number must be specified. To delete higher level
 #'units the group ID and \code{group} parameter must be specified.
@@ -772,7 +772,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
 #' ss.cr1 <- covratio(ss)
 #' 
 #' # covratio for subject-level deletion
-#' ss.cr2 <- covratio(ss, group = "Subject")
+#' ss.cr2 <- covratio(ss, level = "Subject")
 #' 
 #' \dontrun{
 #' ## A larger example
@@ -783,7 +783,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
 #' cr1 <- covratio(fm)
 #' 
 #' # covratio for school-level deletion
-#' cr2 <- covratio(fm, group = "school")
+#' cr2 <- covratio(fm, level = "school")
 #' }
 covratio.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
@@ -929,7 +929,7 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
 #' ss.ct1 <- covtrace(ss)
 #' 
 #' # covtrace for subject-level deletion
-#' ss.ct2 <- covtrace(ss, group = "Subject")
+#' ss.ct2 <- covtrace(ss, level = "Subject")
 #' 
 #' \dontrun{
 #' ## Returning to the larger example
@@ -937,7 +937,7 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
 #' ct1 <- covtrace(fm)
 #' 
 #' # covtrace for school-level deletion
-#' ct2 <- covtrace(fm, group = "school")
+#' ct2 <- covtrace(fm, level = "school")
 #' }
 covtrace.mer <- function(object, group = NULL, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
@@ -1080,8 +1080,8 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' @S3method rvc mer
 #' @aliases rvc
 #'@param object fitted object of class \code{mer} or \code{lmerMod}
-#'@param group variable used to define the group for which cases will be
-#'deleted.  If \code{group = NULL}, then individual cases will be deleted.
+#'@param level variable used to define the group for which cases will be
+#'deleted.  If \code{level = 1} (default), then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
 #' observations the row number must be specified. To delete higher level
 #'units the group ID and \code{group} parameter must be specified.
