@@ -283,7 +283,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
                      ls.resid)
       
-      if(ncol(ls.resid) != n.ranefs + 1) {
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
         warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
       }
       
@@ -324,7 +324,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
         group = row.order2,
         purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
       
-      if(ncol(ls.resid) != n.ranefs + 1) {
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
         warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
       }
 
