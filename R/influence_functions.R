@@ -278,8 +278,10 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' for the fixed effects for every model, it will be slower.
 #' 
 #' @return Both functions return a numeric vector (or single value if 
-#' \code{delete} has been specified) with attribute \code{beta_cdd} giving
-#' the difference between the full and deleted parameter estimates.
+#' \code{delete} has been specified) as the default. If \code{include.attr = TRUE}, 
+#' then a tibble is returned. The first column consists of the Cook's distance or
+#' MDFFITS values, and the later columns capture the difference between the full
+#' and deleted parameter estimates. 
 #'
 #'@export
 #'@rdname cooks.distance
@@ -293,6 +295,11 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' observations the row number must be specified. To delete higher level
 #'units the group ID and \code{group} parameter must be specified.
 #' If \code{delete = NULL} then all cases are iteratively deleted.
+#'@param include.attr logical value determining whether the difference between 
+#'the full and deleted parameter estimates should be included. If \code{FALSE} 
+#'(default), a numeric vector of Cook's distance or MDFFITS is returned. 
+#'If \code{TRUE}, a tibble with the Cook's distance or MDFFITS values in the 
+#'first column and the parameter differences in the remaining columns is returned. 
 #' @param ... do not use
 #'@author Adam Loy \email{loyad01@@gmail.com}
 #'@references
@@ -401,7 +408,7 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method cooks.distance lmerMod
 #' @S3method cooks.distance lmerMod
-cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
+cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
@@ -428,8 +435,22 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
                          beta_ = as.matrix(betaHat), PACKAGE = "HLMdiag")
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]]
+    
+    cooksd <- calc.cooksd[[1]]
+    betas <- calc.cooksd[[2]]
+    
+    if(!include.attr) { 
+      return(cooksd)
+    }
+    else {
+      beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
+      nbetas <- ncol(cook.tbl) - 1 
+      for (i in 1:nbetas) {
+        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      }
+      return(cook.tbl)
+    }
   }
   
   else{
@@ -457,19 +478,29 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, ...) {
                          XVXinv_ = as.matrix(mats$XVXinv), 
                          e_ = as.numeric(e), PACKAGE = "HLMdiag")
     
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]] 
+    cooksd <- calc.cooksd[[1]]
+    betas <- calc.cooksd[[2]]
+    
+    if(!include.attr) { 
+      return(cooksd)
+    }
+    else { 
+      beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
+      nbetas <- ncol(cook.tbl) - 1 
+      for (i in 1:nbetas) {
+        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      }
+      return(cook.tbl)
+    }
   }
-  
-  class(res) <- "fixef.dd"
-  return(res)
 }
 
 #' @export
 #' @rdname cooks.distance
 #' @method cooks.distance lme
 #' @S3method cooks.distance lme
-cooks.distance.lme <- function(model, level = 1, delete = NULL, ...) {
+cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
@@ -495,10 +526,24 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, ...) {
                          Vinv_ = as.matrix(mats$Vinv), 
                          XVXinv_ = as.matrix(mats$XVXinv), 
                          beta_ = as.matrix(betaHat), PACKAGE = "HLMdiag")
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]]
+    
+    cooksd <- calc.cooksd[[1]]
+    betas <- calc.cooksd[[2]]
+    
+    if(!include.attr) { 
+      return(cooksd)
+    }
+    else {
+      beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
+      nbetas <- ncol(cook.tbl) - 1 
+      for (i in 1:nbetas) {
+        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      }
+      return(cook.tbl)
+    }
   }
-  
+
   else{
     e <- with(mats, Y - X %*% betaHat)
     
@@ -524,12 +569,22 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, ...) {
                          XVXinv_ = as.matrix(mats$XVXinv), 
                          e_ = as.numeric(e), PACKAGE = "HLMdiag")
     
-    res <- calc.cooksd[[1]]
-    attr(res, "beta_cdd") <- calc.cooksd[[2]] 
+    cooksd <- calc.cooksd[[1]]
+    betas <- calc.cooksd[[2]]
+    
+    if(!include.attr) { 
+      return(cooksd)
+    }
+    else { 
+      beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
+      nbetas <- ncol(cook.tbl) - 1 
+      for (i in 1:nbetas) {
+        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      }
+      return(cook.tbl)
+    }
   }
-  
-  class(res) <- "fixef.dd"
-  return(res)
 }
 
 print.fixef.dd <- function(x, ...) {
@@ -618,7 +673,7 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @rdname cooks.distance
 #' @method mdffits lmerMod
 #' @S3method mdffits lmerMod
-mdffits.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
@@ -661,20 +716,30 @@ mdffits.lmerMod <- function(object, level = 1, delete = NULL, ...) {
                         P_ = mats$P, Vinv_ = as.matrix(mats$Vinv), 
                         XVXinv_ = as.matrix(mats$XVXinv), 
                         e_ = as.numeric(e), PACKAGE = "HLMdiag")
-  res <- calc.mdffits[[1]]
-  attr(res, "beta_cdd") <- calc.mdffits[[2]] 
+  mdffits.vals <- calc.mdffits[[1]]
+  betas <- calc.mdffits[[2]]
   
-  class(res) <- "fixef.dd"
-  return(res)
+  if(!include.attr) { 
+    return(mdffits.vals)
+  }
+  else { 
+    beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+    mdffits.tbl <- tibble::as_tibble(cbind(mdffits.vals, beta_matrix))
+    names(mdffits.tbl)[1] <- "mdffits"
+    nbetas <- ncol(mdffits.tbl) - 1 
+    for (i in 1:nbetas) {
+      names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+    }
+    return(mdffits.tbl)
+  }
 }
-
 
 
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits lme
 #' @S3method mdffits lme
-mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
+mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
@@ -717,11 +782,22 @@ mdffits.lme <- function(object, level = 1, delete = NULL, ...) {
                         P_ = mats$P, Vinv_ = as.matrix(mats$Vinv), 
                         XVXinv_ = as.matrix(mats$XVXinv), 
                         e_ = as.numeric(e), PACKAGE = "HLMdiag")
-  res <- calc.mdffits[[1]]
-  attr(res, "beta_cdd") <- calc.mdffits[[2]] 
+  mdffits.vals <- calc.mdffits[[1]]
+  betas <- calc.mdffits[[2]]
   
-  class(res) <- "fixef.dd"
-  return(res)
+  if(!include.attr) { 
+    return(mdffits.vals)
+  }
+  else { 
+    beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+    mdffits.tbl <- tibble::as_tibble(cbind(mdffits.vals, beta_matrix))
+    names(mdffits.tbl)[1] <- "mdffits"
+    nbetas <- ncol(mdffits.tbl) - 1 
+    for (i in 1:nbetas) {
+      names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+    }
+    return(mdffits.tbl)
+  }
 }
 
 #' Influence on precision of fixed effects in HLMs
