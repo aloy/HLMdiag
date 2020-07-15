@@ -32,10 +32,11 @@ hlm_influence.default <- function(model, ...){
 #'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation. 
 #'If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
 #'the model using \code{lmer}. This method is more accurate, but slower than the one step approximation. 
+#'If \code{approx = FALSE}, the returned tibble also contains columns for relative variance change (RVC). 
 #'@param leverage a character vector to determine which types of leverage should be included in the 
-#'returned tibble. There are five options: 'overall' (default), 'fixef', 'ranef', 'ranef.uc', or 'all', 
-#'which will return all four types. One or more types may be specified. For additional information 
-#'about the types of leverage, see \code{?leverage}. 
+#'returned tibble. There are four options: 'overall' (default), 'fixef', 'ranef', or 'ranef.uc'. 
+#'One or more types may be specified. For additional information about the types of leverage, see 
+#'\code{?leverage}.
 #'
 #'@details 
 #'The \code{hlm_influence} function provides a wrapper that appends influence diagnostics 
@@ -53,27 +54,23 @@ hlm_influence.lmerMod <- function(model, level = 1, approx = TRUE, leverage = "o
   }
   
   for (i in 1:length(leverage)) {
-    if (!leverage[i] %in% c("overall", "fixef", "ranef", "ranef.uc", "all")) {
-      stop(paste(leverage[i], "is not a valid option for a type of leverage. Valid options are limited to: 'overall', 'fixef', 'ranef', 'ranef.uc', or 'all'."))
+    if (!leverage[i] %in% c("overall", "fixef", "ranef", "ranef.uc")) {
+      stop(paste(leverage[i], "is not a valid option for a type of leverage. Valid options are limited to: 'overall', 'fixef', 'ranef', or 'ranef.uc'."))
     }
-  }
-  
-  if (leverage == "all") {
-    leverage <- c("overall", "fixef", "ranef", "ranef.uc")
   }
   
   if (!level %in% names(model@flist) & level != 1) {
     stop(paste(level, "is not a valid level for this model"))
   }
   
-  if (approx) { #approximations
+  if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level)),
                     mdffits = as.vector(mdffits(model, level = level)),
                     covtrace = covtrace(model, level = level),
                     covratio = covratio(model, level = level))
-        
-    leverage.df <- leverage(model, level = level)[,leverage]
-    names(leverage.df) <- purrr::map_chr(names(leverage.df), function(s) stringr::str_c("leverage", s, sep = "."))
+    
+    leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+    colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
     infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
         
     if (level == 1) {
@@ -91,9 +88,13 @@ hlm_influence.lmerMod <- function(model, level = 1, approx = TRUE, leverage = "o
                             mdffits = as.vector(mdffits(case)),
                             covtrace = covtrace(case),
                             covratio = covratio(case))
-    leverage.df <- leverage(model, level = level)[,leverage]
-    names(leverage.df) <- purrr::map_chr(names(leverage.df), function(s) stringr::str_c("leverage", s, sep = "."))
+    leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+    colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
     infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    
+    rvc.df <- as.data.frame(rvc(case))
+    colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
+    infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
     
     
     if (level == 1) {
