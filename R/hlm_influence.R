@@ -28,6 +28,11 @@ hlm_influence.default <- function(model, ...){
 #'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are 
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
 #'factor as defined in \code{flist} of the \code{lmerMod} object. 
+#'@param delete optional parameter to specify a single case or set of cases to calculate influence
+#'diagnostics for. If the \code{level} parameter is specified, \code{delete} may also take 
+#'the form of a character vector consisting of group names as they appear in \code{flist}. 
+#'If \code{delete = NULL} then all cases are iteratively deleted, and influence diagnostics are 
+#'calculated for each case.
 #'@param approx logical parameter used to determine how the influence diagnostics are calculated.
 #'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation. 
 #'If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
@@ -35,7 +40,8 @@ hlm_influence.default <- function(model, ...){
 #'If \code{approx = FALSE}, the returned tibble also contains columns for relative variance change (RVC). 
 #'@param leverage a character vector to determine which types of leverage should be included in the 
 #'returned tibble. There are four options: 'overall' (default), 'fixef', 'ranef', or 'ranef.uc'. 
-#'One or more types may be specified. For additional information about the types of leverage, see 
+#'One or more types may be specified. If the \code{delete} is specified, no leverage can be returned.
+#'For additional information about the types of leverage, see 
 #'\code{?leverage}.
 #'
 #'@details 
@@ -46,11 +52,17 @@ hlm_influence.default <- function(model, ...){
 #'refit of the data are also avaliable through \code{case_delete} and the accompaning functions 
 #'\code{cooks.distance}, \code{mdffits}, \code{covtrace}, and \code{covratio} that can be called 
 #'directly on the \code{case_delete} object. 
+#'
+#'@note 
+#'It is possible to set \code{level} and delete individual cases from different groups using 
+#'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
+#'Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble. 
 
 
-hlm_influence.lmerMod <- function(model, level = 1, approx = TRUE, leverage = "overall", ...) {
-  if (hasArg(group)) {
-    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
+  
+  if (!level %in% names(model@flist) & level != 1) {
+    stop(paste(level, "is not a valid level for this model"))
   }
   
   for (i in 1:length(leverage)) {
@@ -59,19 +71,29 @@ hlm_influence.lmerMod <- function(model, level = 1, approx = TRUE, leverage = "o
     }
   }
   
-  if (!level %in% names(model@flist) & level != 1) {
-    stop(paste(level, "is not a valid level for this model"))
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(!is.null(delete) & leverage != "overall") {
+    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
   }
   
   if (approx) { #one step approximations
-    infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level)),
-                    mdffits = as.vector(mdffits(model, level = level)),
-                    covtrace = covtrace(model, level = level),
-                    covratio = covratio(model, level = level))
+    infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
+                    mdffits = as.vector(mdffits(model, level = level, delete = delete)),
+                    covtrace = covtrace(model, level = level, delete = delete),
+                    covratio = covratio(model, level = level, delete = delete))
     
-    leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
-    colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
-    infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    if(!is.null(delete)) {
+      return(infl.tbl)
+    }
+    
+    else {
+      leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+      colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    }
         
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
@@ -82,23 +104,31 @@ hlm_influence.lmerMod <- function(model, level = 1, approx = TRUE, leverage = "o
     }
   }
   else { #full refits 
-    case <- case_delete(model, level = level)
+    case <- case_delete(model, level = level, delete = delete)
   
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(case)),
                             mdffits = as.vector(mdffits(case)),
                             covtrace = covtrace(case),
                             covratio = covratio(case))
-    leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
-    colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
-    infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
     
-    rvc.df <- as.data.frame(rvc(case))
-    colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
-    infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
-    
-    
+    if (!is.null(delete)) {
+      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null 
+      colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
+      return(infl.tbl)
+    }
+    else{
+      rvc.df <- as.data.frame(rvc(case))
+      colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
+      
+      leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+      colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    }
+  
     if (level == 1) {
-      infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
+      infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model@flist[[level]]), .before = 1)
