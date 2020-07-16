@@ -25,15 +25,15 @@ case_delete.default <- function(model, ...){
 #' @S3method case_delete mer
 #' @aliases case_delete
 #'@param model the original hierarchical model fit using \code{lmer()}
-#'@param group a variable used to define the group for which cases will be
-#'deleted.  If this is left \code{NULL} (default), then the function will delete
+#'@param level a variable used to define the group for which cases will be
+#'deleted.  If \code{level = 1} (default), then the function will delete
 #'individual observations.
 #'@param type the part of the model for which you are obtaining deletion
 #'diagnostics: the fixed effects (\code{"fixef"}), variance components
 #'(\code{"varcomp"}), or \code{"both"} (default).
-#'@param delete numeric index of individual cases to be deleted. If the \code{group} parameter 
+#'@param delete numeric index of individual cases to be deleted. If the \code{level} parameter 
 #'is specified, \code{delete} may also take the form of a character vector consisting of group 
-#'names as they appear in \code{flist}. It is possible to set \code{group} and delete individual
+#'names as they appear in \code{flist}. It is possible to set \code{level} and delete individual
 #'cases from different groups using \code{delete}, so numeric indices should be double checked 
 #'to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.
 #' @param ... do not use
@@ -67,19 +67,23 @@ case_delete.default <- function(model, ...){
 #'fm <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #'
 #' # Deleting every Subject
-#' fmDel <- case_delete(model = fm, group = "Subject", type = "both")
+#' fmDel <- case_delete(model = fm, level = "Subject", type = "both")
 #'
 #' # Deleting only subject 308
-#' del308 <- case_delete(model = fm, group = "Subject", type = "both", delete = 308)
+#' del308 <- case_delete(model = fm, level = "Subject", type = "both", delete = 308)
 #' 
 #' # Deleting a subset of subjects
-#' delSubset <- case_delete(model = fm, group = "Subject", type = "both", delete = 308:310)
+#' delSubset <- case_delete(model = fm, level = "Subject", type = "both", delete = 308:310)
 #'
-case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), 
+case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp"), 
                         delete = NULL, ...){
   if(!is(model, "mer")) stop("model must be of class 'mer'")
   if(!model@dims["LMM"]){
     stop("case_delete is currently only implemented for mixed/hierarchical models.")
+  }
+  
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
   flist <- model@flist
@@ -91,7 +95,7 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
   fitted.delete  <- NULL
   
   type <- match.arg(type) #default is "both"
-  if( is.null(group) ){ # SINGLE CASE DELETION DIAGNOSTICS
+  if( level == 1 ){ # SINGLE CASE DELETION DIAGNOSTICS
     n <- model@dims[["n"]]
     modframe <- model@frame
 
@@ -145,15 +149,15 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
 
   else{ # MULTIPLE CASE DELETION DIAGNOSTICS
     
-    if(!group %in% names(flist)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+    if(!level %in% names(flist)) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
     
     
     if( is.null(delete) ){
-      data.delete <- split(model@frame, model@frame[, group])
+      data.delete <- split(model@frame, model@frame[, level])
       data.delete <- lapply(data.delete, function(df){
-        index <- unique( df[, group ] )
+        index <- unique( df[, level ] )
         if(class(index) != "character") index <- as.character(index)
         data.delete[[ index ]] <- NULL
         do.call('rbind', data.delete)
@@ -164,13 +168,13 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
       
       if(length(flist) == 1) {
         ranef.delete <- lapply(model.delete, function(x){
-          data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
+          data.frame(deleted = setdiff(model@frame[, level], x@frame[, level]),
                      id = rownames(lme4::ranef(x)[[1]]), lme4::ranef(x)[[1]])
         })
       }
       else{
         ranef.delete  <- lapply(model.delete, lme4::ranef)
-        deleted.group <- rownames(lme4::ranef(model)[[group]])
+        deleted.group <- rownames(lme4::ranef(model)[[level]])
         
         ranef.delete <- lapply(1:length(ranef.delete), function(x){
           ranef.list <- ranef.delete[[x]]
@@ -193,12 +197,12 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
       
       
       fitted.delete <- lapply(model.delete, function(x){
-        data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
+        data.frame(deleted = setdiff(model@frame[, level], x@frame[, level]),
                    x@frame, fitted(x))
       })
     }
     else{
-      index <- !model@frame[,group] %in% delete
+      index <- !model@frame[,level] %in% delete
       model.delete   <- lme4::lmer(formula = formula(model), data = model@frame[index,])
       
       if(type %in% c("both", "fixef")) {
@@ -266,10 +270,14 @@ case_delete.mer <- function(model, group = NULL, type = c("both", "fixef", "varc
 #' @rdname case_delete.mer
 #' @method case_delete lmerMod
 #' @S3method case_delete lmerMod
-case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), 
+case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "varcomp"), 
                             delete = NULL, ...){
   if(!isNestedModel(model)){
     stop("case_delete is currently only implemented for mixed/hierarchical models.")
+  }
+  
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
   flist <- model@flist
@@ -281,7 +289,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
   fitted.delete  <- NULL
   
   type <- match.arg(type) #default is "both"
-  if( is.null(group) ){ # SINGLE CASE DELETION DIAGNOSTICS
+  if( level == 1 ){ # SINGLE CASE DELETION DIAGNOSTICS
     n <- lme4::getME(model, "n")
     modframe <- model@frame
     
@@ -338,14 +346,14 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
   
   else{ # MULTIPLE CASE DELETION DIAGNOSTICS
     
-    if(!group %in% names(flist)) {
-      stop(paste(group, "is not a valid grouping factor for this model."))
+    if(!level %in% names(flist)) {
+      stop(paste(level, "is not a valid grouping factor for this model."))
     }
     
     
     if( is.null(delete) ){
     
-      data.delete <- split(model@frame, flist[group])
+      data.delete <- split(model@frame, flist[level])
       data.delete <- lapply(data.delete, function(df) {
         df <- dplyr::anti_join(model@frame, df, by = names(model@frame))
       })
@@ -357,14 +365,14 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
      
       if(length(flist) == 1) {
         ranef.delete <- lapply(model.delete, function(x){
-          data.frame(deleted = setdiff(model@frame[, group], x@frame[, group]),
+          data.frame(deleted = setdiff(model@frame[, level], x@frame[, level]),
                      id = rownames(lme4::ranef(x)[[1]]), lme4::ranef(x)[[1]])
         }) 
       }
       
       else{
         ranef.delete  <- lapply(model.delete, lme4::ranef)
-        deleted.group <- rownames(lme4::ranef(model)[[group]])
+        deleted.group <- rownames(lme4::ranef(model)[[level]])
         
         ranef.delete <- lapply(1:length(ranef.delete), function(x){
           ranef.list <- ranef.delete[[x]]
@@ -386,7 +394,7 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
       }
      
       fitted.delete <- lapply(model.delete, function(x) {
-        data.frame(deleted = setdiff(model@flist[[group]], x@flist[[group]]), x@frame, fitted(x))
+        data.frame(deleted = setdiff(model@flist[[level]], x@flist[[level]]), x@frame, fitted(x))
       })
     }
     
@@ -394,18 +402,18 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
       deleted_levels <- NULL
       
       if(is.numeric(delete)) {
-        index <- rep(TRUE, length(flist[[group]]))
+        index <- rep(TRUE, length(flist[[level]]))
         index[delete] <- FALSE
-        deleted_levels <- as.vector(flist[[group]][delete])
+        deleted_levels <- as.vector(flist[[level]][delete])
       }
       else if (is.character(delete)) {
         for (i in 1:length(delete)) {
-          if(!delete[i] %in% flist[[group]]) {
-            stop(paste(delete[i], "is not a valid group name to delete for this model. Names should follow the same format as in model@flist[[group]]. An example of an acceptable group name is:", model@flist[[group]][1]))
+          if(!delete[i] %in% flist[[level]]) {
+            stop(paste(delete[i], "is not a valid group name to delete for this model. Names should follow the same format as in model@flist[[group]]. An example of an acceptable group name is:", model@flist[[level]][1]))
           }
         }
         index <- unlist(lapply(list(delete), function(s) {
-          s <- !as.vector(model@flist[[group]]) %in% s
+          s <- !as.vector(model@flist[[level]]) %in% s
         }))
       }
       else {
@@ -414,8 +422,8 @@ case_delete.lmerMod <- function(model, group = NULL, type = c("both", "fixef", "
      
       model.delete   <- lme4::lmer(formula = formula(model), data = model@frame[index,])
       
-      if (sum(deleted_levels %in% model.delete@flist[[group]]) > 0) {
-        warning("Group parameter is specified, but deleted cases do not encompass entire groups")
+      if (sum(deleted_levels %in% model.delete@flist[[level]]) > 0) {
+        warning("Level parameter is specified, but deleted cases do not encompass entire groups")
       }
       
       if(type %in% c("both", "fixef")) {
