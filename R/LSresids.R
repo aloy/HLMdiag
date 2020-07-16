@@ -199,8 +199,8 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(level == 1){
     group_var <- names(object@flist)[1]
     if(stringr::str_detect(names(object@flist)[1], ":")) {
-      vars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
-      group_var <- vars[which(!vars %in% names(object@flist))]
+      gvars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
+      group_var <- gvars[which(!gvars %in% names(object@flist))]
     }
     
     # fitting a separate LS regression model to each group
@@ -208,8 +208,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     
     suppressWarnings(ls.models <- adjust_lmList(object = formula(form), data = data))
     if (!is.null(attr(ls.models, which = "warningMsg"))) {
-       warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
-  It is recommended to use EB (.resid) residuals for this model.")
+       warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
     }
     
     ls.residuals <- lapply(ls.models, resid)
@@ -276,14 +275,17 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       
       suppressWarnings(ls.models <- lme4::lmList(formula = formula(form), data = data))
       if (!is.null(attr(ls.models, which = "warningMsg"))) {
-        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated:
-  It is recommended to use EB (.ranef) group level residuals for this model.")
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
       if(standardize == "semi") standardize <- FALSE
       ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
       ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
                      ls.resid)
+      
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
+        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+      }
       
       return(ls.resid)
       
@@ -298,8 +300,12 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       form <- paste(fixed[2], fixed[1], fixed[3], "|", g) 
       
       # recombine data frame
-      ls.models <- purrr::map(split_data,
-                        ~lme4::lmList(formula = formula(form), data = .x))
+      ls.models <- suppressWarnings(purrr::map(split_data,
+                        ~lme4::lmList(formula = formula(form), data = .x)))
+      ls.warnings <- purrr::map_lgl(ls.models, ~!is.null(attr(.x, which = "warningMsg")))
+      if (sum(ls.warnings) > 0) {
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+      }
       
       # to fix the order 
       row.order <- purrr::map(ls.models, ~row.names(coef(.x)))
@@ -317,8 +323,11 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       ls.resid <- tibble::tibble(
         group = row.order2,
         purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
-
       
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
+        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+      }
+
       return(ls.resid)
     }
   }
