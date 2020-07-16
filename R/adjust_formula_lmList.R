@@ -21,10 +21,12 @@ problem_factor_groups <- function(formula, data){
 	ngroups <- length(unique(data[,g]))
 	y <- deparse(form[[2]])
 	xs <- setdiff(names(model_frame), c(deparse(form[[2]]), g))
-	xs_frame <- model_frame[, xs]
+	xs_frame <- model_frame[xs]
 	
-	are_factors <- rapply(xs_frame, class)
-	are_factors <- names(are_factors)[which(are_factors == "factor")]
+	# are_factors <- rapply(xs_frame, class)
+	# are_factors <- names(are_factors)[which(are_factors == "factor")]
+	are_factors <- dplyr::select(xs_frame, function(x) any(is.factor(x), is.character(x)))
+	are_factors <- colnames(are_factors)
 	
 	id_vars <- c(g, are_factors)
 	molten_model_frame <- melt(model_frame, id = id_vars)
