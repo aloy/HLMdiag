@@ -67,8 +67,9 @@ estimating parameters. Equivalent to \code{lme4::ranef} on the specified
 level. EB residuals are prefered at higher levels LS residuals are dependent
 on a large sample size.}
 \item{\code{.ls.*}}{The group level random effects using the LS method of
-estimating parameters. Calculated using \code{ranef.lmList4} to compare the
-random effects of individual models to the global model.}
+estimating parameters. Calculated using \code{ranef} on a \code{lmList4}
+object to compare the random effects of individual models to the global
+model.}
 }
 Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
