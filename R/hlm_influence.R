@@ -138,3 +138,5 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   return(infl.tbl)
 }
 
+
+

@@ -54,6 +54,34 @@ varcomp.mer <- function(object) {
   return(res)
 }
 
+varcomp.lme <- function(model) {
+  #vc.design <- RLRsim::extract.lmeDesign(object)
+  #vc.vr <- vc.design$Vr
+  #sig2 <- vc.design$sigmasq
+  #numcol <- ncol(nlme::ranef(object))
+  #vc.mat <- vc.vr[1:numcol, 1:numcol] * sig2
+  
+  vc <- model$modelStruct$reStruct
+  sig2 <- sigma(model)^2
+  vc.list <- lapply(vc, function(x) {
+    vc <- as.matrix(x) * sig2
+  })
+  vc.mat <- bdiag(vc.list)
+  
+  if(isDiagonal(vc.mat)) {
+    vc.vec   <- diag(vc.mat)
+    vc.names <- paste("D", 1:length(vc.vec), 1:length(vc.vec), sep="")
+  } else{
+    vc.vec <- as.matrix(vc.mat)[!upper.tri(vc.mat)]
+    vc.index <- which(!upper.tri(vc.mat) == TRUE, arr.ind = TRUE)
+    vc.names <- paste("D", vc.index[,1], vc.index[,2], sep="")
+  }
+  
+  res <- c(sig2, vc.vec)
+  names(res) <- c("sigma2", vc.names)
+  return(res)
+}
+
 
 # Checking if matrix is diagonal 
 # @param mat a matrix
