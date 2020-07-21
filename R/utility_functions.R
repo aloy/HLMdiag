@@ -55,12 +55,6 @@ varcomp.mer <- function(object) {
 }
 
 varcomp.lme <- function(model) {
-  #vc.design <- RLRsim::extract.lmeDesign(object)
-  #vc.vr <- vc.design$Vr
-  #sig2 <- vc.design$sigmasq
-  #numcol <- ncol(nlme::ranef(object))
-  #vc.mat <- vc.vr[1:numcol, 1:numcol] * sig2
-  
   vc <- model$modelStruct$reStruct
   sig2 <- sigma(model)^2
   vc.list <- lapply(vc, function(x) {

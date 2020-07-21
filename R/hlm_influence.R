@@ -138,5 +138,82 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   return(infl.tbl)
 }
 
-
+hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
+  
+  if (!level %in% names(model$groups) & level != 1) {
+    stop(paste(level, "is not a valid level for this model"))
+  }
+  
+  for (i in 1:length(leverage)) {
+    if (!leverage[i] %in% c("overall", "fixef", "ranef", "ranef.uc")) {
+      stop(paste(leverage[i], "is not a valid option for a type of leverage. Valid options are limited to: 'overall', 'fixef', 'ranef', or 'ranef.uc'."))
+    }
+  }
+  
+  if (hasArg(group)) {
+    warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
+  }
+  
+  if(!is.null(delete) & leverage != "overall") {
+    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+  }
+  
+  if (approx) { #one step approximations
+    infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
+                               mdffits = as.vector(mdffits(model, level = level, delete = delete)),
+                               covtrace = covtrace(model, level = level, delete = delete),
+                               covratio = covratio(model, level = level, delete = delete))
+    
+    if(!is.null(delete)) {
+      return(infl.tbl)
+    }
+    
+    else {
+      leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+      colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    }
+    
+    if (level == 1) {
+      infl.tbl <- tibble::add_column(infl.tbl, model$data, .before = 1)
+    }
+    else {
+      infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
+      names(infl.tbl)[1] <- level 
+    }
+  }
+  else { #full refits 
+    case <- case_delete(model, level = level, delete = delete)
+    
+    infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(case)),
+                               mdffits = as.vector(mdffits(case)),
+                               covtrace = covtrace(case),
+                               covratio = covratio(case))
+    
+    if (!is.null(delete)) {
+      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null 
+      colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
+      return(infl.tbl)
+    }
+    else{
+      rvc.df <- as.data.frame(rvc(case))
+      colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
+      
+      leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
+      colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
+      infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    }
+    
+    if (level == 1) {
+      infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
+    }
+    else {
+      infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)
+      names(infl.tbl)[1] <- level
+    }
+  }
+  return(infl.tbl)
+}
 
