@@ -4,13 +4,29 @@
 \alias{case_delete.default}
 \alias{case_delete.mer}
 \alias{case_delete}
+<<<<<<< HEAD
+=======
+\alias{case_delete.lmerMod}
+>>>>>>> 9c4ebeaca4a1bc356dd1d88921d50033b2faff62
 \title{Case Deletion for \code{mer}/\code{lmerMod} objects}
 \usage{
 \method{case_delete}{default}(model, ...)
 
 \method{case_delete}{mer}(
   model,
+<<<<<<< HEAD
   level = 1,
+=======
+  group = NULL,
+  type = c("both", "fixef", "varcomp"),
+  delete = NULL,
+  ...
+)
+
+\method{case_delete}{lmerMod}(
+  model,
+  group = NULL,
+>>>>>>> 9c4ebeaca4a1bc356dd1d88921d50033b2faff62
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...
@@ -71,7 +87,11 @@ fmDel <- case_delete(model = fm, level = "Subject", type = "both")
 del308 <- case_delete(model = fm, level = "Subject", type = "both", delete = 308)
 
 # Deleting a subset of subjects
+<<<<<<< HEAD
 delSubset <- case_delete(model = fm, level = "Subject", type = "both", delete = 308:310)
+=======
+delSubset <- case_delete(model = fm, group = "Subject", type = "both", delete = 308:310)
+>>>>>>> 9c4ebeaca4a1bc356dd1d88921d50033b2faff62
 
 }
 \references{

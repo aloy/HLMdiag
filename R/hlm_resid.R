@@ -3,7 +3,6 @@ hlm_resid <- function(object, ...){
   UseMethod("hlm_resid", object)
 }
 
-
 #' @export
 #' @rdname hlm_resid.lmerMod
 #' @method hlm_resid default
@@ -12,7 +11,6 @@ hlm_resid.default <- function(object, ...){
   stop(paste("there is no hlm_resid() method for objects of class",
              paste(class(object), collapse=", ")))
 }
-
 
 #' Calculating residuals from HLMs
 #'

@@ -42,6 +42,7 @@ Collate:
     'adjust_formula_lmList.R'
     'case_delete.R'
     'LSresids.R'
+    'HLMaugment.R'
     'HLMresid.R'
     'help.R'
     'influence_functions.R'

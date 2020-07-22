@@ -22,7 +22,11 @@
 \item{...}{do not use}
 
 \item{level}{the level at which the leverage should be calculated: either
+<<<<<<< HEAD
 1 for observation level leverage (default) or the name of the grouping factor 
+=======
+1 for observation level leverage or the name of the grouping factor 
+>>>>>>> 9c4ebeaca4a1bc356dd1d88921d50033b2faff62
 (as defined in \code{flist} of the \code{mer} object) for group level
 leverage. \code{leverage} assumes that the grouping factors are unique;
 thus, if IDs are repeated within each unit, unique IDs must be generated 
