@@ -51,6 +51,9 @@ varcomp.mer <- function(object) {
 
   res <- c(sig^2, vc.vec)
   names(res) <- c("sigma2", vc.names)
+  
+  #remove 0s 
+  res <- res[res != 0]
   return(res)
 }
 
@@ -73,6 +76,9 @@ varcomp.lme <- function(model) {
   
   res <- c(sig2, vc.vec)
   names(res) <- c("sigma2", vc.names)
+  
+  #remove 0s 
+  res <- res[res != 0]
   return(res)
 }
 

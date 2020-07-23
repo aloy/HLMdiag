@@ -49,15 +49,10 @@ first column and the parameter differences in the remaining columns is returned.
 }
 \value{
 Both functions return a numeric vector (or single value if 
-<<<<<<< HEAD
 \code{delete} has been specified) as the default. If \code{include.attr = TRUE}, 
 then a tibble is returned. The first column consists of the Cook's distance or
 MDFFITS values, and the later columns capture the difference between the full
 and deleted parameter estimates.
-=======
-\code{delete} has been specified) with attribute \code{beta_cdd} giving
-the difference between the full and deleted parameter estimates.
->>>>>>> 9c4ebeaca4a1bc356dd1d88921d50033b2faff62
 }
 \description{
 These functions calculate measures of the change in the fixed effects

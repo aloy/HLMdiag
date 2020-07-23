@@ -1,10 +1,11 @@
 #'@export
+#'@rdname hlm_influence
 hlm_influence <- function(model, ...) {
   UseMethod("hlm_influence", model)
 }
 
 #' @export
-#' @rdname hlm_influence.lmerMod
+#' @rdname hlm_influence
 #' @method hlm_influence default
 #' @S3method hlm_influence default
 hlm_influence.default <- function(model, ...){
@@ -57,8 +58,7 @@ hlm_influence.default <- function(model, ...){
 #'It is possible to set \code{level} and delete individual cases from different groups using 
 #'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
 #'Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble. 
-
-
+#'@rdname hlm_influence
 hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
   
   if (!level %in% names(model@flist) & level != 1) {
@@ -138,6 +138,11 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   return(infl.tbl)
 }
 
+#' @export
+#' @rdname hlm_influence
+#' @method hlm_influence lme
+#' @S3method hlm_influence lme
+#' @aliases hlm_influence
 hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
   
   if (!level %in% names(model$groups) & level != 1) {

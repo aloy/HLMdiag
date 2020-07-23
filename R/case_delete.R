@@ -267,7 +267,7 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
 
 
 #' @export
-#' @rdname case_delete lmerMod
+#' @rdname case_delete.mer
 #' @method case_delete lmerMod
 #' @S3method case_delete lmerMod
 #' @aliases case_delete
@@ -488,9 +488,10 @@ case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "var
 
 
 #' @export
-#' @rdname case_delete
+#' @rdname case_delete.mer
 #' @method case_delete lme
 #' @S3method case_delete lme
+#' @aliases case_delete
 case_delete.lme <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), delete = NULL, ...){
   if(!isNestedModel(model)){
     stop("case_delete is currently only implemented for mixed/hierarchical models.")
