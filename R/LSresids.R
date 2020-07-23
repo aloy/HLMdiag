@@ -206,7 +206,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     # fitting a separate LS regression model to each group
     form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
     
-    suppressWarnings(ls.models <- adjust_lmList(object = formula(form), data = data))
+    ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
     if (!is.null(attr(ls.models, which = "warningMsg"))) {
        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
     }
@@ -273,7 +273,10 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     if(level == names(object@flist)[n.ranefs]) { #highest level
       form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
       
-      suppressWarnings(ls.models <- lme4::lmList(formula = formula(form), data = data))
+      ls.models <- suppressWarnings(lme4::lmList(formula = formula(form), data = data))
+      if (sum(purrr::map_lgl(ls.models, is.null)) == length(ls.models)) {
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+      }
       if (!is.null(attr(ls.models, which = "warningMsg"))) {
         warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
@@ -303,6 +306,9 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       ls.models <- suppressWarnings(purrr::map(split_data,
                         ~lme4::lmList(formula = formula(form), data = .x)))
       ls.warnings <- purrr::map_lgl(ls.models, ~!is.null(attr(.x, which = "warningMsg")))
+      if (sum(purrr::map_lgl(ls.models, ~all(purrr::map_lgl(.x, is.null)))) == length(ls.models)) {
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+      }
       if (sum(ls.warnings) > 0) {
         warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
@@ -328,6 +334,174 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
         warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
       }
 
+      return(ls.resid)
+    }
+  }
+}
+
+
+
+#' @export
+#' @rdname LSresids.mer
+#' @method LSresids lme
+#' @S3method LSresids lme
+LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
+  #GLM OR NRESTED MODEL CHECK
+  if(!level %in% c(1, names(object$groups))) {
+    stop("level can only be 1 or a grouping factor from the fitted model.")
+  }
+  #NESTED MODEL CHECK
+  if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
+    stop("standardize can only be specified to be logical or 'semi' .")
+  }
+  
+  LS.resid <- NULL # Make codetools happy
+  
+  fixed <- as.character(formula(object))
+  
+  data <- object$data %>%
+    dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+    as.data.frame()
+  
+  if(!is.null(sim)){data[,fixed[2]] <- sim}
+  
+  if(level == 1){
+    group_var <- names(object$groups)[length(object$groups)]
+    
+    # fitting a separate LS regression model to each group
+    form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
+    
+    ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
+    if (!is.null(attr(ls.models, which = "warningMsg"))) {
+      warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
+    }
+    
+    ls.residuals <- lapply(ls.models, resid)
+    ls.fitted <- lapply(ls.models, fitted)
+    
+    # creating a data frame of the residuals, fitted values, and model frames
+    ls.data <- lapply(ls.models, model.frame)
+    
+    # force the rank deficient entries to NA
+    temp <- rep(NA, length(ls.data)) # how many coeff for each group
+    for(i in 1:length(ls.data)){
+      temp[i] <- ncol(ls.data[i][[1]])
+    }
+    index <- which(temp != max(temp)) # which groups are deficient
+    if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
+      for(i in 1:length(index)){
+        ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
+        ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
+      }
+    }
+    
+    row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
+    
+    return.df <- data.frame(LS.resid = unlist(ls.residuals), 
+                            fitted = unlist(ls.fitted))
+    
+    if(!is.null(standardize) && standardize == "semi"){
+      ls.influence <- lapply(ls.models, lm.influence)
+      ls.hat <- lapply(ls.influence, function(x) x$hat)
+      
+      h <- unlist(ls.hat)
+      semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
+      semi.std.resid[is.infinite(semi.std.resid)] <- NaN
+      # Catching earlier NAs
+      for (i in 1:length(semi.std.resid)){
+        if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
+      }
+      
+      return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
+    }
+    
+    if(!is.null(standardize) && standardize == TRUE){
+      ls.rstandard <- unlist(lapply(ls.models, rstandard))
+      ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+      # Catching earlier NAs
+      for (i in 1:length(ls.rstandard)){
+        if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
+      }
+      
+      return.df <- cbind(return.df, std.resid = ls.rstandard)
+    }
+    
+    rownames(return.df) <- row.order
+    
+    return(return.df)
+  }
+  
+  if(level != 1){
+    n.ranefs <- length(names(object$groups))
+    if (n.ranefs == 1){
+      ranef_names <- names( nlme::ranef(object) )
+    } else {
+      ranef_names <- names( nlme::ranef(object)[[level]] )
+    }
+    
+    
+    if(level == names(object$groups)[1]) { #highest level
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
+      
+      ls.models <- suppressWarnings(lme4::lmList(formula = formula(form), data = data))
+      if (sum(purrr::map_lgl(ls.models, is.null)) == length(ls.models)) {
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+      }
+      if (!is.null(attr(ls.models, which = "warningMsg"))) {
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+      }
+      if(standardize == "semi") standardize <- FALSE
+      ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
+      ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
+                                 ls.resid)
+      
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
+        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+      }
+      
+      return(ls.resid)
+      
+    } else { #middle level
+      # group by (specified level + 1)
+      higher.level <- names(object$groups)[which(names(object$groups) == level) - 1]
+      split_data <- split(data, data[,higher.level])
+      
+      # for each group use ranef as above
+      form <- paste(fixed[2], fixed[1], fixed[3], "|", level) 
+      
+      # recombine data frame
+      ls.models <- suppressWarnings(purrr::map(split_data,
+                                               ~lme4::lmList(formula = formula(form), data = .x)))
+      ls.warnings <- purrr::map_lgl(ls.models, ~!is.null(attr(.x, which = "warningMsg")))
+      if (sum(purrr::map_lgl(ls.models, ~all(purrr::map_lgl(.x, is.null)))) == length(ls.models)) {
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+      }
+      if (sum(ls.warnings) > 0) {
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+      }
+      
+      # to fix the order 
+      row.order <- purrr::map(ls.models, ~row.names(coef(.x)))
+      row.order2 <- c()
+      for (i in names(ls.models)) {
+        row.order2 <- append(row.order2, 
+                             stringr::str_c(i, row.order[[i]], sep = "/"))
+      }
+      
+      # get the ranef
+      ls.ranef <- purrr::map(ls.models, 
+                             ~lme4::ranef(.x, standard = standardize)[ranef_names])
+      
+      # reconstruct the data frame with group id
+      ls.resid <- tibble::tibble(
+        group = row.order2,
+        purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
+      
+      if(ncol(ls.resid) != length(ranef_names) + 1) {
+        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+      }
+      
       return(ls.resid)
     }
   }
