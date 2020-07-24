@@ -29,7 +29,8 @@ Suggests:
     mlmRev,
     WWGbook,
     lme4 (>= 1.0),
-    nlme
+    nlme,
+    testthat
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
@@ -44,6 +45,7 @@ Collate:
     'LSresids.R'
     'HLMresid.R'
     'hlm_influence.R'
+    'hlm_resid.R'
     'help.R'
     'influence_functions.R'
     'utility_functions.R'
