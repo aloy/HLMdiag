@@ -1,6 +1,12 @@
 S3method(hlm_resid,default)
 S3method(hlm_resid,lmerMod)
+<<<<<<< HEAD
 S3method(hlm_resid,lme)
+=======
+S3method(hlm_influence,default)
+S3method(hlm_influence,lmerMod)
+S3method(hlm_influence,lme)
+>>>>>>> a3ef8cafd4e1d6a125236e12f2b7db1028960195
 S3method(HLMresid,default)
 S3method(HLMresid,lmerMod)
 S3method(HLMresid,mer)
@@ -9,6 +15,7 @@ S3method(LSresids,lmerMod)
 S3method(LSresids,mer)
 S3method(LSresids,lme)
 S3method(case_delete,default)
+S3method(case_delete,lme)
 S3method(case_delete,lmerMod)
 S3method(case_delete,mer)
 S3method(cooks.distance,case_delete)

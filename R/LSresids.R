@@ -86,14 +86,14 @@ LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
       
 		  h <- unlist(ls.hat)
 			semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
-			semi.std.resid[is.infinite(semi.std.resid)] <- NaN
+			semi.std.resid[is.infinite(semi.std.resid)] <- NA
 	
 			return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
 		}
     
 		if(!is.null(standardize) && standardize == TRUE){
 		  ls.rstandard <- unlist(lapply(ls.models, rstandard))
-		  ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+		  ls.rstandard[is.infinite(ls.rstandard)] <- NA
       
       return.df <- cbind(return.df, std.resid = ls.rstandard)
 		}
@@ -241,7 +241,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       
       h <- unlist(ls.hat)
       semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
-      semi.std.resid[is.infinite(semi.std.resid)] <- NaN
+      semi.std.resid[is.infinite(semi.std.resid)] <- NA
       # Catching earlier NAs
       for (i in 1:length(semi.std.resid)){
         if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
@@ -252,7 +252,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
     
     if(!is.null(standardize) && standardize == TRUE){
       ls.rstandard <- unlist(lapply(ls.models, rstandard))
-      ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+      ls.rstandard[is.infinite(ls.rstandard)] <- NA
       # Catching earlier NAs
       for (i in 1:length(ls.rstandard)){
         if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
@@ -406,7 +406,7 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
       
       h <- unlist(ls.hat)
       semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
-      semi.std.resid[is.infinite(semi.std.resid)] <- NaN
+      semi.std.resid[is.infinite(semi.std.resid)] <- NA
       # Catching earlier NAs
       for (i in 1:length(semi.std.resid)){
         if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
@@ -417,7 +417,7 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
     
     if(!is.null(standardize) && standardize == TRUE){
       ls.rstandard <- unlist(lapply(ls.models, rstandard))
-      ls.rstandard[is.infinite(ls.rstandard)] <- NaN
+      ls.rstandard[is.infinite(ls.rstandard)] <- NA
       # Catching earlier NAs
       for (i in 1:length(ls.rstandard)){
         if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA

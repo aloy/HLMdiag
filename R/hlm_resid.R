@@ -14,12 +14,12 @@ hlm_resid.default <- function(object, ...){
 
 #' Calculating residuals from HLMs
 #'
-#' \code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod}
-#' object and adds residuals and predicted values for individual observations or
-#' higher level clusters.
+#' \code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod} or
+#' \code{lme} object and adds residuals and fitted values for individual
+#' observations or higher level clusters.
 #' 
 #' This function extracts residuals and predicted values from the model, using
-#' least squares (LS) and Empirical Bayes (EB) methods, and appends them to the
+#' Least Squares (LS) and Empirical Bayes (EB) methods, and appends them to the
 #' model data. This unified framework enables the analyst to more easily conduct
 #' an upward residual analysis during model exploration/checking.
 #'
@@ -27,10 +27,11 @@ hlm_resid.default <- function(object, ...){
 #' @method hlm_resid lmerMod
 #' @S3method hlm_resid lmerMod
 #' @aliases hlm_resid
-#' @param object an object of class \code{lmerMod}.
+#' @param object an object of class \code{lmerMod} or \code{lme}.
 #' @param level which residuals should be extracted: 1 for within-group
-#'   (case-level) residuals, the name of a grouping factor (as defined in
-#'   \code{flist} of the \code{lmerMod} object) for between-group residuals
+#'   (case-level) residuals, the name of a grouping factor for between-group
+#'   residuals (as defined in \code{flist} in \code{lmerMod} objects or in
+#'   \code{groups}} in \code{lme} objects)
 #' @param standardize for any level, if \code{standardize = TRUE} the
 #'   standardized residuals will be returned for any group; for level-1 only, if
 #'   \code{standardize = "semi"} then the semi-standardized level-1 residuals
@@ -41,7 +42,8 @@ hlm_resid.default <- function(object, ...){
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{hlm_resid} function provides a wrapper that will extract
-#' residuals and predicted values from a fitted \code{lmerMod} object. 
+#' residuals and predicted values from a fitted \code{lmerMod} or \code{lme}
+#' object.
 #' The function provides access to residual quantities already made available by
 #' the functions \code{resid}, \code{predict}, and \code{ranef}, but adds
 #' additional functionality. Below is a list of types of residuals and predicted
