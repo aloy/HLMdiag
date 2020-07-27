@@ -10,11 +10,11 @@
 \usage{
 \method{leverage}{default}(object, ...)
 
-\method{leverage}{mer}(object, level = 1, ...)
+\method{leverage}{mer}(object, level, ...)
 
-\method{leverage}{lmerMod}(object, level = 1, ...)
+\method{leverage}{lmerMod}(object, level, ...)
 
-\method{leverage}{lme}(object, level = 1, ...)
+\method{leverage}{lme}(object, level, ...)
 }
 \arguments{
 \item{object}{fitted object of class \code{mer} of \code{lmerMod}}
@@ -22,7 +22,7 @@
 \item{...}{do not use}
 
 \item{level}{the level at which the leverage should be calculated: either
-1 for observation level leverage (default) or the name of the grouping factor 
+1 for observation level leverage or the name of the grouping factor 
 (as defined in \code{flist} of the \code{mer} object) for group level
 leverage. \code{leverage} assumes that the grouping factors are unique;
 thus, if IDs are repeated within each unit, unique IDs must be generated 
