@@ -22,7 +22,6 @@ case_delete.default <- function(model, ...){
 #'
 #' @export
 #' @method case_delete mer
-#' @S3method case_delete mer
 #' @aliases case_delete
 #'@param model the original hierarchical model fit using \code{lmer()}
 #'@param level a variable used to define the group for which cases will be
@@ -269,7 +268,6 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
 #' @export
 #' @rdname case_delete.mer
 #' @method case_delete lmerMod
-#' @S3method case_delete lmerMod
 case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "varcomp"), 
                             delete = NULL, ...){
   if(!isNestedModel(model)){
