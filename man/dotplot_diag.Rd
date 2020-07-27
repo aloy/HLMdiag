@@ -6,10 +6,10 @@
 \usage{
 dotplot_diag(
   x,
-  index,
-  data,
   cutoff,
   name = c("cooks.distance", "mdffits", "covratio", "covtrace", "rvc", "leverage"),
+  data,
+  index = NULL,
   modify = FALSE,
   ...
 )
@@ -17,23 +17,25 @@ dotplot_diag(
 \arguments{
 \item{x}{values of the diagnostic of interest}
 
-\item{index}{index (IDs) of \code{x} values}
+\item{cutoff}{value(s) specifying the boundary for unusual values of the 
+diagnostic. The cutoff(s) can either be supplied by the user, or automatically
+calculated using measures of internal scaling if \code{cutoff = "internal"}.}
+
+\item{name}{what diagnostic is being plotted
+(one of \code{"cooks.distance"}, \code{"mdffits"}, \code{"covratio"}, 
+\code{"covtrace"}, \code{"rvc"}, or \code{"leverage"}).
+This is used for the calculation of "internal" cutoffs.}
 
 \item{data}{data frame to use (optional)}
 
-\item{cutoff}{value(s) specifying the boundary for unusual values of the 
-diagnostic. The cutoff(s) can either be supplied by the user, or automatically
-calculated using measures of internal scaling if \code{cutoff = "internal"}}
-
-\item{name}{what diagnostic is being plotted 
-(one of \code{"cooks.distance"}, \code{"mdffits"}, \code{"covratio"}, 
-\code{"covtrace"}, \code{"rvc"}, or \code{"leverage"}).
-this is used for the calculation of "internal" cutoffs}
+\item{index}{optional parameter to specify index (IDs) of \code{x} values.
+If \code{NULL}(default), values will be indexed in the order of the vector 
+passed to \code{x}.}
 
 \item{modify}{specifies the \code{geom} to be used to produce a 
 space-saving modification: either \code{"dotplot"} or \code{"boxplot"}}
 
-\item{...}{other arguments to be passed to \code{qplot()}}
+\item{...}{other arguments to be passed to \code{ggplot()}}
 }
 \description{
 This is a function that can be used to create (modified) dotplots for the
@@ -51,19 +53,19 @@ fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Subject level deletion and diagnostics
 subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
-subject.diag <- diagnostics(subject.del)
+subject.diag <- hlm_influence(subject.del)
+subject.cd <- cooks.distance(fm)
 
-dotplot_diag(x = COOKSD, index = IDS, data = subject.diag[["fixef_diag"]], 
+dotplot_diag(x = cooksd, data = subject.diag, cutoff = "internal",
              name = "cooks.distance", modify = FALSE, 
              xlab = "Subject", ylab = "Cook's Distance")
-
-dotplot_diag(x = sigma2, index = IDS, data = subject.diag[["varcomp_diag"]], 
-             name = "rvc", modify = "dotplot", cutoff = "internal", 
-             xlab = "Subject", ylab = "Relative Variance Change")
              
-dotplot_diag(x = sigma2, index = IDS, data = subject.diag[["varcomp_diag"]], 
-             name = "rvc", modify = "boxplot", cutoff = "internal", 
-             xlab = "Subject", ylab = "Relative Variance Change")
+dotplot_diag(x = mdffits, data = subject.diag, name = "mdffits",
+             name = "mdffits", modify = "dotplot", xlab = "Subject,
+             ylab = "MDFFITS")
+             
+dotplot_diag(x = subject.cd, name = "cooks.distance, cutoff = "internal",
+            xlab = "Subject", ylab = "Cook's Distance")
 }
 \author{
 Adam Loy \email{loyad01@gmail.com}

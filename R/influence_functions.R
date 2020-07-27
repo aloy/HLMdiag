@@ -1289,4 +1289,4 @@ leverage.lme <- function(object, level = 1, ...) {
   
   if(level == 1) return(lev1)
   if(level != 1) return(grp.lev)
-  }
+}
