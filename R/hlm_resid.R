@@ -89,21 +89,21 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, standardize = standardize, sim = sim)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
-      
-      if (standardize == FALSE) {
-        ls.resid <- ls.resid %>% 
-          select(.ls.resid = LS.resid, .ls.fitted = fitted)
-        
-      } else if (standardize == TRUE) {
-        ls.resid <- ls.resid %>% 
-          select(.std.ls.resid = std.resid, .ls.fitted = fitted)
-        
-      } else {
-        ls.resid <- ls.resid %>% 
-          select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
-      }
+      # 
+      # if (standardize == FALSE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.ls.resid = LS.resid, .ls.fitted = fitted)
+      #   
+      # } else if (standardize == TRUE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.std.ls.resid = std.resid, .ls.fitted = fitted)
+      #   
+      # } else {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
+      # }
     }
     
     # EB Residuals
