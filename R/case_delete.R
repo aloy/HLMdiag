@@ -677,8 +677,11 @@ case_delete.lme <- function(model, group = NULL, type = c("both", "fixef", "varc
       else {
         flist <- colnames(flist)
         temp  <- NULL
-        for(i in 1:ncol(flist)) {
-          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
+        #for(i in 1:ncol(flist)) {
+          #temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
+        #}
+        for (i in 1:length(flist)) {
+          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]]) #ncol(flist) is null 
         }
         ranef.delete <- temp
         names(ranef.delete) <- names(ranef(model))
