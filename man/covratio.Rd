@@ -17,25 +17,25 @@
 
 \method{covtrace}{default}(object, ...)
 
-\method{covratio}{mer}(object, group = NULL, delete = NULL, ...)
+\method{covratio}{mer}(object, level = 1, delete = NULL, ...)
 
-\method{covratio}{lmerMod}(object, group = NULL, delete = NULL, ...)
+\method{covratio}{lmerMod}(object, level = 1, delete = NULL, ...)
 
-\method{covratio}{lme}(object, group = NULL, delete = NULL, ...)
+\method{covratio}{lme}(object, level = 1, delete = NULL, ...)
 
-\method{covtrace}{mer}(object, group = NULL, delete = NULL, ...)
+\method{covtrace}{mer}(object, level = 1, delete = NULL, ...)
 
-\method{covtrace}{lmerMod}(object, group = NULL, delete = NULL, ...)
+\method{covtrace}{lmerMod}(object, level = 1, delete = NULL, ...)
 
-\method{covtrace}{lme}(object, group = NULL, delete = NULL, ...)
+\method{covtrace}{lme}(object, level = 1, delete = NULL, ...)
 }
 \arguments{
 \item{object}{fitted object of class \code{mer} or \code{lmerMod}}
 
 \item{...}{do not use}
 
-\item{group}{variable used to define the group for which cases will be
-deleted.  If \code{group = NULL}, then individual cases will be deleted.}
+\item{level}{variable used to define the group for which cases will be
+deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
 
 \item{delete}{index of individual cases to be deleted. To delete specific 
 observations the row number must be specified. To delete higher level
@@ -72,7 +72,7 @@ ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 ss.cr1 <- covratio(ss)
 
 # covratio for subject-level deletion
-ss.cr2 <- covratio(ss, group = "Subject")
+ss.cr2 <- covratio(ss, level = "Subject")
 
 \dontrun{
 ## A larger example
@@ -83,14 +83,14 @@ fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 cr1 <- covratio(fm)
 
 # covratio for school-level deletion
-cr2 <- covratio(fm, group = "school")
+cr2 <- covratio(fm, level = "school")
 }
 
 # covtrace for individual observations
 ss.ct1 <- covtrace(ss)
 
 # covtrace for subject-level deletion
-ss.ct2 <- covtrace(ss, group = "Subject")
+ss.ct2 <- covtrace(ss, level = "Subject")
 
 \dontrun{
 ## Returning to the larger example
@@ -98,7 +98,7 @@ ss.ct2 <- covtrace(ss, group = "Subject")
 ct1 <- covtrace(fm)
 
 # covtrace for school-level deletion
-ct2 <- covtrace(fm, group = "school")
+ct2 <- covtrace(fm, level = "school")
 }
 }
 \references{

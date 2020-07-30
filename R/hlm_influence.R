@@ -1,11 +1,10 @@
 #'@export
-#'@rdname hlm_influence
 hlm_influence <- function(model, ...) {
   UseMethod("hlm_influence", model)
 }
 
 #' @export
-#' @rdname hlm_influence
+#' @rdname hlm_influence.lmerMod
 #' @method hlm_influence default
 hlm_influence.default <- function(model, ...){
   stop(paste("there is no hlm_influence() method for objects of class",
@@ -15,43 +14,36 @@ hlm_influence.default <- function(model, ...){
 #'Calculating influence diagnostics for HLMs
 #'
 #'@description
-#'This function is used to compute influence diagnostics for a hierarchical linear model. 
-#'It takes a model fit as a \code{lmerMod} object and returns a tibble with Cook's 
-#'distance, MDFFITS, covtrace, covratio, and leverage. 
+#'This function is used to compute influence diagnostics for a hierarchical linear model.
+#'It takes a model fit as a \code{lmerMod} object and returns a tibble with Cook's
+#'distance, MDFFITS, covtrace, covratio, and leverage.
 #'
 #'@export
 #'@method hlm_influence lmerMod
 #'@aliases hlm_influence
 #'@param model an object of class \code{lmerMod}
-#'@param level a variable used to define the group for which cases are deleted and influence 
-#'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are 
+#'@param level a variable used to define the group for which cases are deleted and influence
+#'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
-#'factor as defined in \code{flist} of the \code{lmerMod} object. 
-#'@param delete optional parameter to specify a single case or set of cases to calculate influence
-#'diagnostics for. If the \code{level} parameter is specified, \code{delete} may also take 
-#'the form of a character vector consisting of group names as they appear in \code{flist}. 
-#'If \code{delete = NULL} then all cases are iteratively deleted, and influence diagnostics are 
-#'calculated for each case.
+#'factor as defined in \code{flist} of the \code{lmerMod} object.
 #'@param approx logical parameter used to determine how the influence diagnostics are calculated.
-#'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation. 
+#'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation.
 #'If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
-#'the model using \code{lmer}. This method is more accurate, but slower than the one step approximation. 
-#'If \code{approx = FALSE}, the returned tibble also contains columns for relative variance change (RVC). 
-#'@param leverage a character vector to determine which types of leverage should be included in the 
-#'returned tibble. There are four options: 'overall' (default), 'fixef', 'ranef', or 'ranef.uc'. 
-#'One or more types may be specified. If the \code{delete} is specified, no leverage can be returned.
-#'For additional information about the types of leverage, see 
+#'the model using \code{lmer}. This method is more accurate, but slower than the one step approximation.
+#'If \code{approx = FALSE}, the returned tibble also contains columns for relative variance change (RVC).
+#'@param leverage a character vector to determine which types of leverage should be included in the
+#'returned tibble. There are four options: 'overall' (default), 'fixef', 'ranef', or 'ranef.uc'.
+#'One or more types may be specified. For additional information about the types of leverage, see
 #'\code{?leverage}.
 #'
-#'@details 
-#'The \code{hlm_influence} function provides a wrapper that appends influence diagnostics 
-#'to the original data. The approximated influence diagnostics returned by this 
-#'function are equivalent to those returned by \code{cooks.distance}, \code{mdffits}, \code{covtrace}, 
-#'\code{covratio}, and \code{leverage}. The exact influence diagnostics obtained through a full 
-#'refit of the data are also avaliable through \code{case_delete} and the accompaning functions 
-#'\code{cooks.distance}, \code{mdffits}, \code{covtrace}, and \code{covratio} that can be called 
-#'directly on the \code{case_delete} object. 
-#'
+#'@details
+#'The \code{hlm_influence} function provides a wrapper that appends influence diagnostics
+#'to the original data. The approximated influence diagnostics returned by this
+#'function are equivalent to those returned by \code{cooks.distance}, \code{mdffits}, \code{covtrace},
+#'\code{covratio}, and \code{leverage}. The exact influence diagnostics obtained through a full
+#'refit of the data are also avaliable through \code{case_delete} and the accompaning functions
+#'\code{cooks.distance}, \code{mdffits}, \code{covtrace}, and \code{covratio} that can be called
+#'directly on the \code{case_delete} object.
 #'@note 
 #'It is possible to set \code{level} and delete individual cases from different groups using 
 #'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
@@ -79,9 +71,9 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
-                    mdffits = as.vector(mdffits(model, level = level, delete = delete)),
-                    covtrace = covtrace(model, level = level, delete = delete),
-                    covratio = covratio(model, level = level, delete = delete))
+                               mdffits = as.vector(mdffits(model, level = level, delete = delete)),
+                               covtrace = covtrace(model, level = level, delete = delete),
+                               covratio = covratio(model, level = level, delete = delete))
     
     if(!is.null(delete)) {
       return(infl.tbl)
@@ -92,25 +84,25 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
       colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
     }
-        
+    
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model@flist[[level]]), .before = 1)
-      names(infl.tbl)[1] <- level 
+      names(infl.tbl)[1] <- level
     }
   }
-  else { #full refits 
+  else { #full refits
     case <- case_delete(model, level = level, delete = delete)
-  
+    
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(case)),
-                            mdffits = as.vector(mdffits(case)),
-                            covtrace = covtrace(case),
-                            covratio = covratio(case))
+                               mdffits = as.vector(mdffits(case)),
+                               covtrace = covtrace(case),
+                               covratio = covratio(case))
     
     if (!is.null(delete)) {
-      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null 
+      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null
       colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
       return(infl.tbl)
@@ -124,7 +116,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
       colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
     }
-  
+    
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
     }
@@ -139,7 +131,6 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
 #' @export
 #' @rdname hlm_influence
 #' @method hlm_influence lme
-#' @S3method hlm_influence lme
 #' @aliases hlm_influence
 hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
   
@@ -182,10 +173,10 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
-      names(infl.tbl)[1] <- level 
+      names(infl.tbl)[1] <- level
     }
   }
-  else { #full refits 
+  else { #full refits
     case <- case_delete(model, level = level, delete = delete)
     
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(case)),
@@ -194,7 +185,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
                                covratio = covratio(case))
     
     if (!is.null(delete)) {
-      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null 
+      rvc.df <- as.data.frame(t(rvc(case))) #need to take transpose of rvc output when delete isn't null
       colnames(rvc.df) <- purrr::map_chr(names(rvc.df), function(s) stringr::str_c("rvc", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, rvc.df)
       return(infl.tbl)
@@ -219,4 +210,3 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
   }
   return(infl.tbl)
 }
-

@@ -188,12 +188,13 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-  
-  LS.resid <- NULL # Make codetools happy
-
+  #we can move this to level 2
   fixed <- as.character(lme4::nobars( formula(object)))
   
   data <- object@frame
+  names(data)[which(names(data) == fixed[2])] <- "y"
+  fixed[2] <- "y"
+  
   if(!is.null(sim)){data[,fixed[2]] <- sim}
 
   if(level == 1){
@@ -319,7 +320,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       # END JACK CODE
   }
   
-  if(level != 1){
+  if(level %in% names(object@flist)){
     n.ranefs <- length(names(object@flist))
     ranef_names <- names( lme4::ranef(object)[[level]] )
     
@@ -448,39 +449,28 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
       }
     }
     
-    row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
-    
-    return.df <- data.frame(LS.resid = unlist(ls.residuals), 
-                            fitted = unlist(ls.fitted))
+    row.order <- unlist(purrr::map(ls.data, function(x) row.names(x)))
+    return.df <- data.frame(.ls.resid = unlist(ls.residuals),
+                            .ls.fitted = unlist(ls.fitted))
     
     if(!is.null(standardize) && standardize == "semi"){
-      ls.influence <- lapply(ls.models, lm.influence)
-      ls.hat <- lapply(ls.influence, function(x) x$hat)
-      
-      h <- unlist(ls.hat)
-      semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
+      ls.hat <- unlist(purrr::map(ls.models, ~lm.influence(.x)$hat))
+      semi.std.resid  <- unlist(ls.residuals) / sqrt(1 - ls.hat)
       semi.std.resid[is.infinite(semi.std.resid)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(semi.std.resid)){
-        if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
-      }
       
-      return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
+      return.df <- data.frame(.semi.ls.resid = semi.std.resid, 
+                              .ls.fitted = unlist(ls.fitted))
     }
     
     if(!is.null(standardize) && standardize == TRUE){
-      ls.rstandard <- unlist(lapply(ls.models, rstandard))
+      ls.rstandard <- unlist(purrr::map(ls.models, rstandard))
       ls.rstandard[is.infinite(ls.rstandard)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(ls.rstandard)){
-        if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
-      }
       
-      return.df <- cbind(return.df, std.resid = ls.rstandard)
+      return.df <- data.frame(.std.ls.resid = ls.rstandard, 
+                              .ls.fitted = unlist(ls.fitted))
     }
     
     rownames(return.df) <- row.order
-    
     return(return.df)
   }
   

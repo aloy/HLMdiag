@@ -5,6 +5,7 @@
 \alias{LSresids.mer}
 \alias{LSresids}
 \alias{LSresids.lmerMod}
+\alias{LSresids.lme}
 \title{Calculating least squares residuals}
 \usage{
 \method{LSresids}{default}(object, ...)
@@ -12,6 +13,8 @@
 \method{LSresids}{mer}(object, level, sim = NULL, standardize = FALSE, ...)
 
 \method{LSresids}{lmerMod}(object, level, sim = NULL, standardize = FALSE, ...)
+
+\method{LSresids}{lme}(object, level, sim = NULL, standardize = FALSE, ...)
 }
 \arguments{
 \item{object}{an object of class \code{mer} or \code{lmerMod}.}

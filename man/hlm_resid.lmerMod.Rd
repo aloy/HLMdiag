@@ -4,42 +4,59 @@
 \alias{hlm_resid.default}
 \alias{hlm_resid.lmerMod}
 \alias{hlm_resid}
+\alias{hlm_resid.lme}
 \title{Calculating residuals from HLMs}
 \usage{
 \method{hlm_resid}{default}(object, ...)
 
-\method{hlm_resid}{lmerMod}(object, level = 1, standardize = FALSE, sim = NULL, ...)
+\method{hlm_resid}{lmerMod}(
+  object,
+  level = 1,
+  standardize = FALSE,
+  include.ls = TRUE,
+  sim = NULL,
+  ...
+)
+
+\method{hlm_resid}{lme}(
+  object,
+  level = 1,
+  standardize = FALSE,
+  include.ls = TRUE,
+  sim = NULL,
+  ...
+)
 }
 \arguments{
-\item{object}{an object of class \code{lmerMod}.}
+\item{object}{an object of class \code{lmerMod} or \code{lme}.}
 
 \item{...}{do not use}
 
-\item{level}{which residuals should be extracted: 1 for within-group
-(case-level) residuals, the name of a grouping factor (as defined in
-\code{flist} of the \code{lmerMod} object) for between-group residuals}
-
-\item{standardize}{foy any level, if \code{standardize = TRUE} the
+\item{standardize}{for any level, if \code{standardize = TRUE} the
 standardized residuals will be returned for any group; for level-1 only, if
 \code{standardize = "semi"} then the semi-standardized level-1 residuals
 will be returned}
 
 \item{sim}{optional argument giving the data frame used for LS residuals.
 This is used mainly for dealing with simulations.}
+
+\item{ls.include}{a logical indicating if LS residuals be included in the
+return tibble. \code{include.ls = FALSE} decreases runtime substantially.}
 }
 \description{
-\code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod}
-object and adds residuals and predicted values for individual observations or
-higher level clusters.
+\code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod} or
+\code{lme} object and adds residuals and fitted values for individual
+observations or higher level clusters.
 }
 \details{
 This function extracts residuals and predicted values from the model, using
-least squares (LS) and Empirical Bayes (EB) methods, and appends them to the
+Least Squares (LS) and Empirical Bayes (EB) methods, and appends them to the
 model data. This unified framework enables the analyst to more easily conduct
 an upward residual analysis during model exploration/checking.
 
 The \code{hlm_resid} function provides a wrapper that will extract
-residuals and predicted values from a fitted \code{lmerMod} object. 
+residuals and predicted values from a fitted \code{lmerMod} or \code{lme}
+object.
 The function provides access to residual quantities already made available by
 the functions \code{resid}, \code{predict}, and \code{ranef}, but adds
 additional functionality. Below is a list of types of residuals and predicted
@@ -67,8 +84,9 @@ estimating parameters. Equivalent to \code{lme4::ranef} on the specified
 level. EB residuals are prefered at higher levels LS residuals are dependent
 on a large sample size.}
 \item{\code{.ls.*}}{The group level random effects using the LS method of
-estimating parameters. Calculated using \code{ranef.lmList4} to compare the
-random effects of individual models to the global model.}
+estimating parameters. Calculated using \code{ranef} on a \code{lmList4}
+object to compare the random effects of individual models to the global
+model.}
 }
 Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
