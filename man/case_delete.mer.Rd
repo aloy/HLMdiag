@@ -5,6 +5,7 @@
 \alias{case_delete.mer}
 \alias{case_delete}
 \alias{case_delete.lmerMod}
+\alias{case_delete.lme}
 \title{Case Deletion for \code{mer}/\code{lmerMod} objects}
 \usage{
 \method{case_delete}{default}(model, ...)
@@ -20,6 +21,17 @@
 \method{case_delete}{lmerMod}(
   model,
   level = 1,
+<<<<<<< HEAD
+=======
+  type = c("both", "fixef", "varcomp"),
+  delete = NULL,
+  ...
+)
+
+\method{case_delete}{lme}(
+  model,
+  group = NULL,
+>>>>>>> e25ba95b48be2e4dcb86fb1a4e7d6beae6388821
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...

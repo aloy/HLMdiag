@@ -98,7 +98,7 @@ diagnostics <- function(object){
 cooks.distance.case_delete <- function(model, ...){
   p <- length(model$fixef.original)
   
-  if (colnames(model$fixef.delete)[1] == "deleted") {
+  if (names(model$fixef.delete)[1] == "deleted") {
     model$fixef.delete <- model$fixef.delete[,-1]
   }
 
@@ -125,7 +125,7 @@ cooks.distance.case_delete <- function(model, ...){
 mdffits.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
   
-  if (colnames(object$fixef.delete)[1] == "deleted") {
+  if (names(object$fixef.delete)[1] == "deleted") {
     object$fixef.delete <- object$fixef.delete[,-1]
   }
 

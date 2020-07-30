@@ -89,21 +89,21 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, standardize = standardize, sim = sim)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
-      
-      if (standardize == FALSE) {
-        ls.resid <- ls.resid %>% 
-          select(.ls.resid = LS.resid, .ls.fitted = fitted)
-        
-      } else if (standardize == TRUE) {
-        ls.resid <- ls.resid %>% 
-          select(.std.ls.resid = std.resid, .ls.fitted = fitted)
-        
-      } else {
-        ls.resid <- ls.resid %>% 
-          select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
-      }
+      # 
+      # if (standardize == FALSE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.ls.resid = LS.resid, .ls.fitted = fitted)
+      #   
+      # } else if (standardize == TRUE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.std.ls.resid = std.resid, .ls.fitted = fitted)
+      #   
+      # } else {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
+      # }
     }
     
     # EB Residuals
@@ -181,6 +181,10 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # Grab level specific variables
     fixed <- as.character(lme4::nobars( formula(object)))
+    data <- object@frame
+    names(data)[which(names(data) == fixed[2])] <- "y"
+    fixed[2] <- "y"
+    
     n.ranefs <- length(names(object@flist))
     ranef_names <- names( lme4::ranef(object)[[level]] )
     
@@ -189,7 +193,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
       
       # Use lmList
-      g.list <- suppressWarnings(lme4::lmList(formula(form), data = object@frame))
+      g.list <- suppressWarnings(lme4::lmList(formula(form), data = data))
      
       # Checking if all of the values for a coef are NAs
       g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
@@ -211,7 +215,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
         return.tbl <- suppressMessages(tibble::tibble(
           groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
         names(return.tbl) <- c(level, eb.names, ls.names[-1])
-        if(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])){
+        if(sum(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])) != 0){
           g.vars[level][[1]] <- as.character(g.vars[level][[1]])
           return.tbl[level][[1]] <- as.character(return.tbl[level][[1]])
         }
@@ -221,7 +225,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       } else {
         return.tbl <- tibble::tibble(groups, eb.resid)
         names(return.tbl) <- c(level, eb.names)
-        if(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])){
+        if(sum(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])) != 0){
           g.vars[level][[1]] <- as.character(g.vars[level][[1]])
           return.tbl[level][[1]] <- as.character(return.tbl[level][[1]])
         }
@@ -306,18 +310,18 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
       ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
       
-      if (standardize == FALSE) {
-        ls.resid <- ls.resid %>% 
-          select(.ls.resid = LS.resid, .ls.fitted = fitted)
-        
-      } else if (standardize == TRUE) {
-        ls.resid <- ls.resid %>% 
-          select(.std.ls.resid = std.resid, .ls.fitted = fitted)
-        
-      } else {
-        ls.resid <- ls.resid %>% 
-          select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
-      }
+      # if (standardize == FALSE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.ls.resid = LS.resid, .ls.fitted = fitted)
+      #   
+      # } else if (standardize == TRUE) {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.std.ls.resid = std.resid, .ls.fitted = fitted)
+      #   
+      # } else {
+      #   ls.resid <- ls.resid %>% 
+      #     select(.semi.ls.resid = semi.std.resid, .ls.fitted = fitted)
+      # }
     }
     
     # EB Residuals
@@ -329,7 +333,6 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
 
     # EB Fitted
     eb.fitted <- data.frame(.fitted = fitted(object))
-    # EB Fitted
     
     # Marginal Residuals
     mr <- resid(object, type="response", level=0)
@@ -438,7 +441,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
         return.tbl <- suppressMessages(tibble::tibble(
           groups, eb.resid, ls.resid[,-1], .name_repair = "universal"))
         names(return.tbl) <- c(level, eb.names, ls.names[-1])
-        if(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])){
+        if(sum(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])) != 0){
           g.vars[level][[1]] <- as.character(g.vars[level][[1]])
           return.tbl[level][[1]] <- as.character(return.tbl[level][[1]])
         }
@@ -448,7 +451,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
       } else {
         return.tbl <- tibble::tibble(groups, eb.resid)
         names(return.tbl) <- c(level, eb.names)
-        if(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])){
+        if(sum(class(g.vars[level][[1]]) != class(return.tbl[level][[1]])) != 0){
           g.vars[level][[1]] <- as.character(g.vars[level][[1]])
           return.tbl[level][[1]] <- as.character(return.tbl[level][[1]])
         }

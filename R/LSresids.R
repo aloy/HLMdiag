@@ -188,85 +188,139 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-  
-  LS.resid <- NULL # Make codetools happy
-
+  #we can move this to level 2
   fixed <- as.character(lme4::nobars( formula(object)))
   
   data <- object@frame
+  names(data)[which(names(data) == fixed[2])] <- "y"
+  fixed[2] <- "y"
+  
   if(!is.null(sim)){data[,fixed[2]] <- sim}
 
   if(level == 1){
-    group_var <- names(object@flist)[1]
-    if(stringr::str_detect(names(object@flist)[1], ":")) {
-      gvars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
-      group_var <- gvars[which(!gvars %in% names(object@flist))]
-    }
-    
-    # fitting a separate LS regression model to each group
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
-    
-    ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
-    if (!is.null(attr(ls.models, which = "warningMsg"))) {
-       warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
-    }
-    
-    ls.residuals <- lapply(ls.models, resid)
-    ls.fitted <- lapply(ls.models, fitted)
-    
-    # creating a data frame of the residuals, fitted values, and model frames
-    ls.data <- lapply(ls.models, model.frame)
-    
-    # force the rank deficient entries to NA
-    temp <- rep(NA, length(ls.data)) # how many coeff for each group
-    for(i in 1:length(ls.data)){
-      temp[i] <- ncol(ls.data[i][[1]])
-    }
-    index <- which(temp != max(temp)) # which groups are deficient
-    if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
-      for(i in 1:length(index)){
-        ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
-        ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
-      }
-    }
-    
-    row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
-    
-    return.df <- data.frame(LS.resid = unlist(ls.residuals), 
-                            fitted = unlist(ls.fitted))
-    
-    if(!is.null(standardize) && standardize == "semi"){
-      ls.influence <- lapply(ls.models, lm.influence)
-      ls.hat <- lapply(ls.influence, function(x) x$hat)
+    # group_var <- names(object@flist)[1]
+    # if(stringr::str_detect(names(object@flist)[1], ":")) {
+    #   gvars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
+    #   group_var <- gvars[which(!gvars %in% names(object@flist))]
+    # }
+    # 
+    # # fitting a separate LS regression model to each group
+    # form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
+    # 
+    # ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
+    # if (!is.null(attr(ls.models, which = "warningMsg"))) {
+    #    warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
+    # }
+    # 
+    # ls.residuals <- lapply(ls.models, resid)
+    # ls.fitted <- lapply(ls.models, fitted)
+    # 
+    # # creating a data frame of the residuals, fitted values, and model frames
+    # ls.data <- lapply(ls.models, model.frame)
+    # 
+    # # force the rank deficient entries to NA
+    # temp <- rep(NA, length(ls.data)) # how many coeff for each group
+    # for(i in 1:length(ls.data)){
+    #   temp[i] <- ncol(ls.data[i][[1]])
+    # }
+    # index <- which(temp != max(temp)) # which groups are deficient
+    # if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
+    #   for(i in 1:length(index)){
+    #     ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
+    #     ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
+    #   }
+    # }
+    # 
+    # row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
+    # 
+    # return.df <- data.frame(LS.resid = unlist(ls.residuals), 
+    #                         fitted = unlist(ls.fitted))
+    # 
+    # if(!is.null(standardize) && standardize == "semi"){
+    #   ls.influence <- lapply(ls.models, lm.influence)
+    #   ls.hat <- lapply(ls.influence, function(x) x$hat)
+    #   
+    #   h <- unlist(ls.hat)
+    #   semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
+    #   semi.std.resid[is.infinite(semi.std.resid)] <- NA
+    #   # Catching earlier NAs
+    #   for (i in 1:length(semi.std.resid)){
+    #     if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
+    #   }
+    #   
+    #   return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
+    # }
+    # 
+    # if(!is.null(standardize) && standardize == TRUE){
+    #   ls.rstandard <- unlist(lapply(ls.models, rstandard))
+    #   ls.rstandard[is.infinite(ls.rstandard)] <- NA
+    #   # Catching earlier NAs
+    #   for (i in 1:length(ls.rstandard)){
+    #     if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
+    #   }
+    #   
+    #   return.df <- cbind(return.df, std.resid = ls.rstandard)
+    # }
+    # 
+    # rownames(return.df) <- row.order
+    # 
+    # return(return.df)
       
-      h <- unlist(ls.hat)
-      semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
-      semi.std.resid[is.infinite(semi.std.resid)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(semi.std.resid)){
-        if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
+      # JACK CODE 
+      y <- lme4::getME(object, "y")
+      X <- lme4::getME(object, "X")
+      g <- as.data.frame(object@flist[1])
+      names(g) <- "group"
+      
+      frame <- cbind(y = y, X, g)                  #bind y, Xs, group
+      frame <- frame[,-2]                          #remove intercept column
+      
+      frame.split <- split(frame, frame[,"group"]) #split on groups
+      frame.lgl <- 
+        purrr::map(frame.split, function(split) {  #check if column elements are equal
+          purrr::map_lgl(split, ~all(.x == .x[1]))
+        })
+      
+      for (i in 1:length(frame.split)) {           #remove the all equal columns
+        frame.lgl[[i]][1] <- FALSE                 #make sure we never remove response
+        frame.split[[i]] <- frame.split[[i]][!frame.lgl[[i]]]
       }
       
-      return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
-    }
-    
-    if(!is.null(standardize) && standardize == TRUE){
-      ls.rstandard <- unlist(lapply(ls.models, rstandard))
-      ls.rstandard[is.infinite(ls.rstandard)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(ls.rstandard)){
-        if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
-      }
+      ls.models <-                                 #fit the lm
+        purrr::map(frame.split, function(split){
+          lm(y ~ ., data = split)
+        })
       
-      return.df <- cbind(return.df, std.resid = ls.rstandard)
-    }
+      ls.residuals <- purrr::map(ls.models, resid) #calculate residuals within group
+      ls.fitted <- purrr::map(ls.models, fitted)   #calculate fitted values
+      
+      row.order <- unlist(purrr::map(ls.data, function(x) row.names(x)))
+      return.df <- data.frame(.ls.resid = unlist(ls.residuals),
+                              .ls.fitted = unlist(ls.fitted))
+      
+      if(!is.null(standardize) && standardize == "semi"){
+        ls.hat <- unlist(purrr::map(ls.models, ~lm.influence(.x)$hat))
+        semi.std.resid  <- unlist(ls.residuals) / sqrt(1 - ls.hat)
+        semi.std.resid[is.infinite(semi.std.resid)] <- NA
+        
+        return.df <- data.frame(.semi.ls.resid = semi.std.resid, 
+                                .ls.fitted = unlist(ls.fitted))
+      }
 
-    rownames(return.df) <- row.order
-    
-    return(return.df)
+      if(!is.null(standardize) && standardize == TRUE){
+        ls.rstandard <- unlist(purrr::map(ls.models, rstandard))
+        ls.rstandard[is.infinite(ls.rstandard)] <- NA
+
+        return.df <- data.frame(.std.ls.resid = ls.rstandard, 
+                                .ls.fitted = unlist(ls.fitted))
+      }
+      
+      rownames(return.df) <- row.order
+      return(return.df)
+      # END JACK CODE
   }
   
-  if(level != 1){
+  if(level %in% names(object@flist)){
     n.ranefs <- length(names(object@flist))
     ranef_names <- names( lme4::ranef(object)[[level]] )
     
@@ -395,39 +449,28 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
       }
     }
     
-    row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
-    
-    return.df <- data.frame(LS.resid = unlist(ls.residuals), 
-                            fitted = unlist(ls.fitted))
+    row.order <- unlist(purrr::map(ls.data, function(x) row.names(x)))
+    return.df <- data.frame(.ls.resid = unlist(ls.residuals),
+                            .ls.fitted = unlist(ls.fitted))
     
     if(!is.null(standardize) && standardize == "semi"){
-      ls.influence <- lapply(ls.models, lm.influence)
-      ls.hat <- lapply(ls.influence, function(x) x$hat)
-      
-      h <- unlist(ls.hat)
-      semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
+      ls.hat <- unlist(purrr::map(ls.models, ~lm.influence(.x)$hat))
+      semi.std.resid  <- unlist(ls.residuals) / sqrt(1 - ls.hat)
       semi.std.resid[is.infinite(semi.std.resid)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(semi.std.resid)){
-        if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
-      }
       
-      return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
+      return.df <- data.frame(.semi.ls.resid = semi.std.resid, 
+                              .ls.fitted = unlist(ls.fitted))
     }
     
     if(!is.null(standardize) && standardize == TRUE){
-      ls.rstandard <- unlist(lapply(ls.models, rstandard))
+      ls.rstandard <- unlist(purrr::map(ls.models, rstandard))
       ls.rstandard[is.infinite(ls.rstandard)] <- NA
-      # Catching earlier NAs
-      for (i in 1:length(ls.rstandard)){
-        if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
-      }
       
-      return.df <- cbind(return.df, std.resid = ls.rstandard)
+      return.df <- data.frame(.std.ls.resid = ls.rstandard, 
+                              .ls.fitted = unlist(ls.fitted))
     }
     
     rownames(return.df) <- row.order
-    
     return(return.df)
   }
   

@@ -1,4 +1,8 @@
-library(HLMdiag)
+devtools::document()
+devtools::build()
+library(dplyr)
+library(lme4)
+library(nlme)
 bdf <- nlme::bdf
 
 test_that("detects level 2 variables, lme4", {
@@ -10,7 +14,7 @@ test_that("detects level 2 variables, lme4", {
 })
 
 test_that("detects level 2 variables, nlme", {
-  bdf.lme <- nlme::lme(IQ.verb ~ sex + ses + denomina + schoolSES, 
+  bdf.lme <- nlme::lme(IQ.verb ~ ses + aritPOST + langPOST + schoolSES, 
                        random = ~1|schoolNR, data = bdf)
   bdf.resids <- hlm_resid(bdf.lme, level = "schoolNR")
   expect_equal(ncol(bdf.resids), 4)
