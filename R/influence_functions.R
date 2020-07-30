@@ -20,7 +20,6 @@ covratio <- function(object, ...){
 #' @export
 #' @rdname covratio
 #' @method covratio default
-#' @S3method covratio default
 covratio.default <- function(object, ...){
   stop(paste("there is no covratio() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -34,7 +33,6 @@ covtrace <- function(object, ...){
 #' @export
 #' @rdname covratio
 #' @method covtrace default
-#' @S3method covtrace default
 covtrace.default <- function(object, ...){
   stop(paste("there is no covtrace() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -48,7 +46,6 @@ mdffits <- function(object, ...){
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits default
-#' @S3method mdffits default
 mdffits.default <- function(object, ...){
   stop(paste("there is no mdffits() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -62,7 +59,6 @@ rvc <- function(object, ...){
 #' @export
 #' @rdname rvc.mer
 #' @method rvc default
-#' @S3method rvc default
 rvc.default <- function(object, ...){
   stop(paste("there is no rvc() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -76,7 +72,6 @@ rvc.default <- function(object, ...){
 #' 
 #' @export
 #' @method leverage mer
-#' @S3method leverage mer
 #' @aliases leverage
 #' @param object fitted object of class \code{mer} of \code{lmerMod}
 #' @param level the level at which the leverage should be calculated: either
@@ -198,7 +193,6 @@ leverage.mer <- function(object, level = 1, ...) {
 #' @export
 #' @rdname leverage.mer
 #' @method leverage lmerMod
-#' @S3method leverage lmerMod
 leverage.lmerMod <- function(object, level = 1, ...) {
   if(!isNestedModel(object)) {
     stop("leverage.mer has not yet been implemented for models with 
@@ -286,7 +280,6 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #'@export
 #'@rdname cooks.distance
 #'@method cooks.distance mer
-#'@S3method cooks.distance mer
 #'@aliases cooks.distance
 #'@param model fitted model of class \code{mer} or \code{lmerMod}
 #'@param level variable used to define the group for which cases will be
@@ -407,7 +400,6 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname cooks.distance
 #' @method cooks.distance lmerMod
-#' @S3method cooks.distance lmerMod
 cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -499,7 +491,6 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr
 #' @export
 #' @rdname cooks.distance
 #' @method cooks.distance lme
-#' @S3method cooks.distance lme
 cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -598,7 +589,6 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits mer
-#' @S3method mdffits mer
 #' @aliases mdffits
 #' @param object fitted object of class \code{mer} or \code{lmerMod}
 #' @examples
@@ -672,7 +662,6 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits lmerMod
-#' @S3method mdffits lmerMod
 mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -738,7 +727,6 @@ mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FAL
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits lme
-#' @S3method mdffits lme
 mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -818,7 +806,6 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #'@export
 #' @rdname covratio
 #'@method covratio mer
-#'@S3method covratio mer
 #'@aliases covratio
 #'@param object fitted object of class \code{mer} or \code{lmerMod}
 #'@param level variable used to define the group for which cases will be
@@ -917,7 +904,6 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covratio lmerMod
-#'@S3method covratio lmerMod
 covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -964,7 +950,6 @@ covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covratio lme
-#'@S3method covratio lme
 covratio.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -1010,7 +995,6 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covtrace mer
-#'@S3method covtrace mer
 #'@aliases covtrace
 #' @examples
 #' 
@@ -1074,7 +1058,6 @@ covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covtrace lmerMod
-#'@S3method covtrace lmerMod
 covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -1121,7 +1104,6 @@ covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covtrace lme
-#'@S3method covtrace lme
 covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -1170,7 +1152,6 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' 
 #' @export
 #' @method rvc mer
-#' @S3method rvc mer
 #' @aliases rvc
 #'@param object fitted object of class \code{mer} or \code{lmerMod}
 #'@param level variable used to define the group for which cases will be
@@ -1208,7 +1189,6 @@ rvc.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname rvc.mer
 #' @method rvc lmerMod
-#' @S3method rvc lmerMod
 rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -1221,7 +1201,6 @@ rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname rvc.mer
 #' @method rvc lme
-#' @S3method rvc lme
 rvc.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -1235,7 +1214,6 @@ rvc.lme <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname leverage.mer
 #' @method leverage lme
-#' @S3method leverage lme
 leverage.lme <- function(object, level = 1, ...) {
   if(!isNestedModel(object)) {
     stop("leverage.mer has not yet been implemented for models with 
@@ -1289,4 +1267,4 @@ leverage.lme <- function(object, level = 1, ...) {
   
   if(level == 1) return(lev1)
   if(level != 1) return(grp.lev)
-  }
+}

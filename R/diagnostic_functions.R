@@ -94,7 +94,6 @@ diagnostics <- function(object){
 #' @rdname diagnostics
 #' @param model an object containing the output returned by \code{case_delete()}.
 #' This is only named differently to agree with the generic.
-#' @S3method cooks.distance case_delete
 #' @method cooks.distance case_delete
 cooks.distance.case_delete <- function(model, ...){
   p <- length(model$fixef.original)
@@ -122,7 +121,6 @@ cooks.distance.case_delete <- function(model, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method mdffits case_delete
 #' @method mdffits case_delete
 mdffits.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
@@ -150,7 +148,6 @@ mdffits.case_delete <- function(object, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method covtrace case_delete
 #' @method covtrace case_delete
 covtrace.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
@@ -177,7 +174,6 @@ covtrace.case_delete <- function(object, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method covratio case_delete
 #' @method covratio case_delete
 covratio.case_delete <- function(object, ...){
   if(is(object$vcov.delete, "list")) {
@@ -203,7 +199,6 @@ covratio.case_delete <- function(object, ...){
 #' @export
 #' @rdname diagnostics
 #' @param ... do not use
-#' @S3method rvc case_delete
 #' @method rvc case_delete
 rvc.case_delete <- function(object, ...){
 	if(class(object$varcomp.delete) == "list") {

@@ -7,7 +7,6 @@ hlm_influence <- function(model, ...) {
 #' @export
 #' @rdname hlm_influence
 #' @method hlm_influence default
-#' @S3method hlm_influence default
 hlm_influence.default <- function(model, ...){
   stop(paste("there is no hlm_influence() method for objects of class",
              paste(class(model), collapse=", ")))
@@ -22,7 +21,6 @@ hlm_influence.default <- function(model, ...){
 #'
 #'@export
 #'@method hlm_influence lmerMod
-#'@S3method hlm_influence lmerMod
 #'@aliases hlm_influence
 #'@param model an object of class \code{lmerMod}
 #'@param level a variable used to define the group for which cases are deleted and influence 
