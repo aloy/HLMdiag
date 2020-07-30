@@ -14,17 +14,17 @@
 \usage{
 \method{mdffits}{default}(object, ...)
 
-\method{cooks.distance}{mer}(model, group = NULL, delete = NULL, ...)
+\method{cooks.distance}{mer}(model, level = 1, delete = NULL, ...)
 
-\method{cooks.distance}{lmerMod}(model, group = NULL, delete = NULL, ...)
+\method{cooks.distance}{lmerMod}(model, level = 1, delete = NULL, include.attr = FALSE, ...)
 
-\method{cooks.distance}{lme}(model, group = NULL, delete = NULL, ...)
+\method{cooks.distance}{lme}(model, level = 1, delete = NULL, include.attr = FALSE, ...)
 
-\method{mdffits}{mer}(object, group = NULL, delete = NULL, ...)
+\method{mdffits}{mer}(object, level = 1, delete = NULL, ...)
 
-\method{mdffits}{lmerMod}(object, group = NULL, delete = NULL, ...)
+\method{mdffits}{lmerMod}(object, level = 1, delete = NULL, include.attr = FALSE, ...)
 
-\method{mdffits}{lme}(object, group = NULL, delete = NULL, ...)
+\method{mdffits}{lme}(object, level = 1, delete = NULL, include.attr = FALSE, ...)
 }
 \arguments{
 \item{object}{fitted object of class \code{mer} or \code{lmerMod}}
@@ -33,18 +33,26 @@
 
 \item{model}{fitted model of class \code{mer} or \code{lmerMod}}
 
-\item{group}{variable used to define the group for which cases will be
-deleted.  If \code{group = NULL}, then individual cases will be deleted.}
+\item{level}{variable used to define the group for which cases will be
+deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
 
 \item{delete}{index of individual cases to be deleted. To delete specific 
 observations the row number must be specified. To delete higher level
 units the group ID and \code{group} parameter must be specified.
 If \code{delete = NULL} then all cases are iteratively deleted.}
+
+\item{include.attr}{logical value determining whether the difference between 
+the full and deleted parameter estimates should be included. If \code{FALSE} 
+(default), a numeric vector of Cook's distance or MDFFITS is returned. 
+If \code{TRUE}, a tibble with the Cook's distance or MDFFITS values in the 
+first column and the parameter differences in the remaining columns is returned.}
 }
 \value{
 Both functions return a numeric vector (or single value if 
-\code{delete} has been specified) with attribute \code{beta_cdd} giving
-the difference between the full and deleted parameter estimates.
+\code{delete} has been specified) as the default. If \code{include.attr = TRUE}, 
+then a tibble is returned. The first column consists of the Cook's distance or
+MDFFITS values, and the later columns capture the difference between the full
+and deleted parameter estimates.
 }
 \description{
 These functions calculate measures of the change in the fixed effects
@@ -71,7 +79,7 @@ ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 ss.cd.lev1 <- cooks.distance(ss)
 
 # Cook's distance for each Subject
-ss.cd.subject <- cooks.distance(ss, group = "Subject")
+ss.cd.subject <- cooks.distance(ss, level = "Subject")
 
 \dontrun{
 data(Exam, package = 'mlmRev')
@@ -81,10 +89,10 @@ fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 cd.lev1 <- cooks.distance(fm)
 
 # Cook's distance for each school
-cd.school <- cooks.distance(fm, group = "school")
+cd.school <- cooks.distance(fm, level = "school")
 
 # Cook's distance when school 1 is deleted
-cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
+cd.school1 <- cooks.distance(fm, level = "school", delete = 1)
 
 }
 
@@ -93,7 +101,7 @@ cd.school1 <- cooks.distance(fm, group = "school", delete = 1)
 ss.m1 <- mdffits(ss)
 
 # MDFFITS for each Subject
-ss.m.subject <- mdffits(ss, group = "Subject")
+ss.m.subject <- mdffits(ss, level = "Subject")
 
 \dontrun{  
 
@@ -101,7 +109,7 @@ ss.m.subject <- mdffits(ss, group = "Subject")
 m1 <- mdffits(fm)
 
 # MDFFITS for each school
-m.school <- mdffits(fm, group = "school")
+m.school <- mdffits(fm, level = "school")
 }
 }
 \references{

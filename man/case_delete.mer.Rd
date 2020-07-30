@@ -11,7 +11,7 @@
 
 \method{case_delete}{mer}(
   model,
-  group = NULL,
+  level = 1,
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...
@@ -19,7 +19,7 @@
 
 \method{case_delete}{lmerMod}(
   model,
-  group = NULL,
+  level = 1,
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...
@@ -30,17 +30,17 @@
 
 \item{...}{do not use}
 
-\item{group}{a variable used to define the group for which cases will be
-deleted.  If this is left \code{NULL} (default), then the function will delete
+\item{level}{a variable used to define the group for which cases will be
+deleted.  If \code{level = 1} (default), then the function will delete
 individual observations.}
 
 \item{type}{the part of the model for which you are obtaining deletion
 diagnostics: the fixed effects (\code{"fixef"}), variance components
 (\code{"varcomp"}), or \code{"both"} (default).}
 
-\item{delete}{numeric index of individual cases to be deleted. If the \code{group} parameter 
+\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter 
 is specified, \code{delete} may also take the form of a character vector consisting of group 
-names as they appear in \code{flist}. It is possible to set \code{group} and delete individual
+names as they appear in \code{flist}. It is possible to set \code{level} and delete individual
 cases from different groups using \code{delete}, so numeric indices should be double checked 
 to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.}
 }
@@ -74,13 +74,13 @@ data(sleepstudy, package = 'lme4')
 fm <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 
 # Deleting every Subject
-fmDel <- case_delete(model = fm, group = "Subject", type = "both")
+fmDel <- case_delete(model = fm, level = "Subject", type = "both")
 
 # Deleting only subject 308
-del308 <- case_delete(model = fm, group = "Subject", type = "both", delete = 308)
+del308 <- case_delete(model = fm, level = "Subject", type = "both", delete = 308)
 
 # Deleting a subset of subjects
-delSubset <- case_delete(model = fm, group = "Subject", type = "both", delete = 308:310)
+delSubset <- case_delete(model = fm, level = "Subject", type = "both", delete = 308:310)
 
 }
 \references{

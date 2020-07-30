@@ -10,19 +10,19 @@
 \usage{
 \method{rvc}{default}(object, ...)
 
-\method{rvc}{mer}(object, group = NULL, delete = NULL, ...)
+\method{rvc}{mer}(object, level = 1, delete = NULL, ...)
 
-\method{rvc}{lmerMod}(object, group = NULL, delete = NULL, ...)
+\method{rvc}{lmerMod}(object, level = 1, delete = NULL, ...)
 
-\method{rvc}{lme}(object, group = NULL, delete = NULL, ...)
+\method{rvc}{lme}(object, level = 1, delete = NULL, ...)
 }
 \arguments{
 \item{object}{fitted object of class \code{mer} or \code{lmerMod}}
 
 \item{...}{do not use}
 
-\item{group}{variable used to define the group for which cases will be
-deleted.  If \code{group = NULL}, then individual cases will be deleted.}
+\item{level}{variable used to define the group for which cases will be
+deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
 
 \item{delete}{index of individual cases to be deleted. To delete specific 
 observations the row number must be specified. To delete higher level
