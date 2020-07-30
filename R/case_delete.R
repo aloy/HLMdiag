@@ -550,8 +550,18 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
           vcov.delete[[i]]  <- as.matrix(vcov(model.delete))
         }
         
-        fitted.delete[[i]] <- data.frame(deleted = i, model.delete$data, fitted(model.delete))
         
+        fixed <- as.character(formula(model))
+        dataform <- paste(fixed[2], fixed[1], fixed[3], " + ",
+                          paste(names(model.delete$groups), collapse = " + "))
+        data <- model.delete$data %>%
+          dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+          as.data.frame()
+        new.frame <- model.frame(formula(dataform), data)
+        
+        
+        #fitted.delete[[i]] <- data.frame(deleted = i, model.delete$data, fitted(model.delete)) #we need to change that model.delete$data argumnet
+        fitted.delete[[i]] <- data.frame(deleted = i, new.frame, fitted(model.delete))
       }
     } #end delete is null 
     else {
@@ -588,12 +598,6 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
     
     if( is.null(delete) ){
       data.delete <- split(modframe, modframe[, level])
-      #data.delete <- lapply(data.delete, function(df, dataformula){
-        #data.delete[[ unique( df[, level ] ) ]] <- NULL
-        #temp <- do.call('rbind', data.delete)
-        #groupedData(dataformula, temp)
-      #}, dataformula = dataformula) #what is this doing? it's causing an error 
-      
       data.delete <- lapply(data.delete, function(df) {
         df <- dplyr::anti_join(model$data, df, by = names(model$data))
       })
@@ -635,11 +639,10 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
         vcov.delete <- lapply(vcov.delete, as.matrix)
       }
       
-      
       fitted.delete <- lapply(model.delete, function(x){
-        data.frame(deleted = setdiff(modframe[, level], x$data[, level]),
-                   x$data, fitted(x))
-      })
+        data.frame(deleted = setdiff(modframe[, group], x$data[, group]),
+        x$data, fitted(x))
+        }) #do we need to fix this??? 
     }
     else{
       #index <- !modframe[,group] %in% delete
