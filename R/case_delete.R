@@ -270,6 +270,7 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
 #' @rdname case_delete.mer
 #' @method case_delete lmerMod
 #' @S3method case_delete lmerMod
+#' @aliases case_delete
 case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "varcomp"), 
                             delete = NULL, ...){
   if(!isNestedModel(model)){
@@ -473,6 +474,228 @@ case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "var
   
   vcov.original <- as.matrix(vcov(model))
   varcomp.original <- varcomp.mer(model)
+  
+  val <- list(fixef.original = fixef.original, ranef.original = ranef.original,
+              vcov.original = vcov.original, varcomp.original = varcomp.original,
+              fixef.delete = fixef.delete, ranef.delete = ranef.delete,
+              vcov.delete = vcov.delete, fitted.delete = fitted.delete,
+              varcomp.delete = varcomp.delete)
+  
+  attr(val, "type") <- type
+  class(val) <- "case_delete"
+  return(val)
+}
+
+
+#' @export
+#' @rdname case_delete.mer
+#' @method case_delete lme
+#' @S3method case_delete lme
+#' @aliases case_delete
+case_delete.lme <- function(model, group = NULL, type = c("both", "fixef", "varcomp"), delete = NULL, ...){
+  if(!isNestedModel(model)){
+    stop("case_delete is currently only implemented for mixed/hierarchical models.")
+  }
+  
+  flist <- model$groups
+  
+  fixef.delete   <- NULL
+  vcov.delete    <- NULL
+  varcomp.delete <- NULL
+  ranef.delete   <- NULL
+  fitted.delete  <- NULL
+  
+  type <- match.arg(type) #default is "both"
+  if(is.null(group) ) { # SINGLE CASE DELETION DIAGNOSTICS
+    n <- model$dims$N
+    modframe <- model$data
+    dataformula <- formula(modframe)
+    randcall <- as.formula(model$call$random)
+    
+    if( is.null(delete) ) {
+      for(i in 1:n){
+        if(is.null(randcall)) {
+          model.delete <- nlme::lme(formula(model), data = modframe[-i,])
+        } 
+        else{
+          model.delete <- nlme::lme(formula(model), random = randcall, data = modframe[-i,])
+          model.delete.1 <- nlme::lme(formula(model), random = randcall, data = modframe[-1,])
+        } 
+        
+        
+        if(type %in% c("both", "varcomp")){
+          if(length(flist) == 1) {
+            ranef.delete[[i]] <- data.frame(deleted = i, 
+                                            id = rownames(nlme::ranef(model.delete)), 
+                                            nlme::ranef(model.delete))
+          }
+          else{
+            ranef.delete[[i]] <- nlme::ranef(model.delete)
+            
+            if(is.list(ranef.delete[[i]])) { 
+              ranef.delete[[i]] <- lapply(ranef.delete[[i]], function(x){
+                x$id <- rownames(x)
+                x$deleted <- i
+                return(x)
+              })
+            } else{
+              ranef.delete[[i]]$id <- rownames(ranef.delete[[i]])
+              ranef.delete[[i]]$deleted <- i
+            }
+            
+          }
+          
+          varcomp.delete[[i]] <- varcomp.lme(model.delete) 
+          
+          
+        } #end type in both or varcomp 
+        
+        if(type %in% c("both", "fixef")){
+          fixef.delete[[i]] <- c(deleted = i, fixef(model.delete))
+          vcov.delete[[i]]  <- as.matrix(vcov(model.delete))
+        }
+        
+        fitted.delete[[i]] <- data.frame(deleted = i, model.delete$data, fitted(model.delete))
+        
+      } #end for loop
+    } #end delete is null 
+    else {
+      if(is.null(randcall)) {
+        model.delete <- lme(formula(model), data = modframe[-delete,])
+      } else{
+        model.delete <- lme(formula(model), data = modframe[-delete,], random = randcall)
+      }
+      
+      if(type %in% c("both", "fixef")) {
+        fixef.delete   <- fixef(model.delete)
+        vcov.delete    <- as.matrix(vcov(model.delete))
+      }
+      
+      if(type %in% c("both", "varcomp")) {
+        varcomp.delete <- varcomp.lme(model.delete)
+        ranef.delete   <- nlme::ranef(model.delete)
+        if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
+      }
+      fitted.delete  <- fitted(model.delete)
+    }
+  }
+  
+  else{ # MULTIPLE CASE DELETION DIAGNOSTICS
+    modframe <- model$data
+    dataformula <- formula(modframe)
+    modframe <- as.data.frame(modframe)
+    randcall <- model$call$random
+    
+    if(!group %in% names(flist)) {
+      stop(paste(group, "is not a valid grouping factor for this model."))
+    }
+    
+    
+    if( is.null(delete) ){
+      data.delete <- split(modframe, modframe[, group])
+      data.delete <- lapply(data.delete, function(df, dataformula){
+        data.delete[[ unique( df[, group ] ) ]] <- NULL
+        temp <- do.call('rbind', data.delete)
+        groupedData(dataformula, temp)
+      }, dataformula = dataformula)
+      
+      if(is.null(randcall)) {
+        model.delete <- lapply(data.delete, lme, fixed = formula(model))
+      } else{
+        model.delete <- lapply(data.delete, lme, fixed = formula(model), random = randcall)
+      }
+      
+      
+      if(length(flist) == 1) {
+        ranef.delete <- lapply(model.delete, function(x){
+          data.frame(deleted = setdiff(modframe[, group], x$data[, group]),
+                     id = rownames(nlme::ranef(x)), nlme::ranef(x))
+        })
+      }
+      else{
+        ranef.delete  <- lapply(model.delete, nlme::ranef)
+        deleted.group <- rownames(nlme::ranef(model))
+        
+        ranef.delete <- lapply(1:length(ranef.delete), function(x){
+          ranef.list <- ranef.delete[[x]]
+          lapply(ranef.list, function(y) {
+            y$id <- rownames(y)
+            y$deleted <- deleted.group[x]
+            return(y)
+          })
+        })
+      }
+      
+      varcomp.delete <- lapply(model.delete, varcomp)
+      
+      if(type %in% c("both", "fixef")){
+        fixef.delete <- lapply(model.delete, fixef)
+        
+        vcov.delete <- lapply(model.delete, vcov)
+        vcov.delete <- lapply(vcov.delete, as.matrix)
+      }
+      
+      
+      fitted.delete <- lapply(model.delete, function(x){
+        data.frame(deleted = setdiff(modframe[, group], x$data[, group]),
+                   x$data, fitted(x))
+      })
+    }
+    else{
+      index <- !modframe[,group] %in% delete
+      if(is.null(randcall)) {
+        model.delete   <- lme(formula(model), data = groupedData(dataformula, data = modframe[index,]))
+      } else{
+        model.delete   <- lme(formula(model), data = groupedData(dataformula, data = modframe[index,]), random = randcall)
+      }
+      
+      if(type %in% c("both", "fixef")) {
+        fixef.delete   <- fixef(model.delete)
+        vcov.delete    <-  as.matrix(vcov(model.delete))
+      }
+      
+      if(type %in% c("both", "varcomp")) {
+        varcomp.delete <- varcomp.lme(model.delete)
+        ranef.delete   <- nlme::ranef(model.delete)
+        if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]]
+      }
+      fitted.delete  <- fitted(model.delete)
+    }
+    
+    
+  }
+  
+  # Organizing results
+  if(is.null(delete)) {
+    if(type %in% c("both", "fixef")){
+      fitted.delete <- do.call('rbind', fitted.delete)
+      #if(model@dims[["p"]] > 1) 
+      fixef.delete  <- do.call('rbind', fixef.delete)
+    }
+    
+    
+    if(type %in% c("both", "varcomp")){
+      if(ncol(flist) == 1) {
+        ranef.delete <- do.call('rbind', ranef.delete)
+      }
+      else {
+        flist <- colnames(flist)
+        temp  <- NULL
+        for(i in 1:ncol(flist)) {
+          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
+        }
+        ranef.delete <- temp
+        names(ranef.delete) <- names(ranef(model))
+      }
+    }
+  }
+  
+  fixef.original <- fixef(model)
+  ranef.original <- ranef(model)
+  if(length(ranef.original) == 1) ranef.original <- ranef.original[[1]]
+  
+  vcov.original <- as.matrix(vcov(model))
+  varcomp.original <- varcomp.lme(model)
   
   val <- list(fixef.original = fixef.original, ranef.original = ranef.original,
               vcov.original = vcov.original, varcomp.original = varcomp.original,
