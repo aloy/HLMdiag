@@ -165,7 +165,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # Extracting/calculating key matrices from lme object 
 # @param model an lme object
 .lme_matrices <- function(model) {
-  design.info <- extract.lmeDesign(model)
+  design.info <- suppressWarnings(extract.lmeDesign(model)) 
   
   Y <- design.info$y
   X <- design.info$X
@@ -180,7 +180,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
   # Constructing V = Cov(Y)
   sig0 <- model$sigma
-  V    <- sig0^2 * .extractV.lme(model)
+  V <- extract_design(model)$V 
   
   # Inverting V
   V.chol <- chol( V )
