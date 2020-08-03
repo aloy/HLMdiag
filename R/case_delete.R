@@ -237,7 +237,7 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
         flist <- names(model@flist)
         temp  <- NULL
         for(i in 1:length(flist)) {
-          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
+          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]])
         }
         ranef.delete <- temp
         names(ranef.delete) <- names(lme4::ranef(model))
@@ -432,7 +432,7 @@ case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "var
       if(type %in% c("both", "varcomp")) {
         varcomp.delete <- varcomp.mer(model.delete)
         ranef.delete   <- lme4::ranef(model.delete)
-        if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]] #does this line do different things in the two types? 
+        if( length(flist) == 1 ) ranef.delete <- ranef.delete[[1]] 
       }
       fitted.delete  <- fitted(model.delete)
     }
@@ -457,7 +457,7 @@ case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "var
         flist <- names(model@flist)
         temp  <- NULL
         for(i in 1:length(flist)) {
-          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
+          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]])
         }
         ranef.delete <- temp
         names(ranef.delete) <- names(lme4::ranef(model))
@@ -551,8 +551,8 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
         }
         
         
-        fixed <- as.character(formula(model))
-        dataform <- paste(fixed[2], fixed[1], fixed[3], " + ",
+        fixed <- formula(model)
+        dataform <- paste(fixed[2], "~", fixed[3], " + ",
                           paste(names(model.delete$groups), collapse = " + "))
         data <- model.delete$data %>%
           dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
@@ -560,11 +560,15 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
         new.frame <- model.frame(formula(dataform), data)
         
         
-        #fitted.delete[[i]] <- data.frame(deleted = i, model.delete$data, fitted(model.delete)) #we need to change that model.delete$data argumnet
+       
         fitted.delete[[i]] <- data.frame(deleted = i, new.frame, fitted(model.delete))
       }
-    } #end delete is null 
+    }  
     else {
+      if (!is.numeric(delete)) {
+        stop("For individual case deletion, the delete parameter should be a numeric vector")
+      }
+      
       if(is.null(randcall)) {
         model.delete <- lme(formula(model), data = modframe[-delete,])
       } else{
@@ -642,9 +646,9 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       }
       
       #create new frame of data with variables used in the model 
-      fixed <- as.character(formula(model))
+      fixed <- formula(model)
       for (i in 1:length(model.delete)) {
-        dataform <- paste(fixed[2], fixed[1], fixed[3], " + ",
+        dataform <- paste(fixed[2], "~", fixed[3], " + ",
                           paste(names(model.delete[[i]]$groups), collapse = " + "))
         data <- model.delete[[i]]$data %>%
           dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
@@ -690,6 +694,10 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
         model.delete   <- lme(formula(model), data = modframe[index,], random = randcall)
       }
       
+      if (sum(deleted_levels %in% model.delete$groups[[level]]) > 0) {
+        warning("Level parameter is specified, but deleted cases do not encompass entire groups")
+      }
+      
       if(type %in% c("both", "fixef")) {
         fixef.delete   <- fixef(model.delete)
         vcov.delete    <-  as.matrix(vcov(model.delete))
@@ -722,11 +730,8 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       else {
         flist <- colnames(flist)
         temp  <- NULL
-        #for(i in 1:ncol(flist)) {
-          #temp[[i]] <- ldply(ranef.delete, function(x) x[[i]])
-        #}
         for (i in 1:length(flist)) {
-          temp[[i]] <- ldply(ranef.delete, function(x) x[[i]]) #ncol(flist) is null 
+          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]]) 
         }
         ranef.delete <- temp
         names(ranef.delete) <- names(ranef(model))

@@ -169,7 +169,17 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
     
     if (level == 1) {
-      infl.tbl <- tibble::add_column(infl.tbl, model$data, .before = 1)
+      
+      
+      
+      fixed <- formula(model)
+      dataform <- paste(fixed[2], "~", fixed[3], " + ",
+                        paste(names(model$groups), collapse = " + ")) 
+      data <- model$data %>%
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        as.data.frame()
+      new.data <- model.frame(formula(dataform), data)
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1) 
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
@@ -201,7 +211,14 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
     
     if (level == 1) {
-      infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
+      fixed <- formula(model)
+      dataform <- paste(fixed[2], "~", fixed[3], " + ",
+                        paste(names(model$groups), collapse = " + ")) 
+      data <- model$data %>%
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        as.data.frame()
+      new.data <- model.frame(formula(dataform), data)
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  #issue here too? 
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)
