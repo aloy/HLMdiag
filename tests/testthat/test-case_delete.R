@@ -24,14 +24,20 @@ Chem97 <- Chem97[1:257,]
 chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
 chem.lme <- nlme::lme(score ~ gcsecnt, random = ~1|lea/school, data = Chem97)
 
-chem.lmer.case <- suppressMessages(case_delete(chem.lmer)) #this throws isSingular warnings
+chem.lmer.case <- suppressMessages(case_delete(chem.lmer)) 
 chem.lme.case <- case_delete(chem.lme)
 
-chem.lmer.caseG <- suppressMessages(case_delete(chem.lmer, level = "lea")) #also throws isSingular warnings 
+chem.lmer.caseG <- suppressMessages(case_delete(chem.lmer, level = "lea")) 
 chem.lme.caseG <- case_delete(chem.lme, level = "lea")
 
-chem.lmer.caseG2 <- suppressMessages(case_delete(chem.lmer, level = "school:lea")) #also throws isSingular warnings
-chem.lme.caseG2 <- case_delete(chem.lme, level = "school") #school instead of school:lea 
+chem.lmer.caseG2 <- suppressMessages(case_delete(chem.lmer, level = "school:lea")) 
+chem.lme.caseG2 <- case_delete(chem.lme, level = "school") 
+
+chem.lmer.caseGD <- case_delete(chem.lmer, level = "lea", delete = c("1", "2"))
+chem.lme.caseGD <- case_delete(chem.lme, level = "lea", delete = c("1", "2"))
+
+chem.lmer.caseGD2 <- case_delete(chem.lmer, level = "school:lea", delete = c("1:1", "5:2"))
+chem.lme.caseGD2 <- case_delete(chem.lme, level = "school", delete = c("1/1", "2/5"))
 
 
 #passed
@@ -52,7 +58,7 @@ test_that("Original fixed effects matches output from fixef",{
   expect_equal(sleep.lmer.caseG$fixef.original, fixef(sleep.lmer))
   expect_equal(sleep.lme.caseG$fixef.original, fixef(sleep.lme))
   
-  #chemistry - still need chemistry group model 
+  #chemistry  
   expect_equal(chem.lmer.case$fixef.original, fixef(chem.lmer))
   expect_equal(chem.lme.case$fixef.original, fixef(chem.lme))
   expect_equal(chem.lmer.caseG$fixef.original, fixef(chem.lmer))
@@ -158,14 +164,13 @@ test_that("Dimensions of fixed effects after deletion are correct for single cas
   expect_equal(nrow(sleep.lme.case$fixef.delete), nrow(sleep.lme$groups))
   expect_equal(ncol(sleep.lme.case$fixef.delete), 1 + length(fixef(sleep.lme)))
   expect_equal(length(sleep.lme.caseD$fixef.delete), length(fixef(sleep.lme)))
+
   
   #chemistry 
   expect_equal(nrow(chem.lmer.case$fixef.delete), nrow(chem.lmer@frame))
   expect_equal(ncol(chem.lmer.case$fixef.delete), 1 + length(fixef(chem.lmer)))
   expect_equal(nrow(chem.lme.case$fixef.delete), nrow(chem.lme$groups))
   expect_equal(ncol(chem.lme.case$fixef.delete), 1 + length(fixef(chem.lme)))
-  
-  #add chemistry delete stuff here too? 
   
 })
 
@@ -234,39 +239,70 @@ test_that("Dimensions of random effects after deletion are correct for single ca
 })
 
 #passed
-test_that("Dimensions of random effects after deletion are correct for group deletion ", {
+test_that("Dimensions of random effects after deletion are correct for group deletion when delete param is NULL", {
   #number of rows is number of groups times (number of groups minus 1), columns is two plus number of random effects
   
   #sleepstudy
   n <- length(unique(sleep.lmer@flist[["Subject"]]))
   expect_equal(nrow(sleep.lmer.caseG$ranef.delete), n * (n-1))
   expect_equal(ncol(sleep.lmer.caseG$ranef.delete), 2 + ncol(ranef(sleep.lmer)$Subject))
-  expect_equal(nrow(sleep.lmer.caseGD$ranef.delete), length(unique(sleep.lmer@flist[["Subject"]])) - 1)
-  expect_equal(ncol(sleep.lmer.caseGD$ranef.delete), ncol(ranef(sleep.lmer)$Subject))
   
   n <- length(unique(sleep.lme$groups$Subject))
   expect_equal(nrow(sleep.lme.caseG$ranef.delete), n * (n-1))
   expect_equal(ncol(sleep.lme.caseG$ranef.delete), 2 + ncol(ranef(sleep.lme)))
-  expect_equal(nrow(sleep.lme.caseGD$ranef.delete), length(unique(sleep.lme$groups$Subject)) - 1)
-  expect_equal(ncol(sleep.lme.caseGD$ranef.delete), ncol(ranef(sleep.lme)))
   
   #chemistry
   n <- length(unique(chem.lmer@flist[["lea"]]))
   expect_equal(nrow(chem.lmer.caseG$ranef.delete[[2]]), n * (n-1))  
   expect_equal(ncol(chem.lmer.caseG$ranef.delete[[2]]), 2 + ncol(ranef(chem.lmer)$lea))
   
-  n <- length(unique(chem.lme$groups[["lea"]]))
-  expect_equal(nrow(chem.lme.caseG$ranef.delete[[1]]), n * (n-1))
-  expect_equal(ncol(chem.lme.caseG$ranef.delete[[1]]), 1 + ncol(ranef(chem.lme)$lea)) #lme doesn't add delete column
-  
   n <- length(unique(chem.lmer@flist[["school:lea"]]))
   expect_equal(nrow(chem.lmer.caseG2$ranef.delete[[1]]), n * (n-1))  
   expect_equal(ncol(chem.lmer.caseG2$ranef.delete[[1]]), 2 + ncol(ranef(chem.lmer)$'school:lea'))
   
+  n <- length(unique(chem.lme$groups[["lea"]]))
+  expect_equal(nrow(chem.lme.caseG$ranef.delete[[1]]), n * (n-1))
+  expect_equal(ncol(chem.lme.caseG$ranef.delete[[1]]), 1 + ncol(ranef(chem.lme)$lea)) #lme doesn't add delete column
+  
   n <- length(unique(chem.lme$groups[["school"]]))
   expect_equal(nrow(chem.lme.caseG2$ranef.delete[[2]]), n * (n-1))
   expect_equal(ncol(chem.lme.caseG2$ranef.delete[[2]]), 1 + ncol(ranef(chem.lme)$school))
+})
+
+#passed
+test_that("Dimensions of random effects after deletion are correct for group deletion when delete param is set", {
+  #sleepstudy 
+  expect_equal(nrow(sleep.lmer.caseGD$ranef.delete), length(unique(sleep.lmer@flist[["Subject"]])) - 1)
+  expect_equal(ncol(sleep.lmer.caseGD$ranef.delete), ncol(ranef(sleep.lmer)$Subject))
   
+  expect_equal(nrow(sleep.lme.caseGD$ranef.delete), length(unique(sleep.lme$groups$Subject)) - 1)
+  expect_equal(ncol(sleep.lme.caseGD$ranef.delete), ncol(ranef(sleep.lme)))
+  
+  #chemistry 
+
+  expect_equal(nrow(chem.lmer.caseGD$ranef.delete[[2]]), length(unique(chem.lmer@flist[["lea"]])) - 2)
+  expect_equal(ncol(chem.lmer.caseGD$ranef.delete[[2]]), ncol(ranef(chem.lmer)$lea))
+  
+  expect_equal(nrow(chem.lmer.caseGD$ranef.delete[[1]]), 12) #there are 12 schools left after removing 2 leas 
+  expect_equal(ncol(chem.lmer.caseGD$ranef.delete[[1]]), ncol(ranef(chem.lmer)$school))
+  
+  expect_equal(nrow(chem.lmer.caseGD2$ranef.delete[[2]]), length(unique(chem.lmer@flist[["lea"]]))) #failing
+  expect_equal(ncol(chem.lmer.caseGD2$ranef.delete[[2]]), ncol(ranef(chem.lmer)$'lea'))
+  
+  expect_equal(nrow(chem.lmer.caseGD2$ranef.delete[[1]]), length(unique(chem.lmer@flist[["school:lea"]])) - 2) #failing
+  expect_equal(ncol(chem.lmer.caseGD2$ranef.delete[[1]]), ncol(ranef(chem.lmer)$'school:lea'))
+  
+  expect_equal(nrow(chem.lme.caseGD$ranef.delete[[1]]), length(unique(chem.lme$groups[["lea"]])) - 2)
+  expect_equal(ncol(chem.lme.caseGD$ranef.delete[[1]]), ncol(ranef(chem.lme)$lea))
+  
+  expect_equal(nrow(chem.lme.caseGD$ranef.delete[[2]]), 12) #there are 12 schools left after removing 2 leas 
+  expect_equal(ncol(chem.lme.caseGD$ranef.delete[[2]]), ncol(ranef(chem.lme)$school))
+  
+  expect_equal(nrow(chem.lme.caseGD2$ranef.delete[[1]]), length(unique(chem.lme$groups[["lea"]])))
+  expect_equal(ncol(chem.lme.caseGD2$ranef.delete[[1]]), ncol(ranef(chem.lme)$'school'))
+  
+  expect_equal(nrow(chem.lme.caseGD2$ranef.delete[[2]]), length(unique(chem.lme$groups[["school"]])) - 2) 
+  expect_equal(ncol(chem.lme.caseGD2$ranef.delete[[2]]), ncol(ranef(chem.lme)$lea))
 })
 
 #passed
@@ -298,22 +334,17 @@ test_that("Dimensions of variance covariance matrices after deletion are correct
 })
 
 #passed
-test_that("Dimensions of variance covariance matrices after deletion are correct for group deletion", {
+test_that("Dimensions of variance covariance matrices after deletion are correct for group deletion when delete param is NULL", {
   
   #sleepstudy
   expect_equal(length(sleep.lmer.caseG$vcov.delete), length(unique(sleep.lmer@flist[["Subject"]])))
-  #should I check the first one, a random sample, all of them, something else??? For now, just the first
   expect_equal(nrow(sleep.lmer.caseG$vcov.delete[[1]]), nrow(as.matrix(vcov(sleep.lmer))))
   expect_equal(ncol(sleep.lmer.caseG$vcov.delete[[1]]), ncol(as.matrix(vcov(sleep.lmer))))
-  expect_equal(nrow(sleep.lmer.caseGD$vcov.delete), nrow(as.matrix(vcov(sleep.lmer))))
-  expect_equal(ncol(sleep.lmer.caseGD$vcov.delete), ncol(as.matrix(vcov(sleep.lmer))))
   
   
   expect_equal(length(sleep.lme.caseG$vcov.delete), length(unique(sleep.lme$groups$Subject)))
   expect_equal(nrow(sleep.lme.caseG$vcov.delete[[1]]), nrow(as.matrix(vcov(sleep.lme))))
   expect_equal(ncol(sleep.lme.caseG$vcov.delete[[1]]), ncol(as.matrix(vcov(sleep.lme))))
-  expect_equal(nrow(sleep.lme.caseGD$vcov.delete), nrow(as.matrix(vcov(sleep.lme))))
-  expect_equal(ncol(sleep.lme.caseGD$vcov.delete), ncol(as.matrix(vcov(sleep.lme))))
   
   #chemistry
   expect_equal(length(chem.lmer.caseG$vcov.delete), length(unique(chem.lmer@flist[["lea"]])))
@@ -332,8 +363,30 @@ test_that("Dimensions of variance covariance matrices after deletion are correct
   expect_equal(nrow(chem.lme.caseG2$vcov.delete[[1]]), nrow(as.matrix(vcov(chem.lme))))
   expect_equal(ncol(chem.lme.caseG2$vcov.delete[[1]]), ncol(as.matrix(vcov(chem.lme))))
   
+})
+
+#passed
+test_that("Dimensions of variance covariance matrices after deletion are correct when delete param is set", {
   
+  #sleepstudy
+  expect_equal(nrow(sleep.lmer.caseGD$vcov.delete), nrow(as.matrix(vcov(sleep.lmer))))
+  expect_equal(ncol(sleep.lmer.caseGD$vcov.delete), ncol(as.matrix(vcov(sleep.lmer))))
   
+  expect_equal(nrow(sleep.lme.caseGD$vcov.delete), nrow(as.matrix(vcov(sleep.lme))))
+  expect_equal(ncol(sleep.lme.caseGD$vcov.delete), ncol(as.matrix(vcov(sleep.lme))))
+  
+  #chemistry 
+  expect_equal(nrow(chem.lmer.caseGD$vcov.delete), nrow(as.matrix(vcov(chem.lmer))))
+  expect_equal(ncol(chem.lmer.caseGD$vcov.delete), ncol(as.matrix(vcov(chem.lmer))))
+  
+  expect_equal(nrow(chem.lmer.caseGD2$vcov.delete), nrow(as.matrix(vcov(chem.lmer))))
+  expect_equal(ncol(chem.lmer.caseGD2$vcov.delete), ncol(as.matrix(vcov(chem.lmer))))
+  
+  expect_equal(nrow(chem.lme.caseGD$vcov.delete), nrow(as.matrix(vcov(chem.lme))))
+  expect_equal(ncol(chem.lme.caseGD$vcov.delete), ncol(as.matrix(vcov(chem.lme))))
+  
+  expect_equal(nrow(chem.lme.caseGD2$vcov.delete), nrow(as.matrix(vcov(chem.lme))))
+  expect_equal(ncol(chem.lme.caseGD2$vcov.delete), ncol(as.matrix(vcov(chem.lme))))
 })
 
 #passed
@@ -359,13 +412,10 @@ test_that("Dimensions of fitted values after deletion are correct for single cas
   n <- nrow(chem.lme$data)
   expect_equal(nrow(chem.lme.case$fitted.delete), n * (n-1))
   expect_equal(ncol(chem.lme.case$fitted.delete), 2 + ncol(chem.lmer@frame)) #want to match lme4
-
-  
-  
 })
 
 #passed 
-test_that("Dimensions of fitted values after deletion are correct for group deletion", {
+test_that("Dimensions of fitted values after deletion are correct for group deletion when delete param is NULL", {
   #number of rows is number of observations * (number of groups - 1), number of columns is 2 + variables
   
   #sleepstudy
@@ -373,14 +423,12 @@ test_that("Dimensions of fitted values after deletion are correct for group dele
   ngroups <- length(unique(sleep.lmer@flist[["Subject"]]))
   expect_equal(nrow(sleep.lmer.caseG$fitted.delete), nobs * (ngroups - 1))
   expect_equal(ncol(sleep.lmer.caseG$fitted.delete), 2 + ncol(sleep.lmer@frame))
-  expect_equal(length(sleep.lmer.caseGD$fitted.delete), nobs - 10)
   
   
   nobs <- nrow(sleep.lme$data)
   ngroups <- length(unique(sleep.lme$groups$Subject))
   expect_equal(nrow(sleep.lme.caseG$fitted.delete), nobs * (ngroups - 1))
   expect_equal(ncol(sleep.lme.caseG$fitted.delete), 2 + ncol(sleep.lme$data)) 
-  expect_equal(length(sleep.lme.caseGD$fitted.delete), nobs - 10)
   
   #chemistry 
   nobs <- nrow(chem.lmer@frame)
@@ -399,11 +447,23 @@ test_that("Dimensions of fitted values after deletion are correct for group dele
 })
 
 #passed
+test_that("Dimensions of fitted values after deletion are correct when delete parameter is set", {
+  nobs <- nrow(sleep.lmer@frame)
+  expect_equal(length(sleep.lmer.caseGD$fitted.delete), nobs - 10)
+  expect_equal(length(sleep.lme.caseGD$fitted.delete), nobs - 10)
+  
+  expect_equal(length(chem.lmer.caseGD$fitted.delete), 72)
+  expect_equal(length(chem.lme.caseGD$fitted.delete), 72)
+  
+  expect_equal(length(chem.lmer.caseGD2$fitted.delete), 228)
+  expect_equal(length(chem.lme.caseGD2$fitted.delete), 228)
+})
+
+#passed
 test_that("Dimenstions of variance components are correct for single case deletion", {
   
   #sleepstudy 
   expect_equal(length(sleep.lmer.case$varcomp.delete), nrow(sleep.lmer@frame))
-  #same issue here, should I check all of them, some of them, only the first one? 
   expect_equal(length(sleep.lmer.case$varcomp.delete[[1]]), length(varcomp.mer(sleep.lmer)))
   expect_equal(length(sleep.lmer.caseD$varcomp.delete), length(varcomp.mer(sleep.lmer)))
   
@@ -420,16 +480,14 @@ test_that("Dimenstions of variance components are correct for single case deleti
   
 })
 
-#passed - here 
-test_that("Dimensions of variance components are correct for group deletion", {
+#passed 
+test_that("Dimensions of variance components are correct for group deletion when delete param is NULL", {
   #sleepstudy
   expect_equal(length(sleep.lmer.caseG$varcomp.delete), length(unique(sleep.lmer@flist[["Subject"]])))
   expect_equal(length(sleep.lmer.caseG$varcomp.delete[[1]]), length(varcomp.mer(sleep.lmer)))
-  expect_equal(length(sleep.lmer.caseGD$varcomp.delete), length(varcomp.mer(sleep.lmer)))
   
   expect_equal(length(sleep.lme.caseG$varcomp.delete), length(unique(sleep.lme$groups$Subject)))
   expect_equal(length(sleep.lme.caseG$varcomp.delete[[1]]), length(varcomp.lme(sleep.lme)))
-  expect_equal(length(sleep.lme.caseGD$varcomp.delete), length(varcomp.lme(sleep.lme)))
   
   #chemistry 
   expect_equal(length(chem.lmer.caseG$varcomp.delete), length(unique(chem.lmer@flist[["lea"]])))
@@ -443,19 +501,41 @@ test_that("Dimensions of variance components are correct for group deletion", {
   
   expect_equal(length(chem.lme.caseG2$varcomp.delete), length(unique(chem.lme$groups[["school"]])))
   expect_equal(length(chem.lme.caseG2$varcomp.delete[[1]]), length(varcomp.lme(chem.lme)))
+  
+})
+
+#passed
+test_that("Dimensions of variance components are correct for group deletion when delete param is set", {
+  #sleepstudy
+  expect_equal(length(sleep.lmer.caseGD$varcomp.delete), length(varcomp.mer(sleep.lmer)))
+  expect_equal(length(sleep.lme.caseGD$varcomp.delete), length(varcomp.lme(sleep.lme)))
+  
+  #chemistry 
+  expect_equal(length(chem.lmer.caseGD$varcomp.delete), length(varcomp.mer(chem.lmer)))
+  expect_equal(length(chem.lmer.caseGD2$varcomp.delete), length(varcomp.mer(chem.lmer)))
+  
+  expect_equal(length(chem.lme.caseGD$varcomp.delete), length(varcomp.lme(chem.lme)))
+  expect_equal(length(chem.lme.caseGD2$varcomp.delete), length(varcomp.lme(chem.lme)))
+})
+
+test_that("Only correct arguments for delete parameter are allowed", {
+  #for single case, only numeric cases are allowed 
+  expect_error(case_delete(sleep.lmer, delete = "308"), "parameter should be a numeric vector")
+  expect_error(case_delete(sleep.lme, delete = "308"), "parameter should be a numeric vector") 
+  
+  expect_error(case_delete(chem.lmer, delete = "1"), "parameter should be a numeric vector")
+  expect_error(case_delete(chem.lme, delete = "1"), "parameter should be a numeric vector")
+
+  #for group, numeric indices or group names (as a character vector) are allowed 
+  expect_warning(case_delete(sleep.lmer, level = "Subject", delete = c(1,2,11)), "deleted cases do not encompass entire groups")
+  expect_warning(case_delete(sleep.lme, level = "Subject", delete = c(1,2,11)), "deleted cases do not encompass entire groups") 
+  expect_error(case_delete(chem.lmer, level = "school:lea", delete = c("1/1", "2/5")), "not a valid group name")
+  expect_error(case_delete(chem.lme, level = "school", delete = c("1:1", "5:2")), "not a valid group name")
 })
 
 
 
-#I should be checking all of these things also when:
-#we set level - DONE for sleepstudy 
-#we set delete - DONE for sleepstudy
-#all tests pass for sleepstudy lmer and lme 
 
-#does delete throw errors at the right spots? (especially for three level models, indices or group names allowed)
-#especially check that three level lme models allow the correct names for delete and for level 
-
-#are varcomp.mer and varcomp.lme exported? If I use those functions in the tests, will it work? 
 
 
 
