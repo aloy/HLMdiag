@@ -26,6 +26,10 @@ hlm_influence.default <- function(model, ...){
 #'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
 #'factor as defined in \code{flist} of the \code{lmerMod} object.
+#'@param delete numeric index of individual cases to be deleted. If the \code{level} parameter 
+#'is specified, \code{delete} may also take the form of a character vector consisting of group 
+#'names as they appear in \code{model$flist} (\code{lme4} models) or \code{model$groups} (\code{nlme} models). 
+#'If \code{delete = NULL} then all cases are iteratively deleted.
 #'@param approx logical parameter used to determine how the influence diagnostics are calculated.
 #'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation.
 #'If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
