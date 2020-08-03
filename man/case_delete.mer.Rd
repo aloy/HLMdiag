@@ -21,6 +21,8 @@
 \method{case_delete}{lmerMod}(
   model,
   level = 1,
+<<<<<<< HEAD
+=======
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...
@@ -28,7 +30,12 @@
 
 \method{case_delete}{lme}(
   model,
+<<<<<<< HEAD
   level = 1,
+=======
+  group = NULL,
+>>>>>>> e25ba95b48be2e4dcb86fb1a4e7d6beae6388821
+>>>>>>> e492939e02d91f41d7c444e76eb3053f06110599
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...
