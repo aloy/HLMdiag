@@ -44,6 +44,7 @@ Collate:
     'case_delete.R'
     'LSresids.R'
     'HLMresid.R'
+    'hlm_augment.R'
     'hlm_influence.R'
     'hlm_resid.R'
     'help.R'
@@ -53,6 +54,7 @@ Collate:
     'autism.R'
     'ahd.R'
     'radon.R'
+    'pull_resid.R'
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
 RoxygenNote: 7.1.0

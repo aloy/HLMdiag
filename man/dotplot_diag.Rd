@@ -44,28 +44,8 @@ of the diagnostic measure and visually identify unusual cases.
 }
 \note{
 The resulting plot uses \code{coord_flip} to rotate the plot, so when
-adding customized axis labels you will need to flip the usage of 
-\code{xlab} and \code{ylab}.
-}
-\examples{
-data(sleepstudy, package = 'lme4')
-fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
-
-# Subject level deletion and diagnostics
-subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
-subject.diag <- hlm_influence(subject.del)
-subject.cd <- cooks.distance(fm)
-
-dotplot_diag(x = cooksd, data = subject.diag, cutoff = "internal",
-             name = "cooks.distance", modify = FALSE, 
-             xlab = "Subject", ylab = "Cook's Distance")
-             
-dotplot_diag(x = mdffits, data = subject.diag, name = "mdffits",
-             name = "mdffits", modify = "dotplot", xlab = "Subject,
-             ylab = "MDFFITS")
-             
-dotplot_diag(x = subject.cd, name = "cooks.distance, cutoff = "internal",
-            xlab = "Subject", ylab = "Cook's Distance")
+adding customized axis labels you will need to flip the names 
+between the x and y axes.
 }
 \author{
 Adam Loy \email{loyad01@gmail.com}

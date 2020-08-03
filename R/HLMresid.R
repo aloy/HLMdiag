@@ -6,7 +6,6 @@ HLMresid <- function(object, ...){
 #' @export
 #' @rdname HLMresid.mer
 #' @method HLMresid default
-#' @S3method HLMresid default
 HLMresid.default <- function(object, ...){
   stop(paste("there is no HLMresid() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -29,7 +28,6 @@ HLMresid.default <- function(object, ...){
 #'
 #' @export
 #' @method HLMresid mer
-#' @S3method HLMresid mer
 #' @aliases HLMresid
 #' @param object an object of class \code{mer} or \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for within-group (case-level)
@@ -176,7 +174,6 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
 #' @export
 #' @rdname HLMresid.mer
 #' @method HLMresid lmerMod
-#' @S3method HLMresid lmerMod
 HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL, 
                              standardize = FALSE, ...){
   if(!level %in% c(1, names(object@flist), "marginal")) {

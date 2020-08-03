@@ -246,7 +246,6 @@ adjust_lmList.formula <- function(object, data, pool){
 
 #' @export
 #' @method coef adjust_lmList
-#' @S3method coef adjust_lmList
 # setMethod("coef", signature(object = "adjust_lmList"),
 coef.adjust_lmList <- 	function(object, ...){
 			coefs <- lapply(object, coef)
@@ -266,7 +265,6 @@ coef.adjust_lmList <- 	function(object, ...){
 
 #' @export
 #' @method print adjust_lmList
-#' @S3method print adjust_lmList
 # setMethod("show", signature(object = "adjust_lmList"), 
 print.adjust_lmList <- 	function(x, ...){
 		cat("Call:", deparse(attr(x, "call")), "\n")
@@ -278,7 +276,6 @@ print.adjust_lmList <- 	function(x, ...){
 
 #' @export
 #' @method confint adjust_lmList
-#' @S3method confint adjust_lmList
 # setMethod("confint", signature(object = "adjust_lmList"),
 confint.adjust_lmList <- function(object, parm, level = 0.95, pool = NULL, ...){
 		#if(length(object < 1))
@@ -319,7 +316,6 @@ confint.adjust_lmList <- function(object, parm, level = 0.95, pool = NULL, ...){
 
 #' @export
 #' @method plot adjust_lmList.confint
-#' @S3method plot adjust_lmList.confint
 # setMethod("plot", signature(x = "adjust_lmList.confint"),
 plot.adjust_lmList.confint <-	function(x, y, ...){
 # 		stopifnot(require("ggplot2"))

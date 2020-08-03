@@ -32,6 +32,11 @@
 
 \item{...}{do not use}
 
+\item{level}{which residuals should be extracted: 1 for within-group
+(case-level) residuals, the name of a grouping factor for between-group
+residuals (as defined in \code{flist} in \code{lmerMod} objects or in
+\code{groups} in \code{lme} objects)}
+
 \item{standardize}{for any level, if \code{standardize = TRUE} the
 standardized residuals will be returned for any group; for level-1 only, if
 \code{standardize = "semi"} then the semi-standardized level-1 residuals
@@ -45,19 +50,16 @@ return tibble. \code{include.ls = FALSE} decreases runtime substantially.}
 }
 \description{
 \code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod} or
-\code{lme} object and adds residuals and fitted values for individual
-observations or higher level clusters.
+\code{lme} object and extracts residuals and predicted values from the model,
+using Least Squares (LS) and Empirical Bayes (EB) methods. It then appends
+them to the model data frame. This unified framework enables the analyst to
+more easily conduct an upward residual analysis during model
+exploration/checking.
 }
 \details{
-This function extracts residuals and predicted values from the model, using
-Least Squares (LS) and Empirical Bayes (EB) methods, and appends them to the
-model data. This unified framework enables the analyst to more easily conduct
-an upward residual analysis during model exploration/checking.
-
 The \code{hlm_resid} function provides a wrapper that will extract
 residuals and predicted values from a fitted \code{lmerMod} or \code{lme}
-object.
-The function provides access to residual quantities already made available by
+object. The function provides access to residual quantities already made available by
 the functions \code{resid}, \code{predict}, and \code{ranef}, but adds
 additional functionality. Below is a list of types of residuals and predicted
 values that are extracted and appended to the model data.
@@ -66,25 +68,25 @@ values that are extracted and appended to the model data.
 \item{\code{.resid} and \code{.fitted}}{Residuals calculated using
 the EB method (using maximum likelihood). Level-1 EB residuals are interrelated
 with higher level residuals. Equivalent to the residuals extracted by
-\code{resid(object)} and \code{lme4::getME(object, "mu")} respectively. When
+\code{resid(object)} and \code{predict(object)} respectively. When
 \code{standardize = TRUE}, residuals are standardized by sigma components of
 the model object.}
 \item{\code{.ls.resid} and \code{.ls.fitted}}{Residuals calculated calculated
 by fitting separate LS regression models for each group. Level-1 LS residuals
 are unconfounded by higher level residuals, but unreliable for small
-within-group sample sizes. Uses \code{lme4::lmList} and \code{adjust_lmList} in
-fitting individual LS models.}
+within-group sample sizes.}
 \item{\code{.mar.resid} and \code{.mar.fitted}}{Marginal residuals only
-consider the fixed effect portion of the estimates. They are calculated by 
-\code{object@resp$y - lme4::getME(object, "X") \%*\% lme4::fixef(object)}.
-When \code{standardize = TRUE}, cholskey residuals are returned.}
+consider the fixed effect portion of the estimates. Equivalent to
+\code{resid(object, level=0)} in \code{nlme}, not currently implemented
+within the \code{lme4::resid} function. When \code{standardize = TRUE},
+cholskey marginal residuals are returned.}
 \item{\strong{higher-level residuals} (random effects)}{}
-\item{\code{.ranef.*}}{The group level random effects using the EB method of
-estimating parameters. Equivalent to \code{lme4::ranef} on the specified
-level. EB residuals are prefered at higher levels LS residuals are dependent
+\item{\code{.ranef.var_name}}{The group level random effects using the EB method of
+estimating parameters. Equivalent to \code{ranef(object)} on the specified
+level. EB residuals are prefered at higher levels as LS residuals are dependent
 on a large sample size.}
-\item{\code{.ls.*}}{The group level random effects using the LS method of
-estimating parameters. Calculated using \code{ranef} on a \code{lmList4}
+\item{\code{.ls.var_name}}{The group level random effects using the LS method of
+estimating parameters. Calculated using \code{ranef} on a \code{lmList}
 object to compare the random effects of individual models to the global
 model.}
 }

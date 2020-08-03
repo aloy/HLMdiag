@@ -28,7 +28,7 @@
 
 \method{case_delete}{lme}(
   model,
-  group = NULL,
+  level = 1,
   type = c("both", "fixef", "varcomp"),
   delete = NULL,
   ...

@@ -295,7 +295,6 @@ isNestedModel <- function(object) {
 #' @export
 #' @rdname extract_design
 #' @aliases extract_design
-#' @S3method extract_design
 #' @return A list of matrices is returned.
 #' \itemize{
 #' \item{\code{D} contains the covariance matrix of the random effects.}
@@ -303,7 +302,6 @@ isNestedModel <- function(object) {
 #' \item{\code{X} contains the fixed-effect model matrix.}
 #' \item{\code{Z} contians the random-effect model matrix.}}
 #' @param b a fitted model object of class \code{lme}.
-#' @param data
 #' @author Adam Loy \email{loyad01@@gmail.com}
 #' @references This method has been adapted from the method
 #'   \code{mgcv::extract.lme.cov} in the \code{mgcv} package, written by Simon
