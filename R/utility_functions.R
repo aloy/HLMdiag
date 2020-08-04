@@ -165,7 +165,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # Extracting/calculating key matrices from lme object 
 # @param model an lme object
 .lme_matrices <- function(model) {
-  design.info <- suppressWarnings(extract.lmeDesign(model)) 
+  design.info <- suppressWarnings(RLRsim::extract.lmeDesign(model)) 
   
   Y <- design.info$y
   X <- design.info$X
