@@ -225,7 +225,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       form <- paste(fixed[2], fixed[1], fixed[3], "|", level.var)
       
       # Use lmList
-      g.list <- suppressWarnings(lme4::lmList(formula(form), data = object@frame))
+      g.list <- suppressWarnings(lme4::lmList(formula(form), data = data))
       
       # Checking if all of the values for a coef are NAs
       g.index <- which(purrr::map_lgl(coef(g.list), ~all(is.na(.x))))
