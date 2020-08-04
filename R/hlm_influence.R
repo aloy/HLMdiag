@@ -15,17 +15,17 @@ hlm_influence.default <- function(model, ...){
 #'
 #'@description
 #'This function is used to compute influence diagnostics for a hierarchical linear model.
-#'It takes a model fit as a \code{lmerMod} object and returns a tibble with Cook's
+#'It takes a model fit as a \code{lmerMod} object or as a \code{lme} object and returns a tibble with Cook's
 #'distance, MDFFITS, covtrace, covratio, and leverage.
 #'
 #'@export
 #'@method hlm_influence lmerMod
 #'@aliases hlm_influence
-#'@param model an object of class \code{lmerMod}
-#'@param level a variable used to define the group for which cases are deleted and influence
-#'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are
+#'@param model an object of class \code{lmerMod} or \code{lme}
+#'@param level used to define the group for which cases are deleted and influence
+#'diagnostics are calculated. If \code{level = 1} (default), then influence diagnostics are
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
-#'factor as defined in \code{flist} of the \code{lmerMod} object.
+#'factor as defined in \code{flist} for a \code{lmerMod} object or in \code{groups} for a \code{lme} object.
 #'@param delete numeric index of individual cases to be deleted. If the \code{level} parameter 
 #'is specified, \code{delete} may also take the form of a character vector consisting of group 
 #'names as they appear in \code{model$flist} (\code{lme4} models) or \code{model$groups} (\code{nlme} models). 
