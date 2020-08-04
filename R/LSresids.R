@@ -186,13 +186,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-  #we can move this to level 2
-  fixed <- as.character(lme4::nobars( formula(object)))
-  
-  data <- object@frame
-  names(data)[which(names(data) == fixed[2])] <- "y"
-  fixed[2] <- "y"
-  
+
   if(!is.null(sim)){data[,fixed[2]] <- sim}
 
   if(level == 1){
@@ -249,6 +243,11 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   }
   
   if(level %in% names(object@flist)){
+    fixed <- as.character(lme4::nobars( formula(object)))
+    data <- object@frame
+    names(data)[which(names(data) == fixed[2])] <- "y"
+    fixed[2] <- "y"
+    
     n.ranefs <- length(names(object@flist))
     ranef_names <- names( lme4::ranef(object)[[level]] )
     
@@ -335,15 +334,7 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-  
-  LS.resid <- NULL # Make codetools happy
-  
-  fixed <- as.character(formula(object))
-  
-  data <- object$data %>%
-    dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
-    as.data.frame()
-  
+
   if(!is.null(sim)){data[,fixed[2]] <- sim}
   
   if(level == 1){
@@ -400,6 +391,12 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   }
   
   if(level != 1){
+    fixed <- as.character(formula(object))
+    
+    data <- object$data %>%
+      dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      as.data.frame()
+    
     n.ranefs <- length(names(object$groups))
     if (n.ranefs == 1){
       ranef_names <- names( nlme::ranef(object) )
