@@ -19,7 +19,6 @@ LSresids.default <- function(object, ...){
 #'
 #' @export
 #' @method LSresids mer
-#' @S3method LSresids mer
 #' @aliases LSresids
 #' @param object an object of class \code{mer} or \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for case-level
@@ -173,7 +172,6 @@ fixform <- function (term)
 #' @export
 #' @rdname LSresids.mer
 #' @method LSresids lmerMod
-#' @S3method LSresids lmerMod
 LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!lme4::isLMM(object)){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
@@ -198,75 +196,6 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(!is.null(sim)){data[,fixed[2]] <- sim}
 
   if(level == 1){
-    # group_var <- names(object@flist)[1]
-    # if(stringr::str_detect(names(object@flist)[1], ":")) {
-    #   gvars <- stringr::str_split(names(object@flist)[1], ":")[[1]]
-    #   group_var <- gvars[which(!gvars %in% names(object@flist))]
-    # }
-    # 
-    # # fitting a separate LS regression model to each group
-    # form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
-    # 
-    # ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
-    # if (!is.null(attr(ls.models, which = "warningMsg"))) {
-    #    warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
-    # }
-    # 
-    # ls.residuals <- lapply(ls.models, resid)
-    # ls.fitted <- lapply(ls.models, fitted)
-    # 
-    # # creating a data frame of the residuals, fitted values, and model frames
-    # ls.data <- lapply(ls.models, model.frame)
-    # 
-    # # force the rank deficient entries to NA
-    # temp <- rep(NA, length(ls.data)) # how many coeff for each group
-    # for(i in 1:length(ls.data)){
-    #   temp[i] <- ncol(ls.data[i][[1]])
-    # }
-    # index <- which(temp != max(temp)) # which groups are deficient
-    # if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
-    #   for(i in 1:length(index)){
-    #     ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
-    #     ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
-    #   }
-    # }
-    # 
-    # row.order <- unlist(lapply(ls.data, function(x) row.names(x)))
-    # 
-    # return.df <- data.frame(LS.resid = unlist(ls.residuals), 
-    #                         fitted = unlist(ls.fitted))
-    # 
-    # if(!is.null(standardize) && standardize == "semi"){
-    #   ls.influence <- lapply(ls.models, lm.influence)
-    #   ls.hat <- lapply(ls.influence, function(x) x$hat)
-    #   
-    #   h <- unlist(ls.hat)
-    #   semi.std.resid  <- with(return.df, LS.resid / sqrt(1 - h))
-    #   semi.std.resid[is.infinite(semi.std.resid)] <- NA
-    #   # Catching earlier NAs
-    #   for (i in 1:length(semi.std.resid)){
-    #     if (is.na(return.df[,1][i])) semi.std.resid[i] <- NA
-    #   }
-    #   
-    #   return.df <- cbind(return.df, semi.std.resid = semi.std.resid)
-    # }
-    # 
-    # if(!is.null(standardize) && standardize == TRUE){
-    #   ls.rstandard <- unlist(lapply(ls.models, rstandard))
-    #   ls.rstandard[is.infinite(ls.rstandard)] <- NA
-    #   # Catching earlier NAs
-    #   for (i in 1:length(ls.rstandard)){
-    #     if (is.na(return.df[,1][i])) ls.rstandard[i] <- NA
-    #   }
-    #   
-    #   return.df <- cbind(return.df, std.resid = ls.rstandard)
-    # }
-    # 
-    # rownames(return.df) <- row.order
-    # 
-    # return(return.df)
-      
-      # JACK CODE 
       y <- lme4::getME(object, "y")
       X <- lme4::getME(object, "X")
       g <- as.data.frame(object@flist[1])
@@ -294,7 +223,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       ls.residuals <- purrr::map(ls.models, resid) #calculate residuals within group
       ls.fitted <- purrr::map(ls.models, fitted)   #calculate fitted values
       
-      row.order <- unlist(purrr::map(ls.data, function(x) row.names(x)))
+      row.order <- unlist(purrr::map(frame.split, function(x) row.names(x)))
       return.df <- data.frame(.ls.resid = unlist(ls.residuals),
                               .ls.fitted = unlist(ls.fitted))
       
@@ -317,7 +246,6 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       
       rownames(return.df) <- row.order
       return(return.df)
-      # END JACK CODE
   }
   
   if(level %in% names(object@flist)){
@@ -398,7 +326,6 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
 #' @export
 #' @rdname LSresids.mer
 #' @method LSresids lme
-#' @S3method LSresids lme
 LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   #GLM OR NRESTED MODEL CHECK
   if(!level %in% c(1, names(object$groups))) {
@@ -420,36 +347,34 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!is.null(sim)){data[,fixed[2]] <- sim}
   
   if(level == 1){
-    group_var <- names(object$groups)[length(object$groups)]
+    y <- nlme::getResponse(object)
+    X <- model.matrix(object, data = object$data)
+    g <- object$groups[length(object$groups)]
+    names(g) <- "group"
     
-    # fitting a separate LS regression model to each group
-    form <- paste(fixed[2], fixed[1], fixed[3], "|", group_var)
+    frame <- cbind(y = y, X, g)                  #bind y, Xs, group
+    frame <- frame[,-2]                          #remove intercept column
     
-    ls.models <- suppressWarnings(adjust_lmList(object = formula(form), data = data))
-    if (!is.null(attr(ls.models, which = "warningMsg"))) {
-      warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.resid) residuals for this model.")
+    frame.split <- split(frame, frame[,"group"]) #split on groups
+    frame.lgl <- 
+      purrr::map(frame.split, function(split) {  #check if column elements are equal
+        purrr::map_lgl(split, ~all(.x == .x[1]))
+      })
+    
+    for (i in 1:length(frame.split)) {           #remove the all equal columns
+      frame.lgl[[i]][1] <- FALSE                 #make sure we never remove response
+      frame.split[[i]] <- frame.split[[i]][!frame.lgl[[i]]]
     }
     
-    ls.residuals <- lapply(ls.models, resid)
-    ls.fitted <- lapply(ls.models, fitted)
+    ls.models <-                                 #fit the lm
+      purrr::map(frame.split, function(split){
+        lm(y ~ ., data = split)
+      })
     
-    # creating a data frame of the residuals, fitted values, and model frames
-    ls.data <- lapply(ls.models, model.frame)
+    ls.residuals <- purrr::map(ls.models, resid) #calculate residuals within group
+    ls.fitted <- purrr::map(ls.models, fitted)   #calculate fitted values
     
-    # force the rank deficient entries to NA
-    temp <- rep(NA, length(ls.data)) # how many coeff for each group
-    for(i in 1:length(ls.data)){
-      temp[i] <- ncol(ls.data[i][[1]])
-    }
-    index <- which(temp != max(temp)) # which groups are deficient
-    if(length(index) > 0){ # for deficient groups, set resid/fitted to NULL
-      for(i in 1:length(index)){
-        ls.residuals[index[i]][[1]] <- rep(NA, length(ls.residuals[index[i]][[1]]))
-        ls.fitted[index[i]][[1]] <- rep(NA, length(ls.fitted[index[i]][[1]]))
-      }
-    }
-    
-    row.order <- unlist(purrr::map(ls.data, function(x) row.names(x)))
+    row.order <- unlist(purrr::map(frame.split, function(x) row.names(x)))
     return.df <- data.frame(.ls.resid = unlist(ls.residuals),
                             .ls.fitted = unlist(ls.fitted))
     

@@ -1,5 +1,3 @@
-devtools::document()
-devtools::build()
 library(dplyr)
 library(lme4)
 library(nlme)

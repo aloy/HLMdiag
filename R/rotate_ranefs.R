@@ -20,7 +20,6 @@ rotate_ranef.default <- function(.mod, ...){
 #' 
 #' @export
 #' @method rotate_ranef mer
-#' @S3method rotate_ranef mer
 #' @aliases rotate_ranef
 #' @param .mod an object of class \code{mer} or \code{lmerMod}.
 #' @param .L a matrix defining which combination of random effects are of interest.
@@ -81,7 +80,6 @@ rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
 #' @export
 #' @rdname rotate_ranef.mer
 #' @method rotate_ranef lmerMod
-#' @S3method rotate_ranef lmerMod
 rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   y <- .mod@resp$y
   X <- lme4::getME(.mod, "X")
@@ -151,7 +149,6 @@ mcrotate <- function(A, B, s) {
 #' @export
 #' @rdname rotate_ranef.mer
 #' @method rotate_ranef lme
-#' @S3method rotate_ranef lme
 rotate_ranef.lme <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   design.info <- .extract.lmeDesign(.mod)
   
