@@ -25,10 +25,10 @@ hlm_influence.default <- function(model, ...){
 #'@param level used to define the group for which cases are deleted and influence
 #'diagnostics are calculated. If \code{level = 1} (default), then influence diagnostics are
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
-#'factor as defined in \code{flist} for a \code{lmerMod} object or in \code{groups} for a \code{lme} object.
+#'factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.
 #'@param delete numeric index of individual cases to be deleted. If the \code{level} parameter 
 #'is specified, \code{delete} may also take the form of a character vector consisting of group 
-#'names as they appear in \code{model$flist} (\code{lme4} models) or \code{model$groups} (\code{nlme} models). 
+#'names as they appear in \code{flist} for \code{lme4} models or as in \code{groups} for \code{nlme} models. 
 #'If \code{delete = NULL} then all cases are iteratively deleted.
 #'@param approx logical parameter used to determine how the influence diagnostics are calculated.
 #'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation.
@@ -52,7 +52,6 @@ hlm_influence.default <- function(model, ...){
 #'It is possible to set \code{level} and delete individual cases from different groups using 
 #'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
 #'Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble. 
-#'@rdname hlm_influence
 hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
   
   if (!level %in% names(model@flist) & level != 1) {
@@ -133,7 +132,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
 }
 
 #' @export
-#' @rdname hlm_influence
+#' @rdname hlm_influence.lmerMod
 #' @method hlm_influence lme
 #' @aliases hlm_influence
 hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
