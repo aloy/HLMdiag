@@ -13,3 +13,5 @@ hlm_augment.default <- function(object, ...){
   stop(paste("there is no hlm_augment() method for objects of class",
              paste(class(object), collapse=", ")))
 }
+
+#hlm_augment.lmerMod <- function(object, level = 1, )

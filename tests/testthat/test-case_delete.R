@@ -1,4 +1,4 @@
-context("tests for case_delete") 
+context("basic tests for case_delete") 
 
 #sleepstudy models 
 data(sleepstudy, package = 'lme4')
@@ -50,7 +50,8 @@ test_that("Correct influence diagnostics are returned", {
 })
 
 
-#passes
+context("tests for original fixed effects")
+
 test_that("Original fixed effects matches output from fixef",{
   #sleepstudy
   expect_equal(sleep.lmer.case$fixef.original, fixef(sleep.lmer))
@@ -67,93 +68,102 @@ test_that("Original fixed effects matches output from fixef",{
   expect_equal(chem.lme.caseG2$fixef.original, fixef(chem.lme))
 })
 
-
+context("tests for original random effects")
 
 #passes
-test_that("Original predicted random effects match output from ranef", {
+test_that("Original predicted random effects match output from ranef for lme4 models", {
   
   #sleepstudy
   expect_equal(sleep.lmer.case$ranef.original[[1]], ranef(sleep.lmer)[[1]][,1])
   expect_equal(sleep.lmer.case$ranef.original[[2]], ranef(sleep.lmer)[[1]][,2])
   
-  expect_equal(sleep.lme.case$ranef.original[[1]], ranef(sleep.lme)[,1])
-  expect_equal(sleep.lme.case$ranef.original[[2]], ranef(sleep.lme)[,2])
-  
   expect_equal(sleep.lmer.caseG$ranef.original[[1]], ranef(sleep.lmer)[[1]][,1])
   expect_equal(sleep.lmer.caseG$ranef.original[[2]], ranef(sleep.lmer)[[1]][,2])
-  
-  expect_equal(sleep.lme.caseG$ranef.original[[1]], ranef(sleep.lme)[,1])
-  expect_equal(sleep.lme.caseG$ranef.original[[2]], ranef(sleep.lme)[,2])
   
   #chemistry 
   expect_equal(chem.lmer.case$ranef.original[[1]][,1], ranef(chem.lmer)[[1]][,1]) 
   expect_equal(chem.lmer.case$ranef.original[[2]][,1], ranef(chem.lmer)[[2]][,1]) 
   
-  expect_equal(chem.lme.case$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1]) 
-  expect_equal(chem.lme.case$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1]) 
-  
   expect_equal(chem.lmer.caseG$ranef.original[[1]][,1], ranef(chem.lmer)[[1]][,1])
   expect_equal(chem.lmer.caseG$ranef.original[[2]][,1], ranef(chem.lmer)[[2]][,1])
-  
-  expect_equal(chem.lme.caseG$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1])
-  expect_equal(chem.lme.caseG$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1])
-  
   
   expect_equal(chem.lmer.caseG2$ranef.original[[1]][,1], ranef(chem.lmer)[[1]][,1])
   expect_equal(chem.lmer.caseG2$ranef.original[[2]][,1], ranef(chem.lmer)[[2]][,1])
   
-  expect_equal(chem.lme.caseG2$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1])
-  expect_equal(chem.lme.caseG2$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1])
-  
-  
 })
 
+
+test_that("Original predicted random effects match output from ranef for nlme models", {
+  #sleepstudy
+  expect_equal(sleep.lme.case$ranef.original[[1]], ranef(sleep.lme)[,1])
+  expect_equal(sleep.lme.case$ranef.original[[2]], ranef(sleep.lme)[,2])
+  expect_equal(sleep.lme.caseG$ranef.original[[1]], ranef(sleep.lme)[,1])
+  expect_equal(sleep.lme.caseG$ranef.original[[2]], ranef(sleep.lme)[,2])
+  
+  #sleepstudy
+  expect_equal(chem.lme.case$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1]) 
+  expect_equal(chem.lme.case$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1]) 
+  
+  expect_equal(chem.lme.caseG$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1])
+  expect_equal(chem.lme.caseG$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1])
+  
+  expect_equal(chem.lme.caseG2$ranef.original[[1]][,1], ranef(chem.lme)[[1]][,1])
+  expect_equal(chem.lme.caseG2$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1])
+})
+
+context("tests for original variance-covariance matrix")
+
 #passes 
-test_that("Original variance-covariance matrix matches output from vcov", {
+test_that("Original variance-covariance matrix matches output from vcov for lme4 models", {
   #sleepstudy
   expect_equal(sleep.lmer.case$vcov.original, as.matrix(vcov(sleep.lmer)))
-  expect_equal(sleep.lme.case$vcov.original, as.matrix(vcov(sleep.lme)))
-  
   expect_equal(sleep.lmer.caseG$vcov.original, as.matrix(vcov(sleep.lmer)))
-  expect_equal(sleep.lme.caseG$vcov.original, as.matrix(vcov(sleep.lme)))
   
   #chemistry 
   expect_equal(chem.lmer.case$vcov.original, as.matrix(vcov(chem.lmer)))
-  expect_equal(chem.lme.case$vcov.original, as.matrix(vcov(chem.lme)))
-  
   expect_equal(chem.lmer.caseG$vcov.original, as.matrix(vcov(chem.lmer)))
-  expect_equal(chem.lme.caseG$vcov.original, as.matrix(vcov(chem.lme)))
-  
   expect_equal(chem.lmer.caseG2$vcov.original, as.matrix(vcov(chem.lmer)))
-  expect_equal(chem.lme.caseG2$vcov.original, as.matrix(vcov(chem.lme)))
-  
 })
 
-#passed
-test_that("Variance components matches output from varcomp", {
+
+test_that("Original variance-covariance matrix matches output from vcov for nlme models", {
+  #sleepstudy
+  expect_equal(sleep.lme.case$vcov.original, as.matrix(vcov(sleep.lme)))
+  expect_equal(sleep.lme.caseG$vcov.original, as.matrix(vcov(sleep.lme)))
+  
+  #chemistry
+  expect_equal(chem.lme.case$vcov.original, as.matrix(vcov(chem.lme)))
+  expect_equal(chem.lme.caseG$vcov.original, as.matrix(vcov(chem.lme)))
+  expect_equal(chem.lme.caseG2$vcov.original, as.matrix(vcov(chem.lme)))
+})
+
+context("tests for original variance components")
+
+test_that("Variance components match output from varcomp for lme4 models", {
   #sleepstudy
   expect_equal(sleep.lmer.case$varcomp.original, varcomp.mer(sleep.lmer))
-  expect_equal(sleep.lme.case$varcomp.original, varcomp.lme(sleep.lme))
-  
   expect_equal(sleep.lmer.caseG$varcomp.original, varcomp.mer(sleep.lmer))
-  expect_equal(sleep.lme.caseG$varcomp.original, varcomp.lme(sleep.lme))
   
   #chemistry 
   expect_equal(chem.lmer.case$varcomp.original, varcomp.mer(chem.lmer))
-  expect_equal(chem.lme.case$varcomp.original, varcomp.lme(chem.lme))
-  
   expect_equal(chem.lmer.caseG$varcomp.original, varcomp.mer(chem.lmer))
-  expect_equal(chem.lme.caseG$varcomp.original, varcomp.lme(chem.lme))
-  
   expect_equal(chem.lmer.caseG2$varcomp.original, varcomp.mer(chem.lmer))
-  expect_equal(chem.lme.caseG2$varcomp.original, varcomp.lme(chem.lme))
-  
-  
 })
 
+test_that("Variance components match output from varcomp for nlme models", {
+  #sleepstudy
+  expect_equal(sleep.lme.case$varcomp.original, varcomp.lme(sleep.lme))
+  expect_equal(sleep.lme.caseG$varcomp.original, varcomp.lme(sleep.lme))
+  
+  #chemistry
+  expect_equal(chem.lme.case$varcomp.original, varcomp.lme(chem.lme))
+  expect_equal(chem.lme.caseG$varcomp.original, varcomp.lme(chem.lme))
+  expect_equal(chem.lme.caseG2$varcomp.original, varcomp.lme(chem.lme))
+})
 
+context("tests for fixed effects after deletion")
 #passed
-test_that("Dimensions of fixed effects after deletion are correct for single case deletion", {
+test_that("Dimensions of fixed effects after deletion are correct for single case deletion for lme4 models", {
   #number of rows is number of observations, number of columns is number of fixed effects plus one
   
   #sleepstudy
@@ -161,47 +171,51 @@ test_that("Dimensions of fixed effects after deletion are correct for single cas
   expect_equal(ncol(sleep.lmer.case$fixef.delete), 1 + length(fixef(sleep.lmer)))
   expect_equal(length(sleep.lmer.caseD$fixef.delete), length(fixef(sleep.lmer)))
   
-  expect_equal(nrow(sleep.lme.case$fixef.delete), nrow(sleep.lme$groups))
-  expect_equal(ncol(sleep.lme.case$fixef.delete), 1 + length(fixef(sleep.lme)))
-  expect_equal(length(sleep.lme.caseD$fixef.delete), length(fixef(sleep.lme)))
-
-  
   #chemistry 
   expect_equal(nrow(chem.lmer.case$fixef.delete), nrow(chem.lmer@frame))
   expect_equal(ncol(chem.lmer.case$fixef.delete), 1 + length(fixef(chem.lmer)))
+})
+
+test_that("Dimensions of fixed effects after deletion are correct for single case deletion for nlme models", {
+  #sleepstudy
+  expect_equal(nrow(sleep.lme.case$fixef.delete), nrow(sleep.lme$groups))
+  expect_equal(ncol(sleep.lme.case$fixef.delete), 1 + length(fixef(sleep.lme)))
+  expect_equal(length(sleep.lme.caseD$fixef.delete), length(fixef(sleep.lme)))
+  
+  #chemistry
   expect_equal(nrow(chem.lme.case$fixef.delete), nrow(chem.lme$groups))
   expect_equal(ncol(chem.lme.case$fixef.delete), 1 + length(fixef(chem.lme)))
-  
 })
 
 
-#passed
-test_that("Dimensions of fixed effects after deletion are correct for group deletion", {
+test_that("Dimensions of fixed effects after deletion are correct for group deletion for lme4 models", {
   #number of rows is number of groups, number of columns is number of fixed effects 
   #sleepstudy
   expect_equal(nrow(sleep.lmer.caseG$fixef.delete), length(unique(sleep.lmer@flist[["Subject"]])))
   expect_equal(ncol(sleep.lmer.caseG$fixef.delete), length(fixef(sleep.lmer)))
   expect_equal(length(sleep.lmer.caseGD$fixef.delete), length(fixef(sleep.lmer)))
   
+  #chemistry
+  expect_equal(nrow(chem.lmer.caseG$fixef.delete), length(unique(chem.lmer@flist[["lea"]])))
+  expect_equal(ncol(chem.lmer.caseG$fixef.delete), length(fixef(chem.lmer)))
+  expect_equal(nrow(chem.lmer.caseG2$fixef.delete), length(unique(chem.lmer@flist[["school:lea"]])))
+  expect_equal(ncol(chem.lmer.caseG2$fixef.delete), length(fixef(chem.lmer)))
+})
+
+test_that("Dimensions of fixed effects after deletion are correct for group deletion for nlme models", {
+  #sleepstudy
   expect_equal(nrow(sleep.lme.caseG$fixef.delete), length(unique(sleep.lme$groups$Subject)))
   expect_equal(ncol(sleep.lme.caseG$fixef.delete), length(fixef(sleep.lme)))
   expect_equal(length(sleep.lme.caseGD$fixef.delete), length(fixef(sleep.lme)))
   
   #chemistry
-  expect_equal(nrow(chem.lmer.caseG$fixef.delete), length(unique(chem.lmer@flist[["lea"]])))
-  expect_equal(ncol(chem.lmer.caseG$fixef.delete), length(fixef(chem.lmer)))
-  
   expect_equal(nrow(chem.lme.caseG$fixef.delete), length(unique(chem.lme$groups[["lea"]])))
   expect_equal(ncol(chem.lme.caseG$fixef.delete), length(fixef(chem.lme)))
-  
-  expect_equal(nrow(chem.lmer.caseG2$fixef.delete), length(unique(chem.lmer@flist[["school:lea"]])))
-  expect_equal(ncol(chem.lmer.caseG2$fixef.delete), length(fixef(chem.lmer)))
-  
   expect_equal(nrow(chem.lme.caseG2$fixef.delete), length(unique(chem.lme$groups[["school"]])))
   expect_equal(ncol(chem.lme.caseG2$fixef.delete), length(fixef(chem.lme)))
-  
 })
 
+context("tests for random effects after deletion")
 
 #passed
 test_that("Dimensions of random effects after deletion are correct for single case deletion", {
@@ -305,7 +319,8 @@ test_that("Dimensions of random effects after deletion are correct for group del
   expect_equal(ncol(chem.lme.caseGD2$ranef.delete[[2]]), ncol(ranef(chem.lme)$lea))
 })
 
-#passed
+context("tests for variance covariance matrices after deletion")
+
 test_that("Dimensions of variance covariance matrices after deletion are correct for single case deletion", {
   #sleepstudy
   expect_equal(length(sleep.lmer.case$vcov.delete), nrow(sleep.lmer@frame))
@@ -389,6 +404,7 @@ test_that("Dimensions of variance covariance matrices after deletion are correct
   expect_equal(ncol(chem.lme.caseGD2$vcov.delete), ncol(as.matrix(vcov(chem.lme))))
 })
 
+context("tests for fitted values after deletion")
 #passed
 test_that("Dimensions of fitted values after deletion are correct for single case deletion", {
   #number of rows is number of observations * (number of observations - 1), number of columns is 2 + variables
@@ -459,6 +475,7 @@ test_that("Dimensions of fitted values after deletion are correct when delete pa
   expect_equal(length(chem.lme.caseGD2$fitted.delete), 228)
 })
 
+context("tests for variance components after deletion")
 #passed
 test_that("Dimenstions of variance components are correct for single case deletion", {
   
@@ -517,6 +534,9 @@ test_that("Dimensions of variance components are correct for group deletion when
   expect_equal(length(chem.lme.caseGD$varcomp.delete), length(varcomp.lme(chem.lme)))
   expect_equal(length(chem.lme.caseGD2$varcomp.delete), length(varcomp.lme(chem.lme)))
 })
+
+
+context("tests for argument restrictions")
 
 test_that("Only correct arguments for delete parameter are allowed", {
   #for single case, only numeric cases are allowed 
