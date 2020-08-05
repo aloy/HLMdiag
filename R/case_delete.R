@@ -6,7 +6,6 @@ case_delete <- function(model, ...){
 #' @export
 #' @rdname case_delete.mer
 #' @method case_delete default
-#' @S3method case_delete default
 case_delete.default <- function(model, ...){
   stop(paste("there is no case_delete() method for objects of class",
              paste(class(model), collapse=", ")))
