@@ -68,8 +68,15 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & length(leverage) != 1) {
-    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+  if(!is.null(delete)) { 
+    if (length(leverage) != 1) {
+      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+    }
+    else {
+      if(leverage != "overall") {
+        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+      }
+    }
   }
   
   if (approx) { #one step approximations
@@ -151,8 +158,15 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & length(leverage) != 1) {
-    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+  if(!is.null(delete)) { 
+    if (length(leverage) != 1) {
+      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+    }
+    else {
+      if(leverage != "overall") {
+        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+      }
+    }
   }
   
   if (approx) { #one step approximations
@@ -221,7 +235,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
         dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
         as.data.frame()
       new.data <- model.frame(formula(dataform), data)
-      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  #issue here too? 
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)
