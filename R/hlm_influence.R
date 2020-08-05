@@ -15,17 +15,21 @@ hlm_influence.default <- function(model, ...){
 #'
 #'@description
 #'This function is used to compute influence diagnostics for a hierarchical linear model.
-#'It takes a model fit as a \code{lmerMod} object and returns a tibble with Cook's
+#'It takes a model fit as a \code{lmerMod} object or as a \code{lme} object and returns a tibble with Cook's
 #'distance, MDFFITS, covtrace, covratio, and leverage.
 #'
 #'@export
 #'@method hlm_influence lmerMod
 #'@aliases hlm_influence
-#'@param model an object of class \code{lmerMod}
-#'@param level a variable used to define the group for which cases are deleted and influence
-#'diagnostics are calculated. If \code{level} equals 1 (default), then influence diagnostics are
+#'@param model an object of class \code{lmerMod} or \code{lme}
+#'@param level used to define the group for which cases are deleted and influence
+#'diagnostics are calculated. If \code{level = 1} (default), then influence diagnostics are
 #'calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
-#'factor as defined in \code{flist} of the \code{lmerMod} object.
+#'factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.
+#'@param delete numeric index of individual cases to be deleted. If the \code{level} parameter 
+#'is specified, \code{delete} may also take the form of a character vector consisting of group 
+#'names as they appear in \code{flist} for \code{lme4} models or as in \code{groups} for \code{nlme} models. 
+#'If \code{delete = NULL} then all cases are iteratively deleted.
 #'@param approx logical parameter used to determine how the influence diagnostics are calculated.
 #'If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation.
 #'If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
@@ -48,7 +52,6 @@ hlm_influence.default <- function(model, ...){
 #'It is possible to set \code{level} and delete individual cases from different groups using 
 #'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
 #'Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble. 
-#'@rdname hlm_influence
 hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
   
   if (!level %in% names(model@flist) & level != 1) {
@@ -65,7 +68,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & leverage != "overall") {
+  if(!is.null(delete) & length(leverage) != 1) {
     warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
   }
   
@@ -129,7 +132,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
 }
 
 #' @export
-#' @rdname hlm_influence
+#' @rdname hlm_influence.lmerMod
 #' @method hlm_influence lme
 #' @aliases hlm_influence
 hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
@@ -148,7 +151,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & leverage != "overall") {
+  if(!is.null(delete) & length(leverage) != 1) {
     warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
   }
   
@@ -169,7 +172,17 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
     
     if (level == 1) {
-      infl.tbl <- tibble::add_column(infl.tbl, model$data, .before = 1)
+      
+      
+      
+      fixed <- formula(model)
+      dataform <- paste(fixed[2], "~", fixed[3], " + ",
+                        paste(names(model$groups), collapse = " + ")) 
+      data <- model$data %>%
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        as.data.frame()
+      new.data <- model.frame(formula(dataform), data)
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1) 
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
@@ -201,7 +214,14 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
     
     if (level == 1) {
-      infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
+      fixed <- formula(model)
+      dataform <- paste(fixed[2], "~", fixed[3], " + ",
+                        paste(names(model$groups), collapse = " + ")) 
+      data <- model$data %>%
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        as.data.frame()
+      new.data <- model.frame(formula(dataform), data)
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  #issue here too? 
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)

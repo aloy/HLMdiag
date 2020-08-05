@@ -6,7 +6,6 @@ leverage <- function(object, ...){
 #' @export
 #' @rdname leverage.mer
 #' @method leverage default
-#' @S3method leverage default
 leverage.default <- function(object, ...){
   stop(paste("there is no leverage() method for objects of class",
              paste(class(object), collapse=", ")))
