@@ -15,8 +15,8 @@ data(Chem97, package = "mlmRev")
 Chem97 <- Chem97[1:257,]
 chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
 chem.lme <- nlme::lme(score ~ gcsecnt, random = ~1|lea/school, data = Chem97)
-chem.lmer.aug <- hlm_augment(chem.lmer)
-chem.lme.aug <- hlm_augment(chem.lme)
+chem.lmer.aug <- suppressWarnings(hlm_augment(chem.lmer))
+chem.lme.aug <- suppressWarnings(hlm_augment(chem.lme))
 
 chem.lmer.augG <- hlm_augment(chem.lmer, level = "lea")
 chem.lme.augG <- hlm_augment(chem.lme, level = "lea")
