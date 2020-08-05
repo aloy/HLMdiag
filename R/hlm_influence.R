@@ -82,7 +82,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
                                mdffits = as.vector(mdffits(model, level = level, delete = delete)),
-                               covtrace = covtrace(model, level = level, delete = delete),
+                               covtrace = as.numeric(covtrace(model, level = level, delete = delete)),
                                covratio = covratio(model, level = level, delete = delete))
     
     if(!is.null(delete)) {
@@ -172,7 +172,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
                                mdffits = as.vector(mdffits(model, level = level, delete = delete)),
-                               covtrace = covtrace(model, level = level, delete = delete),
+                               covtrace = as.numeric(covtrace(model, level = level, delete = delete)),
                                covratio = covratio(model, level = level, delete = delete))
     
     if(!is.null(delete)) {
