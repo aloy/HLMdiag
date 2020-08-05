@@ -1,11 +1,13 @@
 context("basic tests for case_delete") 
 
+#there is a model failed to converge warning (need to suppress this)
+
 #sleepstudy models 
 data(sleepstudy, package = 'lme4')
 sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)
 sleep.lme <- nlme::lme(Reaction ~ Days, random =  ~ Days|Subject, data = sleepstudy)
 
-sleep.lmer.case <- case_delete(sleep.lmer)
+sleep.lmer.case <- suppressWarnings(case_delete(sleep.lmer))
 sleep.lme.case <- case_delete(sleep.lme)
 
 sleep.lmer.caseG <- case_delete(sleep.lmer, level = "Subject")
@@ -50,7 +52,7 @@ test_that("Correct influence diagnostics are returned for nlme models", {
 })
 
 
-context("tests for original fixed effects")
+context("case_delete, original fixed effects")
 
 test_that("Original fixed effects matches output from fixef for lme4 models",{
   #sleepstudy
@@ -74,7 +76,7 @@ test_that("Original fixed effects matches output from fixef for nlme models",{
   expect_equal(chem.lme.caseG2$fixef.original, fixef(chem.lme))
 })
 
-context("tests for original random effects")
+context("case_delete, original random effects")
 
 #passes
 test_that("Original predicted random effects match output from ranef for lme4 models", {
@@ -117,7 +119,7 @@ test_that("Original predicted random effects match output from ranef for nlme mo
   expect_equal(chem.lme.caseG2$ranef.original[[2]][,1], ranef(chem.lme)[[2]][,1])
 })
 
-context("tests for original variance-covariance matrix")
+context("case_delete, original variance-covariance matrix")
 
 #passes 
 test_that("Original variance-covariance matrix matches output from vcov for lme4 models", {
@@ -143,7 +145,7 @@ test_that("Original variance-covariance matrix matches output from vcov for nlme
   expect_equal(chem.lme.caseG2$vcov.original, as.matrix(vcov(chem.lme)))
 })
 
-context("tests for original variance components")
+context("case_delete, original variance components")
 
 test_that("Variance components match output from varcomp for lme4 models", {
   #sleepstudy
@@ -167,7 +169,7 @@ test_that("Variance components match output from varcomp for nlme models", {
   expect_equal(chem.lme.caseG2$varcomp.original, varcomp.lme(chem.lme))
 })
 
-context("tests for fixed effects after deletion")
+context("case_delete, fixed effects after deletion")
 #passed
 test_that("Dimensions of fixed effects after deletion are correct for single case deletion for lme4 models", {
   #number of rows is number of observations, number of columns is number of fixed effects plus one
@@ -221,7 +223,7 @@ test_that("Dimensions of fixed effects after deletion are correct for group dele
   expect_equal(ncol(chem.lme.caseG2$fixef.delete), length(fixef(chem.lme)))
 })
 
-context("tests for random effects after deletion")
+context("case_delete, random effects after deletion")
 
 test_that("Dimensions of random effects after deletion are correct for single case deletion for lme4 models", {
   #number of rows is number of groups times number of observations, number of columns is two plus number of random effects
@@ -338,7 +340,7 @@ test_that("Dimensions of random effects after deletion are correct for group del
   expect_equal(ncol(chem.lme.caseGD2$ranef.delete[[2]]), ncol(ranef(chem.lme)$lea))
 })
 
-context("tests for variance covariance matrices after deletion")
+context("case_delete, variance covariance matrices after deletion")
 
 test_that("Dimensions of variance covariance matrices after deletion are correct for single case deletion for lme4 models", {
   #sleepstudy
@@ -432,7 +434,7 @@ test_that("Dimensions of variance covariance matrices after deletion are correct
   expect_equal(ncol(chem.lme.caseGD2$vcov.delete), ncol(as.matrix(vcov(chem.lme))))
 })
 
-context("tests for fitted values after deletion")
+context("case_delete, fitted values after deletion")
 
 test_that("Dimensions of fitted values after deletion are correct for single case deletion for lme4 models", {
   #number of rows is number of observations * (number of observations - 1), number of columns is 2 + variables
@@ -518,7 +520,7 @@ test_that("Dimensions of fitted values after deletion are correct when delete pa
   expect_equal(length(chem.lme.caseGD2$fitted.delete), 228)
 })
 
-context("tests for variance components after deletion")
+context("case_delete, variance components after deletion")
 
 test_that("Dimenstions of variance components are correct for single case deletion for lme4 models", {
   
@@ -594,7 +596,7 @@ test_that("Dimensions of variance components are correct for group deletion when
 })
 
 
-context("tests for argument restrictions")
+context("case_delete, argument restrictions")
 
 test_that("Only correct arguments for delete parameter are allowed for lme4 models", {
   #for single case, only numeric cases are allowed 

@@ -1,8 +1,8 @@
 context("tests for hlm_influence")
 
 #sleepstudy
-sleepstudy <- data(sleepstudy, package = 'lme4')
-sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)
+data(sleepstudy, package = 'lme4')
+sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)  
 sleep.lme <- nlme::lme(Reaction ~ Days, random =  ~ Days|Subject, data = sleepstudy)
 
 #chemistry 
@@ -12,40 +12,52 @@ chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
 chem.lme <- nlme::lme(score ~ gcsecnt, random = ~1|lea/school, data = Chem97)
 
 
-test_that("Number of rows and columns is correct for default approximations and full refits for lme4 models", {
+test_that("Number of rows and columns are correct for default approximations for lme4 models", {
   #sleepstudy
   sleep.lmer.infl <- hlm_influence(sleep.lmer)
   expect_equal(ncol(sleep.lmer.infl), 5 + ncol(sleep.lmer@frame))
   expect_equal(nrow(sleep.lmer.infl), nrow(sleep.lmer@frame))
   
-  sleep.lmer.infl2 <- hlm_influence(sleep.lmer, approx = FALSE)
-  expect.equal(ncol(sleep.lmer.infl2), 5 + ncol(sleep.lmer@frame) + ncol(rvc(sleep.lmer)))
-  
   #chemistry
   chem.lmer.infl <- hlm_influence(chem.lmer)
-  expect_equal(ncol(chem.lmer.infl), 5 + ncol(chem.lmer@frame)) #should match lme4, this will fail for now 
+  expect_equal(ncol(chem.lmer.infl), 5 + ncol(chem.lmer@frame)) 
   expect_equal(nrow(chem.lmer.infl), nrow(chem.lmer@frame))
-  
-  chem.lmer.infl2 <- hlm_influence(chem.lmer, approx = FALSE)
-  expect.equal(ncol(chem.lmer.infl2), 5 + ncol(chem.lmer@frame) + ncol(rvc(chem.lmer)))
 })
 
-test_that("Number of rows and columns is correct for default approximations and full refits for nlme models", {
+test_that("Number of rows and columns are correct for full refits for lme4 models", {
+  skip_on_cran()
+  #sleepstudy
+  sleep.lmer.infl2 <- suppressWarnings(hlm_influence(sleep.lmer, approx = FALSE))
+  expect_equal(ncol(sleep.lmer.infl2), 5 + ncol(sleep.lmer@frame) + ncol(suppressWarnings(rvc(sleep.lmer))))
+  
+  #chemistry
+  chem.lmer.infl2 <- suppressWarnings(suppressMessages(hlm_influence(chem.lmer, approx = FALSE)))
+  expect_equal(ncol(chem.lmer.infl2), 5 + ncol(chem.lmer@frame) + ncol(suppressWarnings(suppressMessages(rvc(chem.lmer)))))
+})
+
+test_that("Number of rows and columns are correct for default approximations for nlme models", {
   #sleepstudy
   sleep.lme.infl <- hlm_influence(sleep.lme)
   expect_equal(ncol(sleep.lme.infl), 5 + ncol(sleep.lme$data))
   expect_equal(nrow(sleep.lme.infl), nrow(sleep.lme$data))
-  
-  sleep.lme.infl2 <- hlm_influence(sleep.lme, approx = FALSE)
-  expect.equal(ncol(sleep.lme.infl2), 5 + ncol(sleep.lmer@frame) + ncol(rvc(sleep.lme)))
   
   #chemistry
   chem.lme.infl <- hlm_influence(chem.lme)
   expect_equal(ncol(chem.lme.infl), 5 + ncol(chem.lmer@frame)) #same here 
   expect_equal(nrow(chem.lme.infl), nrow(chem.lme$data))
   
+})
+
+test_that("Number of rows and columns are correct for full refits for nlme models", {
+  skip_on_cran()
+  
+  #sleepstudy
+  sleep.lme.infl2 <- hlm_influence(sleep.lme, approx = FALSE)
+  expect_equal(ncol(sleep.lme.infl2), 5 + ncol(sleep.lmer@frame) + ncol(rvc(sleep.lme)))
+  
+  #chemistry
   chem.lme.infl2 <- hlm_influence(chem.lme, approx = FALSE)
-  expect.equal(ncol(chem.lme.infl2), 5 + ncol(chem.lmer@frame) + ncol(rvc(chem.lme)))
+  expect_equal(ncol(chem.lme.infl2), 5 + ncol(chem.lmer@frame) + ncol(rvc(chem.lme)))
   
 })
 
@@ -128,12 +140,12 @@ test_that("Influence diagnostic columns match output from influence functions fo
   expect_equal(sleep.lme.infl$leverage.overall, leverage(sleep.lme)[,1])
   
   #chemistry
-  sleep.lme.infl <- hlm_influence(chem.lme)
+  chem.lme.infl <- hlm_influence(chem.lme)
   expect_equal(chem.lme.infl$cooksd, cooks.distance(chem.lme))
   expect_equal(chem.lme.infl$mdffits, mdffits(chem.lme))
   expect_equal(chem.lme.infl$covtrace, covtrace(chem.lme))
   expect_equal(chem.lme.infl$covratio, covratio(chem.lme))
-  expect_equal(chem.lme.infl$leverage.overall, leverage(chem.lme[,1]))
+  expect_equal(chem.lme.infl$leverage.overall, leverage(chem.lme)[,1])  
   
 })
 
@@ -143,7 +155,7 @@ test_that("Number of rows and columns are correct when delete is specified for l
   expect_equal(nrow(sleep.lmer.infl), 1)
   expect_equal(ncol(sleep.lmer.infl), 4)
 
-  expect_warning(hlm_influence(sleep.lmer, delete = c(1,10,13), leverage = "ranef"))
+  expect_warning(hlm_influence(sleep.lmer, delete = c(1,10,13), leverage = c("ranef", "ranef.uc")))
 
   #chemistry 
   chem.lmer.infl <- hlm_influence(chem.lmer, delete = c(2, 8, 78))
@@ -157,7 +169,7 @@ test_that("Number of rows and columns are correct when delete is specified for n
   expect_equal(nrow(sleep.lme.infl), 1)
   expect_equal(ncol(sleep.lme.infl), 4)
   
-  expect_warning(hlm_influence(sleep.lme, delete = c(1,10,13), leverage = "ranef"))
+  expect_warning(hlm_influence(sleep.lme, delete = c(1,10,13), leverage = c("ranef", "ranef.uc")))
   
   #chemistry
   chem.lme.infl <- hlm_influence(chem.lme, delete = c(2, 8, 78))
