@@ -214,6 +214,13 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
           lm(y ~ ., data = split)
         })
       
+      ls.rank <- purrr::map_dbl(ls.models, ~qr(.x)$rank) #check rank deficiency
+      deficient.groups <- names(which(ls.rank != max(ls.rank)))
+      if(length(deficient.groups) != 0) {
+        warning("LS residuals might be inaccurate as one or more groups are rank deficient.", 
+                "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+      }
+      
       ls.residuals <- purrr::map(ls.models, resid) #calculate residuals within group
       ls.fitted <- purrr::map(ls.models, fitted)   #calculate fitted values
       
@@ -256,19 +263,22 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       
       ls.models <- suppressWarnings(lme4::lmList(formula = formula(form), data = data))
       if (sum(purrr::map_lgl(ls.models, is.null)) == length(ls.models)) {
-        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated.", 
+             "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
       }
       if (!is.null(attr(ls.models, which = "warningMsg"))) {
-        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated.",
+                "\nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
       if(standardize == "semi") standardize <- FALSE
-      ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
+      ls.ranef <- lme4::ranef(ls.models, standard = standardize)[ranef_names]
       ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
                      ls.resid)
       
       if(ncol(ls.resid) != length(ranef_names) + 1) {
-        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+        warning("The model contains a random effect term for variables with no fixed effect term.",
+                "\nSome LS group level residuals cannot be calculated.")
       }
       
       return(ls.resid)
@@ -277,6 +287,8 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
       # group by (specified level + 1)
       higher.level <- names(object@flist)[which(names(object@flist) == level) + 1]
       split_data <- split(data, data[,higher.level])
+      # remove any empty groups
+      split_data <- split_data[which(purrr::map_lgl(split_data, ~(nrow(.x)) != 0))]
       
       # for each group use ranef as above
       vars <- stringr::str_split(level, ":")[[1]]
@@ -288,10 +300,12 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
                         ~lme4::lmList(formula = formula(form), data = .x)))
       ls.warnings <- purrr::map_lgl(ls.models, ~!is.null(attr(.x, which = "warningMsg")))
       if (sum(purrr::map_lgl(ls.models, ~all(purrr::map_lgl(.x, is.null)))) == length(ls.models)) {
-        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
-      }
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated.", 
+             "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+        }
       if (sum(ls.warnings) > 0) {
-        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated.",
+                "\nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
       
       # to fix the order 
@@ -312,7 +326,8 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
         purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
       
       if(ncol(ls.resid) != length(ranef_names) + 1) {
-        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+        warning("The model contains a random effect term for variables with no fixed effect term.",
+                "\nSome LS group level residuals cannot be calculated.")
       }
 
       return(ls.resid)
@@ -362,6 +377,13 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
         lm(y ~ ., data = split)
       })
     
+    ls.rank <- purrr::map_dbl(ls.models, ~qr(.x)$rank) #check rank deficiency
+    deficient.groups <- names(which(ls.rank != max(ls.rank)))
+    if(length(deficient.groups) != 0) {
+      warning("LS residuals might be inaccurate as one or more groups are rank deficient.", 
+              "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+    }    
+    
     ls.residuals <- purrr::map(ls.models, resid) #calculate residuals within group
     ls.fitted <- purrr::map(ls.models, fitted)   #calculate fitted values
     
@@ -394,7 +416,7 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
     fixed <- as.character(formula(object))
     
     data <- object$data %>%
-      dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
       as.data.frame()
     
     n.ranefs <- length(names(object$groups))
@@ -404,25 +426,27 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
       ranef_names <- names( nlme::ranef(object)[[level]] )
     }
     
-    
     if(level == names(object$groups)[1]) { #highest level
       form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
       
       ls.models <- suppressWarnings(lme4::lmList(formula = formula(form), data = data))
       if (sum(purrr::map_lgl(ls.models, is.null)) == length(ls.models)) {
-        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated.",
+             "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
       }
       if (!is.null(attr(ls.models, which = "warningMsg"))) {
-        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated.",
+                "\nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
       if(standardize == "semi") standardize <- FALSE
-      ls.ranef <- ranef(ls.models, standard = standardize)[ranef_names]
+      ls.ranef <- lme4::ranef(ls.models, standard = standardize)[ranef_names]
       ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)),
                                  ls.resid)
       
       if(ncol(ls.resid) != length(ranef_names) + 1) {
-        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+        warning("The model contains a random effect term for variables with no fixed effect term.",
+                "\nSome LS group level residuals cannot be calculated.")
       }
       
       return(ls.resid)
@@ -431,6 +455,8 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
       # group by (specified level + 1)
       higher.level <- names(object$groups)[which(names(object$groups) == level) - 1]
       split_data <- split(data, data[,higher.level])
+      # remove any empty groups
+      split_data <- split_data[which(purrr::map_lgl(split_data, ~(nrow(.x)) != 0))]
       
       # for each group use ranef as above
       form <- paste(fixed[2], fixed[1], fixed[3], "|", level) 
@@ -440,10 +466,12 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
                                                ~lme4::lmList(formula = formula(form), data = .x)))
       ls.warnings <- purrr::map_lgl(ls.models, ~!is.null(attr(.x, which = "warningMsg")))
       if (sum(purrr::map_lgl(ls.models, ~all(purrr::map_lgl(.x, is.null)))) == length(ls.models)) {
-        stop("The model matrix is rank deficient. LS residuals cannot be calculated. \nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
+        stop("The model matrix is rank deficient. LS residuals cannot be calculated.",
+             "\nUse the 'include.ls = FALSE' parameter to get EB residuals only.")
       }
       if (sum(ls.warnings) > 0) {
-        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated. \nIt is recommended to use EB (.ranef) group level residuals for this model.")
+        warning("The model matrix is likely rank deficient. Some LS residuals cannot be calculated.",
+                "\nIt is recommended to use EB (.ranef) group level residuals for this model.")
       }
       
       # to fix the order 
@@ -464,7 +492,8 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
         purrr::map_dfr(ls.ranef, ~dplyr::bind_cols(.x)))
       
       if(ncol(ls.resid) != length(ranef_names) + 1) {
-        warning("The model contains a random effect term for variables with no fixed effect term. \nSome LS group level residuals cannot be calculated.")
+        warning("The model contains a random effect term for variables with no fixed effect term.",
+                "\nSome LS group level residuals cannot be calculated.")
       }
       
       return(ls.resid)
