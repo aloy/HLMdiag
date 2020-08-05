@@ -250,7 +250,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
                                       g.vars[higher.level][i,], sep = ":")
       }
       g.vars <- g.vars %>%
-        select(ncol(g.vars), 1:(ncol(g.vars)-1))
+        dplyr::select(ncol(g.vars), 1:(ncol(g.vars)-1))
       
       # Assemble data frame
       if (include.ls == TRUE) {
@@ -321,7 +321,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     dataform <- paste(fixed[2], fixed[1], fixed[3], " + ", 
                       paste(names(object$groups), collapse = " + "))
     data <- object$data %>%
-      dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
       as.data.frame()
     if (include.ls == TRUE) {
       return.tbl <- tibble::tibble(model.frame(formula(dataform), data),
@@ -345,9 +345,9 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     # EB Residuals
     if(standardize == "semi") standardize <- FALSE
     if (length(object$groups) != 1) {
-      eb.resid <- ranef(object, standard = standardize)[[level]]
+      eb.resid <- nlme::ranef(object, standard = standardize)[[level]]
     } else { 
-      eb.resid <- ranef(object, standard = standardize)
+      eb.resid <- nlme::ranef(object, standard = standardize)
     }
 
     eb.resid <- janitor::clean_names(eb.resid)
@@ -379,7 +379,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
       ranef_names <- names( nlme::ranef(object)[[level]] )
     }
     data <- object$data %>%
-      dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
       as.data.frame()
     
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
@@ -443,7 +443,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
                                           g.vars[level][i,], sep = "/")
       }
       g.vars <- g.vars %>%
-        select(ncol(g.vars), 1:(ncol(g.vars)-1))
+        dplyr::select(ncol(g.vars), 1:(ncol(g.vars)-1))
       
       # Assemble data frame
       if (include.ls == TRUE) {
