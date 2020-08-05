@@ -43,7 +43,12 @@ hlm_augment.default <- function(object, ...){
 hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE) {
   residuals <- hlm_resid(object, level = level, standardize = standardize)
   infl <- hlm_influence(object, level = level)
-  infl <- infl[,-c(1:ncol(object@frame))]
+  if (level == 1) {
+    infl <- infl[,-c(1:ncol(object@frame))]
+  }
+  else {
+    infl <- infl[,-1]
+  }
   aug.tibble <- tibble::add_column(residuals, infl)
   return(aug.tibble)
 }
@@ -65,7 +70,12 @@ hlm_augment.lme <- function(object, level = 1, standardize = FALSE) {
     as.data.frame()
   newdata <- model.frame(formula(dataform), data)  
   
-  infl <- infl[,-c(1:ncol(newdata))]
+  if (level == 1) {
+    infl <- infl[,-c(1:ncol(newdata))]
+  }
+  else {
+    infl <- infl[,-1]
+  }
   aug.tibble <- tibble::add_column(residuals, infl)
   return(aug.tibble)
 }
