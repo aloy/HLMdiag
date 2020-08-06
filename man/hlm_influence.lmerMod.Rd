@@ -15,6 +15,7 @@
   delete = NULL,
   approx = TRUE,
   leverage = "overall",
+  data = NULL,
   ...
 )
 
@@ -33,11 +34,19 @@
 \item{level}{used to define the group for which cases are deleted and influence
 diagnostics are calculated. If \code{level = 1} (default), then influence diagnostics are
 calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
+<<<<<<< HEAD:man/hlm_influence.lmerMod.Rd
 factor as defined in \code{flist} for a \code{lmerMod} object or in \code{groups} for a \code{lme} object.}
 
 \item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter 
 is specified, \code{delete} may also take the form of a character vector consisting of group 
 names as they appear in \code{model$flist} (\code{lme4} models) or \code{model$groups} (\code{nlme} models). 
+=======
+factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.}
+
+\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter 
+is specified, \code{delete} may also take the form of a character vector consisting of group 
+names as they appear in \code{flist} for \code{lme4} models or as in \code{groups} for \code{nlme} models. 
+>>>>>>> 1538386dd3f36c8fb1af455c7afc59b98b5a6790:man/hlm_influence.Rd
 If \code{delete = NULL} then all cases are iteratively deleted.}
 
 \item{approx}{logical parameter used to determine how the influence diagnostics are calculated.

@@ -38,3 +38,4 @@
 src/HLMdiag.so
 
 .RData
+inst/doc

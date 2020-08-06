@@ -34,6 +34,8 @@ hlm_resid.default <- function(object, ...){
 #'   will be returned
 #' @param ls.include a logical indicating if LS residuals be included in the
 #'   return tibble. \code{include.ls = FALSE} decreases runtime substantially.
+#' @param data if \code{na.action = na.exclude}, the user must provide the data
+#'   set used to fit the model, otherwise \code{NULL}.
 #' @param sim optional argument giving the data frame used for LS residuals.
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
@@ -71,7 +73,7 @@ hlm_resid.default <- function(object, ...){
 #' model.}
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, sim = NULL, ...) {
+hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
   
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or the following grouping factors from the fitted model: \n", 
@@ -79,6 +81,16 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   }
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi'.")
+  }
+  if(class(attr(object@frame, "na.action")) == "exclude" && is.null(data) && level == 1){
+    stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
+  }
+  
+  # na action
+  if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
+    na.index <- which(!rownames(data) %in% rownames(object@frame))
+  } else {                                                         #if na.omit
+    data <- object@frame
   }
   
   if(level == 1) { 
@@ -95,7 +107,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       eb.resid <- data.frame(.resid = resid(object))
     }
     # EB Fitted
-    eb.fitted <- data.frame(.fitted = lme4::getME(object, "mu"))
+    # eb.fitted <- data.frame(.fitted = lme4::getME(object, "mu"))
+    eb.fitted <- data.frame(.fitted = predict(object))
     
     # Marginal Residuals
     mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
@@ -117,19 +130,45 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     # Marginal Fitted
     mar.fitted  <- data.frame(.mar.fitted = predict(object, re.form = ~0))
     
+    # NA Action
+    if(class(attr(object@frame, "na.action")) == "exclude"){
+      if(include.ls == TRUE){
+        problem_dfs <- cbind(ls.resid, mar.resid)
+        na.fix <- data.frame(LSR = rep(NA, length(na.index)), 
+                             LSF = rep(NA, length(na.index)),
+                             MR = rep(NA, length(na.index)))
+        rownames(na.fix) <- na.index
+        names(na.fix) <- c(names(ls.resid), names(mar.resid))
+        problem_dfs <- rbind(problem_dfs, na.fix)
+        problem_dfs <- problem_dfs[order(as.numeric(rownames(problem_dfs))),]
+      } else {
+        na.fix <- data.frame(MR = rep(NA, length(na.index)))
+        rownames(na.fix) <- na.index
+        names(na.fix) <- names(mar.resid)
+        problem_dfs <- rbind(mar.resid, na.fix)
+        problem_dfs <- data.frame(MR = problem_dfs[order(as.numeric(rownames(problem_dfs))),])
+        names(problem_dfs) <- names(mar.resid)
+      }
+    } else {
+      if(include.ls == TRUE){
+        problem_dfs <- cbind(ls.resid, mar.resid)
+      } else {
+        problem_dfs <- mar.resids
+      }
+    }
+    
     # Assemble Tibble
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(object@frame,
+      return.tbl <- tibble::tibble(data,
                                    eb.resid,
                                    eb.fitted,
-                                   ls.resid,
-                                   mar.resid,
+                                   problem_dfs,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(object@frame,
+      return.tbl <- tibble::tibble(data,
                                    eb.resid,
                                    eb.fitted,
-                                   mar.resid,
+                                   problem_dfs,
                                    mar.fitted)
     }
     

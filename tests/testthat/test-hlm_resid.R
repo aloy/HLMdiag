@@ -1,7 +1,3 @@
-library(dplyr)
-library(lme4)
-library(nlme)
-
 #2 level, random intercept
 bdf <- nlme::bdf
 bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES + 
@@ -87,9 +83,9 @@ test_that("detects level 2 variables, nlme", {
 
 #3 level, random intercept and slope
 class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
-class.lmer <- lmer(mathgain ~ mathkind + minority + ses + housepov + 
+class.lmer <- lme4::lmer(mathgain ~ mathkind + minority + ses + housepov + 
                      (mathkind | schoolid/classid), class)
-class.lme <- lme(mathgain ~ mathkind + minority + ses + housepov,
+class.lme <- nlme::lme(mathgain ~ mathkind + minority + ses + housepov,
                      random = ~mathkind | schoolid/classid, class)
 
 test_that("3 level model tests, lme4", {
