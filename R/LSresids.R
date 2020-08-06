@@ -354,6 +354,7 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   
   if(level == 1){
     y <- nlme::getResponse(object)
+    y <- na.exclude(y)
     X <- model.matrix(object, data = object$data)
     g <- object$groups[length(object$groups)]
     names(g) <- "group"

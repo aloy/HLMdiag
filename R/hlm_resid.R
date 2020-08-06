@@ -86,7 +86,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
   }
   
-  # na action
+  # NA action
   if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
     na.index <- which(!rownames(data) %in% rownames(object@frame))
   } else {                                                         #if na.omit
@@ -254,7 +254,6 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
           unique(suppressMessages(dplyr::left_join(g.vars, return.tbl))))
       }
       
-      
       return(return.tbl)
       
     } else { # inner level
@@ -315,7 +314,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
 #' @export
 #' @rdname hlm_resid.lmerMod
 #' @method hlm_resid lme
-hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, sim = NULL, ...) {
+hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
   if(!level %in% c(1, names(object$groups))) {
     stop("level can only be 1 or the following grouping factors from the fitted model: \n", 
          stringr::str_c(names(object$groups), collapse = ", "))
@@ -362,15 +361,38 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     data <- object$data %>%
       dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
       as.data.frame()
+    model.data <- model.frame(formula(dataform), data)
+    
+    # NA action
+    if(class(object$na.action) == "exclude"){ # if na.exclude
+      # fix data frame
+      na.index <- which(!rownames(data) %in% rownames(model.data))
+      na.fix.data <- data[which(rownames(data) %in% na.index),] %>% 
+        dplyr::select(all_of(names(model.data)))
+      model.data <- rbind(model.data, na.fix.data)
+      model.data <- model.data[order(as.numeric(rownames(model.data))),]
+      
+      # fix ls residuals
+      if(include.ls == TRUE){
+        na.fix.ls <- data.frame(LSR = rep(NA, length(na.index)),
+                                LSF = rep(NA, length(na.index)))
+        rownames(na.fix.ls) <- na.index
+        names(na.fix.ls) <- c(names(ls.resid))
+        ls.resid <- rbind(ls.resid, na.fix.ls)
+        ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
+      }
+    }
+    
+    # Continue to Assemble Tibble  
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(model.frame(formula(dataform), data),
+      return.tbl <- tibble::tibble(model.data,
                                    eb.resid,
                                    eb.fitted,
                                    ls.resid,
                                    mar.resid,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(model.frame(formula(dataform), data),
+      return.tbl <- tibble::tibble(model.data,
                                    eb.resid,
                                    eb.fitted,
                                    mar.resid,

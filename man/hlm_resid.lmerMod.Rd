@@ -24,6 +24,7 @@
   level = 1,
   standardize = FALSE,
   include.ls = TRUE,
+  data = NULL,
   sim = NULL,
   ...
 )
