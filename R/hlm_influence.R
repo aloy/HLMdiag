@@ -39,6 +39,8 @@ hlm_influence.default <- function(model, ...){
 #'returned tibble. There are four options: 'overall' (default), 'fixef', 'ranef', or 'ranef.uc'.
 #'One or more types may be specified. For additional information about the types of leverage, see
 #'\code{?leverage}.
+#'@param data (optional) the data frame used to fit the model. This is only necessary for \code{lmerMod} models if
+#'\code{na.action = "na.exclude"} was set. 
 #'
 #'@details
 #'The \code{hlm_influence} function provides a wrapper that appends influence diagnostics
@@ -81,7 +83,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   
   na.action <- attr(model@frame, "na.action")
   if(class(na.action) == "exclude" & is.null(data)) {
-    warning("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
+    warning("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude.")
     na.action <- NULL 
   }
   
@@ -103,7 +105,8 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
-      if (!is.null(na.action)) {
+      #infl.tbl <- tibble::add_column(infl.tbl, data, .before = 1)
+      if (class(na.action) == "exclude") {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
     }
@@ -138,7 +141,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
-      if (!is.null(na.action)) {
+      if (class(na.action) == "exclude") {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
     }
@@ -181,6 +184,8 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
   }
   
+  na.action <- model$na.action
+  
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
                                mdffits = as.vector(mdffits(model, level = level, delete = delete)),
@@ -199,16 +204,19 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     
     if (level == 1) {
       
-      
-      
       fixed <- formula(model)
       dataform <- paste(fixed[2], "~", fixed[3], " + ",
                         paste(names(model$groups), collapse = " + ")) 
-      data <- model$data %>%
+      data.fixed <- model$data %>%
         dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
         as.data.frame()
-      new.data <- model.frame(formula(dataform), data)
+      new.data <- model.frame(formula(dataform), data.fixed)
+      
       infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1) 
+      
+      if (class(na.action) == "exclude") {
+        infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
+      }
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
@@ -243,11 +251,14 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
       fixed <- formula(model)
       dataform <- paste(fixed[2], "~", fixed[3], " + ",
                         paste(names(model$groups), collapse = " + ")) 
-      data <- model$data %>%
+      data.fixed <- model$data %>%
         dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
         as.data.frame()
-      new.data <- model.frame(formula(dataform), data)
+      new.data <- model.frame(formula(dataform), data.fixed)
       infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  
+      if (class(na.action) == "exclude") {
+        infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
+      }
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)

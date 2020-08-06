@@ -416,9 +416,19 @@ extract_design <- function (b){
   return(frame)
 }
 
-#.lme_add_NArows <- function(model, frame, na.action, data) {
-  #rownums <- NULL
-  #for (i in 1:length(na.action)) {
-    #rownums[i] <- na.action[[i]]
-  #}
-#}
+.lme_add_NArows <- function(model, frame, na.action, org.data, fixed.data) {
+  rownums <- NULL
+  for (i in 1:length(na.action)) {
+    rownums[i] <- na.action[[i]]
+  }
+  
+  df <- org.data %>%
+    anti_join(fixed.data, by = colnames(fixed.data)) %>%
+    select(colnames(fixed.data))
+  
+  for (i in 1:length(na.action)) {
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownums[i]))
+  }
+  
+  return(frame)
+}
