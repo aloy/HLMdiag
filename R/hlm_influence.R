@@ -52,7 +52,7 @@ hlm_influence.default <- function(model, ...){
 #'It is possible to set \code{level} and delete individual cases from different groups using 
 #'\code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
 #'Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble. 
-hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", ...) {
+hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE, leverage = "overall", data = NULL, ...) {
   
   if (!level %in% names(model@flist) & level != 1) {
     stop(paste(level, "is not a valid level for this model"))
@@ -68,15 +68,28 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & length(leverage) != 1) {
-    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+  if(!is.null(delete)) { 
+    if (length(leverage) != 1) {
+      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+    }
+    else {
+      if(leverage != "overall") {
+        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+      }
+    }
+  }
+  
+  na.action <- attr(model@frame, "na.action")
+  if(class(na.action) == "exclude" & is.null(data)) {
+    warning("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
+    na.action <- NULL 
   }
   
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
                                mdffits = as.vector(mdffits(model, level = level, delete = delete)),
                                covtrace = covtrace(model, level = level, delete = delete),
-                               covratio = covratio(model, level = level, delete = delete))
+                               covratio = as.numeric(covratio(model, level = level, delete = delete)))
     
     if(!is.null(delete)) {
       return(infl.tbl)
@@ -90,6 +103,9 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
+      if (!is.null(na.action)) {
+        infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
+      }
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model@flist[[level]]), .before = 1)
@@ -122,6 +138,9 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
+      if (!is.null(na.action)) {
+        infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
+      }
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model@flist[[level]]), .before = 1)
@@ -151,15 +170,22 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete) & length(leverage) != 1) {
-    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+  if(!is.null(delete)) { 
+    if (length(leverage) != 1) {
+      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+    }
+    else {
+      if(leverage != "overall") {
+        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
+      }
+    }
   }
   
   if (approx) { #one step approximations
     infl.tbl <- tibble::tibble(cooksd = as.vector(cooks.distance(model, level = level, delete = delete)),
                                mdffits = as.vector(mdffits(model, level = level, delete = delete)),
                                covtrace = covtrace(model, level = level, delete = delete),
-                               covratio = covratio(model, level = level, delete = delete))
+                               covratio = as.numeric(covratio(model, level = level, delete = delete)))
     
     if(!is.null(delete)) {
       return(infl.tbl)
@@ -221,7 +247,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
         dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
         as.data.frame()
       new.data <- model.frame(formula(dataform), data)
-      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  #issue here too? 
+      infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)

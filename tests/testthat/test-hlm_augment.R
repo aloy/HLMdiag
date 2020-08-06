@@ -15,13 +15,13 @@ data(Chem97, package = "mlmRev")
 Chem97 <- Chem97[1:257,]
 chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
 chem.lme <- nlme::lme(score ~ gcsecnt, random = ~1|lea/school, data = Chem97)
-chem.lmer.aug <- hlm_augment(chem.lmer)
-chem.lme.aug <- hlm_augment(chem.lme)
+chem.lmer.aug <- suppressWarnings(hlm_augment(chem.lmer))
+chem.lme.aug <- suppressWarnings(hlm_augment(chem.lme))
 
 chem.lmer.augG <- hlm_augment(chem.lmer, level = "lea")
 chem.lme.augG <- hlm_augment(chem.lme, level = "lea")
 chem.lmer.augG2 <- hlm_augment(chem.lmer, level = "school:lea")
-#chem.lme.augG2 <- hlm_augment(chem.lme, level = "school") #still throwing an error 
+chem.lme.augG2 <- hlm_augment(chem.lme, level = "school") 
 
 test_that("Number of rows is equal to number of observations when level equals 1 for lme4 models", {
   expect_equal(nrow(sleep.lmer.aug), nrow(sleep.lmer@frame))
@@ -60,12 +60,12 @@ test_that("Number of columns is correct when level equals 1 for nlme models", {
 test_that("Number of rows is equal to number of groups when level is set for nlme models", {
   expect_equal(nrow(sleep.lme.augG), length(unique(sleep.lmer@flist[["Subject"]])))
   expect_equal(nrow(chem.lme.augG), length(unique(chem.lmer@flist[["lea"]])))
-  #expect_equal(nrow(chem.lme.augG2), length(unique(chem.lmer@flist[["school:lea"]])))
+  expect_equal(nrow(chem.lme.augG2), length(unique(chem.lmer@flist[["school:lea"]])))
 })
 
 test_that("Number of columns is correct when level is set for nlme models", {
   expect_equal(ncol(sleep.lme.augG), 10)
   expect_equal(ncol(chem.lme.augG), 8)
-  #expect_equal(ncol(chem.lmer.augG2), 10)
+  expect_equal(ncol(chem.lmer.augG2), 10)
 })
 

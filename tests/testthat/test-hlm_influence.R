@@ -156,6 +156,7 @@ test_that("Number of rows and columns are correct when delete is specified for l
   expect_equal(ncol(sleep.lmer.infl), 4)
 
   expect_warning(hlm_influence(sleep.lmer, delete = c(1,10,13), leverage = c("ranef", "ranef.uc")))
+  expect_warning(hlm_influence(sleep.lmer, delete = c(1,10,13), leverage = "ranef"))
 
   #chemistry 
   chem.lmer.infl <- hlm_influence(chem.lmer, delete = c(2, 8, 78))
@@ -170,6 +171,7 @@ test_that("Number of rows and columns are correct when delete is specified for n
   expect_equal(ncol(sleep.lme.infl), 4)
   
   expect_warning(hlm_influence(sleep.lme, delete = c(1,10,13), leverage = c("ranef", "ranef.uc")))
+  expect_warning(hlm_influence(sleep.lme, delete = c(1,10,13), leverage = "ranef"))
   
   #chemistry
   chem.lme.infl <- hlm_influence(chem.lme, delete = c(2, 8, 78))
