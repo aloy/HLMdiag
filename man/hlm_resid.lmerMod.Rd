@@ -14,6 +14,7 @@
   level = 1,
   standardize = FALSE,
   include.ls = TRUE,
+  data = NULL,
   sim = NULL,
   ...
 )
@@ -41,6 +42,9 @@ residuals (as defined in \code{flist} in \code{lmerMod} objects or in
 standardized residuals will be returned for any group; for level-1 only, if
 \code{standardize = "semi"} then the semi-standardized level-1 residuals
 will be returned}
+
+\item{data}{if \code{na.action = na.exclude}, the user must provide the data
+set used to fit the model, otherwise \code{NULL}.}
 
 \item{sim}{optional argument giving the data frame used for LS residuals.
 This is used mainly for dealing with simulations.}

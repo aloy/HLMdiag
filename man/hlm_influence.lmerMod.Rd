@@ -15,6 +15,7 @@
   delete = NULL,
   approx = TRUE,
   leverage = "overall",
+  data = NULL,
   ...
 )
 
