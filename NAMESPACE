@@ -91,6 +91,19 @@ importFrom(reshape2, "melt")
 importFrom(reshape2, "dcast")
 importFrom(MASS, "rlm")
 importFrom(mgcv, "tensor.prod.model.matrix")
+
+importFrom(magrittr, "%>%")
+importFrom(dplyr, "select", "left_join", "mutate", "across", 
+           "bind_cols")
+importFrom(stringr, "str_c", "str_detect", "str_split")
+importFrom(purrr, "map", "map_lgl", "map_df", "map_dfc", "map_dfr", 
+           "map_dbl")
+importFrom(tibble, "tibble")
+importFrom(tidyselect, "all_of")
+importFrom(janitor, "clean_names")
+
+
+
 #importFrom(stats,"cooks.distance")
 #importFrom(stats,covratio)
 #importFrom(stats,"coef")

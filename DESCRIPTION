@@ -23,14 +23,23 @@ Imports:
     MASS,
     Matrix,
     RLRsim,
-    mgcv
+    mgcv,
+    dplyr,
+    magrittr,
+    stringr,
+    purrr,
+    tibble,
+    tidyselect,
+    janitor
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
     WWGbook,
     lme4 (>= 1.0),
     nlme,
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
@@ -58,3 +67,4 @@ Collate:
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
 RoxygenNote: 7.1.0
+VignetteBuilder: knitr

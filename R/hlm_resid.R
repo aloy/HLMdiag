@@ -95,7 +95,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       eb.resid <- data.frame(.resid = resid(object))
     }
     # EB Fitted
-    eb.fitted <- data.frame(.fitted = lme4::getME(object, "mu"))
+    # eb.fitted <- data.frame(.fitted = lme4::getME(object, "mu"))
+    eb.fitted <- data.frame(.fitted = predict(object))
     
     # Marginal Residuals
     mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)

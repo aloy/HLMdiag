@@ -1,7 +1,3 @@
-library(dplyr)
-library(lme4)
-library(nlme)
-
 bdf <- nlme::bdf
 bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES + 
                          (1|schoolNR), data = bdf)
