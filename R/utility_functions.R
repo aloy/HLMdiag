@@ -395,3 +395,30 @@ extract_design <- function (b){
     )
   )
 }
+
+#adding rows with NAs into returned tibble
+
+.lmerMod_add_NArows <- function(model, frame, na.action, data) { 
+  rownums <- NULL
+  for (i in 1:length(na.action)) {
+    rownums[i] <- na.action[[i]]  
+  }
+  df <- data %>%
+    anti_join(model@frame, by = colnames(model@frame)) %>%
+    select(colnames(model@frame))
+  
+  rownames(df) <- rownums
+  
+  for (i in 1:nrow(df)) {
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownames(df)[i]))
+  }
+  
+  return(frame)
+}
+
+#.lme_add_NArows <- function(model, frame, na.action, data) {
+  #rownums <- NULL
+  #for (i in 1:length(na.action)) {
+    #rownums[i] <- na.action[[i]]
+  #}
+#}
