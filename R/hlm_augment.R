@@ -40,9 +40,9 @@ hlm_augment.default <- function(object, ...){
 #'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. Additional
 #'parameters \code{sim} and \code{ls.include} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
 #'should be used instead. 
-hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE) {
-  residuals <- hlm_resid(object, level = level, standardize = standardize)
-  infl <- hlm_influence(object, level = level)
+hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = NULL) {
+  residuals <- hlm_resid(object, level = level, standardize = standardize, data = data)
+  infl <- hlm_influence(object, level = level, data = data)
   if (level == 1) {
     infl <- infl[,-c(1:ncol(object@frame))]
   }

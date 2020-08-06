@@ -83,8 +83,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   
   na.action <- attr(model@frame, "na.action")
   if(class(na.action) == "exclude" & is.null(data)) {
-    warning("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude.")
-    na.action <- NULL 
+    stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude.")
   }
   
   if (approx) { #one step approximations
