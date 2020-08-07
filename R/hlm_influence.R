@@ -70,20 +70,17 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
-  if(!is.null(delete)) { 
-    if (length(leverage) != 1) {
-      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
-    }
-    else {
-      if(leverage != "overall") {
-        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
-      }
-    }
-  }
-  
   na.action <- attr(model@frame, "na.action")
   if(class(na.action) == "exclude" & is.null(data)) {
     stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude.")
+  }
+  
+  if(!isNestedModel(model) & approx == FALSE) {
+    stop("Full refits of the model are currently not implemented for models with crossed random effects.")
+  }
+  
+  if(!is.null(delete)) { 
+    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
   }
   
   if (approx) { #one step approximations
@@ -96,15 +93,17 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
       return(infl.tbl)
     }
     
-    else {
+    if (isNestedModel(model)) {
       leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
       colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
     }
+    else{
+      warning("Leverage is currently not implemented for models with crossed random effects.")
+    }
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
-      #infl.tbl <- tibble::add_column(infl.tbl, data, .before = 1)
       if (class(na.action) == "exclude") {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
@@ -168,20 +167,18 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
     }
   }
   
+  if(!isNestedModel(model) & approx == FALSE) {
+    stop("Full refits of the model are currently not implemented for models with crossed random effects.")
+  }
+  
   if (hasArg(group)) {
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
   if(!is.null(delete)) { 
-    if (length(leverage) != 1) {
-      warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
-    }
-    else {
-      if(leverage != "overall") {
-        warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
-      }
-    }
+    warning("If the delete argument is specified, leverage cannot be returned. See ?hlm_influence for more information.")
   }
+
   
   na.action <- model$na.action
   
@@ -195,10 +192,13 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
       return(infl.tbl)
     }
     
-    else {
+    if (isNestedModel(model)) {
       leverage.df <- as.data.frame(leverage(model, level = level)[,leverage])
       colnames(leverage.df) <- purrr::map_chr(leverage, function(s) stringr::str_c("leverage", s, sep = "."))
       infl.tbl <- tibble::add_column(infl.tbl, leverage.df)
+    }
+    else{
+      warning("Leverage is currently not implemented for models with crossed random effects.")
     }
     
     if (level == 1) {
