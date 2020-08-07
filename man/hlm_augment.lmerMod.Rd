@@ -9,7 +9,7 @@
 \usage{
 \method{hlm_augment}{default}(object, ...)
 
-\method{hlm_augment}{lmerMod}(object, level = 1, standardize = FALSE)
+\method{hlm_augment}{lmerMod}(object, level = 1, standardize = FALSE, data = NULL)
 
 \method{hlm_augment}{lme}(object, level = 1, standardize = FALSE)
 }

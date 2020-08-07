@@ -75,6 +75,9 @@ hlm_resid.default <- function(object, ...){
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
   
+  if(!isNestedModel(object)){
+    stop("hlm_resid is not currently implemented for non-nested models.")
+  }
   if(!level %in% c(1, names(object@flist))) {
     stop("level can only be 1 or the following grouping factors from the fitted model: \n", 
          stringr::str_c(names(object@flist), collapse = ", "))
@@ -85,7 +88,11 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(class(attr(object@frame, "na.action")) == "exclude" && is.null(data) && level == 1){
     stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
   }
-  
+  if(!is.null(getCall(object)$correlation)){
+    warning("LS residuals for non-random correlation are not yet implemented")
+    include.ls <- FALSE
+  }
+
   # NA action
   if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
     na.index <- which(!rownames(data) %in% rownames(object@frame))
@@ -315,6 +322,10 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
 #' @rdname hlm_resid.lmerMod
 #' @method hlm_resid lme
 hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
+  
+  if(!isNestedModel(object)){
+    stop("hlm_resid is not currently implemented for non-nested models.")
+  }
   if(!level %in% c(1, names(object$groups))) {
     stop("level can only be 1 or the following grouping factors from the fitted model: \n", 
          stringr::str_c(names(object$groups), collapse = ", "))

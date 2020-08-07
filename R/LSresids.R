@@ -25,7 +25,7 @@ LSresids.default <- function(object, ...){
 #' residuals or the name of a grouping factor (as defined in \code{flist} of the 
 #' \code{mer} object) for between-group residuals.
 #' @param sim optional argument giving the data frame used for LS residuals. This
-#'  is used mainly when dealing with simulations.
+#'  is used mainly when dealing with simulations. Removed in version 0.3.2.
 #' @param standardize if \code{TRUE} the standardized level-1
 #' residuals will also be returned (if \code{level = 1}); if \code{"semi"} then
 #' the semi-standardized level-1 residuals will be returned.
@@ -172,7 +172,7 @@ fixform <- function (term)
 #' @export
 #' @rdname LSresids.mer
 #' @method LSresids lmerMod
-LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...){
+LSresids.lmerMod <- function(object, level, standardize = FALSE, ...){
   if(!lme4::isLMM(object)){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
   }
@@ -186,8 +186,6 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-
-  if(!is.null(sim)){data[,fixed[2]] <- sim}
 
   if(level == 1){
       y <- lme4::getME(object, "y")
@@ -340,7 +338,7 @@ LSresids.lmerMod <- function(object, level, sim = NULL, standardize = FALSE, ...
 #' @export
 #' @rdname LSresids.mer
 #' @method LSresids lme
-LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
+LSresids.lme <- function(object, level, standardize = FALSE, ...){
   #GLM OR NRESTED MODEL CHECK
   if(!level %in% c(1, names(object$groups))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
@@ -349,8 +347,6 @@ LSresids.lme <- function(object, level, sim = NULL, standardize = FALSE, ...){
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi' .")
   }
-
-  if(!is.null(sim)){data[,fixed[2]] <- sim}
   
   if(level == 1){
     y <- nlme::getResponse(object)
