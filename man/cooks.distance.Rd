@@ -73,7 +73,7 @@ for the fixed effects for every model, it will be slower.
 }
 \examples{
 data(sleepstudy, package = 'lme4')
-ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Cook's distance for individual observations
 ss.cd.lev1 <- cooks.distance(ss)
@@ -83,7 +83,7 @@ ss.cd.subject <- cooks.distance(ss, level = "Subject")
 
 \dontrun{
 data(Exam, package = 'mlmRev')
-fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+fm <- lme4::lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 
 # Cook's distance for individual observations
 cd.lev1 <- cooks.distance(fm)

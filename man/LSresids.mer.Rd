@@ -12,9 +12,9 @@
 
 \method{LSresids}{mer}(object, level, sim = NULL, standardize = FALSE, ...)
 
-\method{LSresids}{lmerMod}(object, level, sim = NULL, standardize = FALSE, ...)
+\method{LSresids}{lmerMod}(object, level, standardize = FALSE, ...)
 
-\method{LSresids}{lme}(object, level, sim = NULL, standardize = FALSE, ...)
+\method{LSresids}{lme}(object, level, standardize = FALSE, ...)
 }
 \arguments{
 \item{object}{an object of class \code{mer} or \code{lmerMod}.}
@@ -26,7 +26,7 @@ residuals or the name of a grouping factor (as defined in \code{flist} of the
 \code{mer} object) for between-group residuals.}
 
 \item{sim}{optional argument giving the data frame used for LS residuals. This
-is used mainly when dealing with simulations.}
+is used mainly when dealing with simulations. Removed in version 0.3.2.}
 
 \item{standardize}{if \code{TRUE} the standardized level-1
 residuals will also be returned (if \code{level = 1}); if \code{"semi"} then

@@ -119,7 +119,7 @@ rvc.default <- function(object, ...){
 #' 
 #' @examples
 #' data(sleepstudy, package = 'lme4')
-#' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Observation level leverage
 #' lev1 <- leverage(fm, level = 1)
@@ -308,7 +308,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}, \code{\link{rvc.mer}}
 #' @examples 
 #' data(sleepstudy, package = 'lme4')
-#' ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Cook's distance for individual observations
 #' ss.cd.lev1 <- cooks.distance(ss)
@@ -318,7 +318,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' 
 #' \dontrun{
 #' data(Exam, package = 'mlmRev')
-#' fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+#' fm <- lme4::lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
 #' 
 #' # Cook's distance for individual observations
 #' cd.lev1 <- cooks.distance(fm)
@@ -836,7 +836,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' @examples
 #' 
 #' #' data(sleepstudy, package = 'lme4')
-#' ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 #' 
 #' # covratio for individual observations
 #' ss.cr1 <- covratio(ss)
@@ -847,7 +847,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' \dontrun{
 #' ## A larger example
 #' data(Exam, package = 'mlmRev')
-#' fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+#' fm <- lme4::lmer(normexam ~ standLRT * schavg + (standLRT | school), data = Exam)
 #' 
 #' # covratio for individual observations
 #' cr1 <- covratio(fm)

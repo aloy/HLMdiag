@@ -66,7 +66,7 @@ Both the covariance ratio (\code{covratio}) and the covariance trace
 \examples{
 
 #' data(sleepstudy, package = 'lme4')
-ss <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 
 # covratio for individual observations
 ss.cr1 <- covratio(ss)
@@ -77,7 +77,7 @@ ss.cr2 <- covratio(ss, level = "Subject")
 \dontrun{
 ## A larger example
 data(Exam, package = 'mlmRev')
-fm <- lmer(normexam ~ standLRT * schavg + (standLRT | school), Exam)
+fm <- lme4::lmer(normexam ~ standLRT * schavg + (standLRT | school), data = Exam)
 
 # covratio for individual observations
 cr1 <- covratio(fm)

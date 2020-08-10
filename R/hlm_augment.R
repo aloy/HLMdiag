@@ -4,7 +4,7 @@ hlm_augment <- function(object, ...){
 }
 
 #' @export
-#' @rdname hlm_augment.lmerMod
+#' @rdname hlm_augment
 #' @method hlm_augment default
 hlm_augment.default <- function(object, ...){
   stop(paste("there is no hlm_augment() method for objects of class",

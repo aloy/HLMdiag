@@ -16,7 +16,7 @@
 #'@export
 #'@examples
 #'
-#'wages.fm1 <- lmer(lnw ~ exper + (exper | id), data = wages)
+#'wages.fm1 <- lme4::lmer(lnw ~ exper + (exper | id), data = wages)
 #'wages.sepLM <- adjust_lmList(lnw ~ exper | id, data = wages)
 #'rancoef.eb <- coef(wages.fm1)$id
 #'rancoef.ols <- coef(wages.sepLM)

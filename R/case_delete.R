@@ -62,7 +62,7 @@ case_delete.default <- function(model, ...){
 #'@examples
 #'
 #'data(sleepstudy, package = 'lme4')
-#'fm <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#'fm <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #'
 #' # Deleting every Subject
 #' fmDel <- case_delete(model = fm, level = "Subject", type = "both")

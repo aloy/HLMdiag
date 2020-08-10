@@ -61,7 +61,7 @@ higher-level unit.
 }
 \examples{
 data(sleepstudy, package = 'lme4')
-fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Observation level leverage
 lev1 <- leverage(fm, level = 1)

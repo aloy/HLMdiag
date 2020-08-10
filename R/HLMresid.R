@@ -88,7 +88,7 @@ HLMresid.default <- function(object, ...){
 #' \emph{Journal of the American Statistical Association}, \bold{99}(466), 383--394.
 #' @examples
 #' data(sleepstudy, package = "lme4")
-#' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' 
 #' # level-1 residuals
 #' all.equal(HLMresid(object = fm1, level = 1, type = "EB"), resid(fm1)) ## EB
@@ -98,7 +98,8 @@ HLMresid.default <- function(object, ...){
 #' head(r1LS.std)
 #' 
 #' # level-2 residuals
-#' all.equal(r2EB <- HLMresid(object = fm1, level = "Subject", type = "EB"), ranef(fm1)[["Subject"]])
+#' all.equal(r2EB <- HLMresid(object = fm1, level = "Subject", type = "EB"), 
+#'                            lme4::ranef(fm1)[["Subject"]])
 #' r2EB.std <- HLMresid(object = fm1, level = "Subject", type = "EB", standardize = TRUE)
 #' head(r2EB)
 #' head(r2EB.std)
