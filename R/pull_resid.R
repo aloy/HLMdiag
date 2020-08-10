@@ -24,6 +24,7 @@ pull_resid.default <- function(object, ...){
 #' @param type which residuals should be returned. Can be either 'ls', 'eb', or
 #'   'marginal'
 #' @param standardize a logical indicating if residuals should be standardized
+#' @param ...  not in use
 #' @details \describe{
 #' \item{\code{type = "ls"}}{Residuals calculated by fitting separate LS
 #' regression models for each group. LS residuals are unconfounded by higher

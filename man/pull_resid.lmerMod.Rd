@@ -16,6 +16,8 @@
 \arguments{
 \item{object}{an object of class \code{lmerMod} or \code{lme}.}
 
+\item{...}{not in use}
+
 \item{type}{which residuals should be returned. Can be either 'ls', 'eb', or
 'marginal'}
 

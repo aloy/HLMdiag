@@ -31,6 +31,8 @@
 \arguments{
 \item{model}{an object of class \code{lmerMod} or \code{lme}}
 
+\item{...}{not in use}
+
 \item{level}{used to define the group for which cases are deleted and influence
 diagnostics are calculated. If \code{level = 1} (default), then influence diagnostics are
 calculated for individual observations. Otherwise, \code{level} should be the name of a grouping

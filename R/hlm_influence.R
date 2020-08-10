@@ -41,6 +41,7 @@ hlm_influence.default <- function(model, ...){
 #'\code{?leverage}.
 #'@param data (optional) the data frame used to fit the model. This is only necessary for \code{lmerMod} models if
 #'\code{na.action = "na.exclude"} was set. 
+#'@param ... not in use
 #'
 #'@details
 #'The \code{hlm_influence} function provides a wrapper that appends influence diagnostics
