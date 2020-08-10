@@ -31,6 +31,8 @@ hlm_augment.default <- function(object, ...){
 #'standardized residuals will be returned for any group; for level-1 only, if
 #'\code{standardize = "semi"} then the semi-standardized level-1 residuals
 #'will be returned
+#'@param data the original data frame passed to `lmer`.
+#'@param ... currently not used
 #'@details The \code{hlm_augment} function combines functionality from \code{hlm_resid}
 #'and \code{hlm_influence} for a simpler way of obtaining residuals and influence 
 #'diagnostics. Please see \code{?hlm_resid} and \code{?hlm_influence} for additional information 
@@ -40,7 +42,7 @@ hlm_augment.default <- function(object, ...){
 #'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. Additional
 #'parameters \code{sim} and \code{ls.include} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
 #'should be used instead. 
-hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = NULL) {
+hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = NULL, ...) {
   residuals <- hlm_resid(object, level = level, standardize = standardize, data = data)
   infl <- hlm_influence(object, level = level, data = data)
   if (level == 1) {
@@ -57,7 +59,7 @@ hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = N
 #'@rdname hlm_augment.lmerMod
 #'@method hlm_augment lme
 #'@aliases hlm_augment
-hlm_augment.lme <- function(object, level = 1, standardize = FALSE) {
+hlm_augment.lme <- function(object, level = 1, standardize = FALSE, ...) {
   residuals <- hlm_resid(object, level = level, standardize = standardize)
   infl <- hlm_influence(object, level = level, standardize = standardize)
   
