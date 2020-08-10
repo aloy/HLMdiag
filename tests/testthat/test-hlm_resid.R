@@ -119,3 +119,24 @@ test_that("3 level model tests, nlme", {
   #grabs only two level variables
   expect_equal(names(class.resids)[1:2], c("schoolid", "housepov"))
 })
+
+
+class.lmerNA <- lme4::lmer(mathgain ~ mathkind + minority + mathknow + 
+             ses + housepov + (mathkind | schoolid/classid), data = class, 
+           na.action = na.exclude)
+class.lmeNA <- nlme::lme(mathgain ~ mathkind + minority + mathknow + 
+                           ses + housepov, random = ~mathkind | schoolid/classid, 
+                         data = class, na.action = na.exclude)
+test_that("respects na.action, lme4", {
+  expect_equal(nrow(hlm_resid(class.lmerNA, data = class)),
+               nrow(class))
+  expect_equal(nrow(hlm_resid(class.lmerNA, data = class, include.ls = FALSE)),
+               nrow(class))
+})
+
+test_that("respects na.action, nlme", {
+  expect_equal(nrow(hlm_resid(class.lmeNA, data = class)),
+               nrow(class))
+  expect_equal(nrow(hlm_resid(class.lmeNA, data = class, include.ls = FALSE)),
+               nrow(class))
+})
