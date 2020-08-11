@@ -74,9 +74,31 @@ We illustrate usage for `hlm_resid` using the exam data introduced above and fit
 ```{r}
 library(lme4)
 fm1 <- lmer(normexam ~ standLRT + (1 | school), Exam, REML = FALSE)
+fm1
 ```
 
+But is this model appropriate? To assess the appropriateness of model `fm1` we must examine the level-1 and -2 residuals. To extract the standardized level-1 residuals, we call `hlm_resid` as demonstrated below.
+```{r}
+library(HLMdiag)
+resid1_fm1 <- hlm_resid(fm1, level = 1, standardize = TRUE)
+resid1_fm1
+```
 
+Utilizing the tibble output of `hlm_resid`, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score.
+```{r}
+library(ggplot2)
+ggplot(data = resid1_fm1, aes(x = standLRT, y = .std.ls.resid)) + 
+  geom_point() +
+  geom_smooth(method = "loess") + 
+  labs(y = "LS level-1 residuals", title = "LS residuals against standardized LRT score")
+
+ggplot(data = resid1_fm1, aes(x = .ls.fitted, y = .std.ls.resid)) + 
+  geom_point() +
+  geom_smooth(method = "loess") + 
+  labs(y = "LS level-1 residuals", title = "LS residuals against LS fitted values")
+```
+
+The smoother indicates a possible 
 
 ## Multilevel data:
 
