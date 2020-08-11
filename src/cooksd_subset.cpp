@@ -1,8 +1,9 @@
 #include <RcppArmadillo.h>
+using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-SEXP cooksdSubset(SEXP index, SEXP X_, SEXP P_, 
+extern "C" SEXP cooksdSubset(SEXP index, SEXP X_, SEXP P_, 
                               SEXP Vinv_, SEXP XVXinv_, SEXP e_) {
   Rcpp::List grpInd(index);
   arma::mat X = Rcpp::as<arma::mat>(X_);
