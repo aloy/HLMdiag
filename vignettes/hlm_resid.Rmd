@@ -84,7 +84,7 @@ resid1_fm1 <- hlm_resid(fm1, level = 1, standardize = TRUE)
 resid1_fm1
 ```
 
-Utilizing the tibble output of `hlm_resid`, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score.
+Utilizing the tibble output of `hlm_resid`, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score or against the fitted values.
 ```{r}
 library(ggplot2)
 ggplot(data = resid1_fm1, aes(x = standLRT, y = .std.ls.resid)) + 
