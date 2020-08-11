@@ -1,27 +1,32 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
+context("tests for pull_resid")
+
 bdf <- nlme::bdf
 bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES + 
                          (1|schoolNR), data = bdf)
 bdf.lme <- nlme::lme(IQ.verb ~ ses + aritPOST + langPOST + schoolSES, 
                      random = ~1|schoolNR, data = bdf)
 
-bdf.resids.lmer.raw <- hlm_resid(bdf.lmer)
-bdf.resids.lmer.std <- hlm_resid(bdf.lmer, standardize = TRUE)
+expect_warning(bdf.resids.lmer.raw <- hlm_resid(bdf.lmer))
+expect_warning(bdf.resids.lmer.std <- hlm_resid(bdf.lmer, standardize = TRUE))
 
-bdf.resids.lme.raw <- hlm_resid(bdf.lme)
-bdf.resids.lme.std <- hlm_resid(bdf.lme, standardize = TRUE)
+expect_warning(bdf.resids.lme.raw <- hlm_resid(bdf.lme))
+expect_warning(bdf.resids.lme.std <- hlm_resid(bdf.lme, standardize = TRUE))
 
 
 test_that("ls results match hlm_resid, lme4", {
-  expect_equal(pull_resid(bdf.lmer), 
+  expect_equal(expect_warning(pull_resid(bdf.lmer)), 
                bdf.resids.lmer.raw$.ls.resid) 
-  expect_equal(pull_resid(bdf.lmer, standardize = TRUE), 
+  expect_equal(expect_warning(pull_resid(bdf.lmer, standardize = TRUE)), 
                bdf.resids.lmer.std$.std.ls.resid) 
 })
 
 test_that("ls results match hlm_resid, nlme", {
-  expect_equal(pull_resid(bdf.lme), 
+  expect_equal(expect_warning(pull_resid(bdf.lme)), 
                bdf.resids.lme.raw$.ls.resid) 
-  expect_equal(pull_resid(bdf.lme, standardize = TRUE), 
+  expect_equal(expect_warning(pull_resid(bdf.lme, standardize = TRUE)), 
                bdf.resids.lme.std$.std.ls.resid) 
 })
 

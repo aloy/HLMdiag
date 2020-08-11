@@ -1,3 +1,7 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
+
 context("tests for all influence functions")
 
 #sleepstudy models - 2 level

@@ -1,3 +1,7 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
+
 #2 level, random intercept
 bdf <- nlme::bdf
 bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES + 
@@ -5,13 +9,13 @@ bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES +
 bdf.lme <- nlme::lme(IQ.verb ~ ses + aritPOST + langPOST + schoolSES, 
                      random = ~1|schoolNR, data = bdf)
 
-bdf.resids.lmer.lvl1 <- hlm_resid(bdf.lmer)
+expect_warning(bdf.resids.lmer.lvl1 <- hlm_resid(bdf.lmer))
 bdf.resids.lmer.lvl2 <- hlm_resid(bdf.lmer, level = "schoolNR")
-bdf.resids.lmer.lvl1.std <- hlm_resid(bdf.lmer, standardize = T)
+expect_warning(bdf.resids.lmer.lvl1.std <- hlm_resid(bdf.lmer, standardize = T))
 
-bdf.resids.lme.lvl1 <- hlm_resid(bdf.lme)
+expect_warning(bdf.resids.lme.lvl1 <- hlm_resid(bdf.lme))
 bdf.resids.lme.lvl2 <- hlm_resid(bdf.lme, level = "schoolNR")
-bdf.resids.lme.lvl1.std <- hlm_resid(bdf.lme, standardize = T)
+expect_warning(bdf.resids.lme.lvl1.std <- hlm_resid(bdf.lme, standardize = T))
 
 
 test_that("correct dimentions, lme4", {
@@ -128,14 +132,14 @@ class.lmeNA <- nlme::lme(mathgain ~ mathkind + minority + mathknow +
                            ses + housepov, random = ~mathkind | schoolid/classid, 
                          data = class, na.action = na.exclude)
 test_that("respects na.action, lme4", {
-  expect_equal(nrow(hlm_resid(class.lmerNA, data = class)),
+  expect_equal(nrow(expect_warning(hlm_resid(class.lmerNA, data = class))),
                nrow(class))
   expect_equal(nrow(hlm_resid(class.lmerNA, data = class, include.ls = FALSE)),
                nrow(class))
 })
 
 test_that("respects na.action, nlme", {
-  expect_equal(nrow(hlm_resid(class.lmeNA, data = class)),
+  expect_equal(nrow(expect_warning(hlm_resid(class.lmeNA, data = class))),
                nrow(class))
   expect_equal(nrow(hlm_resid(class.lmeNA, data = class, include.ls = FALSE)),
                nrow(class))

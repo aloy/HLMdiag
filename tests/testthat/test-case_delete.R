@@ -1,3 +1,6 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
 context("basic tests for case_delete") 
 
 #there is a model failed to converge warning (need to suppress this)

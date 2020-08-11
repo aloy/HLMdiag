@@ -1,7 +1,16 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
 context("tests for hlm_augment, lmer models")
+
 
 #sleepstudy models 
 data(sleepstudy, package = 'lme4')
+
+sleepstudy2 <- sleepstudy
+sleepstudy2[7,1] <- NA
+sleepstudy2[2,2] <- NA
+
 sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)
 sleep.lme <- nlme::lme(Reaction ~ Days, random =  ~ Days|Subject, data = sleepstudy)
 sleep.lmer.aug <- hlm_augment(sleep.lmer)
@@ -46,9 +55,6 @@ test_that("Number of columns is correct when level is set for lme4 models", {
 })
 
 test_that("Number of rows is correct for different na.actions for lme4 models", {
-  sleepstudy2 <- sleepstudy
-  sleepstudy2[7,1] <- NA
-  sleepstudy2[2,2] <- NA
   sleep.lmerNA <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy2, na.action = na.exclude)
   sleep.lmerNA2 <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy2)
   

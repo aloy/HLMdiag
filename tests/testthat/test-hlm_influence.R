@@ -1,3 +1,7 @@
+library("lme4", quietly = TRUE)
+library("nlme", quietly = TRUE)
+
+
 context("tests for hlm_influence")
 
 #sleepstudy
@@ -151,7 +155,7 @@ test_that("Influence diagnostic columns match output from influence functions fo
 
 test_that("Number of rows and columns are correct when delete is specified for lme4 models", {
   #sleepstudy
-  sleep.lmer.infl <- hlm_influence(sleep.lmer, delete = c(1,10,13))
+  expect_warning(sleep.lmer.infl <- hlm_influence(sleep.lmer, delete = c(1,10,13)))
   expect_equal(nrow(sleep.lmer.infl), 1)
   expect_equal(ncol(sleep.lmer.infl), 4)
 
@@ -159,14 +163,14 @@ test_that("Number of rows and columns are correct when delete is specified for l
   expect_warning(hlm_influence(sleep.lmer, delete = c(1,10,13), leverage = "ranef"))
 
   #chemistry 
-  chem.lmer.infl <- hlm_influence(chem.lmer, delete = c(2, 8, 78))
+  expect_warning(chem.lmer.infl <- hlm_influence(chem.lmer, delete = c(2, 8, 78)))
   expect_equal(nrow(chem.lmer.infl), 1)
   expect_equal(ncol(chem.lmer.infl), 4)
 })
 
 test_that("Number of rows and columns are correct when delete is specified for nlme models", {
   #sleepstudy
-  sleep.lme.infl <- hlm_influence(sleep.lme, delete = c(1,10,13))
+  expect_warning(sleep.lme.infl <- hlm_influence(sleep.lme, delete = c(1,10,13)))
   expect_equal(nrow(sleep.lme.infl), 1)
   expect_equal(ncol(sleep.lme.infl), 4)
   
@@ -174,7 +178,7 @@ test_that("Number of rows and columns are correct when delete is specified for n
   expect_warning(hlm_influence(sleep.lme, delete = c(1,10,13), leverage = "ranef"))
   
   #chemistry
-  chem.lme.infl <- hlm_influence(chem.lme, delete = c(2, 8, 78))
+  expect_warning(chem.lme.infl <- hlm_influence(chem.lme, delete = c(2, 8, 78)))
   expect_equal(nrow(chem.lme.infl), 1)
   expect_equal(ncol(chem.lme.infl), 4)
 })
