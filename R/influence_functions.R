@@ -902,7 +902,6 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
                Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
                PACKAGE = "HLMdiag")
   
-  class(res) <- "vcov.dd"
   return(res)
 }
 
@@ -949,7 +948,6 @@ covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
                Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
                PACKAGE = "HLMdiag")
   
-  class(res) <- "vcov.dd"
   return(res)
 }
 
@@ -995,7 +993,6 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
                Vinv_ = as.matrix(mats$Vinv), XVXinv_ = as.matrix(mats$XVXinv), 
                PACKAGE = "HLMdiag")
   
-  class(res) <- "vcov.dd"
   return(res)
 }
 
