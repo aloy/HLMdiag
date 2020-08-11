@@ -68,6 +68,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   }
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
@@ -173,6 +174,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
   }
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   

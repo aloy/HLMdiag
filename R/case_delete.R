@@ -81,6 +81,7 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
   }
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
@@ -274,6 +275,7 @@ case_delete.lmerMod <- function(model, level = 1, type = c("both", "fixef", "var
   }
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level. See ?hlm_influence for more information.")
   }
   
@@ -545,7 +547,7 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
         } 
         
         if(type %in% c("both", "fixef")){
-          fixef.delete[[i]] <- c(deleted = i, fixef(model.delete))
+          fixef.delete[[i]] <- c(deleted = i, nlme::fixef(model.delete))
           vcov.delete[[i]]  <- as.matrix(vcov(model.delete))
         }
         
@@ -569,13 +571,13 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       }
       
       if(is.null(randcall)) {
-        model.delete <- lme(formula(model), data = modframe[-delete,])
+        model.delete <- nlme::lme(formula(model), data = modframe[-delete,])
       } else{
-        model.delete <- lme(formula(model), data = modframe[-delete,], random = randcall)
+        model.delete <- nlme::lme(formula(model), data = modframe[-delete,], random = randcall)
       }
       
       if(type %in% c("both", "fixef")) {
-        fixef.delete   <- fixef(model.delete)
+        fixef.delete   <- nlme::fixef(model.delete)
         vcov.delete    <- as.matrix(vcov(model.delete))
       }
       
@@ -608,9 +610,9 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       
   
       if(is.null(randcall)) {
-        model.delete <- lapply(data.delete, lme, fixed = formula(model))
+        model.delete <- lapply(data.delete, nlme::lme, fixed = formula(model))
       } else{
-        model.delete <- lapply(data.delete, lme, fixed = formula(model), random = randcall)
+        model.delete <- lapply(data.delete, nlme::lme, fixed = formula(model), random = randcall)
       }
       
       
@@ -638,7 +640,7 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       varcomp.delete <- lapply(model.delete, varcomp.lme)
       
       if(type %in% c("both", "fixef")){
-        fixef.delete <- lapply(model.delete, fixef)
+        fixef.delete <- lapply(model.delete, nlme::fixef)
         
         vcov.delete <- lapply(model.delete, vcov)
         vcov.delete <- lapply(vcov.delete, as.matrix)
@@ -688,9 +690,9 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       
       
       if(is.null(randcall)) {
-        model.delete   <- lme(formula(model), data = modframe[index,])
+        model.delete   <- nlme::lme(formula(model), data = modframe[index,])
       } else{
-        model.delete   <- lme(formula(model), data = modframe[index,], random = randcall)
+        model.delete   <- nlme::lme(formula(model), data = modframe[index,], random = randcall)
       }
       
       if (sum(deleted_levels %in% model.delete$groups[[level]]) > 0) {
@@ -698,7 +700,7 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
       }
       
       if(type %in% c("both", "fixef")) {
-        fixef.delete   <- fixef(model.delete)
+        fixef.delete   <- nlme::fixef(model.delete)
         vcov.delete    <-  as.matrix(vcov(model.delete))
       }
       
@@ -733,13 +735,13 @@ case_delete.lme <- function(model, level = 1, type = c("both", "fixef", "varcomp
           temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]]) 
         }
         ranef.delete <- temp
-        names(ranef.delete) <- names(ranef(model))
+        names(ranef.delete) <- names(nlme::ranef(model))
       }
     }
   }
   
-  fixef.original <- fixef(model)
-  ranef.original <- ranef(model)
+  fixef.original <- nlme::fixef(model)
+  ranef.original <- nlme::ranef(model)
   if(length(ranef.original) == 1) ranef.original <- ranef.original[[1]] 
   
   vcov.original <- as.matrix(vcov(model))

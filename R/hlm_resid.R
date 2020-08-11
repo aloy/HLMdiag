@@ -160,7 +160,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
       if(include.ls == TRUE){
         problem_dfs <- cbind(ls.resid, mar.resid)
       } else {
-        problem_dfs <- mar.resids
+        problem_dfs <- mar.resid
       }
     }
     

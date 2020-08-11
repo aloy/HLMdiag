@@ -333,6 +333,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' 
 cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -401,6 +402,7 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
 #' @method cooks.distance lmerMod
 cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -492,6 +494,7 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr
 #' @method cooks.distance lme
 cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -608,6 +611,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' }
 mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -663,6 +667,7 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @method mdffits lmerMod
 mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -728,6 +733,7 @@ mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FAL
 #' @method mdffits lme
 mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -859,6 +865,7 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -905,6 +912,7 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@method covratio lmerMod
 covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -951,6 +959,7 @@ covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@method covratio lme
 covratio.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -1015,6 +1024,7 @@ covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   if(level != 1) {
@@ -1059,6 +1069,7 @@ covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@method covtrace lmerMod
 covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -1105,6 +1116,7 @@ covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@method covtrace lme
 covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -1190,6 +1202,7 @@ rvc.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @method rvc lmerMod
 rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
@@ -1202,6 +1215,7 @@ rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #' @method rvc lme
 rvc.lme <- function(object, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
+    group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   delete <- case_delete(object, level = level, type = "varcomp", delete = delete)

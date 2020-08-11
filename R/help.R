@@ -1,7 +1,7 @@
 #' Diagnostic tools for hierarchical (multilevel) linear models
 #' 
 #' HLMdiag provides a suite of diagnostic tools for hierarchical 
-#' (multilevel) linear models fit using \code{\link{lmer}}. 
+#' (multilevel) linear models fit using \code{\link[lme4]{lmer}}. 
 #' These tools are grouped below by purpose. 
 #' See the help documentation for additional information
 #' about each function.
@@ -50,14 +50,27 @@
 #' and Q-Q plots that combine the functionality of \code{\link{qqnorm}} and
 #' \code{\link{qqline}} (\code{\link{ggplot_qqnorm}}).
 #' 
-#' @useDynLib HLMdiag
-#' @import lme4
+#' @useDynLib HLMdiag, .registration = TRUE
+#' @importFrom magrittr %>%
+#' @importFrom reshape2 melt dcast
+#' @importFrom plyr adply ddply
+#' @importFrom MASS rlm
+#' @importFrom mgcv tensor.prod.model.matrix
+#' @importFrom dplyr select left_join mutate across bind_cols filter arrange desc
+#' @importFrom stringr str_c str_detect str_split
+#' @importFrom purrr map map_lgl map_df map_dfc map_dfr map_dbl
+#' @importFrom tibble tibble
+#' @importFrom tidyselect all_of
+#' @importFrom janitor clean_names
 #' @import Matrix
-#' # @import methods
-#' @import ply
-#' @import reshape2
-#' @importFrom stats4 coef, confint, plot
-#' @importFrom stats cooks.distance, covratio
+#' @import methods
+#' @import ggplot2
+#' @importFrom grDevices devAskNewPage
+#' @importFrom stats coef confint IQR aggregate 
+#'  complete.cases fitted formula lm lm.influence model.frame
+#'  model.matrix ppoints qnorm qt quantile reorder resid rstandard
+#'  varimax vcov cooks.distance covratio as.formula getCall na.exclude
+#'  predict sigma
 #' @docType package
 #' @name HLMdiag
 #' @aliases HLMdiag package-HLMdiag

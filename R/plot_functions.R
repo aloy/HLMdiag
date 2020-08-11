@@ -43,9 +43,13 @@
 #'dotplot_diag(x = subject.cd, name = "cooks.distance, cutoff = "internal")
 #' @export
 #' @keywords hplot
+#' @importFrom rlang .data
 dotplot_diag <- function(x, cutoff, 
-                          name = c("cooks.distance", "mdffits", "covratio", "covtrace", "rvc", "leverage"),
+                         name = c("cooks.distance", "mdffits", "covratio", "covtrace", "rvc", "leverage"),
                          data, index = NULL, modify = FALSE, ...) {
+  
+  # Address no visible binding for R CMD CHECK 
+  n.factor <- n <- value <- extreme <- NULL
   
   if(!modify %in% c(FALSE, "boxplot", "dotplot")) {
     stop("modify should be FALSE or either 'boxplot' or 'dotplot'")
@@ -90,8 +94,8 @@ dotplot_diag <- function(x, cutoff,
 
   df <- data.frame(index = index, value = x) 
   df <- df %>% 
-    arrange(desc(value)) %>%
-    mutate(n = nrow(df):1, n.factor = factor(seq(nrow(df),1))) 
+    arrange(desc(.data$value)) %>%
+    mutate(n = nrow(df):1, n.factor = factor(seq(nrow(df), 1))) 
   
   if(!is.null(cutoff)){
     
@@ -100,36 +104,52 @@ dotplot_diag <- function(x, cutoff,
     if(is.numeric(cutoff)){ 
       if(!name %in% c("covratio", "rvc") ){
         df <- df %>%
-          mutate(extreme = ifelse(value > cutoff, TRUE, FALSE))
+          mutate(extreme = ifelse(.data$value > cutoff, TRUE, FALSE))
       }
       else {
         df <- df %>%
-          mutate(extreme = ifelse(value < cutoff[1] | value > cutoff[2], TRUE, FALSE))
+          mutate(extreme = ifelse(.data$value < cutoff[1] | .data$value > cutoff[2], TRUE, FALSE))
       }
       
       
       if (modify == FALSE) {
-        p <- ggplot(dplyr::filter(df, extreme == FALSE)) + geom_point(aes(x = n, y = value), 
-                                                                      colour = I("blue"), inherit.aes = FALSE) 
+        p <- ggplot(dplyr::filter(df, .data$extreme == FALSE)) + 
+          geom_point(aes(x = n, y = value), colour = I("blue"), inherit.aes = FALSE) 
         
         if( sum(df$extreme) > 0 ){
-          p <- p + geom_point(data = subset(df, extreme == TRUE), aes(x = n, 
-                                                                      y = value), color = I("red"), shape = 17) +
-            geom_text(data = df[1:5,], aes(x = n, y = value, label = index,  hjust=.5, vjust=1.5, size=3)) 
+          p <- p + 
+            geom_point(
+              data = subset(df, extreme == TRUE), 
+              aes(x = n, y = value), 
+              color = I("red"), 
+              shape = 17
+            ) +
+            geom_text(
+              data = df[1:5,], 
+              aes(x = n, y = value, label = index,  hjust=.5, vjust=1.5, size=3)
+            ) 
         }
         
         if (!name %in% c("covratio", "rvc")) {
-          p + geom_hline(aes(yintercept = cutoff), colour=I("red")) +
-            theme(legend.position = "none", axis.title.y = element_blank(), 
-                  axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+          p + geom_hline(aes(yintercept = cutoff), colour = I("red")) +
+            theme(
+              legend.position = "none", 
+              axis.title.y = element_blank(), 
+              axis.text.y = element_blank(), 
+              axis.ticks.y = element_blank()
+            ) +
             labs(y = name) +
             coord_flip() 
         }
         else {
-          p + geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) +
-            geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) +
-            theme(legend.position = "none", axis.title.y = element_blank(), 
-                  axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+          p + geom_hline(aes(yintercept = cutoff[1]), colour = I("red")) +
+            geom_hline(aes(yintercept = cutoff[2]), colour = I("red")) +
+            theme(
+              legend.position = "none", 
+              axis.title.y = element_blank(), 
+              axis.text.y = element_blank(), 
+              axis.ticks.y = element_blank()
+            ) +
             labs(y = name) +
             coord_flip() 
         }
@@ -137,43 +157,60 @@ dotplot_diag <- function(x, cutoff,
       }
       
       else { #space saving measure 
-        levels(df$n.factor)[levels(df$n.factor) %in% filter(df, extreme == FALSE)$n.factor] <- 0
+        levels(df$n.factor)[levels(df$n.factor) %in% filter(df, .data$extreme == FALSE)$n.factor] <- 0
         
-        p <- ggplot(dplyr::filter(df, extreme == FALSE)) 
+        p <- ggplot(dplyr::filter(df, .data$extreme == FALSE)) 
         
         if (modify == "boxplot") {
-          p <- p + geom_boxplot(aes(x = n.factor,y = value, group = 1), inherit.aes = FALSE) 
+          p <- p + geom_boxplot(aes(x = n.factor, y = value, group = 1), inherit.aes = FALSE) 
         }
         if (modify == "dotplot") {
-          p <- p  + geom_point(aes(x = n.factor, y = value), 
-                               colour = I("blue"), inherit.aes = FALSE) 
+          p <- p  + geom_point(
+            aes(x = n.factor, y = value), 
+            colour = I("blue"), 
+            inherit.aes = FALSE
+          ) 
         }
         
         if( sum(df$extreme) > 0 ){
           
           p <- p +
-            geom_point(data = filter(df, extreme == TRUE), aes(x = n.factor,
-                                                               y = value),
-                       color = I("red"), shape = 17, inherit.aes = FALSE)
-            geom_text(data = filter(df, extreme == TRUE), aes(x = n.factor,
-                                                              y = value,
-                                                              label = index,  
-                                                              hjust=.5, vjust=1.5, size=3), inherit.aes = FALSE)  
+            geom_point(
+              data = filter(df, extreme == TRUE), 
+              aes(x = n.factor, y = value),
+              color = I("red"), 
+              shape = 17, 
+              inherit.aes = FALSE
+            ) +
+            geom_text(
+              data = filter(df, .data$extreme == TRUE), 
+              aes(x = n.factor, y = value, label = index,  
+                  hjust = .5, vjust = 1.5, size = 3), 
+              inherit.aes = FALSE
+            )  
         }
         
         
         if (!name %in% c("covratio", "rvc")) {
           p + geom_hline(aes(yintercept = cutoff), colour=I("red")) +
-            theme(legend.position = "none", axis.title.y = element_blank(), 
-                  axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+            theme(
+              legend.position = "none", 
+              axis.title.y = element_blank(), 
+              axis.text.y = element_blank(), 
+              axis.ticks.y = element_blank()
+            ) +
             labs(y = name) +
             coord_flip() 
         }
         else {
           p + geom_hline(aes(yintercept = cutoff[1]), colour=I("red")) +
             geom_hline(aes(yintercept = cutoff[2]), colour=I("red")) +
-            theme(legend.position = "none", axis.title.y = element_blank(), 
-                  axis.text.y = element_blank(), axis.ticks.y = element_blank()) +
+            theme(
+              legend.position = "none", 
+              axis.title.y = element_blank(), 
+              axis.text.y = element_blank(), 
+              axis.ticks.y = element_blank()
+            ) +
             labs(y = name) +
             coord_flip() 
         }

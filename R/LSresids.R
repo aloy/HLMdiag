@@ -333,7 +333,9 @@ LSresids.lmerMod <- function(object, level, standardize = FALSE, ...){
   }
 }
 
-
+# Solving issue for R CMD check with tidyselect::where 
+# This is currently the recommended practice
+utils::globalVariables("where")
 
 #' @export
 #' @rdname LSresids.mer
