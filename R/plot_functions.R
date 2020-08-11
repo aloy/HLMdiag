@@ -40,7 +40,7 @@
 #'dotplot_diag(x = mdffits, data = subject.diag, name = "mdffits",
 #'              name = "mdffits", modify = "dotplot")
 #'              
-#'dotplot_diag(x = subject.cd, name = "cooks.distance, cutoff = "internal")
+#'dotplot_diag(x = subject.cd, name = "cooks.distance", cutoff = "internal")
 #' @export
 #' @keywords hplot
 #' @importFrom rlang .data

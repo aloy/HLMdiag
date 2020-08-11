@@ -1,6 +1,8 @@
 #include <RcppArmadillo.h>
 
-extern "C" SEXP mdffitsSubset(SEXP index, SEXP X_, SEXP P_,
+// [[Rcpp::depends(RcppArmadillo)]]
+
+SEXP mdffitsSubset(SEXP index, SEXP X_, SEXP P_,
 							   SEXP Vinv_, SEXP XVXinv_, SEXP e_) {
   Rcpp::List grpInd(index);
   arma::mat X = Rcpp::as<arma::mat>(X_);

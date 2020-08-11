@@ -1,6 +1,8 @@
 #include <RcppArmadillo.h>
 
-extern "C" SEXP cooksdObs(SEXP y_, SEXP X_, SEXP Vinv_, 
+// [[Rcpp::depends(RcppArmadillo)]]
+
+SEXP cooksdObs(SEXP y_, SEXP X_, SEXP Vinv_, 
                            SEXP XVXinv_, SEXP beta_) {
   arma::colvec Y = Rcpp::as<arma::colvec>(y_);
   arma::mat X = Rcpp::as<arma::mat>(X_);

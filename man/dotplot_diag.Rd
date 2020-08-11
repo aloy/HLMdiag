@@ -47,6 +47,23 @@ The resulting plot uses \code{coord_flip} to rotate the plot, so when
 adding customized axis labels you will need to flip the names 
 between the x and y axes.
 }
+\examples{
+data(sleepstudy, package = 'lme4')
+fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+
+# Subject level deletion and diagnostics
+subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
+subject.diag <- hlm_influence(subject.del)
+subject.cd <- cooks.distance(fm)
+
+dotplot_diag(x = cooksd, data = subject.diag, cutoff = "internal",
+             name = "cooks.distance", modify = FALSE)
+             
+dotplot_diag(x = mdffits, data = subject.diag, name = "mdffits",
+             name = "mdffits", modify = "dotplot")
+             
+dotplot_diag(x = subject.cd, name = "cooks.distance", cutoff = "internal")
+}
 \author{
 Adam Loy \email{loyad01@gmail.com}
 }
