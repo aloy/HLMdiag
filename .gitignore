@@ -34,7 +34,10 @@
 *.history
 
 *.o
+*.so
+*.dll
 
 src/HLMdiag.so
 
 .RData
+inst/doc

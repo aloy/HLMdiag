@@ -17,13 +17,16 @@ problem_factor_groups <- function(formula, data){
 	model_frame <- data
 	
 	g <- deparse(form[[3]][[3]])
+	g <- strsplit(g, split = ":")[[1]][1] # This fails when (1|Lvl3) + (Lvl3:Lvl2)
 	ngroups <- length(unique(data[,g]))
 	y <- deparse(form[[2]])
 	xs <- setdiff(names(model_frame), c(deparse(form[[2]]), g))
-	xs_frame <- model_frame[, xs]
+	xs_frame <- model_frame[xs]
 	
-	are_factors <- rapply(xs_frame, class)
-	are_factors <- names(are_factors)[which(are_factors == "factor")]
+	# are_factors <- rapply(xs_frame, class)
+	# are_factors <- names(are_factors)[which(are_factors == "factor")]
+	are_factors <- dplyr::select(xs_frame, function(x) any(is.factor(x), is.character(x)))
+	are_factors <- colnames(are_factors)
 	
 	id_vars <- c(g, are_factors)
 	molten_model_frame <- melt(model_frame, id = id_vars)
@@ -178,6 +181,7 @@ adjust_lmList.formula <- function(object, data, pool){
 	check_results <- unlist(lapply(lmList_result, is.null))
 	form <- formula(object)
 	g <- deparse(form[[3]][[3]]) 
+	g <- strsplit(g, split = ":")[[1]][1] # This fails when (1|Lvl3) + (Lvl3:Lvl2)
 	ngroups <- length(unique(data[,g]))
 	
 	if(sum(check_results) != 0){ #return(lmList_result)
@@ -242,7 +246,6 @@ adjust_lmList.formula <- function(object, data, pool){
 
 #' @export
 #' @method coef adjust_lmList
-#' @S3method coef adjust_lmList
 # setMethod("coef", signature(object = "adjust_lmList"),
 coef.adjust_lmList <- 	function(object, ...){
 			coefs <- lapply(object, coef)
@@ -262,7 +265,6 @@ coef.adjust_lmList <- 	function(object, ...){
 
 #' @export
 #' @method print adjust_lmList
-#' @S3method print adjust_lmList
 # setMethod("show", signature(object = "adjust_lmList"), 
 print.adjust_lmList <- 	function(x, ...){
 		cat("Call:", deparse(attr(x, "call")), "\n")
@@ -274,7 +276,6 @@ print.adjust_lmList <- 	function(x, ...){
 
 #' @export
 #' @method confint adjust_lmList
-#' @S3method confint adjust_lmList
 # setMethod("confint", signature(object = "adjust_lmList"),
 confint.adjust_lmList <- function(object, parm, level = 0.95, pool = NULL, ...){
 		#if(length(object < 1))
@@ -315,7 +316,6 @@ confint.adjust_lmList <- function(object, parm, level = 0.95, pool = NULL, ...){
 
 #' @export
 #' @method plot adjust_lmList.confint
-#' @S3method plot adjust_lmList.confint
 # setMethod("plot", signature(x = "adjust_lmList.confint"),
 plot.adjust_lmList.confint <-	function(x, y, ...){
 # 		stopifnot(require("ggplot2"))

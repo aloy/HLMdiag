@@ -51,6 +51,34 @@ varcomp.mer <- function(object) {
 
   res <- c(sig^2, vc.vec)
   names(res) <- c("sigma2", vc.names)
+  
+  #remove 0s 
+  res <- res[res != 0]
+  return(res)
+}
+
+varcomp.lme <- function(model) {
+  vc <- model$modelStruct$reStruct
+  sig2 <- sigma(model)^2
+  vc.list <- lapply(vc, function(x) {
+    vc <- as.matrix(x) * sig2
+  })
+  vc.mat <- bdiag(vc.list)
+  
+  if(isDiagonal(vc.mat)) {
+    vc.vec   <- diag(vc.mat)
+    vc.names <- paste("D", 1:length(vc.vec), 1:length(vc.vec), sep="")
+  } else{
+    vc.vec <- as.matrix(vc.mat)[!upper.tri(vc.mat)]
+    vc.index <- which(!upper.tri(vc.mat) == TRUE, arr.ind = TRUE)
+    vc.names <- paste("D", vc.index[,1], vc.index[,2], sep="")
+  }
+  
+  res <- c(sig2, vc.vec)
+  names(res) <- c("sigma2", vc.names)
+  
+  #remove 0s 
+  res <- res[res != 0]
   return(res)
 }
 
@@ -137,7 +165,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # Extracting/calculating key matrices from lme object 
 # @param model an lme object
 .lme_matrices <- function(model) {
-  design.info <- extract.lmeDesign(model)
+  design.info <- suppressWarnings(RLRsim::extract.lmeDesign(model)) 
   
   Y <- design.info$y
   X <- design.info$X
@@ -152,7 +180,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
   # Constructing V = Cov(Y)
   sig0 <- model$sigma
-  V    <- sig0^2 * .extractV.lme(model)
+  V <- extract_design(model)$V 
   
   # Inverting V
   V.chol <- chol( V )
@@ -175,7 +203,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # that is available to all users. This should not be exported.
 se.ranef <- function (object) 
 {
-  se.bygroup <- lme4::ranef(object, postVar = TRUE)
+  se.bygroup <- lme4::ranef(object, condVar = TRUE)
   n.groupings <- length(se.bygroup)
   for (m in 1:n.groupings) {
     vars.m <- attr(se.bygroup[[m]], "postVar")
@@ -256,4 +284,151 @@ isNestedModel <- function(object) {
   RES <- cond.var + Z %*% D %*% t(Z)
   
   return(RES)
+}
+
+
+#' Extracting covariance matricies from lme
+#' 
+#' This function extracts the full covariance matrices from a mixed/hierarchical
+#' linear model fit using \code{lme}.
+#' 
+#' @export
+#' @rdname extract_design
+#' @aliases extract_design
+#' @return A list of matrices is returned.
+#' \itemize{
+#' \item{\code{D} contains the covariance matrix of the random effects.}
+#' \item{\code{V} contains the covariance matrix of the response.}
+#' \item{\code{X} contains the fixed-effect model matrix.}
+#' \item{\code{Z} contians the random-effect model matrix.}}
+#' @param b a fitted model object of class \code{lme}.
+#' @author Adam Loy \email{loyad01@@gmail.com}
+#' @references This method has been adapted from the method
+#'   \code{mgcv::extract.lme.cov} in the \code{mgcv} package, written by Simon
+#'   N. Wood \email{simon.wood@@r-project.org}.
+extract_design <- function (b){
+  if (!inherits(b, "lme")) 
+    stop("object does not appear to be of class lme")
+  data <- b$data
+  grps <- nlme::getGroups(b)
+  n <- length(grps)
+  if (is.null(b$modelStruct$varStruct)) 
+    w <- rep(b$sigma, n)
+  else {
+    w <- 1/nlme::varWeights(b$modelStruct$varStruct)
+    group.name <- names(b$groups)
+    order.txt <- paste("ind<-order(data[[\"", group.name[1], 
+                       "\"]]", sep = "")
+    if (length(b$groups) > 1) 
+      for (i in 2:length(b$groups)) order.txt <- paste(order.txt, 
+                                                       ",data[[\"", group.name[i], "\"]]", sep = "")
+    order.txt <- paste(order.txt, ")")
+    eval(parse(text = order.txt))
+    w[ind] <- w
+    w <- w * b$sigma
+  }
+  if (is.null(b$modelStruct$corStruct)) 
+    V <- diag(n)
+  else {
+    c.m <- nlme::corMatrix(b$modelStruct$corStruct)
+    if (!is.list(c.m)) 
+      V <- c.m
+    else {
+      V <- matrix(0, n, n)
+      gr.name <- names(c.m)
+      n.g <- length(c.m)
+      j0 <- 1
+      ind <- ii <- 1:n
+      for (i in 1:n.g) {
+        j1 <- j0 + nrow(c.m[[i]]) - 1
+        V[j0:j1, j0:j1] <- c.m[[i]]
+        ind[j0:j1] <- ii[grps == gr.name[i]]
+        j0 <- j1 + 1
+      }
+      V[ind, ] <- V
+      V[, ind] <- V
+    }
+  }
+  V <- as.vector(w) * t(as.vector(w) * V)
+  X <- list()
+  grp.dims <- b$dims$ncol
+  Zt <- model.matrix(b$modelStruct$reStruct, data)
+  cov <- as.matrix(b$modelStruct$reStruct)
+  i.col <- 1
+  n.levels <- length(b$groups)
+  Z <- matrix(0, n, 0)
+  
+  for (i in 1:(n.levels)) {
+    if (length(levels(b$groups[[n.levels - i + 1]])) == 
+        1) {
+      X[[1]] <- matrix(rep(1, nrow(b$groups)))
+    }
+    else {
+      clist <- list(`b$groups[[n.levels - i + 1]]` = c("contr.treatment", 
+                                                       "contr.treatment"))
+      X[[1]] <- model.matrix(~b$groups[[n.levels - 
+                                          i + 1]] - 1, contrasts.arg = clist)
+    }
+    X[[2]] <- Zt[, i.col:(i.col + grp.dims[i] - 1), drop = FALSE]
+    i.col <- i.col + grp.dims[i]
+    Z <- cbind(Z, tensor.prod.model.matrix(X))
+  }
+  Vr <- matrix(0, ncol(Z), ncol(Z))
+  start <- 1
+  for (i in 1:(n.levels)) {
+    k <- n.levels - i + 1
+    for (j in 1:b$dims$ngrps[i]) {
+      stop <- start + ncol(cov[[k]]) - 1
+      Vr[start:stop, start:stop] <- cov[[k]]
+      start <- stop + 1
+    }
+  }
+  Vr <- Vr * b$sigma^2
+  V <- V + Z %*% Vr %*% t(Z)
+  
+  return(
+    list(
+      D = Vr / b$sigma^2,
+      V = V,
+      X = X,
+      Z = Z
+    )
+  )
+}
+
+#adding rows with NAs into returned tibble
+
+.lmerMod_add_NArows <- function(model, frame, na.action, data) { 
+  rownums <- NULL
+  for (i in 1:length(na.action)) {
+    rownums[i] <- na.action[[i]]  
+  }
+  df <- data %>%
+    dplyr::anti_join(model@frame, by = colnames(model@frame)) %>%
+    dplyr::select(colnames(model@frame))
+  
+  rownames(df) <- rownums
+  
+  for (i in 1:nrow(df)) {
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownames(df)[i]))
+  }
+  
+  return(frame)
+}
+
+.lme_add_NArows <- function(model, frame, na.action, org.data, fixed.data) {
+  rownums <- NULL
+  for (i in 1:length(na.action)) {
+    rownums[i] <- na.action[[i]]
+  }
+  
+  df <- org.data %>%
+    dplyr::anti_join(fixed.data, by = colnames(fixed.data)) %>%
+    dplyr::select(colnames(fixed.data))
+  
+  for (i in 1:length(na.action)) {
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownums[i]))
+  }
+  
+  return(frame)
 }

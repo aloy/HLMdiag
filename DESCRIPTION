@@ -23,13 +23,25 @@ Imports:
     MASS,
     Matrix,
     RLRsim,
-    mgcv
+    mgcv,
+    dplyr,
+    magrittr,
+    stringr,
+    purrr,
+    tibble,
+    tidyselect,
+    janitor,
+    Rcpp,
+    rlang
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
     WWGbook,
     lme4 (>= 1.0),
-    nlme
+    nlme,
+    testthat,
+    knitr,
+    rmarkdown
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
@@ -42,7 +54,11 @@ Collate:
     'adjust_formula_lmList.R'
     'case_delete.R'
     'LSresids.R'
+    'HLMdiag-package.R'
     'HLMresid.R'
+    'hlm_augment.R'
+    'hlm_influence.R'
+    'hlm_resid.R'
     'help.R'
     'influence_functions.R'
     'utility_functions.R'
@@ -50,5 +66,9 @@ Collate:
     'autism.R'
     'ahd.R'
     'radon.R'
+    'pull_resid.R'
+Encoding: UTF-8
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
+RoxygenNote: 7.1.0
+VignetteBuilder: knitr

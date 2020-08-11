@@ -1,0 +1,107 @@
+---
+title: "hlm_resid"
+authors: "Jack Moran, Jaylin Lowe, Adam Loy"
+date: "'Sys.Date()'"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# HLMDiag: a diagnostic tool for hierarchical (multilevel) linear models
+
+This vignette introduces new functions concerning residual diagnostics in `HLMdiag`, specifically the `hlm_resid` function. The function `hlm_resid` is intended to replace `HLMresid` in functionality, and works more robustly with 3-level models as well as models fit with `nlme`. This vignette will also explicitly state how different types of residuals are calculated and how they compare to the `resid` functions found in `lme4` and `nlme`
+
+#hlm_resid function
+
+-introduce function 
+-demo what it can do 
+-explain various residuals
+-cover different level options
+-ls.include
+-dotplot_diag can be used with the columns from hlm_influence to visually represent the different values and to illustrate 
+values that go beyond the cutoff 
+-mention na.action??? 
+
+## Introduction:
+
+The function `hlm_resid` takes a hierarchical linear model fit as a `lmerMod` or `lme` object and extracts residuals and predicted values from the model, using both Least Squares (LS) and Empirical Bayes (EB) methods in estimating parameters. Whereas the old function, `HLMresid` would return a vector with a single type of residual, `hlm_resid` appends specified residuals to the data frame of the model in the form of a tibble. The use of a tibble allows the analyst to easily plot residuals against explanatory variables and identify possible outliers or model deficiencies. The function draws heavy inspiration from the `augment` function in the `broom` package, however offers more options for the types of residuals that the analyst may want to use.
+
+## Multilevel data:
+
+We illustrate the use of hlm_resid using an example of a hierarchical linear model with data from 
+
+-CITE CLASSROOM DATA
+-EXPLAIN CLASSROOM DATA
+-EXPLAIN CLASSROOM MODEL
+```{r setup}
+class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
+head(class)
+
+library(lme4)
+fm.1 <- lme4::lmer(mathgain ~ mathkind + sex + minority + ses + housepov +
+                     (1|schoolid/classid), data = class)
+fm.1
+```
+
+The presence of multiple sources of variability in hierarchical linear models (HLMs) results in numerous quantities defining residuals. All functions in `HLMdiag` follow the classification by *Hilden-Minton (1995)* and define three types of residuals:
+
+1. level-1 (conditional) residuals
+1. level-2+ (random effects) residuals
+1. marginal (composite) residuals
+
+For the equations used to calculate the above residuals, see the release paper for `HLMdiag` in the *Journal of Statistical Software*. Note that these residuals are confounded as they are interrelated. This confounding of the residuals can lead to complications in the diagnosis of model deficiencies, since a violation in one type of residual may manifest itself as an alleged violation in a different residual. To cope with these confounded residuals *Hilden-Minton (1995)* recommends an **upward residual analysis**, as it is possible to examine level-1 residuals that are unconfounded by other residuals. This is the approach that we will follow in demonstrating the use of `hlm_resid`, starting by diagnosing level-1 residuals and then checking higher level residuals.
+
+## hlm_resid()
+
+The function `hlm_resid()` has 3 main parameters: `object`, `level`, and `standardize`. The `object` parameter takes the model of interest, and `standardize` takes a logical and indicates if the returned residuals should be scaled. The `level` parameter is how the analyst accesses various types of residuals, with the default, `level = 1` returning level-1 and marginal residuals and level set to a grouping factor returning higher level residuals.
+
+Using upward analysis, we start with the level-1 residuals. To obtain standardized level-1 residuals, we use the call `hlm_resid` on our fit model, which returns a tibble.
+```{r, eval = F}
+library(HLMdiag)
+lvl1.resid <- hlm_resid(fm.1, level = 1, standardize = TRUE)
+lvl1.resid
+```
+
+-Maybe move the EB verus LS discussion here?
+
+Note that 6 columns have been appended to the model frame.
+
+* `.std.resid` contains the standardized Empirical Bayes (EB) residuals for each observation
+* `.fitted` conatins the Empirical Bayes (EB) fitted values
+* `.std.ls.resid` contains the standardized Least Squares (LS) residuals
+* `.ls.fitted` contains Least Squares fitted values
+* `.chol.mar.resid` contains the standaredized marginal residuals, otherwise known as the Cholesky residuals
+* `.mar.fitted` contains the marginal fitted values
+
+Typically in upwards analysis, it is preferable to look at the residuals calculated using the least squares (LS) method, as they are unconfounded with higher level residuals. However, LS residuals rely on sufficiently large sample sizes for all level-2 groups so that fixed effect and random effect coefficients can be accurately estimated for groups. Looking at the class dataset, we see that level two groups have on average 3.8 observations per group, which is troubling for the reliability of LS residuals. The warning that `hlm_resid` throws confirms this issue, and so we will examine the Empirical Bayes (EB) residuals instead, which are estimated with maximum likelihood. It should be noted that these EB residuals are confounded with higher level residuals. To return remove the LS residuals from the output, we can use the parameter, `include.ls = FALSE`.
+
+```{r, eval = F}
+lvl1.resid <- hlm_resid(fm.1, level = 1, standardize = TRUE, include.ls = FALSE)
+lvl1.resid
+```
+
+Now that we have the resiudals and observations in the same tibble, it is easy to create graphics. Here we will use `ggplot2`, staying within the tidyverse.
+```{r}
+library(ggplot2)
+lvl1.resid$id <- as.numeric(rownames(lvl1.resid))
+ggplot(data = lvl1.resid) + 
+  geom_point(aes(x = id, y = .std.resid)) + 
+  labs(title = "EB residuals against ID")
+
+ggplot(data = lvl1.resid) + 
+  geom_point(aes(x = mathgain, y = .std.resid)) + 
+  labs(title = "EB residuals against response")
+```
+
+

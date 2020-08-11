@@ -1,0 +1,89 @@
+---
+title: "hlm_influence and Influence Diagnostics in HLMdiag"
+authors: "Jaylin Lowe, Jack Moran, Adam Loy"
+date: "'Sys.Date()'"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette introduces new functions concerning influence diagnostics in `HLMdiag`, specifically the `hlm_influence` and `hlm_augment` functions. It also covers new updates to the `case_delete` function, which can now be called on three level models or on `lme` models created from the `nlme` package. Additionally, this vignette compares Cook's distance values obtained through `HLMdiag` functions `case_delete` and `cooks_distance` to Cook's distance values from the `lme4`, `influence.ME`, and `car` packages and explores the differences between them. 
+
+#hlm_influence function 
+
+-introduce function 
+-demo what it can do 
+-cover different level options
+-different leverage options
+-different delete options
+-one step approximations versus full refits 
+-dotplot_diag can be used with the columns from hlm_influence to visually represent the different values and to illustrate 
+values that go beyond the cutoff 
+-mention na.action??? 
+
+###Introduction 
+
+The `hlm_influence` function provides a wrapper that returns influence diagnostics appends to the original model frame. It is useful for assessing the influence of individual observations or groups, and can also be used with `dotplot_diag` to provide an easy way of obtaining visual representations of influence diagnostics. The diagnostics returned by `hlm_influence` can include Cook's distance, MDFFITS, covariance trace (covtrace), covariance ratio (covratio), leverage, and relative variance change (RVC). 
+
+IS THIS PART NECESSARY?? (mostly pulled from Adam's paper)
+Cook's distance and MDFFITS both measure the distance between fixed effects estimated from the full dataset and those obtained from the reduced data. For Cook's distance, the change in parameter estimates is scaled by the estimated covariance matrix of the original parameter estimates, while for MDFFITS, the change is scaled by the estimated covariance matrix of the deletion estimates. NEED TO ADD THE OTHER PARAMETERS???? 
+
+To explore the functionality of `hlm_influence`, we will use a subset of the dataset `Chem97` from the `mlmRev` package. The dataset contains the chemistry exam scores of 257 students in Britain in 1997. Students attend one of 27 different schools, and each school is grouped within a single local education authority, labeled as "lea" in the dataset. 
+```{r}
+data("Chem97", package = "mlmRev")
+Chem97 <- tibble::as_tibble(Chem97[1:257,])
+Chem97
+```
+
+We will fit a simple three level hierarchical linear model using the `lme4` package: 
+```{r}
+chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
+```
+
+###Obtain influence diagnostics at different levels with `level`
+`hlm_influence` can be used to obtain influence diagnostics for each individual case, or larger groups. For example, to obtain a tibble with influence diagnostics for all 257 students we can use the following:
+```{r}
+infl <- hlm_influence(chem.lmer, level = 1)
+infl
+```
+
+The resulting tibble can be used along with `dotplot_diag` to identify potentially influential observations using either an internal caculated cutoff of 3*IQR or a provided cutoff. For example, the plot shown below reveals and labels all observations above the internally calculated cutoff. Note that the `modify` parameter is specified; this allows for the influential observations to be more visible in the plot. 
+```{r}
+dotplot_diag(infl$cooksd, name = "cooks.distance", cutoff = "internal", modify = "dotplot")
+```
+
+In addition to identifying influencial observations, it may also be useful to identify influential groups. The `level` parameter in `hlm_influence` can be used for this purpose. For example, we can obtain influence diagnostics for each school:
+```{r}
+infl.schools <- hlm_influence(chem.lmer, level = "school:lea")
+infl.schools
+```
+Note that the `level` parameter is set as `school:lea`, not `school`. The level parameter should be specified as found in `model@flist` for lmerMod objects. For three level models, this usually takes the form of "level2:level3", where level2 is the name of the second level variable, and level3 is the name of the third level variable. 
+
+Using `dotplot_diag` again with one of the columns from the resulting tibble of `hlm_influence` reveals that school 23 is flagged for a high Cook's distance value. This may indicate that school 23 should be removed from the analysis. 
+```{r}
+dotplot_diag(infl.schools$cooksd, name = "cooks.distance", cutoff = "internal")
+```
+
+###Choose between approximations or full refits with `approx`
+
+`hlm_influence` defaults to 
+
+###Select different types of leverage with `leverage` argument
+
+###Investigate deletion of specific observations or groups with `delete`
+
+#hlm_augment function 
+
+#case_delete with 3 level models 
+
+#Models from nlme - now implemented in case_delete, hlm_influence, and hlm_augment
+
+#Cook's distance values comparison to other packages 
