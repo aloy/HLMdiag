@@ -165,13 +165,13 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # Extracting/calculating key matrices from lme object 
 # @param model an lme object
 .lme_matrices <- function(model) {
-  design.info <- suppressWarnings(RLRsim::extract.lmeDesign(model)) 
+  design.info <- suppressWarnings(extract_design(model)) 
   
-  Y <- design.info$y
+  Y <- design.info$Y
   X <- design.info$X
   Z <- Matrix( design.info$Z )
   
-  D <- Matrix( design.info$Vr )
+  D <- Matrix( design.info$D )
   
   n <- length(Y)
   
@@ -180,7 +180,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
   # Constructing V = Cov(Y)
   sig0 <- model$sigma
-  V <- extract_design(model)$V 
+  V <-  Matrix(design.info$V)
   
   # Inverting V
   V.chol <- chol( V )
@@ -390,8 +390,9 @@ extract_design <- function (b){
     list(
       D = Vr / b$sigma^2,
       V = V,
-      X = X,
-      Z = Z
+      X = model.matrix(b, data = b$data),
+      Z = Z,
+      Y = nlme::getResponse(b)
     )
   )
 }
