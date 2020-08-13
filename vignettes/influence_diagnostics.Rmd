@@ -15,6 +15,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r}
+library(HLMdiag)
+```
+
 #Overview
 
 The `HLMdiag` package provides functionality to examine diagnostics for hierarchical linear models, including residuals values and influence diagnostics. This vignette aims to help users understand:
@@ -124,7 +128,7 @@ However, futher analysis reveals that several observations have high leverage wh
 
 ####Choose between approximations or full refits with `approx`
 
-`hlm_influence` defaults to calculating influence diagnostics based off a one step approximation (Christensen et.al 1992; Shi andChen 2008; Zewotir 2008). However, the `approx` parameter allows the user to calculate influence diagnostics based off a full refit of the data using `hlm_influence`. For example, if we wished to calculate influence diagnostics for each school by fully refitting the model each time, we could use:
+`hlm_influence` defaults to calculating influence diagnostics based off a one step approximation (*Christensen et.al 1992*; *Shi andChen 2008*; *Zewotir 2008*). However, the `approx` parameter allows the user to calculate influence diagnostics based off a full refit of the data using `hlm_influence`. For example, if we wished to calculate influence diagnostics for each school by fully refitting the model each time, we could use:
 ```{r}
 hlm_influence(class.lmer, level = "schoolid", approx = FALSE)
 ```
@@ -183,27 +187,27 @@ In most cases, using a `lme` object for `hlm_influence` or `hlm_augment` is iden
 
 For both `hlm_influence` and `hlm_augment`, levels should be specified by names that appear in `model@flist`. For the second level of a three level `lmerMod` model, this usually looks like "level2:level3" where level2 and level3 are the names of the second and third level variables, respectively. However, for a `lme` model, levels should be specified by names that appear in `model$groups`. For example, we can obtain influence diagnostics for each classroom from the `class` dataset in the following way:
 ```{r}
-class.lme <- nlme::lme(mathgain ~ 1, random = ~ 1|schoolid/classid, data = class)
-#hlm_influence(class.lme, level = 1)
+class.lme <- nlme::lme(mathgain ~ mathkind + sex + minority + ses + housepov, random = ~ 1|schoolid/classid, data = class)
+hlm_influence(class.lme, level = "classid")
+```
+For the `lmerMod` model, we specified `level = classid:schoolid`. However, for `lme` models, the name of the second level alone is sufficient. However, specifying names of specific groups to delete for `lme` models is also slightly different. For example, we can obtain influence diagnostics for a model created when classes 160 and 217 are deleted for a `lmerMod` model in the following way:
+```{r, warnings = FALSE}
+hlm_influence(class.lmer, level = "classid:schoolid", delete = c("160:1", "217:1"))
 ```
 
--no data argument for na's 
--difference in how things are named in flist 
+Obtaining influence diagnostics for a model created with the deletion of classes 160 and 217 from a `lme` model is a bit different:
+```{r, warnings = FALSE}
+hlm_influence(class.lme, level = "classid", delete = c("1/160", "1/217"))
+```
+Note that both examples specify units for deletion in the same way they are specified in `model@flist` (`lmerMod` models) or `model$groups` (`lme` models). 
 
-##case_delete with 3 level models 
-
+Additionally, `lmerMod` models require that the `data` argument is passed into `hlm_influence` and `hlm_augment` when `na.action = "na.exclude"` during the model fitting process. However, this is unecessary for `lme` models. 
 
 ##Cook's distance values comparison to other packages 
 
-Do I want an explanation of the full refit versus the approximation? (there's already a short explanation of it above)
+The `HLMdiag` package has two different ways to calculate Cook's distance. One of them, which is more exact, refits the model with each observation or group deleted from the model and calculates Cook's distance from the resulting coefficient estimates and variance components estimates. The second is a one-step approximation. For more information about how the one step approximation works, we refer the reader to *Christensen et.al 1992*; *Shi and Chen 2008*; and *Zewotir 2008*. However, other R packages also have functions that can calculate Cook's distance. This section of the vignette serves to highlight the differences between the ways of calculating Cook's distance in `HLMdiag` versus other methods in the `car` and `lme4` packages. 
 
-```{r}
-hlm_cd_approx <- HLMdiag:::cooks.distance.lmerMod(class.lmer)
-```
-
-
-
-####`car` package
+####The `car` package
 
 The `cooks_distance` function from `HLMdiag` calculates Cook's distance through a full refit of the model using the following formula:
 
@@ -211,7 +215,7 @@ $C_i(\hat{\beta}) = \frac{1}{p}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{
 
 Notice that the difference in the change in the parameter estimates is scaled by the estimated covariance matrix of the *original* parameter estimates. We can calculate the Cook's distance values in the `HLMdiag` package by first using the `case_delete` function, followed by the `cooks.distance` function. 
 
-```{r}
+```{r, cache = TRUE}
 hlm_case <- HLMdiag:::case_delete.lmerMod(class.lmer)
 hlm_cd_full <- HLMdiag:::cooks.distance.case_delete(hlm_case)
 head(hlm_cd_full)
@@ -233,7 +237,7 @@ The `car` package calculates Cook's distance similarily to how the `HLMdiag` pac
 $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ \\
 
 We can calculate this by first using the `influence` function from `car` followed by the `cooks_distance` function. 
-```{r}
+```{r, cache = TRUE}
 car_case <- car:::influence.merMod(class.lmer)
 car_cd <- car:::cooks.distance.influence.merMod(car_case)
 head(car_cd)
@@ -255,7 +259,7 @@ data.frame(car_adjusted = car_cd_adjusted, mdffits = hlm_mdffits, obs = 1:1190) 
 
 While the difference between the estimates varies slightly due to differences in how the fixed effects and variance components are calculated for refit models in bolh packages, the difference in values tends to be very small. 
 
-####`lme4` package
+####The `lme4` package
 
 Similar to `HLMdiag`, the `lme4` package has two methods that calculate Cook's distance. One of them, similar to the `case_delete` method, conducts a full reffit of models without each observation or group. The second is a quicker approximation. 
 
@@ -268,6 +272,7 @@ head(lme_cd_approx)
 However, this approximation is fairly different from the one produced from `HLMdiag`. 
 
 ```{r}
+hlm_cd_approx <- HLMdiag:::cooks.distance.lmerMod(class.lmer)
 head(hlm_cd_approx)
 ```
 The approximation from `HLMdiag` is also closer to the full refit calculated by `HLMdiag` than the `lme4` approximation is. The plots below show the difference between the full refit from `HLMdiag` and the `HLMdiag` approximation (left) and the `lme4` approximation (right). 
@@ -290,21 +295,26 @@ The estimates produced by the `lme4` approximation are never smaller than the va
 #####`lme4` full refit 
 
 `lme4` also has a function that performs a full refit of the models without each observation or group and calculates Cook's distance values based off those refits. We can calculate this by using the `influence` function from `lme4`. 
-```{r}
+```{r, cache = TRUE}
 lme_case <- lme4:::influence.merMod(class.lmer, data = class) 
-
-
-cd_lme_full <- stats:::cooks.distance(lme.infl) #using lme4 throws an error, but using stats with the object created from lme4 works 
+cd_lme_full <- stats:::cooks.distance(lme.infl) 
 head(cd_lme_full)
-head(cd_hlm_full)
 ```
-`lme4`'s cook's distance function for objects created from it's influence function does not actually work. 
+`lme4`'s cook's distance function for objects created from the `influence` function has a bug that prevents us from obtaining Cook's distance values from the `influence` object using `lme4`; however, we can use the `cooks.distance` function from the `stats` package on the `influence` object from `lme4`. 
+
+The values obtained from `lme4` match those from `car`, meaning that `lme4` is also scaling the estimates by dividing by the estimated variance of each refit model, in addition to using the estimated covariance matrix from the deletion estimates, rather than the original estimates. Therefore, the `lme4` package is also using this formula to calculate Cook's distance: 
+
+$C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ \\
+
+SOMETHING ABOUT WHY THEY HAVE SCALED BY THE VARIANCE - DOES IT MATTER? 
 
 ####`influence.ME` package
 
 I think originally, I found that values from `influence.ME` matched the MDFFITS values, but weren't off by sigma squared. Is that still true? 
-```{r}
+```{r, include = FALSE}
 ME.infl <- influence.ME:::influence(class.lmer, obs = TRUE) #throwing an error, but works with radon example 
+
+
 cd_inflME <- influence.ME:::cooks.distance.estex(ME.infl)
 
 influence.ME:::influence(sleep.lmer, obs = TRUE) #this is fine
