@@ -4,7 +4,7 @@ authors: "Jaylin Lowe, Jack Moran, Adam Loy"
 date: "'Sys.Date()'"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteIndexEntry{hlm_influence}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(dplyr)
 ```
 
 ```{r}
@@ -110,7 +111,7 @@ In the previous examples, `hlm_influence` only returned overall leverage. Howeve
 
 We can see that none of our observations are flagged for high leverage when looking only at overall leverage:
 ```{r}
-dotplot_diag(infl2$leverage.overall, name = "leverage", cutoff = "internal")
+dotplot_diag(infl$leverage.overall, name = "leverage", cutoff = "internal")
 ```
 
 
@@ -237,7 +238,7 @@ The `car` package calculates Cook's distance similarily to how the `HLMdiag` pac
 $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ \\
 
 We can calculate this by first using the `influence` function from `car` followed by the `cooks_distance` function. 
-```{r, cache = TRUE}
+```{r}
 car_case <- car:::influence.merMod(class.lmer)
 car_cd <- car:::cooks.distance.influence.merMod(car_case)
 head(car_cd)
