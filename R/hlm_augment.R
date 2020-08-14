@@ -45,7 +45,7 @@ hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NUL
   residuals <- hlm_resid(object, level = level, include.ls = include.ls, data = data)
   infl <- hlm_influence(object, level = level, data = data)
   if (level == 1) {
-    infl <- infl[,-c(1:ncol(object@frame))]
+    infl <- infl[,-c(1:(1+ncol(object@frame)))]
   }
   else {
     infl <- infl[,-1]
@@ -72,7 +72,7 @@ hlm_augment.lme <- function(object, level = 1, include.ls = include.ls, ...) {
   newdata <- model.frame(formula(dataform), data)  
   
   if (level == 1) {
-    infl <- infl[,-c(1:ncol(newdata))]
+    infl <- infl[,-c(1:(1+ncol(newdata)))]
   }
   else {
     infl <- infl[,-1]

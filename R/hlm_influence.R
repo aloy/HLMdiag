@@ -109,6 +109,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
       if (class(na.action) == "exclude") {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
+      infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model@flist[[level]]), .before = 1)
@@ -144,6 +145,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
       if (class(na.action) == "exclude") {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
+      infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model@flist[[level]]), .before = 1)
@@ -219,6 +221,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
       if (class(na.action) == "exclude") {
         infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
       }
+      infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, unique(model$groups[[level]]), .before = 1)
@@ -261,6 +264,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
       if (class(na.action) == "exclude") {
         infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
       }
+      infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
     }
     else {
       infl.tbl <- tibble::add_column(infl.tbl, Group = unique(model$groups[[level]]), .before = 1)
