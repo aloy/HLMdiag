@@ -22,20 +22,11 @@ knitr::opts_chunk$set(
 
 This vignette introduces new functions concerning residual diagnostics in `HLMdiag`, specifically `hlm_resid`, `pull_resid`, and `hlm_augment`. The function `hlm_resid` is intended to replace `HLMresid` in functionality, and works more robustly with 3-level models as well as models fit with `nlme`. `hlm_resid` returns a tibble of the model frame, residuals and fitted values making it simple for an analyst to diagnose a model.
 
-FINISH! This vignette will also explicitly state how different types of residuals are calculated and how they compare to the `resid` functions found in `lme4` and `nlme`
-
--introduce function 
--demo what it can do 
--explain various residuals
--cover different level options
--ls.include
--dotplot_diag can be used with the columns from hlm_influence to visually represent the different values and to illustrate 
-values that go beyond the cutoff 
--mention na.action??? 
+WRITE BETTER INTRO!
 
 ## hlm_resid function
 
-The function `hlm_resid` takes a hierarchical linear model fit as a `lmerMod` or `lme` object and extracts residuals and predicted values from the model, using both Least Squares (LS) and Empirical Bayes (EB) methods in estimating parameters. Whereas the old function, `HLMresid`, would return a vector with a single type of residual, `hlm_resid` appends specified residuals to the data frame of the model in the form of a tibble. The use of a tibble allows the analyst to easily plot residuals against explanatory variables and identify possible outliers or model deficiencies. The function draws heavy inspiration from the `augment` function of the `broom` package, however offers more options for the types of residuals that the analyst may want to use.
+The function `hlm_resid` takes a hierarchical linear model fit as a `lmerMod` or `lme` object and extracts residuals and predicted values from the model using both Least Squares (LS) and Empirical Bayes (EB) methods in estimating parameters. Whereas the old function, `HLMresid`, would return a vector with a single type of residual, `hlm_resid` appends specified residuals to the data frame of the model in the form of a tibble. The use of a tibble allows the analyst to easily plot residuals against explanatory variables and identify possible outliers or model deficiencies. The function draws heavy inspiration from the `augment` function of the `broom` package, however offers more options for the types of residuals that the analyst may want to use.
 
 ## Types of residuals in multilevel models
 
@@ -45,9 +36,9 @@ The presence of multiple sources of variability in hierarchical linear models re
 1. higher level (random effects) residuals
 1. marginal (composite) residuals
 
-The definitions of level-1 and higher level residuals lead to different residuals depending on how the fixed and random model coefficients are estimated. `hlm_resid` implements two estimation methods: Least Squares (LS) estimation and Empirical Bayes (EB) estimation. For a comprehensive discussion of these two methods and how they are implemented, we direct the reader to the release paper for `HLMdiag` in the *Journal of Statistical Softwrare*. 
+The definitions of level-1 and higher level residuals lead to different residuals depending on how the fixed and random model coefficients are estimated. `hlm_resid` implements two estimation methods: Least Squares estimation and Empirical Bayes estimation. For a comprehensive discussion of these two methods and how they are implemented, we direct the reader to the release paper for `HLMdiag` in the *Journal of Statistical Softwrare*. 
 
-LS and EB residuals each have their own advantages and disadvantages. Level-1 LS residuals are calculated by fitting separate linear models to each group and using LS to estimate the fixed and random effects. Because they rely only on the first level of hierarchy, they are unconfounded with higher level residuals and a useful first step in diagnosing a model; however, for small group sample sizes, LS residuals are unreliable. Level-1 EB residuals are defined as the conditional modes of the random effects given the data and the estimated parameter values which are calculated with maximum likelihood. They are confounded with higher level residuals, but more robust with small sample sizes. For higher level residuals, coefficients can again be estimated using either LS or EB, but EB residuals are generally prefered due to small group level sample sizes. `hlm_resid` can return both LS and EB level-1 and higher level residuals as well as marginal residuals.
+LS and EB residuals each have their own advantages and disadvantages. Level-1 LS residuals are calculated by fitting separate linear models to each group and using LS to estimate the fixed and random effects. Because they rely only on the first level of hierarchy, they are unconfounded with higher level residuals and a useful first step in diagnosing a model; however, for small group sample sizes, LS residuals are unreliable. Level-1 EB residuals are defined as the conditional modes of the random effects given the data and the estimated parameter values, which are calculated with maximum likelihood. They are confounded with higher level residuals, but more robust with small sample sizes. For higher level residuals, coefficients can again be estimated using either LS or EB, but EB residuals are generally prefered due to small group level sample sizes. `hlm_resid` can return both LS and EB level-1 and higher level residuals as well as marginal residuals.
 
 ## Example Data
 
@@ -66,9 +57,9 @@ For each student, the data consist of their gender (`sex`) and two standardized 
 
 * `object` - the model fit as a `lmerMod` or `lme` object.
 * `level` - the level at which residuals should be extracted. The default is `level = 1`, which returns both EB and LS level-1  residuals as well as marginal residuals. Can also be set to a grouping level as defined in `names(object@flist)` in `lme4` or in `names(object$groups)` in `nlme`. When set to a grouping level, returns both EB and LS higher level residuals, otherwise known as the random effects for each group. 
-* `standardize` - a logical indicating if the returned residuals should be standardized. The default is `standardize = FALSE`, returning raw residuasl. When `standardize = TRUE`, residuals are standardized by the sigma components of the model object. For marginal residuals, standardized residuals are equivalent to the Cholesky residuals.
-* `include.ls` - a logical indicating if LS residuals should be included in the residuals returned. The default is `include.ls = TRUE`. The LS method of estimating residuals is more computationally complex than the EB method, and thus setting `include.ls = FALSE` decreases the runtime substantially on models with more observations.
-* `data` - only necesarry if `na.action = na.exclude` for the model object. Data should be the data set used to fit the model containing observations with NA values.
+* `standardize` - a logical indicating if the returned residuals should be standardized. The default is `standardize = FALSE`, returning raw residuals. When `standardize = TRUE`, residuals are standardized by the sigma components of the model object. For marginal residuals, standardized residuals are equivalent to the Cholesky residuals.
+* `include.ls` - a logical indicating if LS residuals should be included in the tibble. The default is `include.ls = TRUE`. The LS method of estimating residuals is more computationally intensive than the EB method, and thus setting `include.ls = FALSE` decreases the runtime substantially on models with many observations.
+* `data` - only necesarry if `na.action = na.exclude` for the model object. `data` should take the data set used to fit the model containing observations with NA values.
 
 We illustrate usage for `hlm_resid` using the exam data introduced above and fitting an initial two-level HLM using a student’s standardized London Reading Test intake score (standLRT) to explain their GCSE exam score allowing for a random intercept for each school:
 ```{r}
@@ -95,7 +86,7 @@ hlm_resid(fm1)
 * `.mar.resid`  the raw marginal residuals
 * `.mar.fitted` the marginal fitted values
 
-Note that the columns containing the Empirical Bayes residuals are simply named `.resid` and `.fitted`. This is because both `lme4::resid()` and `nlme::resid()` use the EB method in estimating residuals, thus the analyst is likely most familiar with this type of residual.
+Note that the columns containing the Empirical Bayes residuals are simply named `.resid` and `.fitted`. This is because both `lme4::resid()` and `nlme::resid()` use the EB method in estimating residuals, thus the analyst is likely more familiar with this type of residual.
 
 ### standardize and include.ls
 
@@ -119,11 +110,11 @@ In the tibble returned by `hlm_resid`, each row now represents one of the groups
 * `.ranef.intercept` the random effects for intercept, using Empirical Bayes estimation
 * `.ls.intercept` the random effects for intercept, using Least Squares estimation
 
-Had we included other random effect terms in the model, the EB and LS estimations of their random effects would also be included in the output. Again, the EB random effects are simply named `.ranef` because it is assumed that the analyst is most familiar with this type of residual. The parameters `standardize` and `include.ls` work the same way with higher-level residuals and with both `lmerMod` and `lme` objects. Setting `include.ls = FALSE` is often recommended with higher-level residuals, as calculating LS residuals is computationally intensive and the resulting residuals are often unreliable due to small group level sample sizes.
+Had we included other random effect terms in the model, the EB and LS estimations of their random effects would also be included in the output. Again, the EB random effects are simply named `.ranef` because it is assumed that the analyst is most familiar with this type of random effect The parameters `standardize` and `include.ls` work the same way with higher-level residuals and with both `lmerMod` and `lme` objects. Setting `include.ls = FALSE` is often recommended with higher-level residuals, as calculating LS residuals is computationally intensive and the resulting residuals are often unreliable due to small group level sample sizes.
 
 ### na.action and data
 
-The final parameter, `data`, is an optional argument that becomes required when `na.action = na.exclude` for the model object. To demonstrate this requirement, we create a duplicate data set of Exam with the standardized LRT scores set to NA for observations 1, 2, and 5.
+The final parameter, `data`, is an argument that becomes required when `na.action = na.exclude` for the model object. To demonstrate this requirement, we create a duplicate data set of `Exam` with the standardized LRT scores set to `NA` for observations 1, 2, and 5.
 
 ```{r}
 #make copy of Exam data set
@@ -147,7 +138,7 @@ hlm_resid(fm1.NA, data = Exam2)
 
 ### Three level models
 
-In three level models, the function call to access the middle-level residuals changes depending on whether a model is a `lmerMod` or `lme` object. This is `lme4` and `nlme` take different approaches in how they store their grouping levels. To demonstrate this, we use a classroom data set from the book, *Linear Mixed Models: A Practical Guide Using Statistical Software*. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom, thus it is an excellent example for a three level model.
+In three level models, the function call to access the middle-level residuals changes depending on whether a model is a `lmerMod` or `lme` object. This is due to how `lme4` and `nlme` use different approaches in how they store their grouping levels. To demonstrate this, we use a classroom data set from the book, *Linear Mixed Models: A Practical Guide Using Statistical Software*. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom, thus it is an excellent example for a three level model.
 
 ```{r}
 class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
@@ -181,16 +172,16 @@ hlm_resid(fm2.lme, level = "classid")
 The order of `classid` and `schoolid` in the returned tibble is based on the convention for the package in which the model was fit. 
 
 
-## Diagnosing the model
+## Using hlm_resid in context
 
-But is this model appropriate? To assess the appropriateness of model `fm1` we must examine the level-1 and -2 residuals. To extract the standardized level-1 residuals, we call `hlm_resid` as demonstrated below.
-```{r, eval = FALSE}
+Now that we have shown how to extract all types of residuals for hierarchical models using `hlm_resid`, we illustrate how to use those residuals in context to evaluate a model. We will diagnose the earlier model, `fm1` fit on the `Exam` data set above. We use `hlm_resid` to extract the level-1 standardized residuals.
+```{r}
 resid1_fm1 <- hlm_resid(fm1, level = 1, standardize = TRUE)
 resid1_fm1
 ```
 
-Utilizing the tibble output of `hlm_resid`, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score or against the fitted values.
-```{r, eval = FALSE}
+Utilizing the tibble output of `hlm_resid`, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score or against the fitted values. We use the LS residuals at level-1 because they are unconfounded of higher level residuals.
+```{r, message = FALSE, warning = FALSE}
 library(ggplot2)
 ggplot(data = resid1_fm1, aes(x = standLRT, y = .std.ls.resid)) + 
   geom_point() +
@@ -203,5 +194,17 @@ ggplot(data = resid1_fm1, aes(x = .ls.fitted, y = .std.ls.resid)) +
   labs(y = "LS level-1 residuals", title = "LS residuals against LS fitted values")
 ```
 
-The smoother shows that standardized LRT scores might not be linearly related to GCSE exam scores. 
+The smoother shows that standardized LRT scores might not be linearly related to GCSE exam scores. Likelihood ratio tests (not shown) confirm that quadratic and cubic terms for `standLRT` contribute significantly in describing GCSE exam scores, so we incorporate these terms in the updated model, `fm1b`. We then reassess the level-1 LS residuals.
+
+```{r}
+fm1b <- lme4::lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + (1 | school), 
+             Exam, REML = FALSE)
+resid1_fm1b <- hlm_resid(fm1b, level = 1, standardize = TRUE)
+
+ggplot(data = resid1_fm1b, aes(x = standLRT, y = .std.ls.resid)) + 
+  geom_point() +
+  geom_smooth(method = "loess") + 
+  labs(y = "LS level-1 residuals", title = "LS residuals against standardized LRT score")
+```
+
 
