@@ -4,7 +4,7 @@ hlm_resid <- function(object, ...){
 }
 
 #' @export
-#' @rdname hlm_resid
+#' @rdname hlm_resid.lmerMod
 #' @method hlm_resid default
 hlm_resid.default <- function(object, ...){
   stop(paste("there is no hlm_resid() method for objects of class",
@@ -32,7 +32,7 @@ hlm_resid.default <- function(object, ...){
 #'   standardized residuals will be returned for any group; for level-1 only, if
 #'   \code{standardize = "semi"} then the semi-standardized level-1 residuals
 #'   will be returned
-#' @param include.ls a logical indicating if LS residuals be included in the
+#' @param ls.include a logical indicating if LS residuals be included in the
 #'   return tibble. \code{include.ls = FALSE} decreases runtime substantially.
 #' @param data if \code{na.action = na.exclude}, the user must provide the data
 #'   set used to fit the model, otherwise \code{NULL}.
