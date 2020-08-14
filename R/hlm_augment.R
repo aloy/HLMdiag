@@ -27,11 +27,10 @@ hlm_augment.default <- function(object, ...){
 #'are calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
 #'factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.
 #'This will return between-group residuals and influence diagnostics calculated for each group. 
-#'@param standardize for any level, if \code{standardize = TRUE} (default) the
-#'standardized residuals will be returned for any group; for level-1 only, if
-#'\code{standardize = "semi"} then the semi-standardized level-1 residuals
-#'will be returned
-#'@param data the original data frame passed to `lmer`.
+#'@param include.ls a logical indicating if LS residuals should be included in the
+#'return tibble. \code{include.ls = FALSE} decreases runtime substantially.
+#'@param data the original data frame passed to `lmer`. This is only necessary for `lmerMod` models where
+#'`na.action = "na.exclude"`
 #'@param ... currently not used
 #'@details The \code{hlm_augment} function combines functionality from \code{hlm_resid}
 #'and \code{hlm_influence} for a simpler way of obtaining residuals and influence 
@@ -40,13 +39,13 @@ hlm_augment.default <- function(object, ...){
 #'@note \code{hlm_augment} does not allow for the deletion of specific cases, the specification of other
 #'types of leverage, or the use of full refits of the model instead of one step approximations for influence
 #'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. Additional
-#'parameters \code{sim} and \code{ls.include} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
+#'parameters \code{sim} and \code{standardize} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
 #'should be used instead. 
-hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = NULL, ...) {
-  residuals <- hlm_resid(object, level = level, standardize = standardize, data = data)
+hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NULL, ...) {
+  residuals <- hlm_resid(object, level = level, include.ls = include.ls, data = data)
   infl <- hlm_influence(object, level = level, data = data)
   if (level == 1) {
-    infl <- infl[,-c(1:ncol(object@frame))]
+    infl <- infl[,-c(1:(1+ncol(object@frame)))]
   }
   else {
     infl <- infl[,-1]
@@ -59,9 +58,9 @@ hlm_augment.lmerMod <- function(object, level = 1, standardize = FALSE, data = N
 #'@rdname hlm_augment.lmerMod
 #'@method hlm_augment lme
 #'@aliases hlm_augment
-hlm_augment.lme <- function(object, level = 1, standardize = FALSE, ...) {
-  residuals <- hlm_resid(object, level = level, standardize = standardize)
-  infl <- hlm_influence(object, level = level, standardize = standardize)
+hlm_augment.lme <- function(object, level = 1, include.ls = include.ls, ...) {
+  residuals <- hlm_resid(object, level = level, include.ls = include.ls)
+  infl <- hlm_influence(object, level = level)
   
   #getting correct model frame, without extra variables
   fixed <- as.character(formula(object))
@@ -73,7 +72,7 @@ hlm_augment.lme <- function(object, level = 1, standardize = FALSE, ...) {
   newdata <- model.frame(formula(dataform), data)  
   
   if (level == 1) {
-    infl <- infl[,-c(1:ncol(newdata))]
+    infl <- infl[,-c(1:(1+ncol(newdata)))]
   }
   else {
     infl <- infl[,-1]
