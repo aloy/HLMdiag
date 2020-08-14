@@ -20,9 +20,11 @@ knitr::opts_chunk$set(
 
 # HLMdiag: a diagnostic tool for hierarchical (multilevel) linear models
 
-This vignette introduces new functions concerning residual diagnostics in `HLMdiag`, specifically `hlm_resid`, `pull_resid`, and `hlm_augment`. The function `hlm_resid` is intended to replace `HLMresid` in functionality, and works more robustly with 3-level models as well as models fit with `nlme`. `hlm_resid` returns a tibble of the model frame, residuals and fitted values making it simple for an analyst to diagnose a model.
+`HLMdiag` was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). While it is possible to extract most types of influence diagnostics and residuals from a given model, the process is often uses various functions across multiple packages, each of which has its own syntax and quirks. HLMdiag provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. In this update especially, `HLMdiag` has focused on usability in its functions. Drawing inspiration from the `augment` function in the `broom` package, the new functions `hlm_resid`, `hlm_influence`, and `hlm_augment` append diagnostic information to a model's data frame, allowing the analyst to easily work with and see how these results relate to the original variables.
 
-WRITE BETTER INTRO!
+This vignette introduces new functions concerning residual diagnostics in `HLMdiag`, specifically `hlm_resid`, `pull_resid`, and `hlm_augment`. The function `hlm_resid` is intended to replace `HLMresid` in functionality, and works more robustly with 3-level models as well as models fit with `nlme`. `hlm_resid` returns a tibble of the model frame, residuals and fitted values making it simple for an analyst to diagnose a model. 
+
+For information about influence diagnostics like Cook's distance and leverage in HLMs, the reader should see the *influence vignette*. 
 
 ## hlm_resid function
 
@@ -43,7 +45,6 @@ LS and EB residuals each have their own advantages and disadvantages. Level-1 LS
 ## Example Data
 
 To illustrate the use of `hlm_resid`, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package `mlmRev` (*Bates, Maechler, and Bolker 2013b*), which makes well known multilevel modeling data sets available in R.
-
 ```{r}
 data("Exam", package = "mlmRev")
 head(Exam)
@@ -63,15 +64,13 @@ For each student, the data consist of their gender (`sex`) and two standardized 
 
 We illustrate usage for `hlm_resid` using the exam data introduced above and fitting an initial two-level HLM using a student’s standardized London Reading Test intake score (standLRT) to explain their GCSE exam score allowing for a random intercept for each school:
 ```{r}
-library(lme4)
-fm1 <- lmer(normexam ~ standLRT + (1 | school), Exam, REML = FALSE)
+fm1 <- lme4::lmer(normexam ~ standLRT + (1 | school), Exam, REML = FALSE)
 fm1
 ```
 
 ### General usage
 
 Here we will demonstrate how to extract all types of residuals from the model `fm1` before moving on to a more comprehensive analysis of the model. To extract level-1 raw residuals, we use the following call.
-
 ```{r, message = FALSE}
 library(HLMdiag)
 hlm_resid(fm1)
@@ -115,31 +114,29 @@ Had we included other random effect terms in the model, the EB and LS estimation
 ### na.action and data
 
 The final parameter, `data`, is an argument that becomes required when `na.action = na.exclude` for the model object. To demonstrate this requirement, we create a duplicate data set of `Exam` with the standardized LRT scores set to `NA` for observations 1, 2, and 5.
-
 ```{r}
-#make copy of Exam data set
+# make copy of Exam data set
 Exam2 <- Exam              
-#set standLRT to NA for 3 observations
+# set standLRT to NA for 3 observations
 Exam2[c(1,2,5),7] <- NA    
-#refit model with na.exclude
-fm1.NA <- lmer(normexam ~ standLRT + (1 | school), Exam2,  
+# refit model with na.exclude
+fm1.NA <- lme4::lmer(normexam ~ standLRT + (1 | school), Exam2,  
                na.action = na.exclude, REML = FALSE)
+
 ```
 
 In the first example, when we try to call `hlm_resid` on our model object, it throws an informative error asking for the data set used to fit the model. We provide this using the `data` parameter in the second example.
-
 ```{r, error = TRUE}
-#incorrect:
+# incorrect:
 hlm_resid(fm1.NA) 
 
-#correct:
+# correct:
 hlm_resid(fm1.NA, data = Exam2) 
 ```
 
 ### Three level models
 
 In three level models, the function call to access the middle-level residuals changes depending on whether a model is a `lmerMod` or `lme` object. This is due to how `lme4` and `nlme` use different approaches in how they store their grouping levels. To demonstrate this, we use a classroom data set from the book, *Linear Mixed Models: A Practical Guide Using Statistical Software*. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom, thus it is an excellent example for a three level model.
-
 ```{r}
 class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
 head(class)
@@ -148,10 +145,8 @@ head(class)
 The data set contains 12 columns; however, we are only interested in the response variable, `mathgain`, and the grouping variables`classid`, and `schoolid`. We fit the simple unconditional means model in both `lme4` and `nlme` below.
 ```{r}
 fm2.lmer <- lme4::lmer(mathgain ~ 1 + (1|schoolid/classid), data = class)
-fm2.lmer
 
 fm2.lme <- nlme::lme(mathgain ~ 1, random = ~1|schoolid/classid, data = class)
-fm2.lme
 ```
 
 For both models, classroom is nested within school. We can access the grouping levels for each model with the following:
@@ -162,15 +157,14 @@ names(fm2.lme$groups)
 
 To extract the classroom level random effects for `fm2.lmer`, fit with `lme4`, we set `level = "classid:schoolid"`. For the `fm2.lmer`, fit with `nlme`, we set `level = "classid"`.
 ```{r}
-#lme4
+# lme4
 hlm_resid(fm2.lmer, level = "classid:schoolid")
 
-#nlme
+# nlme
 hlm_resid(fm2.lme, level = "classid")
 ```
 
 The order of `classid` and `schoolid` in the returned tibble is based on the convention for the package in which the model was fit. 
-
 
 ## Using hlm_resid in context
 
@@ -188,15 +182,14 @@ ggplot(data = resid1_fm1, aes(x = standLRT, y = .std.ls.resid)) +
   geom_smooth(method = "loess") + 
   labs(y = "LS level-1 residuals", title = "LS residuals against standardized LRT score")
 
-ggplot(data = resid1_fm1, aes(x = .ls.fitted, y = .std.ls.resid)) + 
+ggplot(data = resid1_fm1, aes(x = id, y = .std.ls.resid)) + 
   geom_point() +
   geom_smooth(method = "loess") + 
-  labs(y = "LS level-1 residuals", title = "LS residuals against LS fitted values")
+  labs(y = "LS level-1 residuals", title = "LS residuals against observation id")
 ```
 
 The smoother shows that standardized LRT scores might not be linearly related to GCSE exam scores. Likelihood ratio tests (not shown) confirm that quadratic and cubic terms for `standLRT` contribute significantly in describing GCSE exam scores, so we incorporate these terms in the updated model, `fm1b`. We then reassess the level-1 LS residuals.
-
-```{r}
+```{r, message = FALSE, warning = FALSE}
 fm1b <- lme4::lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + (1 | school), 
              Exam, REML = FALSE)
 resid1_fm1b <- hlm_resid(fm1b, level = 1, standardize = TRUE)
@@ -206,5 +199,44 @@ ggplot(data = resid1_fm1b, aes(x = standLRT, y = .std.ls.resid)) +
   geom_smooth(method = "loess") + 
   labs(y = "LS level-1 residuals", title = "LS residuals against standardized LRT score")
 ```
+
+The addition of the quadratic and cubic terms seems to have improved the level-1 residuals. Additionally, there don't appear to be any large outliers that might need to be removed. Because there are no glaring issues, we move on to the higher level residuals, again plotting the output of `hlm_resid`.
+```{r}
+resid2_fm1b <- hlm_resid(fm1b, level = "school", include.ls = FALSE)
+resid2_fm1b
+
+ggplot(data = resid2_fm1b, aes(x = school, y = .ranef.intercept)) + 
+  geom_point() +
+  labs(y = "Random effects - intercept", title = "Intercept random effects against school")
+```
+
+The random effects at the group
+
+## pull_resid
+
+The function `pull_resid` is an efficient way to pull a single type of residual as a vector. Whereas `hlm_resid` spends time calculating all types of residuals and fitted values, `pull_resid` only calculates the type of residual specified by the user, saving time over using `hlm_resid` and indexing for a specific column. This is especially useful when used in a loop, such as a resampler.
+
+`pull_resid` takes three parameters, `object`, `type`, and `standardize`. The parameters `object` and `standardize` work identically as they do in `hlm_resid`, and the new parameter, `type`, can be set to:
+
+* `"ls"` to return LS level-1 residuals
+* `"eb"` to return EB level-1 residuals
+* `"marginal"` to return marginal residuals
+
+The example below illustrates the output of `pull_resid` being used to extract level-1 standardized LS residuals.
+```{r}
+head(pull_resid(fm1, type = "ls", standardize = TRUE))
+```
+
+The function `pull_resid` is only implemented for level-1 residuals. If the analyst wants to extract random effects for a model, they should use the `ranef` functions from either `lme4` or `nlme`.
+
+## hlm_augment
+
+The `hlm_augment` function combines the `hlm_resid` and `hlm_influence` functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. `hlm_augment` has three parameters, `object`, `level`, and `include.ls`, all of which have the same functionality as in `hlm_resid`. The syntax is the same for the two functions. For example, we can extract both level-1 residual and influence diagnostics from the model `fm1` with the following call.
+```{r}
+fm1.aug <- hlm_augment(fm1)
+fm1.aug
+```
+
+This is useful for inspecting residuals values and influence diagnostics values at the same time. However, `hlm_augment` lacks some of the functionality that `hlm_influence` and `hlm_resid` have. The `delete` and `approx` parameters avaliable for `hlm_influence` are not avaliable in `hlm_augment`, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The `standardize` parameter from `hlm_resid` is also not included, so raw residuals will always be returned. If additional functionality is required, `hlm_influence` or `hlm_resid` should be used instead. `hlm_augment` is especially useful for inspecting influence diagnostics of observations with relatively high residuals, or vice versa. For more information about avaliable functionality in `hlm_influence`, see the `hlm_influence` vignette. 
 
 

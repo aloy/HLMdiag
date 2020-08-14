@@ -32,11 +32,11 @@ hlm_resid.default <- function(object, ...){
 #'   standardized residuals will be returned for any group; for level-1 only, if
 #'   \code{standardize = "semi"} then the semi-standardized level-1 residuals
 #'   will be returned
-#' @param ls.include a logical indicating if LS residuals be included in the
+#' @param include.ls a logical indicating if LS residuals be included in the
 #'   return tibble. \code{include.ls = FALSE} decreases runtime substantially.
 #' @param data if \code{na.action = na.exclude}, the user must provide the data
 #'   set used to fit the model, otherwise \code{NULL}.
-#' @param sim optional argument giving the data frame used for LS residuals.
+#' @param sim (deprecated) optional argument giving the data frame used for LS residuals.
 #'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{hlm_resid} function provides a wrapper that will extract
@@ -96,6 +96,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   # NA action
   if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
     na.index <- which(!rownames(data) %in% rownames(object@frame))
+    col.index <- which(colnames(data) %in% colnames(object@frame))
+    data <- data[col.index]
   } else {                                                         #if na.omit
     data <- object@frame
   }
@@ -166,13 +168,15 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # Assemble Tibble
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+                                   data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+                                   data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
@@ -396,14 +400,16 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     
     # Continue to Assemble Tibble  
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(model.data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+                                   model.data,
                                    eb.resid,
                                    eb.fitted,
                                    ls.resid,
                                    mar.resid,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(model.data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+                                   model.data,
                                    eb.resid,
                                    eb.fitted,
                                    mar.resid,
