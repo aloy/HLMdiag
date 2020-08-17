@@ -239,6 +239,9 @@ $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i
 
 We can calculate this by first using the `influence` function from `car` followed by the `cooks_distance` function. 
 ```{r}
+## class need to be a data frame here...
+class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
+class.lmer <- lme4::lmer(mathgain ~ mathkind + sex + minority + ses + housepov + (1|schoolid/classid), data = class)
 car_case <- car:::influence.merMod(class.lmer)
 car_cd <- car:::cooks.distance.influence.merMod(car_case)
 head(car_cd)
@@ -253,6 +256,7 @@ head(car_cd_adjusted)
 
 Once the values from `car` have been adjusted by sigma squared, they now appear very similar to the MDFFITS values from `HLMdiag`. The plot below shows the difference between the MDFFITS estimates from `HLMdiag` and the variance-adjusted Cook's distance estimates from `car` for all 1,190 observations in the `class` dataset. 
 ```{r, echo = FALSE}
+library(ggplot2)
 data.frame(car_adjusted = car_cd_adjusted, mdffits = hlm_mdffits, obs = 1:1190) %>%
   mutate(diff = mdffits - car_adjusted) %>%
   ggplot() + geom_point(aes(y = diff, x = obs))
@@ -298,7 +302,7 @@ The estimates produced by the `lme4` approximation are never smaller than the va
 `lme4` also has a function that performs a full refit of the models without each observation or group and calculates Cook's distance values based off those refits. We can calculate this by using the `influence` function from `lme4`. 
 ```{r, cache = TRUE}
 lme_case <- lme4:::influence.merMod(class.lmer, data = class) 
-cd_lme_full <- stats:::cooks.distance(lme.infl) 
+cd_lme_full <- stats:::cooks.distance(lme_case)
 head(cd_lme_full)
 ```
 `lme4`'s cook's distance function for objects created from the `influence` function has a bug that prevents us from obtaining Cook's distance values from the `influence` object using `lme4`; however, we can use the `cooks.distance` function from the `stats` package on the `influence` object from `lme4`. 
@@ -312,7 +316,7 @@ SOMETHING ABOUT WHY THEY HAVE SCALED BY THE VARIANCE - DOES IT MATTER?
 ####`influence.ME` package
 
 I think originally, I found that values from `influence.ME` matched the MDFFITS values, but weren't off by sigma squared. Is that still true? 
-```{r, include = FALSE}
+```{r, include = FALSE, eval=FALSE}
 ME.infl <- influence.ME:::influence(class.lmer, obs = TRUE) #throwing an error, but works with radon example 
 
 
