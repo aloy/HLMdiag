@@ -36,8 +36,6 @@ hlm_resid.default <- function(object, ...){
 #'   return tibble. \code{include.ls = FALSE} decreases runtime substantially.
 #' @param data if \code{na.action = na.exclude}, the user must provide the data
 #'   set used to fit the model, otherwise \code{NULL}.
-#' @param sim (deprecated) optional argument giving the data frame used for LS residuals.
-#'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{hlm_resid} function provides a wrapper that will extract
 #' residuals and predicted values from a fitted \code{lmerMod} or \code{lme}
@@ -73,7 +71,10 @@ hlm_resid.default <- function(object, ...){
 #' model.}
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
+#' @author  Adam Loy \email{loyad01@@gmail.com}, Jack Moran, Jaylin Lowe
+#' @keywords models regression
+#' @seealso \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link{ranef}}
+hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
     stop("hlm_resid is not currently implemented for non-nested models.")
@@ -105,7 +106,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, standardize = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, standardize = standardize)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     }
     
@@ -201,7 +202,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # LS Residuals
     if (include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = level, stand = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group),] # fix order
       ls.resid <- janitor::clean_names(ls.resid)
       if (standardize == TRUE) {
@@ -325,7 +326,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
 #' @export
 #' @rdname hlm_resid.lmerMod
 #' @method hlm_resid lme
-hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
+hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
     stop("hlm_resid is not currently implemented for non-nested models.")
@@ -341,7 +342,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, stand = standardize)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     }
     
@@ -438,7 +439,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     
     # LS Residuals
     if (include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = level, stand = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group),] # fix order
       ls.resid <- janitor::clean_names(ls.resid)
       if (standardize == TRUE) {
