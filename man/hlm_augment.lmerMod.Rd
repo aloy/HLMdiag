@@ -6,9 +6,9 @@
 \alias{hlm_augment.lme}
 \title{Calculating residuals and influence diagnostics for HLMs}
 \usage{
-\method{hlm_augment}{lmerMod}(object, level = 1, standardize = FALSE, data = NULL, ...)
+\method{hlm_augment}{lmerMod}(object, level = 1, include.ls = TRUE, data = NULL, ...)
 
-\method{hlm_augment}{lme}(object, level = 1, standardize = FALSE, ...)
+\method{hlm_augment}{lme}(object, level = 1, include.ls = include.ls, ...)
 }
 \arguments{
 \item{object}{an object of class \code{lmerMod} or \code{lme}.}
@@ -19,12 +19,11 @@ are calculated for individual observations. Otherwise, \code{level} should be th
 factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.
 This will return between-group residuals and influence diagnostics calculated for each group.}
 
-\item{standardize}{for any level, if \code{standardize = TRUE} (default) the
-standardized residuals will be returned for any group; for level-1 only, if
-\code{standardize = "semi"} then the semi-standardized level-1 residuals
-will be returned}
+\item{include.ls}{a logical indicating if LS residuals should be included in the
+return tibble. \code{include.ls = FALSE} decreases runtime substantially.}
 
-\item{data}{the original data frame passed to `lmer`.}
+\item{data}{the original data frame passed to `lmer`. This is only necessary for `lmerMod` models where
+`na.action = "na.exclude"`}
 
 \item{...}{currently not used}
 }
@@ -44,6 +43,6 @@ about the returned values.
 \code{hlm_augment} does not allow for the deletion of specific cases, the specification of other
 types of leverage, or the use of full refits of the model instead of one step approximations for influence
 diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. Additional
-parameters \code{sim} and \code{ls.include} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
+parameters \code{sim} and \code{standardize} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
 should be used instead.
 }

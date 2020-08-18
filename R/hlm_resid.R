@@ -16,9 +16,9 @@ hlm_resid.default <- function(object, ...){
 #' \code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod} or
 #' \code{lme} object and extracts residuals and predicted values from the model,
 #' using Least Squares (LS) and Empirical Bayes (EB) methods. It then appends
-#' them to the model data frame. This unified framework enables the analyst to
-#' more easily conduct an upward residual analysis during model
-#' exploration/checking.
+#' them to the model data frame in the form of a tibble inspired by the \code{augment}
+#' function in \code{broom}. This unified framework enables the analyst to more
+#' easily conduct an upward residual analysis during model exploration/checking.
 #'
 #' @export
 #' @method hlm_resid lmerMod
@@ -74,6 +74,18 @@ hlm_resid.default <- function(object, ...){
 #' @author  Adam Loy \email{loyad01@@gmail.com}, Jack Moran, Jaylin Lowe
 #' @keywords models regression
 #' @seealso \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link{ranef}}
+#' @references 
+#' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
+#' linear models. University of California Los Angeles.
+#' 
+#' Houseman, E. A., Ryan, L. M., & Coull, B. A. (2004) 
+#' Cholesky Residuals for Assessing Normal Errors in a Linear 
+#' Model With Correlated Outcomes. 
+#' \emph{Journal of the American Statistical Association}, \bold{99}(466), 383--394.
+#' 
+#' David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis
+#' Objects into Tidy Tibbles. R package version 0.5.6.
+#' \link{https://CRAN.R-project.org/package=broom}
 hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
