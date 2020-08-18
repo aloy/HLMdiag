@@ -38,8 +38,8 @@ hlm_augment.default <- function(object, ...){
 #'about the returned values.
 #'@note \code{hlm_augment} does not allow for the deletion of specific cases, the specification of other
 #'types of leverage, or the use of full refits of the model instead of one step approximations for influence
-#'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. Additional
-#'parameters \code{sim} and \code{standardize} are avaliable in \code{hlm_resid}; if these are desired, \code{hlm_resid}
+#'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. The additional
+#'parameter \code{standardize} is avaliable in \code{hlm_resid}; if this are desired, \code{hlm_resid}
 #'should be used instead. 
 hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NULL, ...) {
   residuals <- hlm_resid(object, level = level, include.ls = include.ls, data = data)

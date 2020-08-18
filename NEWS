@@ -1,3 +1,32 @@
+Version 0.4.0
+=============
+DEVELOPMENT
+
+*Influence diagnostics are now avaliable through the `case_delete` function and accompaning functions for `lme` objects from the `nlme` package. These diagnostics are also avaliable for three level models. 
+
+USER-VISIBLE CHANGES
+
+*The `group` parameter for influence diagnostics has been changed to `level` in order to match the residual functions.
+`level` defaults to NULL, which will delete individual observations iteratively as `group = NULL` did. 
+*The `cooks.distance` and `mdffits` functions now only return the values as a numeric vector, instead of also returning the 
+beta values as attributes. If these attributes are desired, the user can now set `include.attr = TRUE`, and a tibble
+will be returned instead with the influence diagnostics and the beta attributes. 
+*The `dotplot_diag` function has been updated to be more efficient. Additionally, it no longer places labels on the y-axis 
+and only labels the top five observations in order to improve visibility.
+
+NEW FEATURES
+
+*The `hlm_influence` function has been added. This function returns influence diagnostics appended to the model frame.
+*The `hlm_augment` function has been added, which combines `hlm_influence` and `hlm_resid` to return influence diagnostics
+and residuals appended to the model frame. 
+*The `delete` parameter in `case_delete`, `hlm_influence`, and `hlm_augment` now also accepts character vectors at the second or third level. Observations or groups to be deleted can be specified by row indices in a numeric vector (as previously), or as character vectors of group level names found in `model@flist` (lmerMod models) or `model$groups` (lme models). 
+
+BUG FIXES
+
+*`cooks.distance` and `mdffits` functions was fixed to solve an issue with the number of columns. 
+*Fixed an issue with `case_delete` so that it works with three level models. 
+
+
 Version 0.3.2.900
 =============
 

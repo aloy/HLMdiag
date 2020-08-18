@@ -124,7 +124,7 @@ dotplot_diag <- function(x, cutoff,
               color = I("red"), 
               shape = 17
             ) +
-            geom_text(
+            ggrepel::geom_text_repel(
               data = df[1:5,], 
               aes(x = n, y = value, label = index,  hjust=.5, vjust=1.5, size=3)
             ) 
@@ -182,8 +182,8 @@ dotplot_diag <- function(x, cutoff,
               shape = 17, 
               inherit.aes = FALSE
             ) +
-            geom_text(
-              data = filter(df, .data$extreme == TRUE), 
+            ggrepel::geom_text_repel(
+              data = filter(df, .data$extreme == TRUE)[1:5,], 
               aes(x = n.factor, y = value, label = index,  
                   hjust = .5, vjust = 1.5, size = 3), 
               inherit.aes = FALSE
