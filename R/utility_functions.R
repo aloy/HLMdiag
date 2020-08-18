@@ -408,10 +408,8 @@ extract_design <- function (b){
     dplyr::anti_join(model@frame, by = colnames(model@frame)) %>%
     dplyr::select(colnames(model@frame))
   
-  rownames(df) <- rownums
-  
   for (i in 1:nrow(df)) {
-    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownames(df)[i]))
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownums[i]))
   }
   
   return(frame)
