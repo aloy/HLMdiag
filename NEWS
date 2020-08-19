@@ -30,7 +30,7 @@ BUG FIXES
 *`cooks.distance` and `mdffits` functions was fixed to solve an issue with the number of columns. 
 *Fixed an issue with `case_delete` so that it works with three level models. 
 *`hlm_resid`, `hlm_influence`, and `hlm_augment` properly respect na.action and work with models fit in `nlme`
-*`LSresids` doesn't break with three-level models, or models with tranformed variables
+*`LSresids` doesn't break with three-level models, or with models containing tranformed variables
 
 Version 0.3.2.900
 =============
