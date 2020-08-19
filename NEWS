@@ -2,7 +2,8 @@ Version 0.4.0
 =============
 DEVELOPMENT
 
-*Influence diagnostics are now avaliable through the `case_delete` function and accompaning functions for `lme` objects from the `nlme` package. These diagnostics are also avaliable for three level models. 
+*Influence diagnostics are now avaliable through the `case_delete` function and accompaning functions for `lme` objects from the `nlme` package. These diagnostics are also avaliable for three-level models. 
+*Residual diagnostics are also now available via `hlm_resid` for `lme` model objects and three-level models.
 
 USER-VISIBLE CHANGES
 
@@ -13,19 +14,23 @@ beta values as attributes. If these attributes are desired, the user can now set
 will be returned instead with the influence diagnostics and the beta attributes. 
 *The `dotplot_diag` function has been updated to be more efficient. Additionally, it no longer places labels on the y-axis 
 and only labels the top five observations in order to improve visibility.
+*`LSresid` now returns only the residual values, excluding the model frame
+*The `sim` argument for `LSresid` has been removed
 
 NEW FEATURES
 
 *The `hlm_influence` function has been added. This function returns influence diagnostics appended to the model frame.
-*The `hlm_augment` function has been added, which combines `hlm_influence` and `hlm_resid` to return influence diagnostics
-and residuals appended to the model frame. 
+*The `hlm_resid` function has been added. This function returns residual diagnostics appended to the model frame.
+*The `hlm_augment` function has been added, which combines `hlm_influence` and `hlm_resid` to return influence diagnostics and residuals appended to the model frame. 
+*The `pull_resid` function has been added. This funciton returns a vector of a specified type of residual prioritizing computational efficiency.
 *The `delete` parameter in `case_delete`, `hlm_influence`, and `hlm_augment` now also accepts character vectors at the second or third level. Observations or groups to be deleted can be specified by row indices in a numeric vector (as previously), or as character vectors of group level names found in `model@flist` (lmerMod models) or `model$groups` (lme models). 
 
 BUG FIXES
 
 *`cooks.distance` and `mdffits` functions was fixed to solve an issue with the number of columns. 
 *Fixed an issue with `case_delete` so that it works with three level models. 
-
+*`hlm_resid`, `hlm_influence`, and `hlm_augment` properly respect na.action and work with models fit in `nlme`
+*`LSresids` doesn't break with three-level models, or models with tranformed variables
 
 Version 0.3.2.900
 =============
