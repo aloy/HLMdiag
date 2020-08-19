@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 library(dplyr)
+library(ggplot2)
 ```
 
 ```{r}
@@ -38,20 +39,19 @@ The `hlm_influence()` function provides a wrapper that returns influence diagnos
 Cook's distance and MDFFITS both measure the distance between fixed effects estimated from the full data set and those obtained from the reduced data set. For Cook's distance, the change in parameter estimates is scaled by the estimated covariance matrix of the original parameter estimates, while MDFFITS scales this change by the estimated covariance matrix of the deletion estimates. The covariance trace and covariance ratio both measure how precision is affected by the deletion of a particular observation or group of observations *i*. Covariance trace is a measure of the ratio between the covariance matrices with and without unit *i* to the identity matrix, while covariance ratio is a comparison of the two covariance matrices with and without unit *i* using their determinants. Relative variance change (RVC) is a measurement of the ratio of estimates of the *l* th variance component with and without unit *i*. The final influence diagnostic returned by `hlm_influence()`, leverage, is the rate of change in the predicted response with respect to the observed response. For a full explanation of these influence diagnostics, including formulas, please refer to Loy and Hofmann (2014). 
 
 
-To explore the functionality of `hlm_influence()`, we will use the dataset `class` (*West et. al, 2014*). The data set consists of 1,190 observations of students. Students are grouped within classes, which are nested within schools. There are 312 distinct classes nested within 107 schools. 
+To explore the functionality of `hlm_influence()`, we will use the dataset `classroom` (**West et. al, 2014**). The data set consists of 1,190 observations of students. Students are grouped within classes, which are nested within schools. There are 312 distinct classes nested within 107 schools. 
 
-FIGURE OUT HOW TO CHANGE THE DATASET
 ```{r}
-class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
+data("classroom", package = "WWGbook")
 ```
 
 ```{r, echo = FALSE}
-print(as_tibble(class), width = Inf)
+print(as_tibble(classroom), width = Inf)
 ```
 
 We will fit a simple three-level hierarchical linear model using the `lme4` package: 
 ```{r}
-class.lmer <- lme4::lmer(mathgain ~ mathkind + sex + minority + ses + housepov + (1|schoolid/classid), data = class)
+class.lmer <- lme4::lmer(mathgain ~ mathkind + sex + minority + ses + housepov + (1|schoolid/classid), data = classroom)
 ```
 
 ### Obtain influence diagnostics at different levels with `level`
@@ -67,12 +67,12 @@ print(infl, width = Inf)
 
 Note that the parameter used to select individual observations is now called `level`, not `group`. Previous versions of `HLMdiag` used the group parameter for influence diagnostics, where `group = NULL` was the default, and users could choose to delete groups instead by setting `group` equal to level names. As of `HLMdiag` version 0.4.0, `group` has been replaced by `level`. `level` defaults to `level = 1` which deletes individual observations, exactly how `group = NULL` used to work. 
 
-The resulting tibble can be used along with `dotplot_diag` to identify potentially influential observations using either an internal cutoff of 3*IQR or a user-specified cutoff. For example, the plot shown below reveals and labels all observations above the internally calculated cutoff for Cook's distance.  
+The resulting tibble can be used along with `dotplot_diag()` to identify potentially influential observations using either an internal cutoff of 3*IQR or a user-specified cutoff. For example, the plot shown below reveals and labels all observations above the internally calculated cutoff for Cook's distance.  
 ```{r, fig.height = 4, fig.width= 7}
 dotplot_diag(infl$cooksd, name = "cooks.distance", cutoff = "internal")
 ```
 
-The plot illustrates that there are many observations with a Cook's distance value above the internally calculated cutoff. `dotplot_diag` labels the top 5, which is difficult to see in this case. Rather than investigate all observations above the cutoff, we may be interested in the observations with the highest Cook's distance values. The tibble returned by `hlm_influence()` provides an easy way to do this when used with the `arrange` function from `dplyr`. 
+The plot illustrates that there are many observations with a Cook's distance value above the internally calculated cutoff. `dotplot_diag()` labels the top 5, which is difficult to see in this case. Rather than investigate all observations above the cutoff, we may be interested in the observations with the highest Cook's distance values. The tibble returned by `hlm_influence()` provides an easy way to do this when used with the `arrange()` function from `dplyr`. 
 ```{r}
 tb1 <- infl %>%
   arrange(desc(cooksd))
@@ -93,7 +93,7 @@ print(infl.classes, width = Inf)
 ```
 Note that the `level` parameter is set as `classid:schoolid`, not `classid`. The level parameter should be specified as found in `model@flist` for lmerMod objects. For three level models, this usually takes the form of "level2:level3", where level2 is the name of the second level variable, and level3 is the name of the third level variable. 
 
-Using `dotplot_diag` again with one of the columns from the resulting tibble of `hlm_influence` reveals that class 218 has a relatively high Cook's distance value. 
+Using `dotplot_diag()` again with one of the columns from the resulting tibble of `hlm_influence` reveals that class 218 has a relatively high Cook's distance value. 
 ```{r, fig.height = 4, fig.width= 7}
 dotplot_diag(infl.classes$cooksd, name = "cooks.distance", cutoff = "internal")
 ```
@@ -106,7 +106,7 @@ infl.schools <- hlm_influence(class.lmer, level = "schoolid")
 ```{r, echo = FALSE}
 print(infl.schools, width = Inf)
 ```
-Similarily, we can use `dotplot_diag` to visually represent the differences. In this case, there are only four observations above the cutoff, so we set `modify = "dotplot"` in order to better visualize the influential observations. `modify = "dotplot"` works well when there are a relatively small number of observations above the cutoff. 
+Similarily, we use `dotplot_diag` to visually represent the differences. In this case, there are only four observations above the cutoff, so we set `modify = "dotplot"` in order to better visualize the influential observations. `modify = "dotplot"` works well when there are a relatively small number of observations above the cutoff. 
 ```{r, fig.height = 4, fig.width= 7, warning = FALSE}
 dotplot_diag(infl.schools$cooksd, name = "cooks.distance", cutoff = "internal", modify = "dotplot")
 ```
@@ -126,7 +126,7 @@ Note that in this case, `delete` is specified as a character vector consisting o
 
 In the previous examples, `hlm_influence()` only returned overall leverage. However, `hlm_influence()` also allows for other types of leverage, including the leverage corresponding to the fixed effects, the leverage corresponding to the random effects as proposed by Demidenko and Stukel (2005), and the unconfounded leverage corresponding to the random effects proposed by Nobre and Singer (2011). These types of leverage are referred to as `fixef`, `ranef`, and `ranef.uc`, respectively. 
 
-We can see that none of our observations are flagged for high leverage when looking only at overall leverage:
+None of our observations are flagged for high leverage when looking only at overall leverage:
 ```{r, fig.height = 4, fig.width= 7}
 dotplot_diag(infl$leverage.overall, name = "leverage", cutoff = "internal")
 ```
@@ -145,7 +145,7 @@ However, futher analysis reveals that several observations have high leverage wh
 
 ### Choose between approximations or full refits with `approx`
 
-`hlm_influence()` defaults to calculating influence diagnostics based off a one step approximation (*Christensen et.al 1992*; *Shi and Chen 2008*; *Zewotir 2008*). However, the `approx` parameter allows the user to calculate influence diagnostics based off a full refit of the data using `hlm_influence()`. For example, if we wished to calculate influence diagnostics for each school by fully refitting the model each time, we could use:
+`hlm_influence()` defaults to calculating influence diagnostics based off a one step approximation (**Christensen et.al 1992**; **Shi and Chen 2008**; **Zewotir 2008**). However, the `approx` parameter allows the user to calculate influence diagnostics based off a full refit of the data using `hlm_influence()`. For example, if we wished to calculate influence diagnostics for each school by fully refitting the model each time, we could use:
 ```{r}
 infl3 <- hlm_influence(class.lmer, level = "schoolid", approx = FALSE)
 ```
@@ -162,7 +162,7 @@ In most cases, using the default of `approx = TRUE` is sufficient for influence 
 
 For example, while the `class` dataset does not have any `NA`s in the dataset, we can introduce a couple for the purposes of an example.
 ```{r}
-classNA <- class
+classNA <- classroom
 classNA[2,3] <- NA
 classNA[3,4] <- NA
 ```
@@ -213,7 +213,7 @@ aug2 <- aug %>%
 ```{r, echo = FALSE}
 print(aug2, width = Inf)
 ```
-Similar to `hlm_influence` we can sort by a particular column in order to inspect the values of other influence diagnostics and the residuals of influential observations. 
+We can sort by a particular column in order to inspect the values of other influence diagnostics and the residuals of influential observations. 
 
 ## lme objects from nlme package 
 
@@ -225,7 +225,7 @@ In most cases, using a `lme` object for `hlm_influence()` or `hlm_augment()` is 
 
 For both `hlm_influence()` and `hlm_augment()`, levels should be specified by names that appear in `model@flist`. For the second level of a three level `lmerMod` model, this usually looks like "level2:level3" where level2 and level3 are the names of the second and third level variables, respectively. However, for a `lme` model, levels should be specified by names that appear in `model$groups`. For example, we can obtain influence diagnostics for each classroom from the `class` dataset in the following way:
 ```{r}
-class.lme <- nlme::lme(mathgain ~ mathkind + sex + minority + ses + housepov, random = ~ 1|schoolid/classid, data = class)
+class.lme <- nlme::lme(mathgain ~ mathkind + sex + minority + ses + housepov, random = ~ 1|schoolid/classid, data = classroom)
 hlm_influence(class.lme, level = "classid")
 ```
 For the `lmerMod` model, we specified `level = classid:schoolid`. However, for `lme` models, the name of the second level alone is sufficient. However, specifying names of specific groups to delete for `lme` models is also slightly different. For example, we can obtain influence diagnostics for a model created when classes 160 and 217 are deleted for a `lmerMod` model in the following way:
@@ -243,7 +243,7 @@ Additionally, `lmerMod` models require that the `data` argument is passed into `
 
 ##Cook's distance values comparison to other packages 
 
-The `HLMdiag` package has two different ways to calculate Cook's distance. One of them, which is more exact, refits the model with each observation or group deleted from the model and calculates Cook's distance from the resulting coefficient estimates and variance components estimates. The second is a one-step approximation. For more information about how the one step approximation works, we refer the reader to *Christensen et.al (1992)*; *Shi and Chen (2008)*; and *Zewotir (2008)*. Other R packages also have functions that can calculate Cook's distance. In this section, we highlight the differences between the ways of calculating Cook's distance in `HLMdiag` versus other methods in the `car` and `lme4` packages. 
+The `HLMdiag` package has two different ways to calculate Cook's distance. One of them, which is more exact, refits the model with each observation or group deleted from the model and calculates Cook's distance from the resulting coefficient estimates and variance components estimates. The second is a one-step approximation. For more information about how the one step approximation works, we refer the reader to **Christensen et.al (1992)**; **Shi and Chen (2008)**; and **Zewotir (2008)**. Other R packages also have functions that can calculate Cook's distance. In this section, we highlight the differences between the ways of calculating Cook's distance in `HLMdiag` versus other methods in the `car` and `lme4` packages. 
 
 ### The `car` package
 
@@ -289,7 +289,7 @@ car_cd_adjusted <- car_cd * sig.sq
 head(car_cd_adjusted)
 ```
 
-Once the values from `car` have been adjusted by sigma squared, they now appear very similar to the MDFFITS values from `HLMdiag`. The plot below shows the difference between the MDFFITS estimates from `HLMdiag` and the variance-adjusted Cook's distance estimates from `car` for all 1,190 observations in the `class` data set. 
+Once the values from `car` have been adjusted by sigma squared, they now appear very similar to the MDFFITS values from `HLMdiag`. The plot below shows the difference between the MDFFITS estimates from `HLMdiag` and the variance-adjusted Cook's distance estimates from `car` for all 1,190 observations in the `classroom` data set. 
 ```{r, echo = FALSE, warning = FALSE, fig.height = 4, fig.width= 7}
 data.frame(car_adjusted = car_cd_adjusted, mdffits = hlm_mdffits, obs = 1:1190) %>%
   mutate(diff = mdffits - car_adjusted) %>%
@@ -336,7 +336,7 @@ The estimates produced by the `lme4` approximation are never smaller than the va
 
 `lme4` also has a function that performs a full refit of the models without each observation or group and calculates Cook's distance values based off those refits. We can calculate this by using the `influence` function from `lme4`. 
 ```{r}
-lme_case <- lme4:::influence.merMod(class.lmer, data = class) 
+lme_case <- lme4:::influence.merMod(class.lmer, data = classroom) 
 cd_lme_full <- cooks.distance(lme_case) 
 head(cd_lme_full)
 ```
@@ -347,6 +347,25 @@ The values obtained from `lme4` match those from `car`, meaning that `lme4` is a
 $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ 
 
 The full refits from the `lme4` and `car` packages both choose to calculate what is MDFFITS in the `HLMdiag` package, and additionally choose to scale by dividing by the variance from each refit model. Those choices explain almost all of the differences between Cook's distance values from the three different packages; additional variation is due to differences in how the new models are fit and coefficients estimated. 
+
+##References
+Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Models Using lme4.
+  Journal of Statistical Software, 67(1), 1-48. doi:10.18637/jss.v067.i01.
+
+Christensen R, Pearson L, Johnson W (1992). “Case-Deletion Diagnostics for Mixed Models.” *Technometrics*, 34(1), 38–45.
+
+Fox J, Weisburg S (2019). A {R} Companion to Applied Regression, Third Addition. Thousand Oaks CA: Sage. URL: https://socialsciences.mcmaster.ca/jfox/Books/Companion/
+  
+Loy A, Hofmann H (2014). HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R. *Journal of Statistical Software*, 56(5), 1-28. 
+
+Pinheiro J, Bates D, DebRoy S, Sarkar D, R Core Team (2020). _nlme: Linear and Nonlinear Mixed Effects Models_. R
+package version 3.1-148, <URL: https://CRAN.R-project.org/package=nlme>.
+  
+Shi L, Chen G (2008). “Case Deletion Diagnostics in Multilevel Models.” *Journal of Multivariate Analysis*, 99(9), 1860–1877.
+
+West, B., Welch, K. & Galecki, A. (2006) Linear Mixed Models: A Practical Guide Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN 1584884800
+
+Zewotir T (2008). “Multiple Cases Deletion Diagnostics for Linear Mixed Models.” *Communications in Statistics – Theory and Methods*, 37(7), 1071–1084.
 
 
 
