@@ -1,6 +1,6 @@
 ---
 title: "HLMdiag Influence Diagnostics"
-authors: "Jaylin Lowe, Jack Moran, Adam Loy"
+author: "Jaylin Lowe"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >

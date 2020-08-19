@@ -10,7 +10,7 @@ To help fill this need, `HLMdiag`:
 
 * Implements influence analysis.
   * Leverage
-  * Deletion diagnostics -- Cook's distance, MDFFITS, covariance ratio & trace
+  * Deletion diagnostics -- Cook's distance, MDFFITS, covariance ratio & trace, relative variance change 
 
 `HLMdiag` strives to provide an easy to use interface for models fit using `lmer` from the package `lme4` that is draws from the ideas of `influence.measures` for regression diagnostics.
 
