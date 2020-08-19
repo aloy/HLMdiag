@@ -1,21 +1,27 @@
 #' Diagnostic tools for hierarchical (multilevel) linear models
 #' 
 #' HLMdiag provides a suite of diagnostic tools for hierarchical 
-#' (multilevel) linear models fit using \code{\link[lme4]{lmer}}. 
-#' These tools are grouped below by purpose. 
+#' (multilevel) linear models fit using the \code{lme4} or \code{nlme}
+#' packages. These tools are grouped below by purpose. 
 #' See the help documentation for additional information
 #' about each function.
 #' 
 #' \bold{Residual analysis}
 #' 
-#' HLMdiag's \code{\link{HLMresid}} function provides a convenient
-#' wrapper to obtain residuals at each level of a hierarchical 
-#' linear model. In addition to being a wrapper function for functions 
-#' implemented in the \code{lme4} package, HLMresid provides access
-#' to the marginal and least squares residuals (through \code{\link{LSresids}}) 
-#' that were not previously implemented.
+#' HLMdiag's \code{\link{hlm_resid}} function provides a wrapper that 
+#' extracts residuals and predicted values for individual observations
+#' or groups of observations. In addition to being a wrapper function for functions
+#' implemented in the \code{lme4} package, \code{\link{hlm_resid}} provides access 
+#' to the marginal and least squares residuals. 
 #' 
 #' \bold{Influence analysis}
+#' 
+#' HLMdiag's \code{\link{hlm_influence}} function provides a convenient wrapper 
+#' to obtain influence diagnostics for each observation or group of observations 
+#' appended to the data used to fit the model. The diagnostics returned by 
+#' \code{\link{hlm_influence}} include Cook's distance, MDFFITS, covariance trace (covtrace),
+#' covariance ratio (covratio), leverage, and relative variance change (RVC). 
+#' HLMdiag also contains functions to calculate these diagnostics individually, as discussed below. 
 #' 
 #' Influence on fitted values
 #' 
