@@ -243,7 +243,7 @@ The school-level random effects again show no large outliers. We would now check
 
 ## pull_resid()
 
-The function `pull_resid()` is an efficient way to pull a single type of residual as a vector. Whereas `hlm_resid()` spends time calculating all types of residuals and fitted values, `pull_resid()` only calculates the type of residual specified by the user, saving time over using `hlm_resid()` and indexing for a specific column. This is especially useful when used in a loop, such as when using simulation-based diagnostics..
+The function `pull_resid()` is an efficient way to pull a single type of residual as a vector. Whereas `hlm_resid()` spends time calculating all types of residuals and fitted values, `pull_resid()` only calculates the type of residual specified by the user, saving time over using `hlm_resid()` and indexing for a specific column. This is especially useful when used in a loop, such as when using simulation-based diagnostics.
 
 `pull_resid()` takes three parameters, `object`, `type`, and `standardize`. The parameters `object` and `standardize` work identically as they do in `hlm_resid()`, and the new parameter, `type`, can be set to:
 
