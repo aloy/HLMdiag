@@ -81,11 +81,27 @@ hlm_resid.default <- function(object, ...){
 #' Houseman, E. A., Ryan, L. M., & Coull, B. A. (2004) 
 #' Cholesky Residuals for Assessing Normal Errors in a Linear 
 #' Model With Correlated Outcomes. 
-#' \emph{Journal of the American Statistical Association}, \bold{99}(466), 383--394.
+#' \emph{Journal of the American Statistical Association}, 99(466), 383--394.
 #' 
 #' David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis
 #' Objects into Tidy Tibbles. R package version 0.5.6.
 #' \link{https://CRAN.R-project.org/package=broom}
+#' @examples
+#' data(sleepstudy, package = "lme4")
+#' fm.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm.lme <- nlme::lme(Reaction ~ Days, random = ~Days|Subject, sleepstudy)
+#' 
+#' # level-1 and marginal residuals
+#' fm.lmer.res1 <- hlm_resid(fm.lmer) ## raw level-1 and mar resids
+#' fm.lmer.res1
+#' fm.lme.std1 <- hlm_resid(fm.lme, standardize = TRUE) ## std level-1 and mar resids
+#' fm.lme.std1
+#' 
+#' # level-2 residuals
+#' fm.lmer.res2 <- hlm_resid(fm.lmer, level = "Subject") ## level-2 ranefs
+#' fm.lmer.res2
+#' fm.lme.res2 <- hlm_resid(fm.lme, level = "Subject", include.ls = FALSE) ##level-2 ranef, no LS
+#' fm.lme.res2
 hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
