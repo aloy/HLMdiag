@@ -129,6 +129,7 @@ rvc.default <- function(object, ...){
 #' lev2 <- leverage(fm, level = "Subject")
 #' head(lev2)
 leverage.mer <- function(object, level = 1, ...) {
+  .Deprecated("leverage.lmerMod")
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   if(object@dims[["nest"]] == 0) {
     stop("leverage.mer has not yet been implemented for models with 
@@ -332,6 +333,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' }
 #' 
 cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
+  .Deprecated("cooks.distance.lmerMod")
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -610,6 +612,7 @@ print.vcov.dd <- function(x, ...) { print(unclass(x), ...) }
 #' m.school <- mdffits(fm, level = "school")
 #' }
 mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
+  .Deprecated("mdffits.lmerMod")
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
@@ -862,6 +865,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' cr2 <- covratio(fm, level = "school")
 #' }
 covratio.mer <- function(object, level = 1, delete = NULL, ...) {
+  .Deprecated("covratio.lmerMod")
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   
   if (hasArg(group)) {
@@ -1018,6 +1022,7 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
 #' ct2 <- covtrace(fm, level = "school")
 #' }
 covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
+  .Deprecated("covtrace.lmerMod")
   if(!is(object, "mer")) stop("object must be of class 'mer'")
   
   if (hasArg(group)) {
@@ -1189,6 +1194,7 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
 rvc.mer <- function(object, level = 1, delete = NULL, ...) {
+  .Deprecated("rvc.lmerMod")
     delete <- case_delete(object, level = 1, type = "varcomp", delete = delete)
     return( rvc(delete) )
 }

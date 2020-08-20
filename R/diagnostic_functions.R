@@ -53,6 +53,7 @@
 #' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 #' subject.diag <- diagnostics(subject.del)
 diagnostics <- function(object){
+  .Deprecated("hlm_influence")
   type <- attributes(object)$type
   if(type %in% c("fixef", "both")){
     ids <- as.vector(rownames(object$fixef.delete, do.NULL = FALSE, prefix = ""))
