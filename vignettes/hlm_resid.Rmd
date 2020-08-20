@@ -1,7 +1,7 @@
 ---
 title: "HLMdiag Residual Diagnostics"
 authors: "Jack Moran, Jaylin Lowe, Adam Loy"
-date: "8-17-2020"
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{hlm_resid}
@@ -44,7 +44,7 @@ LS and EB residuals each have their own advantages and disadvantages. Level-1 LS
 
 ## Example Data
 
-To illustrate the use of `hlm_resid`, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package `mlmRev` (**Bates, Maechler, and Bolker 2013b**), which makes well known multilevel modeling data sets available in R.
+To illustrate the use of `hlm_resid()`, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package `mlmRev` (**Bates, Maechler, and Bolker 2013**), which makes well known multilevel modeling data sets available in R.
 ```{r}
 data("Exam", package = "mlmRev")
 head(Exam)
@@ -58,15 +58,15 @@ fm1 <- lme4::lmer(normexam ~ standLRT + (1 | school), Exam, REML = FALSE)
 fm1
 ```
 
-## hlm_resid usage
+## hlm_resid() usage
 
-`hlm_resid` takes 5 arguments:
+`hlm_resid()` takes 5 arguments:
 
 * `object` - the model fit as a `lmerMod` or `lme` object.
 
-* `level` - the level at which residuals should be extracted. By default, `level = 1`, returning both EB and LS level-1  residuals as well as marginal residuals. `level` can also be set to a grouping factor as defined in `names(object@flist)` in `lme4` or in `names(object$groups)` in `nlme`. When set to a grouping factor, `hlm_resid` returns both EB and LS higher-level residuals, otherwise known as the random effects for each group. 
+* `level` - the level at which residuals should be extracted. By default, `level = 1`, returning both EB and LS level-1  residuals as well as marginal residuals. `level` can also be set to a grouping factor as defined in `names(object@flist)` in `lme4` or in `names(object$groups)` in `nlme`. When set to a grouping factor, `hlm_resid()` returns both EB and LS higher-level residuals, otherwise known as the random effects for each group. 
 
-* `standardize` - a logical indicating if the returned residuals should be standardized. By default, `standardize = FALSE`, returning unstandardized residuals. When `standardize = TRUE`, residuals are divided by the estimated variance of the residuals. For marginal residuals, when `standardize = TRUE`, the Cholesky residuals are returned.
+* `standardize` - a logical indicating if the returned residuals should be standardized. By default, `standardize = FALSE`, returning unstandardized residuals. When `standardize = TRUE`, residuals are divided by the estimated standard error. For marginal residuals, when `standardize = TRUE`, the Cholesky residuals are returned.
 
 * `include.ls` - a logical indicating if LS residuals should be returned. By default, `include.ls = TRUE`. The LS method of estimating residuals is more computationally intensive than the EB method. Consequently, setting `include.ls = FALSE` substantially decreases the runtime on models with many observations.
 
@@ -80,7 +80,7 @@ library(HLMdiag)
 hlm_resid(fm1)
 ```
 
-`hlm_resid` appends 6 columns to the model frame:
+`hlm_resid()` appends 6 columns to the model frame:
 
 * `.resid`  the unstandardized Empirical Bayes (EB) level-1 residuals for each observation
 * `.fitted` the Empirical Bayes (EB) fitted values
@@ -151,7 +151,7 @@ hlm_resid(fm1.NA.lme)
 
 ### Three-level models
 
-In three-level models, how we specify middle-level residuals changes depending on whether a model is a `lmerMod` or `lme` object. This is due to differences in how `lme4` and `nlme` store their grouping factors To demonstrate this, we use a classroom data set from **West, B., Welch, K. & Galecki, A. (2006)**. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom.
+In three-level models, how we specify middle-level residuals changes depending on whether a model is a `lmerMod` or `lme` object. This is due to differences in how `lme4` and `nlme` store their grouping factors To demonstrate this, we use a classroom data set from **West, Welch, Galecki (2006)**. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom.
 ```{r}
 data("classroom", package = "WWGbook")
 head(classroom)
@@ -213,7 +213,7 @@ resid1_fm1b <- hlm_resid(fm1b, level = 1, standardize = TRUE)
 
 ggplot(data = resid1_fm1b, aes(x = standLRT, y = .std.ls.resid)) + 
   geom_point(alpha = 0.2) +
-  geom_smooth(method = "loess") + 
+  geom_smooth(method = "loess", se = FALSE) + 
   labs(y = "LS level-1 residuals", title = "LS residuals against standardized LRT score")
 ```
 
@@ -228,14 +228,14 @@ ggplot(data = resid1_fm1b, aes(x = .ls.fitted, y = .std.ls.resid)) +
 ```
 
 The LS level-1 residuals give no indication that the model violates any assumptions of an HLM. Because there are no glaring issues, we move on to the higher-level residuals, again plotting the output of `hlm_resid()`.
-```{r, message = FALSE, warning = FALSE, fig.height = 5, fig.width = 5, fig.align = 'center'}
+```{r, message = FALSE, warning = FALSE, fig.height = 6.5, fig.width = 5, fig.align = 'center'}
 resid2_fm1b <- hlm_resid(fm1b, level = "school", include.ls = FALSE)
 resid2_fm1b
 
 ggplot(data = resid2_fm1b, aes(x = school, y = .ranef.intercept)) + 
   geom_point() +
   labs(y = "Random effects - intercept", 
-       title = "Intercept random effects against school") +
+       title = "Intercept random effects against school") + 
   coord_flip()
 ```
 
@@ -266,17 +266,21 @@ fm1.aug <- hlm_augment(fm1)
 tibble::glimpse(fm1.aug)
 ```
 
-This is useful for inspecting residuals values and influence diagnostics values at the same time. However, `hlm_augment()` lacks some of the functionality that `hlm_influence()` and `hlm_resid` have. The `delete` and `approx` parameters avaliable for `hlm_influence()` are not avaliable in `hlm_augment()`, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The `standardize` parameter from `hlm_resid()` is also not included, so unstandardized residuals will always be returned. If additional functionality is required, `hlm_influence()` or `hlm_resid()` should be used instead. `hlm_augment()` is especially useful for inspecting influence diagnostics of observations with relatively high residuals, or vice versa. For more information about avaliable functionality in `hlm_influence()`, see the `hlm_influence()` vignette. 
+This is useful for inspecting residuals values and influence diagnostics values at the same time. However, `hlm_augment()` lacks some of the functionality that `hlm_influence()` and `hlm_resid()` have. The `delete` and `approx` parameters avaliable for `hlm_influence()` are not avaliable in `hlm_augment()`, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The `standardize` parameter from `hlm_resid()` is also not included, so unstandardized residuals will always be returned. If additional functionality is required, `hlm_influence()` or `hlm_resid()` should be used instead. `hlm_augment()` is especially useful for inspecting influence diagnostics of observations with relatively high residuals, or vice versa. For more information about avaliable functionality in `hlm_influence()`, see the `hlm_influence()` vignette. 
 
 ## References
-
-David Robinson, Alex Hayes (2020). broom: Convert Statistical Analysis Objects
-  into Tidy Tibbles. R package version 0.5.6.
-  https://CRAN.R-project.org/package=broom
 
 Adam Loy, Heike Hofmann (2014). HLMdiag: A Suite of Diagnostics for Hierarchical
   Linear Models in R. Journal of Statistical Software, 56(5), 1-28. URL
   http://www.jstatsoft.org/v56/i05/
+
+Brady West, Kathleen Welch, Andrzej Galecki (2006) Linear Mixed Models: A Practical Guide
+  Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN
+  1584884800
+
+David Robinson, Alex Hayes (2020). broom: Convert Statistical Analysis Objects
+  into Tidy Tibbles. R package version 0.5.6.
+  https://CRAN.R-project.org/package=broom
 
 Douglas Bates, Martin Maechler, Ben Bolker (2020). mlmRev: Examples from
   Multilevel Modelling Software Review. R package version 1.0-8.
@@ -286,14 +290,10 @@ Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting Linear
   Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48.
   doi:10.18637/jss.v067.i01
 
-Jose Pinheiro, Douglas Bates, Saikat DebRoy, Deepayan Sarkar, {R Core Team}} (2020). 
-  _nlme: Linear and Nonlinear Mixed Effects Models_. R package version 3.1-148, 
-  https://CRAN.R-project.org/package=nlme.
-
 J.A. Hilden-Minton (1995). Multilevel Diagnostics for Mixed and Hierarchical Linear 
   Models. Ph.D. thesis, University of California Los Angeles.
-  
-West, B., Welch, K. & Galecki, A. (2006) Linear Mixed Models: A Practical Guide
-  Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN
-  1584884800
+
+Jose Pinheiro, Douglas Bates, Saikat DebRoy, Deepayan Sarkar, R Core Team (2020). 
+  nlme: Linear and Nonlinear Mixed Effects Models. R package version 3.1-148, 
+  https://CRAN.R-project.org/package=nlme.
   

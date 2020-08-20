@@ -16,10 +16,18 @@ about each function.
 \bold{Residual analysis}
 
 HLMdiag's \code{\link{hlm_resid}} function provides a wrapper that 
+<<<<<<< HEAD
 extracts residuals and predicted values for individual observations
 or groups of observations. In addition to being a wrapper function for functions
 implemented in the \code{lme4} package, \code{\link{hlm_resid}} provides access 
 to the marginal and least squares residuals. 
+=======
+extracts residuals and fitted values for individual observations
+or groups of observations. In addition to being a wrapper function for functions
+implemented in the \code{lme4} and \code{nlme} packages,
+\code{\link{hlm_resid}} provides access to the marginal and least squares
+residuals.
+>>>>>>> 3b5ac4c75d263b8cb15045a11be9fb651efa5ab9
 
 \bold{Influence analysis}
 
