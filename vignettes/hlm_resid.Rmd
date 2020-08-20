@@ -44,13 +44,13 @@ LS and EB residuals each have their own advantages and disadvantages. Level-1 LS
 
 ## Example Data
 
-To illustrate the use of `hlm_resid()`, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package `mlmRev` (**Bates, Maechler, and Bolker 2013**), which makes well known multilevel modeling data sets available in R.
+To illustrate the use of `hlm_resid()`, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package `mlmRev` (**Bates, Maechler, Bolker 2013**), which makes well known multilevel modeling data sets available in R.
 ```{r}
 data("Exam", package = "mlmRev")
 head(Exam)
 ```
 
-For each student, the data consist of their gender (`sex`) and two standardized exam scores—- an intake score on the London Reading Test (LRT) at age 11 (`standLRT`) and a score on the General Certificate of Secondary Education (GCSE) examination at age 16 (`normexam`). Additionally, the students’ LRT scores were used to segment students into three categories (bottom 25%, middle 50%, and top 25%) based on their verbal reasoning subscore (`vr`) and overall score (`intake)`. At the school level, the data contain the average intake score for the school (`schavg`) and type based on school gender (`schgend`, coded as mixed, boys, or girls).
+For each student, the data consist of their gender (`sex`) and two standardized exam scores— an intake score on the London Reading Test (LRT) at age 11 (`standLRT`) and a score on the General Certificate of Secondary Education (GCSE) examination at age 16 (`normexam`). Additionally, the students’ LRT scores were used to segment students into three categories (bottom 25%, middle 50%, and top 25%) based on their verbal reasoning subscore (`vr`) and overall score (`intake)`. At the school level, the data contain the average intake score for the school (`schavg`) and type based on school gender (`schgend`, coded as mixed, boys, or girls).
 
 We illustrate usage for `hlm_resid()` below using the exam data and fitting an initial two-level HLM using a student’s standardized London Reading Test intake score (standLRT) to explain their GCSE exam score, allowing for a random intercept for each school:
 ```{r}

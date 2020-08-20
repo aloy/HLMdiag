@@ -105,7 +105,9 @@ fm.lme.std1
 
 # level-2 residuals
 fm.lmer.res2 <- hlm_resid(fm.lmer, level = "Subject") ## level-2 ranefs
+fm.lmer.res2
 fm.lme.res2 <- hlm_resid(fm.lme, level = "Subject", include.ls = FALSE) ##level-2 ranef, no LS
+fm.lme.res2
 }
 \references{
 Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 

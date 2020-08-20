@@ -38,6 +38,7 @@ LSresids.default <- function(object, ...){
 #' @seealso \code{\link{HLMresid}}
 #' @keywords models regression
 LSresids.mer <- function(object, level, sim = NULL, standardize = FALSE, ...){
+  .Deprecated(new = 'LSresids.lmerMod')
   if(!object@dims["LMM"]){
     stop("LSresids is currently not implemented for GLMMs or NLMMs.")
   }
