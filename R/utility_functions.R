@@ -168,6 +168,8 @@ isDiagonal <- function(mat, tol = 1e-10) {
   design.info <- suppressWarnings(extract_design(model)) 
   
   Y <- design.info$Y
+  Y <- Y[!is.na(Y)]
+  
   X <- design.info$X
   Z <- Matrix( design.info$Z )
   

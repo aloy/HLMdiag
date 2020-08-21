@@ -58,7 +58,7 @@ hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NUL
 #'@rdname hlm_augment.lmerMod
 #'@method hlm_augment lme
 #'@aliases hlm_augment
-hlm_augment.lme <- function(object, level = 1, include.ls = include.ls, ...) {
+hlm_augment.lme <- function(object, level = 1, include.ls = TRUE, ...) {
   residuals <- hlm_resid(object, level = level, include.ls = include.ls)
   infl <- hlm_influence(object, level = level)
   
