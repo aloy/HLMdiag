@@ -61,9 +61,10 @@ dotplot_diag(x = obs.infl$mdffits, cutoff = "internal", name = "cooks.distance",
 # Subject level deletion and diagnostics
 subject.infl  <- hlm_influence(fm, level = "Subject")
 
-dotplot_diag(x = subject.infl$cooksd, cutoff = "internal", name = "cooks.distance", modify = FALSE)
+dotplot_diag(x = subject.infl$cooksd, cutoff = "internal",
+             name = "cooks.distance", modify = FALSE)
              
-dotplot_diag(x = subject.infl$mdffits, cutoff = "internal", name = "mdffits", modify = "dotplot")
+dotplot_diag(x = subject.infl$mdffits, name = "mdffits", modify = "dotplot")
 }
 \author{
 Adam Loy \email{loyad01@gmail.com}
