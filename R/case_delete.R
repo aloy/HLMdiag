@@ -60,7 +60,6 @@ case_delete.default <- function(model, ...){
 #'\emph{Proceedings of the Twenty-Ninth SAS Users Group International
 #'Conference}, SAS Users Group International.
 #'@examples
-#'
 #'data(sleepstudy, package = 'lme4')
 #'fm <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #'
