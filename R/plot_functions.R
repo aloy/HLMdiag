@@ -37,16 +37,15 @@
 #' dotplot_diag(x = obs.infl$mdffits, cutoff = "internal", name = "cooks.distance", modify = FALSE)
 #'
 #' # Subject level deletion and diagnostics
-<<<<<<< HEAD
 #' subject.infl  <- hlm_influence(fm, level = "Subject")
 #' 
 #' dotplot_diag(x = subject.infl$cooksd, cutoff = "internal",
 #'              name = "cooks.distance", modify = FALSE)
 #'              
 #'dotplot_diag(x = subject.infl$mdffits, name = "mdffits", modify = "dotplot")
-#' @export
 #' @keywords hplot
 #' @importFrom rlang .data
+#' @export
 dotplot_diag <- function(x, cutoff, 
                          name = c("cooks.distance", "mdffits", "covratio", "covtrace", "rvc", "leverage"),
                          data, index = NULL, modify = FALSE, ...) {
