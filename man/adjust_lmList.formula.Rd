@@ -24,6 +24,13 @@ level within a group. In this case, the \code{formula} is updated eliminating
 the offending factors from the formula for that group as the effect is
 absorbed into the intercept.
 }
+\examples{
+
+data(Exam, package = 'mlmRev')
+sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam)
+confint(sepLM)
+
+}
 \references{
 Douglas Bates, Martin Maechler and Ben Bolker (2012). lme4:
 Linear mixed-effects models using S4 classes. R package version 0.999999-0.
