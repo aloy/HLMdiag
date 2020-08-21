@@ -1,4 +1,7 @@
 #include <RcppArmadillo.h>
+using namespace Rcpp;
+
+// [[Rcpp::depends(RcppArmadillo)]]
 
 extern "C" SEXP covratioCalc(SEXP index, SEXP X_, SEXP P_,
 							  SEXP Vinv_, SEXP XVXinv_) {

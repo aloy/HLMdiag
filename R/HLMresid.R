@@ -1,12 +1,12 @@
 #' @export
 HLMresid <- function(object, ...){
+  .Deprecated(new = "hlm_resid")
   UseMethod("HLMresid", object)
 }
 
 #' @export
 #' @rdname HLMresid.mer
 #' @method HLMresid default
-#' @S3method HLMresid default
 HLMresid.default <- function(object, ...){
   stop(paste("there is no HLMresid() method for objects of class",
              paste(class(object), collapse=", ")))
@@ -29,7 +29,6 @@ HLMresid.default <- function(object, ...){
 #'
 #' @export
 #' @method HLMresid mer
-#' @S3method HLMresid mer
 #' @aliases HLMresid
 #' @param object an object of class \code{mer} or \code{lmerMod}.
 #' @param level which residuals should be extracted: 1 for within-group (case-level)
@@ -90,7 +89,7 @@ HLMresid.default <- function(object, ...){
 #' \emph{Journal of the American Statistical Association}, \bold{99}(466), 383--394.
 #' @examples
 #' data(sleepstudy, package = "lme4")
-#' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' 
 #' # level-1 residuals
 #' all.equal(HLMresid(object = fm1, level = 1, type = "EB"), resid(fm1)) ## EB
@@ -100,7 +99,8 @@ HLMresid.default <- function(object, ...){
 #' head(r1LS.std)
 #' 
 #' # level-2 residuals
-#' all.equal(r2EB <- HLMresid(object = fm1, level = "Subject", type = "EB"), ranef(fm1)[["Subject"]])
+#' all.equal(r2EB <- HLMresid(object = fm1, level = "Subject", type = "EB"), 
+#'                            lme4::ranef(fm1)[["Subject"]])
 #' r2EB.std <- HLMresid(object = fm1, level = "Subject", type = "EB", standardize = TRUE)
 #' head(r2EB)
 #' head(r2EB.std)
@@ -176,7 +176,6 @@ HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = F
 #' @export
 #' @rdname HLMresid.mer
 #' @method HLMresid lmerMod
-#' @S3method HLMresid lmerMod
 HLMresid.lmerMod <- function(object, level, type = "EB", sim = NULL, 
                              standardize = FALSE, ...){
   if(!level %in% c(1, names(object@flist), "marginal")) {

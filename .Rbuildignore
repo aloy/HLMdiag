@@ -3,3 +3,9 @@
 ^.gitignore$
 ^\.travis\.yml$
 ^cran-comments\.md$
+^doc$
+^Meta$
+^README.Rmd$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

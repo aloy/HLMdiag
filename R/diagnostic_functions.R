@@ -47,12 +47,13 @@
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
 #' @examples
 #' data(sleepstudy, package = 'lme4')
-#' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Subject level deletion and diagnostics
 #' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 #' subject.diag <- diagnostics(subject.del)
 diagnostics <- function(object){
+  .Deprecated("hlm_influence")
   type <- attributes(object)$type
   if(type %in% c("fixef", "both")){
     ids <- as.vector(rownames(object$fixef.delete, do.NULL = FALSE, prefix = ""))
@@ -94,10 +95,13 @@ diagnostics <- function(object){
 #' @rdname diagnostics
 #' @param model an object containing the output returned by \code{case_delete()}.
 #' This is only named differently to agree with the generic.
-#' @S3method cooks.distance case_delete
 #' @method cooks.distance case_delete
 cooks.distance.case_delete <- function(model, ...){
   p <- length(model$fixef.original)
+  
+  if (colnames(model$fixef.delete)[1] == "deleted") {
+    model$fixef.delete <- model$fixef.delete[,-1]
+  }
 
   if(is(model$fixef.delete, "matrix")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
@@ -118,10 +122,13 @@ cooks.distance.case_delete <- function(model, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method mdffits case_delete
 #' @method mdffits case_delete
 mdffits.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
+  
+  if (colnames(object$fixef.delete)[1] == "deleted") {
+    object$fixef.delete <- object$fixef.delete[,-1]
+  }
 
   if(is(object$fixef.delete, "matrix")) {
     groups <- rownames(object$fixef.delete, do.NULL = FALSE, prefix = "")
@@ -142,7 +149,6 @@ mdffits.case_delete <- function(object, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method covtrace case_delete
 #' @method covtrace case_delete
 covtrace.case_delete <- function(object, ...){
   p <- length(object$fixef.original)
@@ -169,7 +175,6 @@ covtrace.case_delete <- function(object, ...){
 
 #' @export
 #' @rdname diagnostics
-#' @S3method covratio case_delete
 #' @method covratio case_delete
 covratio.case_delete <- function(object, ...){
   if(is(object$vcov.delete, "list")) {
@@ -195,7 +200,6 @@ covratio.case_delete <- function(object, ...){
 #' @export
 #' @rdname diagnostics
 #' @param ... do not use
-#' @S3method rvc case_delete
 #' @method rvc case_delete
 rvc.case_delete <- function(object, ...){
 	if(class(object$varcomp.delete) == "list") {

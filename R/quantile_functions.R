@@ -69,6 +69,7 @@ qqlineInfo <- function(x){
 #' Hilden-Minton, J. A. (1995) 
 #' Mulilevel Diagnostics for Mixed and Hierarchical Linear Models,
 #' Ph.D. thesis, University of California Los Angeles. 
+#' @importFrom plyr .
 #' @export
 #' @keywords hplot
 group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1, ...){
@@ -96,8 +97,8 @@ group_qqnorm <- function(x, group, line = NULL, alpha_point = 1, alpha_line = 1,
 	
 	# Defining the quantiles of interest for each group
 	group.quant <- data.frame(x = x, group = group)
-	group.quant <- ddply(group.quant, .(group), transform, p = ppoints(x), yp = sort(x))
-	group.quant <- ddply(group.quant, .(group), transform, theory = qnorm(p = p))
+	group.quant <- ddply(group.quant, plyr::.(group), transform, p = ppoints(x), yp = sort(x))
+	group.quant <- ddply(group.quant, plyr::.(group), transform, theory = qnorm(p = p))
 	
 	# Plotting
 	qq <- ggplot(data = group.quant, mapping = aes(x = theory, y = yp), ...) + 

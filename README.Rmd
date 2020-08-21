@@ -1,0 +1,92 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+html_preview: false
+---
+
+# HLMdiag
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  fig.path = "man/figures/README-"
+)
+```
+[![Build Status](https://travis-ci.org/aloy/HLMdiag.svg?branch=master)](https://travis-ci.org/aloy/HLMdiag) 
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
+![CRAN_Downloads_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
+
+The package `HLMdiag` was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). When `HLMdiag` was created in 2014, it made diagnostic producedures available for HLMs that had not yet been implemented in statistical software. Over the past 6 years, other packages have gradually implemented some of these procedures; however, diagnosing a model still often requires multiple packages, each of which has its own syntax and quirks. `HLMdiag` provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. `HLMdiag` provides wrapper functions to all types of residuals implemented in `lme4` and `nlme` as well as providing access to the marginal and least squares residuals. For influence diagnostics, `HLMdiag` provides functions to calculate Cook's distance, MDFFITS, covariance trace and ratio, relative variance change, and leverage. 
+
+## Installation
+
+If you would like to install the development version of `HLMdiag`, you may do so using `devtools`:
+```{r, eval = FALSE}
+#install.packages("devtools")
+library(devtools)
+devtools::install_github("aloy/HLMdiag")
+```
+
+To instead download the stable CRAN version instead, use:
+```{r, eval = FALSE}
+install.packages("HLMdiag")
+```
+
+## Details
+
+The functions provided by this package can be separated into three groups: residual analysis, influence analysis, and graphical tools. 
+
+## Residual Analysis
+The residual functions in `HLMdiag` allow the analyst to estimate all types of residuals defined for a hierarchical linear model. They provide access to level-1, higher-level, and marginal residuals and use both Least Squares and Empirical Bayes estimation methods to provide the analyst with more choices in evaluating a model. The `hlm_resid` method is inspired by the `augment()` function in `broom` and appends all types of residuals and fitted values for a given level to the model frame; however, individual types of residuals can be calculated with the `pull_resid` method.
+
+The functions available for residual analysis in `HLMdiag` are:
+*`hlm_resid()` calculates all residual diagnostics for a given level, returning a tibble with the residuals and fitted values appended to the original model frame. 
+
+*`pull_resid()` calculates a specified type of residual, returning a vector and prioritizing computational efficiency.
+
+*`hlm_augment()` combines `hlm_influence()` and `hlm_resid()` to return a tibble with residual values and influence diagnostics appended to the original model frame. 
+
+### Influence Analysis
+The influence analysis functions provide functionality to calculate Cook's distance, MDFFITS, covariance ratio, covariance trace, relative variance change, and leverage. Additionally, two functions to calculate Cook's distance, MDFFITS, covariance ratio, and covariance trace are provided: a one step approximation, and a full refit method that refits the model and recalculates the fixed and random effects. This functionality is avaliable through individual functions for each diagnostic; however, the `hlm_influence` function can be used to calculate all avaliable diagnostics for each observation or group of observations.
+
+The functions available for influence analysis in `HLMdiag` are:
+
+* `cooks.distance()` calculates Cook's distance values, which measures the difference between the original fixed effects and the deleted ones. 
+* `mdffits()` calculates MDFFITS, a multivariate version of the DFFFITS statistic, which is also a measure of the difference in fixed effects. 
+* `covtrace()` calculates covariance trace, the ratio between the covariance matrices with and without unit *i* to the identity matrix.
+* `covratio()` calculate covariance ratio, a comparison of the two covariance matrices with and without unit *i* using their determinants.
+* `rvc()` calculates relative variance change, a measurement of the ratio of estimates of the *l* th variance component with and without unit *i*.
+* `leverage()` calculates leverage, he rate of change in the predicted response with respect to the observed response.
+* `case_delete()` iteratively deletes observations or groups of observations, returning a list of fixed and random components from the original model and the models created by deletion. 
+* `hlm_influence()` calculates all of the influence diagnostics, returning a tibble with the influence values appended to the original model frame. 
+* `hlm_augment()` combines `hlm_influence()` and `hlm_resid()` to return a tibble with residual values and influence diagnostics appended to the original model frame. 
+
+### Graphical Tools
+
+`HLMdiag` provides the function `dotplot_diag()`, which creates dotplots to visually represent influence diagnostics. It is especially useful when used with the values returned by `hlm_influence()`. `HLMdiag` also provides grouped Q-Q plots (`group_qqnorm()`), and Q-Q plots that combine the functionality of qqnorm and qqline (`ggplot_qqnorm()`).
+
+## Usage
+
+### Residual Analysis
+We will use the `sleepstudy` data set from the `lme4` package. 
+```{r}
+data(sleepstudy, package = "lme4")
+sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy) 
+```
+
+We calculate the unstandardized level-1 and marginal residuals for each observation below.
+```{r}
+hlm_resid(sleep.lmer)
+```
+
+For more information and examples of the functionality of `hlm_resid()`, see the residual diagnostics vignette.
+
+### Influence Analysis
+We calculate influence diagnostics for each observation with the following line:
+```{r}
+hlm_influence(sleep.lmer)
+```
+
+For more information and examples of the functionality of `hlm_influence()`, see the influence diagnostics vignette. 
+

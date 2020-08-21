@@ -3,15 +3,14 @@ Type: Package
 Title: Diagnostic Tools for Hierarchical (Multilevel) Linear Models
 Version: 0.3.2.9000
 Date: 2015-12-7
-Author: Adam Loy <loyad01@gmail.com>
+Authors@R: c(person("Adam", "Loy", email = "loyad01@gmail.com", role = c("cre", "aut")), person("Jaylin", "Lowe", role = "aut"), person("Jack", "Moran", role = "aut"))
 Maintainer: Adam Loy <loyad01@gmail.com>
 Description: A suite of diagnostic tools for hierarchical
     (multilevel) linear models. The tools include
     not only leverage and traditional deletion diagnostics (Cook's
     distance, covratio, covtrace, and MDFFITS) but also 
     convenience functions and graphics for residual analysis. Models
-    can be fit using either lmer in the 'lme4' package or lme in the 'nlme' package,
-    but only two-level models fit using lme are currently supported.
+    can be fit using either lmer in the 'lme4' package or lme in the 'nlme' package.
 Depends:
     R (>= 2.15.0)
 Imports:
@@ -23,13 +22,28 @@ Imports:
     MASS,
     Matrix,
     RLRsim,
-    mgcv
+    mgcv,
+    dplyr,
+    magrittr,
+    stringr,
+    purrr,
+    tibble,
+    tidyselect,
+    janitor,
+    Rcpp,
+    rlang,
+    ggrepel
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
     WWGbook,
     lme4 (>= 1.0),
-    nlme
+    nlme,
+    testthat,
+    knitr,
+    rmarkdown,
+    car,
+    gridExtra
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
@@ -42,7 +56,11 @@ Collate:
     'adjust_formula_lmList.R'
     'case_delete.R'
     'LSresids.R'
+    'HLMdiag-package.R'
     'HLMresid.R'
+    'hlm_augment.R'
+    'hlm_influence.R'
+    'hlm_resid.R'
     'help.R'
     'influence_functions.R'
     'utility_functions.R'
@@ -50,5 +68,9 @@ Collate:
     'autism.R'
     'ahd.R'
     'radon.R'
+    'pull_resid.R'
+Encoding: UTF-8
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
