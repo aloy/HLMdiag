@@ -31,7 +31,8 @@ Imports:
     tidyselect,
     janitor,
     Rcpp,
-    rlang
+    rlang,
+    ggrepel
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
@@ -40,7 +41,9 @@ Suggests:
     nlme,
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    car,
+    gridExtra
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
@@ -69,5 +72,5 @@ Collate:
 Encoding: UTF-8
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr
