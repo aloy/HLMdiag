@@ -3,3 +3,6 @@
 ^.gitignore$
 ^\.travis\.yml$
 ^cran-comments\.md$
+^doc$
+^Meta$
+^README.Rmd$

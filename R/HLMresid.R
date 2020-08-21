@@ -1,5 +1,6 @@
 #' @export
 HLMresid <- function(object, ...){
+  .Deprecated(new = "hlm_resid")
   UseMethod("HLMresid", object)
 }
 

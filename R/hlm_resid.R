@@ -4,7 +4,7 @@ hlm_resid <- function(object, ...){
 }
 
 #' @export
-#' @rdname hlm_resid
+#' @rdname hlm_resid.lmerMod
 #' @method hlm_resid default
 hlm_resid.default <- function(object, ...){
   stop(paste("there is no hlm_resid() method for objects of class",
@@ -16,9 +16,9 @@ hlm_resid.default <- function(object, ...){
 #' \code{hlm_resid} takes a hierarchical linear model fit as a \code{lmerMod} or
 #' \code{lme} object and extracts residuals and predicted values from the model,
 #' using Least Squares (LS) and Empirical Bayes (EB) methods. It then appends
-#' them to the model data frame. This unified framework enables the analyst to
-#' more easily conduct an upward residual analysis during model
-#' exploration/checking.
+#' them to the model data frame in the form of a tibble inspired by the \code{augment}
+#' function in \code{broom}. This unified framework enables the analyst to more
+#' easily conduct an upward residual analysis during model exploration/checking.
 #'
 #' @export
 #' @method hlm_resid lmerMod
@@ -36,8 +36,6 @@ hlm_resid.default <- function(object, ...){
 #'   return tibble. \code{include.ls = FALSE} decreases runtime substantially.
 #' @param data if \code{na.action = na.exclude}, the user must provide the data
 #'   set used to fit the model, otherwise \code{NULL}.
-#' @param sim optional argument giving the data frame used for LS residuals.
-#'   This is used mainly for dealing with simulations.
 #' @param ... do not use
 #' @details The \code{hlm_resid} function provides a wrapper that will extract
 #' residuals and predicted values from a fitted \code{lmerMod} or \code{lme}
@@ -73,7 +71,38 @@ hlm_resid.default <- function(object, ...){
 #' model.}
 #' }
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
-hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
+#' @author  Adam Loy \email{loyad01@@gmail.com}, Jack Moran, Jaylin Lowe
+#' @keywords models regression
+#' @seealso \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link{ranef}}
+#' @references 
+#' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
+#' linear models. University of California Los Angeles.
+#' 
+#' Houseman, E. A., Ryan, L. M., & Coull, B. A. (2004) 
+#' Cholesky Residuals for Assessing Normal Errors in a Linear 
+#' Model With Correlated Outcomes. 
+#' \emph{Journal of the American Statistical Association}, 99(466), 383--394.
+#' 
+#' David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis
+#' Objects into Tidy Tibbles. R package version 0.5.6.
+#' \url{https://CRAN.R-project.org/package=broom}
+#' @examples
+#' data(sleepstudy, package = "lme4")
+#' fm.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm.lme <- nlme::lme(Reaction ~ Days, random = ~Days|Subject, sleepstudy)
+#' 
+#' # level-1 and marginal residuals
+#' fm.lmer.res1 <- hlm_resid(fm.lmer) ## raw level-1 and mar resids
+#' fm.lmer.res1
+#' fm.lme.std1 <- hlm_resid(fm.lme, standardize = TRUE) ## std level-1 and mar resids
+#' fm.lme.std1
+#' 
+#' # level-2 residuals
+#' fm.lmer.res2 <- hlm_resid(fm.lmer, level = "Subject") ## level-2 ranefs
+#' fm.lmer.res2
+#' fm.lme.res2 <- hlm_resid(fm.lme, level = "Subject", include.ls = FALSE) ##level-2 ranef, no LS
+#' fm.lme.res2
+hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
     stop("hlm_resid is not currently implemented for non-nested models.")
@@ -96,6 +125,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   # NA action
   if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
     na.index <- which(!rownames(data) %in% rownames(object@frame))
+    col.index <- which(colnames(data) %in% colnames(object@frame))
+    data <- data[col.index]
   } else {                                                         #if na.omit
     data <- object@frame
   }
@@ -103,7 +134,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, standardize = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, standardize = standardize)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     }
     
@@ -166,13 +197,15 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # Assemble Tibble
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+                                   data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+                                   data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
@@ -197,7 +230,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # LS Residuals
     if (include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = level, stand = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group),] # fix order
       ls.resid <- janitor::clean_names(ls.resid)
       if (standardize == TRUE) {
@@ -321,7 +354,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
 #' @export
 #' @rdname hlm_resid.lmerMod
 #' @method hlm_resid lme
-hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, sim = NULL, ...) {
+hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   
   if(!isNestedModel(object)){
     stop("hlm_resid is not currently implemented for non-nested models.")
@@ -337,7 +370,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
   if(level == 1) { 
     # LS Residuals and Fitted
     if(include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = 1, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = 1, stand = standardize)
       ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
     }
     
@@ -396,14 +429,16 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     
     # Continue to Assemble Tibble  
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble(model.data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+                                   model.data,
                                    eb.resid,
                                    eb.fitted,
                                    ls.resid,
                                    mar.resid,
                                    mar.fitted)
     } else { 
-      return.tbl <- tibble::tibble(model.data,
+      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+                                   model.data,
                                    eb.resid,
                                    eb.fitted,
                                    mar.resid,
@@ -432,7 +467,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     
     # LS Residuals
     if (include.ls == TRUE) {
-      ls.resid <- LSresids(object, level = level, stand = standardize, sim = sim)
+      ls.resid <- LSresids(object, level = level, stand = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group),] # fix order
       ls.resid <- janitor::clean_names(ls.resid)
       if (standardize == TRUE) {

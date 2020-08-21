@@ -144,3 +144,44 @@ test_that("respects na.action, nlme", {
   expect_equal(nrow(hlm_resid(class.lmeNA, data = class, include.ls = FALSE)),
                nrow(class))
 })
+
+Exam <- mlmRev::Exam
+exam.lmer <- lme4::lmer(normexam ~ standLRT + schgend + (1 | school), data = Exam)
+exam.lme <- nlme::lme(normexam ~ standLRT + schgend, random = ~1|school, data = Exam)
+
+hlm_resid(exam.lmer, standardize = TRUE)
+
+test_that("correct dimentions- simple model, lme4", {
+  #check lvl1
+  expect_equal(nrow(hlm_resid(exam.lmer)), nrow(Exam))
+  expect_equal(nrow(hlm_resid(exam.lmer, standardize = TRUE)), 
+               nrow(Exam))
+  expect_equal(nrow(hlm_resid(exam.lmer, standardize = TRUE, include.ls = FALSE)),
+               nrow(Exam))
+  expect_equal(nrow(hlm_resid(exam.lmer, include.ls = FALSE)), nrow(Exam))
+  
+  #check lvl2
+  expect_equal(nrow(hlm_resid(exam.lmer, level = "school", include.ls = FALSE)), 
+               length(unique(Exam$school)))
+  expect_equal(nrow(hlm_resid(exam.lmer, level = "school", standardize = TRUE, include.ls = FALSE)), 
+               length(unique(Exam$school)))
+})
+
+test_that("correct dimentions- simple model, nlme", {
+  #check lvl1
+  expect_equal(nrow(hlm_resid(exam.lme)), nrow(Exam))
+  expect_equal(nrow(hlm_resid(exam.lme, standardize = TRUE)), 
+               nrow(Exam)) #this one takes mega long for some reason
+  expect_equal(nrow(hlm_resid(exam.lme, standardize = TRUE, include.ls = FALSE)),
+               nrow(Exam)) #this one also takes mega long - surprising
+  expect_equal(nrow(hlm_resid(exam.lme, include.ls = FALSE)), nrow(Exam))
+  
+  #check lvl2
+  expect_equal(nrow(hlm_resid(exam.lme, level = "school", include.ls = FALSE)), 
+               length(unique(Exam$school)))
+  expect_equal(nrow(hlm_resid(exam.lme, level = "school", standardize = TRUE, include.ls = FALSE)), 
+               length(unique(Exam$school)))
+})
+
+
+  

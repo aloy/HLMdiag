@@ -38,8 +38,8 @@ test_that("Number of rows is equal to number of observations when level equals 1
 })
 
 test_that("Number of columns is correct when level equals 1 for lme4 models", {
-  expect_equal(ncol(sleep.lmer.aug), 11 + ncol(sleep.lmer@frame))
-  expect_equal(ncol(chem.lmer.aug), 11 + ncol(chem.lmer@frame))
+  expect_equal(ncol(sleep.lmer.aug), 12 + ncol(sleep.lmer@frame))
+  expect_equal(ncol(chem.lmer.aug), 12 + ncol(chem.lmer@frame))
 })
 
 test_that("Number of rows is equal to number of groups when level is set for lme4 models", {
@@ -70,8 +70,8 @@ test_that("Number of rows is equal to number of observations when level equals 1
 })
 
 test_that("Number of columns is correct when level equals 1 for nlme models", {
-  expect_equal(ncol(sleep.lme.aug), 11 + ncol(sleep.lmer@frame))
-  expect_equal(ncol(chem.lme.aug), 11 + ncol(chem.lmer@frame))
+  expect_equal(ncol(sleep.lme.aug), 12 + ncol(sleep.lmer@frame))
+  expect_equal(ncol(chem.lme.aug), 12 + ncol(chem.lmer@frame))
 })
 
 test_that("Number of rows is equal to number of groups when level is set for nlme models", {

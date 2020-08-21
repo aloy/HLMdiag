@@ -65,7 +65,7 @@ Both the covariance ratio (\code{covratio}) and the covariance trace
 }
 \examples{
 
-#' data(sleepstudy, package = 'lme4')
+data(sleepstudy, package = 'lme4')
 ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 
 # covratio for individual observations

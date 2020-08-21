@@ -33,7 +33,7 @@ BlockZ <- function(object) {
 #' @export
 #' @examples
 #' data(sleepstudy, package = "lme4") 
-#' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' varcomp.mer(fm1)
 varcomp.mer <- function(object) {
   vc  <- lme4::VarCorr(object)
@@ -165,13 +165,15 @@ isDiagonal <- function(mat, tol = 1e-10) {
 # Extracting/calculating key matrices from lme object 
 # @param model an lme object
 .lme_matrices <- function(model) {
-  design.info <- suppressWarnings(RLRsim::extract.lmeDesign(model)) 
+  design.info <- suppressWarnings(extract_design(model)) 
   
-  Y <- design.info$y
+  Y <- design.info$Y
+  Y <- Y[!is.na(Y)]
+  
   X <- design.info$X
   Z <- Matrix( design.info$Z )
   
-  D <- Matrix( design.info$Vr )
+  D <- Matrix( design.info$D )
   
   n <- length(Y)
   
@@ -180,7 +182,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
   
   # Constructing V = Cov(Y)
   sig0 <- model$sigma
-  V <- extract_design(model)$V 
+  V <-  Matrix(design.info$V)
   
   # Inverting V
   V.chol <- chol( V )
@@ -390,8 +392,9 @@ extract_design <- function (b){
     list(
       D = Vr / b$sigma^2,
       V = V,
-      X = X,
-      Z = Z
+      X = model.matrix(b, data = b$data),
+      Z = Z,
+      Y = nlme::getResponse(b)
     )
   )
 }
@@ -407,10 +410,8 @@ extract_design <- function (b){
     dplyr::anti_join(model@frame, by = colnames(model@frame)) %>%
     dplyr::select(colnames(model@frame))
   
-  rownames(df) <- rownums
-  
   for (i in 1:nrow(df)) {
-    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownames(df)[i]))
+    frame <- tibble::add_row(frame, df[i,], .before = as.numeric(rownums[i]))
   }
   
   return(frame)
