@@ -47,7 +47,7 @@
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
 #' @examples
 #' data(sleepstudy, package = 'lme4')
-#' fm <- lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
+#' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Subject level deletion and diagnostics
 #' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
