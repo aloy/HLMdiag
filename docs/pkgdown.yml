@@ -1,0 +1,8 @@
+pandoc: 2.7.3
+pkgdown: 1.5.1
+pkgdown_sha: ~
+articles:
+  hlm_resid: hlm_resid.html
+  influence_diagnostics: influence_diagnostics.html
+last_built: 2020-08-21T20:17Z
+
