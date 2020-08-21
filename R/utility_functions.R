@@ -33,7 +33,7 @@ BlockZ <- function(object) {
 #' @export
 #' @examples
 #' data(sleepstudy, package = "lme4") 
-#' fm1 <- lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
+#' fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' varcomp.mer(fm1)
 varcomp.mer <- function(object) {
   vc  <- lme4::VarCorr(object)

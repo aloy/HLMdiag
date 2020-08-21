@@ -26,7 +26,7 @@
 #' @param ... other arguments to be passed to \code{ggplot()}
 #' @author Adam Loy \email{loyad01@@gmail.com}
 #' @examples 
-data(sleepstudy, package = 'lme4')
+#' data(sleepstudy, package = 'lme4')
 #' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' #Observation level deletion and diagnostics
@@ -41,9 +41,10 @@ data(sleepstudy, package = 'lme4')
 #' 
 #' dotplot_diag(x = subject.infl$cooksd, cutoff = "internal", name = "cooks.distance", modify = FALSE)
 #'              
-#' dotplot_diag(x = subject.infl$mdffits, name = "mdffits", modify = "dotplot")#' @export
+#' dotplot_diag(x = subject.infl$mdffits, cutoff = "internal", name = "mdffits", modify = "dotplot")
 #' @keywords hplot
 #' @importFrom rlang .data
+#' @export
 dotplot_diag <- function(x, cutoff, 
                          name = c("cooks.distance", "mdffits", "covratio", "covtrace", "rvc", "leverage"),
                          data, index = NULL, modify = FALSE, ...) {
