@@ -166,12 +166,6 @@ adjust_lmList <- function(object, data, pool){
 #'@seealso \code{\link[lme4]{lmList}, \link[stats]{lm}}
 #'@references Douglas Bates, Martin Maechler and Ben Bolker (2012). lme4:
 #'Linear mixed-effects models using S4 classes. R package version 0.999999-0.
-#'@examples
-#'
-#' data(Exam, package = 'mlmRev')
-#' sepLM <- adjust_lmList(normexam ~ standLRT + sex + schgend | school, data = Exam)
-#' confint(sepLM)
-#'
 adjust_lmList.formula <- function(object, data, pool){
 # 	options(show.error.messages = FALSE)
 # 	lmList_result <- try(lmList(formula = formula, data = data), silent = TRUE)

@@ -120,7 +120,7 @@ Model With Correlated Outcomes.
 
 David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis
 Objects into Tidy Tibbles. R package version 0.5.6.
-\link{https://CRAN.R-project.org/package=broom}
+\url{https://CRAN.R-project.org/package=broom}
 }
 \seealso{
 \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link{ranef}}
