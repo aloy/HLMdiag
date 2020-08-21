@@ -844,7 +844,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #'  
 #' @examples
 #' 
-#' #' data(sleepstudy, package = 'lme4')
+#' data(sleepstudy, package = 'lme4')
 #' ss <- lme4::lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
 #' 
 #' # covratio for individual observations
