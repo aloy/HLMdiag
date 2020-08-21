@@ -9,13 +9,13 @@
 \method{adjust_lmList}{formula}(object, data, pool)
 }
 \arguments{
+\item{object}{a linear formula such as that used by \code{lmList}, e.g.
+\code{y ~ x1 + ... + xn | g}, where \code{g} is a grouping factor.}
+
 \item{data}{a data frame containing the variables in the model.}
 
 \item{pool}{a logical value that indicates whether the pooled standard
 deviation/error should be used.}
-
-\item{formula}{a linear formula such as that used by \code{lmList}, e.g.
-\code{y ~ x1 + ... + xn | g}, where \code{g} is a grouping factor.}
 }
 \description{
 Separate linear models are fit via \code{lm} similar to \code{lmList},

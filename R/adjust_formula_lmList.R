@@ -155,7 +155,7 @@ adjust_lmList <- function(object, data, pool){
 #'
 #'@aliases adjust_lmList adjust_lmList,formula,data.frame-method
 #'@keywords models regression
-#'@param formula a linear formula such as that used by \code{lmList}, e.g.
+#'@param object a linear formula such as that used by \code{lmList}, e.g.
 #'\code{y ~ x1 + ... + xn | g}, where \code{g} is a grouping factor.
 #'@param data a data frame containing the variables in the model.
 #'@param pool a logical value that indicates whether the pooled standard
