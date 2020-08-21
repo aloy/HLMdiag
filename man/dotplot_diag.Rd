@@ -52,7 +52,7 @@ data(sleepstudy, package = 'lme4')
 fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Subject level deletion and diagnostics
-subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
+subject.del  <- case_delete(model = fm, level = "Subject", type = "both")
 subject.diag <- hlm_influence(subject.del)
 subject.cd <- cooks.distance(fm)
 

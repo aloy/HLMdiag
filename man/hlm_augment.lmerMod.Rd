@@ -8,7 +8,7 @@
 \usage{
 \method{hlm_augment}{lmerMod}(object, level = 1, include.ls = TRUE, data = NULL, ...)
 
-\method{hlm_augment}{lme}(object, level = 1, include.ls = include.ls, ...)
+\method{hlm_augment}{lme}(object, level = 1, include.ls = TRUE, ...)
 }
 \arguments{
 \item{object}{an object of class \code{lmerMod} or \code{lme}.}

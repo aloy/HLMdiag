@@ -85,7 +85,7 @@ hlm_resid.default <- function(object, ...){
 #' 
 #' David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis
 #' Objects into Tidy Tibbles. R package version 0.5.6.
-#' \link{https://CRAN.R-project.org/package=broom}
+#' \url{https://CRAN.R-project.org/package=broom}
 #' @examples
 #' data(sleepstudy, package = "lme4")
 #' fm.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
