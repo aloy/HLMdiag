@@ -42,7 +42,7 @@
 #' dotplot_diag(x = subject.infl$cooksd, cutoff = "internal",
 #'              name = "cooks.distance", modify = FALSE)
 #'              
-#'dotplot_diag(x = subject.infl$mdffits, name = "mdffits", modify = "dotplot")
+#'dotplot_diag(x = subject.infl$mdffits, cutoff = "internal", name = "mdffits", modify = "dotplot")
 #' @keywords hplot
 #' @importFrom rlang .data
 #' @export
