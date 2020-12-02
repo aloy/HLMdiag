@@ -56,6 +56,7 @@ Collate:
     'adjust_formula_lmList.R'
     'case_delete.R'
     'LSresids.R'
+    'HLMdiag-deprecated.R'
     'HLMdiag-package.R'
     'HLMresid.R'
     'hlm_augment.R'

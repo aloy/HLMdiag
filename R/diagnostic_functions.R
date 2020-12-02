@@ -46,12 +46,14 @@
 #' \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
 #' @examples
+#' \dontrun{
 #' data(sleepstudy, package = 'lme4')
 #' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Subject level deletion and diagnostics
 #' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 #' subject.diag <- diagnostics(subject.del)
+#' }
 diagnostics <- function(object){
   .Deprecated("hlm_influence")
   type <- attributes(object)$type

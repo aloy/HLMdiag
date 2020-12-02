@@ -88,6 +88,7 @@ HLMresid.default <- function(object, ...){
 #' Model With Correlated Outcomes. 
 #' \emph{Journal of the American Statistical Association}, \bold{99}(466), 383--394.
 #' @examples
+#' \dontrun{
 #' data(sleepstudy, package = "lme4")
 #' fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 #' 
@@ -108,6 +109,7 @@ HLMresid.default <- function(object, ...){
 #' # marginal residuals
 #' mr <- HLMresid(object = fm1, level = "marginal")
 #' cholr <- HLMresid(object = fm1, level = "marginal", standardize = TRUE) # Cholesky residuals
+#' }
 HLMresid.mer <- function(object, level, type = "EB", sim = NULL, standardize = FALSE, ...){
   if(!level %in% c(1, names(object@flist), "marginal")) {
     stop("level can only be 1, a grouping factor from the fitted model,

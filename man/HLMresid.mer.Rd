@@ -82,6 +82,7 @@ and \code{standardize = TRUE}.}
 Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 }
 \examples{
+\dontrun{
 data(sleepstudy, package = "lme4")
 fm1 <- lme4::lmer(Reaction ~ Days + (Days|Subject), sleepstudy)
 
@@ -102,6 +103,7 @@ head(r2EB.std)
 # marginal residuals
 mr <- HLMresid(object = fm1, level = "marginal")
 cholr <- HLMresid(object = fm1, level = "marginal", standardize = TRUE) # Cholesky residuals
+}
 }
 \references{
 Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
