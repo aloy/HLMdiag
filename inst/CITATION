@@ -9,12 +9,12 @@ citEntry(entry = "Article",
   volume       = "56",
   number       = "5",
   pages        = "1--28",
-  url          = "http://www.jstatsoft.org/v56/i05/",
+  url          = "https://www.jstatsoft.org/article/view/v056i05",
 
   textVersion  =
   paste("Adam Loy, Heike Hofmann (2014).",
         "HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R.",
         "Journal of Statistical Software, 56(5), 1-28.",
-        "URL http://www.jstatsoft.org/v56/i05/.")
+        "URL https://www.jstatsoft.org/article/view/v056i05.")
 )
 

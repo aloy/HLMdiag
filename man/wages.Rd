@@ -18,7 +18,7 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
 \source{
   These data are originally from the 1979 National
   Longitudinal Survey on Youth (NLSY79) that can be found
-  here \url{https://www.bls.gov/nls/home.htm}.
+  here \url{https://www.bls.gov/nls/nlsy79.htm}.
 
   Singer and Willett (2003) used these data for examples in
   chapter (insert info. here) and the data sets used can be
@@ -27,7 +27,7 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
 
   Additionally the data were discussed by Cook and Swayne
   (2003) and the data can be found on the GGobi website:
-  \url{http://ggobi.org/book/}.
+  \url{https://ggobi.org/book/}.
 }
 \description{
   Data on the labor-market experience of male high school
