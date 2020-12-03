@@ -272,7 +272,7 @@ This is useful for inspecting residuals values and influence diagnostics values 
 
 Adam Loy, Heike Hofmann (2014). HLMdiag: A Suite of Diagnostics for Hierarchical
   Linear Models in R. Journal of Statistical Software, 56(5), 1-28. URL
-  http://www.jstatsoft.org/v56/i05/
+  http://dx.doi.org/10.18637/jss.v056.i05
 
 Brady West, Kathleen Welch, Andrzej Galecki (2006) Linear Mixed Models: A Practical Guide
   Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN
