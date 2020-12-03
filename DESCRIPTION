@@ -1,8 +1,8 @@
 Package: HLMdiag
 Type: Package
 Title: Diagnostic Tools for Hierarchical (Multilevel) Linear Models
-Version: 0.3.2.9000
-Date: 2015-12-7
+Version: 0.4.0
+Date: 2020-12-3
 Authors@R: c(person("Adam", "Loy", email = "loyad01@gmail.com", role = c("cre", "aut")), person("Jaylin", "Lowe", role = "aut"), person("Jack", "Moran", role = "aut"))
 Maintainer: Adam Loy <loyad01@gmail.com>
 Description: A suite of diagnostic tools for hierarchical
@@ -43,7 +43,8 @@ Suggests:
     knitr,
     rmarkdown,
     car,
-    gridExtra
+    gridExtra,
+    qqplotr
 License: GPL-2
 LazyLoad: yes
 LazyData: yes
