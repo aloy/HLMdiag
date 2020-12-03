@@ -1,0 +1,177 @@
+---
+title: "Updated code for JSS analysis"
+authors: "Adam Loy"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Preliminaries
+
+```{r}
+library(HLMdiag)
+library(ggplot2)
+library(lme4)
+```
+
+
+# Exam data
+
+```{r}
+data("Exam", package = "mlmRev")
+head(Exam)
+```
+
+
+# Residual analysis
+
+```{r}
+# Model fm1 on page 6
+(fm1 <- lmer(normexam ~ standLRT + (1 | school), Exam, REML = FALSE))
+
+# Extract level-1 residuals
+# Residual plot from page 7
+resid_fm1 <- hlm_resid(fm1)
+head(resid_fm1)
+
+ggplot(resid_fm1, aes(x = standLRT, y = .ls.resid)) + 
+  geom_point() + 
+  geom_smooth() +
+  labs(y = "LS level-1 residuals")
+```
+
+```{r}
+# Model fm2 on page 7
+fm2 <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + 
+              (1 | school), Exam, REML = FALSE)
+
+
+resid_fm2 <- hlm_resid(fm2)
+
+
+# Figure 2 page 8
+ggplot(resid_fm2, aes(x = `I(standLRT^2)`, y = .ls.resid)) + 
+  geom_hline(yintercept = 0, color = "blue") + 
+  geom_point() +
+  labs( y = "LS residuals", x = "standLRT2")
+```
+
+
+You can still access the `ggplot_qqnorm()` function, but it is no longer exported from the namespace.
+```{r}
+HLMdiag:::ggplot_qqnorm(x = resid_fm2$.ls.resid, line = "rlm")
+```
+
+Q-Q plots are now much easier to create in **ggplot2** directly
+
+```{r}
+ggplot(resid_fm2, aes(sample = .ls.resid)) +
+  geom_qq() + 
+  geom_qq_line() +
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles")
+```
+
+A better alternative if found in the **qqplotr** package
+```{r}
+library(qqplotr)
+ggplot(resid_fm2, aes(sample = .ls.resid)) +
+  stat_qq_band() +
+  stat_qq_line() + 
+  stat_qq_point() +
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles")
+```
+
+EB residuals are now called `.ranef.` residuals
+
+```{r}
+# Model fm3, page 11
+fm3 <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) + sex +
+              (standLRT | school), Exam, REML = FALSE)
+
+## Extract level-2 EB residuals
+resid_fm3 <- hlm_resid(fm3, level = "school")
+resid_fm3
+```
+
+```{r message=FALSE}
+## Construct school-level data set
+library(dplyr)
+SchoolExam <- Exam %>%
+  group_by(school) %>%
+  dplyr::summarize(
+    size = length(school),
+    schgend = unique(schgend),
+    schavg = unique(schavg),
+    type = unique(type), 
+    schLRT = mean(standLRT)
+  )
+
+SchoolExam <- SchoolExam %>% left_join(resid_fm3, by = "school")
+SchoolExam
+
+## Left panel -- figure 5
+ggplot(
+  SchoolExam, 
+  aes(
+    x = reorder(schgend, .ranef.intercept, median), 
+    y = .ranef.intercept)
+  ) +
+  geom_boxplot() +
+  labs(x = "school gender", y = "level-2 residual (Intercept)")
+  
+## Right panel -- figure 5
+ggplot(SchoolExam, aes(x = schavg, y = .ranef.intercept)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "average intake score", y = "level-2 residual (Intercept)")
+```
+
+```{r}
+## Model fm4, page 12
+fm4 <- lmer(normexam ~ standLRT + I(standLRT^2) + I(standLRT^3) +
+              sex + schgend + schavg + (standLRT | school), 
+            data = Exam, REML = FALSE)
+
+resid_fm4 <- hlm_resid(fm4, level = "school", include.ls = FALSE)
+
+## Figure 6, page 13
+ggplot(resid_fm4, aes(sample = .ranef.intercept)) +
+  stat_qq_band() +
+  stat_qq_line() + 
+  stat_qq_point() +
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles")
+
+ggplot(resid_fm4, aes(sample = .ranef.stand_lrt)) +
+  stat_qq_band() +
+  stat_qq_line() + 
+  stat_qq_point() +
+  labs(x = "Theoretical Quantiles", y = "Sample Quantiles")
+
+```
+
+
+# Influence analysis
+
+We can now use `hlm_influence` to pull off all of the case-deletion diagnostics at the specified level:
+
+```{r}
+# Calculating influence diagnostics for model fm4
+influence_fm4 <- hlm_influence(fm4, level = "school")
+influence_fm4
+
+dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance")
+dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance", modify = "dotplot")
+```
+
