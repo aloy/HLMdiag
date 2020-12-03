@@ -4,7 +4,7 @@ authors: "Adam Loy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteIndexEntry{jss_update}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
