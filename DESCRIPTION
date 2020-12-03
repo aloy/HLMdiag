@@ -21,7 +21,6 @@ Imports:
     reshape2,
     MASS,
     Matrix,
-    RLRsim,
     mgcv,
     dplyr,
     magrittr,
