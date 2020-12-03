@@ -7,7 +7,7 @@ DEVELOPMENT
 
 USER-VISIBLE CHANGES
 
-* The `group` parameter for influence diagnostics has been changed to `level` in order to match the residual functions.
+* The `group` parameter for influence diagnostics has been changed to `level` in order to match the residual functions. 
 `level` defaults to NULL, which will delete individual observations iteratively as `group = NULL` did. 
 * The `cooks.distance` and `mdffits` functions now only return the values as a numeric vector, instead of also returning the 
 beta values as attributes. If these attributes are desired, the user can now set `include.attr = TRUE`, and a tibble
@@ -27,13 +27,10 @@ NEW FEATURES
 
 BUG FIXES
 
-* `cooks.distance` and `mdffits` functions was fixed to solve an issue with the number of columns. 
+* `cooks.distance` and `mdffits` functions were fixed to solve an issue with the number of columns. 
 * Fixed an issue with `case_delete` so that it works with three level models. 
-* `hlm_resid`, `hlm_influence`, and `hlm_augment` properly respect na.action and work with models fit in `nlme`
+* `hlm_resid`, `hlm_influence`, and `hlm_augment` properly respect `na.action` and work with models fit in `nlme`
 * `LSresids` doesn't break with three-level models, or with models containing tranformed variables
-
-Version 0.3.2.900
-=============
 
 
 Version 0.3.1
