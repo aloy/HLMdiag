@@ -56,12 +56,14 @@ versions of \code{cooks.distance}, \code{mdffits}, \code{covtrace},
 the \code{mer} object.
 }
 \examples{
+\dontrun{
 data(sleepstudy, package = 'lme4')
 fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 
 # Subject level deletion and diagnostics
-subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
+subject.del  <- case_delete(model = fm, level = "Subject", type = "both")
 subject.diag <- diagnostics(subject.del)
+}
 }
 \references{
 Christensen, R., Pearson, L.M., and Johnson, W. (1992)
