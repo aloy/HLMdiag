@@ -271,8 +271,8 @@ This is useful for inspecting residuals values and influence diagnostics values 
 ## References
 
 Adam Loy, Heike Hofmann (2014). HLMdiag: A Suite of Diagnostics for Hierarchical
-  Linear Models in R. Journal of Statistical Software, 56(5), 1-28. URL
-  http://dx.doi.org/10.18637/jss.v056.i05
+  Linear Models in R. Journal of Statistical Software, 56(5), 1-28. DOI
+  \doi{10.18637/jss.v056.i05}
 
 Brady West, Kathleen Welch, Andrzej Galecki (2006) Linear Mixed Models: A Practical Guide
   Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN
@@ -288,7 +288,7 @@ Douglas Bates, Martin Maechler, Ben Bolker (2020). mlmRev: Examples from
   
 Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting Linear
   Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48.
-  doi:10.18637/jss.v067.i01
+  DOI \doi{10.18637/jss.v067.i01}
 
 J.A. Hilden-Minton (1995). Multilevel Diagnostics for Mixed and Hierarchical Linear 
   Models. Ph.D. thesis, University of California Los Angeles.

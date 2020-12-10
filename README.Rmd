@@ -1,7 +1,7 @@
 ---
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
 html_preview: false
 ---
 
@@ -71,6 +71,8 @@ The functions available for influence analysis in `HLMdiag` are:
 ### Residual Analysis
 We will use the `sleepstudy` data set from the `lme4` package. 
 ```{r}
+library(lme4)
+library(HLMdiag)
 data(sleepstudy, package = "lme4")
 sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy) 
 ```

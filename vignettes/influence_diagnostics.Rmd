@@ -1,10 +1,10 @@
 ---
-title: "HLMdiag Influence Diagnostics"
-author: "Jaylin Lowe"
+title: "Influence Diagnostics"
+author: "Jaylin Lowe, Jack Moran, Adam Loy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{HLMdiag Influence Diagnostics}
+  %\VignetteIndexEntry{Influence Diagnostics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -241,7 +241,7 @@ Note that both examples specify units for deletion in the same way they are spec
 
 Additionally, `lmerMod` models require that the `data` argument is passed into `hlm_influence()` and `hlm_augment()` when `na.action = "na.exclude"` during the model fitting process. However, this is unecessary for `lme` models. 
 
-##Cook's distance values comparison to other packages 
+## Cook's distance values comparison to other packages 
 
 The `HLMdiag` package has two different ways to calculate Cook's distance. One of them, which is more exact, refits the model with each observation or group deleted from the model and calculates Cook's distance from the resulting coefficient estimates and variance components estimates. The second is a one-step approximation. For more information about how the one step approximation works, we refer the reader to **Christensen et.al (1992)**; **Shi and Chen (2008)**; and **Zewotir (2008)**. Other R packages also have functions that can calculate Cook's distance. In this section, we highlight the differences between the ways of calculating Cook's distance in `HLMdiag` versus other methods in the `car` and `lme4` packages. 
 
@@ -293,7 +293,8 @@ Once the values from `car` have been adjusted by sigma squared, they now appear 
 ```{r, echo = FALSE, warning = FALSE, fig.height = 4, fig.width= 7}
 data.frame(car_adjusted = car_cd_adjusted, mdffits = hlm_mdffits, obs = 1:1190) %>%
   mutate(diff = mdffits - car_adjusted) %>%
-  ggplot() + geom_point(aes(y = diff, x = obs))
+  ggplot() + 
+  geom_point(aes(y = diff, x = obs))
 ```
 
 While the difference between the estimates varies slightly due to differences in how the fixed effects and variance components are calculated for refit models in both packages, the difference in values tends to be very small. 
@@ -321,11 +322,15 @@ The approximation from `HLMdiag` is also closer to the full refit calculated by 
 library(gridExtra)
 p1 <- data.frame(hlm_full = hlm_cd_full, hlm_approx = hlm_cd_approx, obs = 1:1190) %>%
   mutate(diff = hlm_full - hlm_approx) %>%
-  ggplot() + geom_point(aes(x = diff, y = obs)) + labs(x = "HLMdiag full refit - HLMdiag approximation")
+  ggplot() + 
+  geom_point(aes(x = diff, y = obs)) + 
+  labs(x = "HLMdiag full refit - HLMdiag approximation")
 
 p2 <- data.frame(hlm_full = hlm_cd_full, lme_approx = lme_cd_approx, obs = 1:1190) %>%
   mutate(diff = hlm_full - lme_approx) %>%
-  ggplot() + geom_point(aes(x = diff, y = obs)) + labs(x = "HLMdiag full refit - lme4 approximation")
+  ggplot() + 
+  geom_point(aes(x = diff, y = obs)) + 
+  labs(x = "HLMdiag full refit - lme4 approximation")
 
 grid.arrange(p1, p2, nrow = 2)
 ```
@@ -335,10 +340,9 @@ The estimates produced by the `lme4` approximation are never smaller than the va
 #### `lme4` full refit 
 
 `lme4` also has a function that performs a full refit of the models without each observation or group and calculates Cook's distance values based off those refits. We can calculate this by using the `influence` function from `lme4`. 
-```{r}
+```{r eval=FALSE}
 lme_case <- lme4:::influence.merMod(class.lmer, data = classroom) 
 cd_lme_full <- cooks.distance(lme_case) 
-head(cd_lme_full)
 ```
 `lme4`'s cook's distance function for objects created from the `influence` function has a bug that prevents us from obtaining Cook's distance values from the `influence` object using `lme4`; however, we can use the `cooks.distance` function from the `stats` package on the `influence` object from `lme4`. 
 

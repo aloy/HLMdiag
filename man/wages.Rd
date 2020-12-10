@@ -27,7 +27,7 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
 
   Additionally the data were discussed by Cook and Swayne
   (2003) and the data can be found on the GGobi website:
-  \url{https://ggobi.org/book/}.
+  \url{http://ggobi.org/book.html}.
 }
 \description{
   Data on the labor-market experience of male high school

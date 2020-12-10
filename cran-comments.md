@@ -5,16 +5,16 @@
 * win-builder (devel and release)
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs in R 3.2.2 or R-devel.
+There were no ERRORs, WARNINGs, or NOTEs in R 4.0.3 or R-devel on OS X or win-builder.
 
-## Resubmission
-This is a resubmission. In this version I have 
-added the following to the NAMESPACE to eliminate notes:
+There was one NOTE on Ubuntu:   
+sub-directories of 1Mb or more:
+    libs   5.2Mb
 
-importFrom("grDevices", "devAskNewPage")
-importFrom("methods", "as", "is")
-importFrom("stats", "IQR", "aggregate", "complete.cases", "fitted",
-           "formula", "lm", "lm.influence", "model.frame",
-           "model.matrix", "ppoints", "qnorm", "qt", "quantile",
-           "reorder", "resid", "rstandard", "varimax", "vcov",
-           "cooks.distance", "covratio", "coef", "confint")
+This appears to be caused by the use of C++ code
+
+## Downstream dependencies
+
+I have also run R CMD check on downstream dependencies of httr 
+(https://github.com/wch/checkresults/blob/master/hlmdiag/r-release). 
+All packages that I could install passed.

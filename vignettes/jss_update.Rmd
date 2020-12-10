@@ -164,7 +164,7 @@ ggplot(resid_fm4, aes(sample = .ranef.stand_lrt)) +
 
 # Influence analysis
 
-We can now use `hlm_influence` to pull off all of the case-deletion diagnostics at the specified level:
+We can now use `hlm_influence` to pull off all of the case-deletion diagnostics for the fixed effects at the specified level:
 
 ```{r}
 # Calculating influence diagnostics for model fm4
@@ -173,5 +173,13 @@ influence_fm4
 
 dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance")
 dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance", modify = "dotplot")
+```
+
+## Diagnostics for variance components
+
+To calculate the relative variance change, we use `hlm_influence()`, but `approx = FALSE` must be specified:
+
+```{r eval=FALSE}
+hlm_influence(fm4, approx = FALSE)
 ```
 
