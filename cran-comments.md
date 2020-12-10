@@ -15,6 +15,5 @@ This appears to be caused by the use of C++ code
 
 ## Downstream dependencies
 
-I have also run R CMD check on downstream dependencies of httr 
-(https://github.com/wch/checkresults/blob/master/hlmdiag/r-release). 
-All packages that I could install passed.
+I have also run R CMD check on downstream dependencies of HLMdiag.
+All packages passed.
