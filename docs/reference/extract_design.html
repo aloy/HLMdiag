@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Extracting covariance matricies from lme — extract_design • HLMdiag</title>
+<title>Extracting covariance matrices from lme — extract_design • HLMdiag</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Extracting covariance matricies from lme — extract_design" />
+<meta property="og:title" content="Extracting covariance matrices from lme — extract_design" />
 <meta property="og:description" content="This function extracts the full covariance matrices from a mixed/hierarchical
 linear model fit using lme." />
 
@@ -73,7 +73,7 @@ linear model fit using lme." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -99,7 +99,10 @@ linear model fit using lme." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -124,7 +127,7 @@ linear model fit using lme." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Extracting covariance matricies from lme</h1>
+    <h1>Extracting covariance matrices from lme</h1>
     <small class="dont-index">Source: <a href='https://github.com/aloy/HLMdiag/blob/master/R/utility_functions.R'><code>R/utility_functions.R</code></a></small>
     <div class="hidden name"><code>extract_design.Rd</code></div>
     </div>
@@ -134,7 +137,7 @@ linear model fit using lme." />
 linear model fit using <code>lme</code>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>extract_design</span>(<span class='no'>b</span>)</pre>
+    <pre class="usage"><span class='fu'>extract_design</span><span class='op'>(</span><span class='va'>b</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,7 +154,7 @@ linear model fit using <code>lme</code>.</p>
 <li><p><code>D</code> contains the covariance matrix of the random effects.</p></li>
 <li><p><code>V</code> contains the covariance matrix of the response.</p></li>
 <li><p><code>X</code> contains the fixed-effect model matrix.</p></li>
-<li><p><code>Z</code> contians the random-effect model matrix.</p></li>
+<li><p><code>Z</code> contains the random-effect model matrix.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
@@ -159,6 +162,9 @@ linear model fit using <code>lme</code>.</p>
     <p>This method has been adapted from the method
   <code><a href='https://rdrr.io/pkg/mgcv/man/extract.lme.cov.html'>mgcv::extract.lme.cov</a></code> in the <code>mgcv</code> package, written by Simon
   N. Wood <a href='mailto:simon.wood@r-project.org'>simon.wood@r-project.org</a>.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -175,7 +181,7 @@ linear model fit using <code>lme</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

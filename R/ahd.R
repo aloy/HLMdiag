@@ -1,6 +1,6 @@
 #' Methylprednisolone data
 #' 
-#' Data from a longitudinal study exmaining the effectiveness of Methylprednisolone
+#' Data from a longitudinal study examining the effectiveness of Methylprednisolone
 #' as a treatment for patients with severe alcoholic hepatitis. Subjects were
 #' randomly assigned to a treatment (31 received a placebo, 35 received the 
 #' treatment) and serum bilirubin was measures each week for four weeks.

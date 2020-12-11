@@ -256,7 +256,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
 #' Influence on fixed effects of HLMs
 #'
 #' These functions calculate measures of the change in the fixed effects
-#' estimates based on the deletetion of an observation, or group of 
+#' estimates based on the deletion of an observation, or group of 
 #' observations, for a hierarchical linear model fit using \code{lmer}.
 #' 
 #' @details
@@ -799,7 +799,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' Influence on precision of fixed effects in HLMs
 #'
 #' These functions calculate measures of the change in the covariance
-#' matrices for the fixed effects based on the deletetion of an
+#' matrices for the fixed effects based on the deletion of an
 #' observation, or group of observations, for a hierarchical 
 #' linear model fit using \code{lmer}.
 #' 
@@ -1181,7 +1181,7 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' If \code{delete} is specified then a named vector is returned.
 #' 
 #' The residual variance is named \code{sigma2} and the other variance 
-#' componenets are named \code{D**} where the trailing digits give the
+#' components are named \code{D**} where the trailing digits give the
 #' position in the covariance matrix of the random effects.
 #' 
 #'@author Adam Loy \email{loyad01@@gmail.com}

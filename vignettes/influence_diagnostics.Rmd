@@ -40,7 +40,7 @@ The `hlm_influence()` function provides a wrapper that returns influence diagnos
 Cook's distance and MDFFITS both measure the distance between fixed effects estimated from the full data set and those obtained from the reduced data set. For Cook's distance, the change in parameter estimates is scaled by the estimated covariance matrix of the original parameter estimates, while MDFFITS scales this change by the estimated covariance matrix of the deletion estimates. The covariance trace and covariance ratio both measure how precision is affected by the deletion of a particular observation or group of observations *i*. Covariance trace is a measure of the ratio between the covariance matrices with and without unit *i* to the identity matrix, while covariance ratio is a comparison of the two covariance matrices with and without unit *i* using their determinants. Relative variance change (RVC) is a measurement of the ratio of estimates of the *l* th variance component with and without unit *i*. The final influence diagnostic returned by `hlm_influence()`, leverage, is the rate of change in the predicted response with respect to the observed response. For a full explanation of these influence diagnostics, including formulas, please refer to Loy and Hofmann (2014). 
 
 
-To explore the functionality of `hlm_influence()`, we will use the dataset `classroom` (**West et. al, 2014**). The data set consists of 1,190 observations of students. Students are grouped within classes, which are nested within schools. There are 312 distinct classes nested within 107 schools. 
+To explore the functionality of `hlm_influence()`, we will use the data set `classroom` (**West et. al, 2014**). The data set consists of 1,190 observations of students. Students are grouped within classes, which are nested within schools. There are 312 distinct classes nested within 107 schools. 
 
 ```{r}
 data("classroom", package = "WWGbook")
@@ -84,7 +84,7 @@ print(tb1, width = Inf)
 ```
 There does not appear to be a clear pattern among students who have relatively higher Cook's distance values; they do not tend to be from a particular school or class. In order to investigate these observations further, one could look to summary statistics for the different explanatory variables. Additionally, a similar analysis could be done with the other influence diagnostics provided in the tibble from `hlm_influence()`. 
 
-In addition to identifying influencial observations, it may also be useful to identify influential groups. The `level` parameter in `hlm_influence()` can be used for this purpose. For example, we can obtain influence diagnostics for each class:
+In addition to identifying influential observations, it may also be useful to identify influential groups. The `level` parameter in `hlm_influence()` can be used for this purpose. For example, we can obtain influence diagnostics for each class:
 ```{r}
 infl.classes <- hlm_influence(class.lmer, level = "classid:schoolid")
 ```
@@ -107,7 +107,7 @@ infl.schools <- hlm_influence(class.lmer, level = "schoolid")
 ```{r, echo = FALSE}
 print(infl.schools, width = Inf)
 ```
-Similarily, we use `dotplot_diag` to visually represent the differences. In this case, there are only four observations above the cutoff, so we set `modify = "dotplot"` in order to better visualize the influential observations. `modify = "dotplot"` works well when there are a relatively small number of observations above the cutoff. 
+Similarly, we use `dotplot_diag` to visually represent the differences. In this case, there are only four observations above the cutoff, so we set `modify = "dotplot"` in order to better visualize the influential observations. `modify = "dotplot"` works well when there are a relatively small number of observations above the cutoff. 
 ```{r, fig.height = 4, fig.width= 7, warning = FALSE}
 dotplot_diag(infl.schools$cooksd, name = "cooks.distance", cutoff = "internal", modify = "dotplot")
 ```
@@ -142,7 +142,7 @@ We can then use `dotplot_diag()` with one of the new leverage columns to investi
 ```{r, fig.height = 4, fig.width= 7}
 dotplot_diag(infl2$leverage.fixef, name = "leverage", cutoff = "internal", modify = "dotplot")
 ```
-However, futher analysis reveals that several observations have high leverage when considering only the leverage corresponding to the fixed effects. 
+However, further analysis reveals that several observations have high leverage when considering only the leverage corresponding to the fixed effects. 
 
 ### Choose between approximations or full refits with `approx`
 
@@ -161,7 +161,7 @@ In most cases, using the default of `approx = TRUE` is sufficient for influence 
 
 `hlm_influence()` was written to respect the `na.action` parameter from the `lme4` package. This argument defaults to `na.omit`, which means all rows in the data sets with `NA`s present are simply deleted from the model. However, there is also an `na.exclude` option, which pads the resulting tibbles with `NA`s in the the rows that contained `NA`s in the original data set in place of deleting them altogether. In order for `hlm_influence()` to do this, the original data set must be passed into `hlm_influence()` via the `data` argument whenever the `na.action` was set to `na.exclude` in the model fitting process. 
 
-For example, while the `class` dataset does not have any `NA`s in the dataset, we can introduce a couple for the purposes of an example.
+For example, while the `class` data set does not have any `NA`s in the data set, we can introduce a couple for the purposes of an example.
 ```{r}
 classNA <- classroom
 classNA[2,3] <- NA
@@ -182,7 +182,7 @@ infl4 <- hlm_influence(class.lmer.omit, level = 1)
 ```{r, echo = FALSE}
 print(infl4, width = Inf)
 ```
-Note than there are only 1,188 rows in the returned tibble, although there were 1,190 observations in the original dataset. The two rows with NAs were deleted from the returned tibble. 
+Note than there are only 1,188 rows in the returned tibble, although there were 1,190 observations in the original data set. The two rows with NAs were deleted from the returned tibble. 
 
 We repeat this with the model where `na.action = "na.exclude"`. 
 ```{r}
@@ -196,14 +196,14 @@ In this tibble, there are 1,190 rows. Furthermore, the two rows with NAs display
 
 ## hlm_augment function 
 
-The `hlm_augment()` function combines the `hlm_resid()` and `hlm_influence()` functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. For example, we can obtain residuals and influence diagnostics at once for all students in the `class` dataset with the following:
+The `hlm_augment()` function combines the `hlm_resid()` and `hlm_influence()` functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. For example, we can obtain residuals and influence diagnostics at once for all students in the `class` data set with the following:
 ```{r, warning = FALSE}
 aug <- hlm_augment(class.lmer, level = 1)
 ```
 ```{r, echo = FALSE}
 print(aug, width = Inf)
 ```
-This is useful for inspecting residuals values and influence diagnostics values at the same time. However, `hlm_augment()` lacks some of the functionality that `hlm_influence()` and `hlm_resid()` have. The `delete` and `approx` parameters avaliable for `hlm_influence()` are not avaliable in `hlm_augment()`, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The `standardize` parameter from `hlm_resid()` is also not included, so `hlm_influence()` or `hlm_resid()` should be used instead if this functionality is desired. For more information about avaliable functionality in `hlm_resid()`, see the `hlm_resid` vignette. 
+This is useful for inspecting residuals values and influence diagnostics values at the same time. However, `hlm_augment()` lacks some of the functionality that `hlm_influence()` and `hlm_resid()` have. The `delete` and `approx` parameters available for `hlm_influence()` are not available in `hlm_augment()`, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The `standardize` parameter from `hlm_resid()` is also not included, so `hlm_influence()` or `hlm_resid()` should be used instead if this functionality is desired. For more information about available functionality in `hlm_resid()`, see the `hlm_resid` vignette. 
 
 `hlm_augment()` is especially useful for inspecting residual values of observations with relatively high influence diagnostics values, or vice versa. 
 ```{r}
@@ -224,7 +224,7 @@ Previously, only the individual one step approximation influence functions worke
 
 In most cases, using a `lme` object for `hlm_influence()` or `hlm_augment()` is identical to their usage with `lmerMod` objects from `lme4`. However, there are a few notable exceptions. 
 
-For both `hlm_influence()` and `hlm_augment()`, levels should be specified by names that appear in `model@flist`. For the second level of a three level `lmerMod` model, this usually looks like "level2:level3" where level2 and level3 are the names of the second and third level variables, respectively. However, for a `lme` model, levels should be specified by names that appear in `model$groups`. For example, we can obtain influence diagnostics for each classroom from the `class` dataset in the following way:
+For both `hlm_influence()` and `hlm_augment()`, levels should be specified by names that appear in `model@flist`. For the second level of a three level `lmerMod` model, this usually looks like "level2:level3" where level2 and level3 are the names of the second and third level variables, respectively. However, for a `lme` model, levels should be specified by names that appear in `model$groups`. For example, we can obtain influence diagnostics for each classroom from the `class` data set in the following way:
 ```{r}
 class.lme <- nlme::lme(mathgain ~ mathkind + sex + minority + ses + housepov, random = ~ 1|schoolid/classid, data = classroom)
 hlm_influence(class.lme, level = "classid")
@@ -240,7 +240,7 @@ hlm_influence(class.lme, level = "classid", delete = c("1/160", "1/217"))
 ```
 Note that both examples specify units for deletion in the same way they are specified in `model@flist` (`lmerMod` models) or `model$groups` (`lme` models). 
 
-Additionally, `lmerMod` models require that the `data` argument is passed into `hlm_influence()` and `hlm_augment()` when `na.action = "na.exclude"` during the model fitting process. However, this is unecessary for `lme` models. 
+Additionally, `lmerMod` models require that the `data` argument is passed into `hlm_influence()` and `hlm_augment()` when `na.action = "na.exclude"` during the model fitting process. However, this is unnecessary for `lme` models. 
 
 ## Cook's distance values comparison to other packages 
 
@@ -263,7 +263,7 @@ Conversely, the `mdffits()` function from `HLMdiag` calculates MDFFITS, which is
 
 $MDFFITS_i(\hat{\beta}) = \frac{1}{p}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ 
 
-Instead of scaling by the estimated covariance matrix of the original parameter estimates, calculations for MDFFITS are scaled by the estimated covariance matrix of the deletion estimates. For each deleted observation or group, the model is refit and the covariance structure reestimated without unit *i*. We can calculate this similarily to how we calculated Cook's distance, using the same `case_delete` object.
+Instead of scaling by the estimated covariance matrix of the original parameter estimates, calculations for MDFFITS are scaled by the estimated covariance matrix of the deletion estimates. For each deleted observation or group, the model is refit and the covariance structure re-estimated without unit *i*. We can calculate this similarly to how we calculated Cook's distance, using the same `case_delete` object.
 
 ```{r}
 hlm_mdffits <- mdffits(hlm_case)
@@ -271,7 +271,7 @@ head(hlm_mdffits)
 ```
 These estimates are pretty similar to those produced by `cooks_distance()`; the difference is due to the use of the covariance matrix of the deletion estimates, rather than the original estimates. 
 
-The `car` package calculates Cook's distance similarily to how the `HLMdiag` package calculates MDFFITS. Instead of using the covariance matrix of the original parameter estimates like `HLMdiag`'s `cooks_distance()` function, the `cooks.distance()` function from `car` uses the estimated covariance matrix of the deletion estimates. However, the `cooks_distance()` function from car  is not identical to the `mdffits` function from `HLMdiag`; the `car::cooks.distance()` function also scaled each observation, *i*, by dividing it by the estimated variance of the model calculated without observation *i*. Therefore, the formula used to calculate Cook's distance in the `car` package is as follows: 
+The `car` package calculates Cook's distance similarly to how the `HLMdiag` package calculates MDFFITS. Instead of using the covariance matrix of the original parameter estimates like `HLMdiag`'s `cooks_distance()` function, the `cooks.distance()` function from `car` uses the estimated covariance matrix of the deletion estimates. However, the `cooks_distance()` function from car  is not identical to the `mdffits` function from `HLMdiag`; the `car::cooks.distance()` function also scaled each observation, *i*, by dividing it by the estimated variance of the model calculated without observation *i*. Therefore, the formula used to calculate Cook's distance in the `car` package is as follows: 
 
 $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})$ 
 
@@ -302,7 +302,7 @@ While the difference between the estimates varies slightly due to differences in
 
 ### The `lme4` package
 
-Similar to `HLMdiag`, the `lme4` package has two methods that calculate Cook's distance. One of them, similar to the `case_delete` method, conducts a full reffit of models without each observation or group. The second is a quicker approximation. 
+Similar to `HLMdiag`, the `lme4` package has two methods that calculate Cook's distance. One of them, similar to the `case_delete` method, conducts a full refit of models without each observation or group. The second is a quicker approximation. 
 
 #### `lme4` approximation 
 

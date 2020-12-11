@@ -10,7 +10,7 @@
 #'@param identify the percentage of points to identify as unusual,
 #'\code{FALSE} if you do not want the points identified.
 #'@param silent logical: should the list of data frames used to make the plots
-#' be supressed.
+#' be suppressed.
 #'@param ... other arguments to be passed to \code{qplot()}
 #'@author Adam Loy \email{loyad01@@gmail.com}
 #'@export

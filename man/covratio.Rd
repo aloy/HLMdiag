@@ -51,7 +51,7 @@ to the deleted subset specified.
 }
 \description{
 These functions calculate measures of the change in the covariance
-matrices for the fixed effects based on the deletetion of an
+matrices for the fixed effects based on the deletion of an
 observation, or group of observations, for a hierarchical 
 linear model fit using \code{lmer}.
 }

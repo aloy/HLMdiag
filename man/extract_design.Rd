@@ -2,7 +2,7 @@
 % Please edit documentation in R/utility_functions.R
 \name{extract_design}
 \alias{extract_design}
-\title{Extracting covariance matricies from lme}
+\title{Extracting covariance matrices from lme}
 \usage{
 extract_design(b)
 }
@@ -15,7 +15,7 @@ A list of matrices is returned.
 \item{\code{D} contains the covariance matrix of the random effects.}
 \item{\code{V} contains the covariance matrix of the response.}
 \item{\code{X} contains the fixed-effect model matrix.}
-\item{\code{Z} contians the random-effect model matrix.}}
+\item{\code{Z} contains the random-effect model matrix.}}
 }
 \description{
 This function extracts the full covariance matrices from a mixed/hierarchical

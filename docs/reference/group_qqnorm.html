@@ -41,7 +41,7 @@
 
 <meta property="og:title" content="Overlaying normal Q-Q plots — group_qqnorm" />
 <meta property="og:description" content="This function will overlay multiple normal Q-Q plots on the same plot. This
-will be particulary useful when comparing the distribution between groups.
+will be particularly useful when comparing the distribution between groups.
 In this situation, significantly different slopes would indicate the normal 
 distributions for the groups do not share a common standard deviation." />
 
@@ -75,7 +75,7 @@ distributions for the groups do not share a common standard deviation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -101,7 +101,10 @@ distributions for the groups do not share a common standard deviation." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -133,12 +136,12 @@ distributions for the groups do not share a common standard deviation." />
 
     <div class="ref-description">
     <p>This function will overlay multiple normal Q-Q plots on the same plot. This
-will be particulary useful when comparing the distribution between groups.
+will be particularly useful when comparing the distribution between groups.
 In this situation, significantly different slopes would indicate the normal 
 distributions for the groups do not share a common standard deviation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>group_qqnorm</span>(<span class='no'>x</span>, <span class='no'>group</span>, <span class='kw'>line</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>alpha_point</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>alpha_line</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>group_qqnorm</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>group</span>, line <span class='op'>=</span> <span class='cn'>NULL</span>, alpha_point <span class='op'>=</span> <span class='fl'>1</span>, alpha_line <span class='op'>=</span> <span class='fl'>1</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -176,6 +179,9 @@ reference lines. <code>line = "quantile"</code> will fit lines through the first
     <p>Hilden-Minton, J. A. (1995) 
 Mulilevel Diagnostics for Mixed and Hierarchical Linear Models,
 Ph.D. thesis, University of California Los Angeles.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -192,7 +198,7 @@ Ph.D. thesis, University of California Los Angeles.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

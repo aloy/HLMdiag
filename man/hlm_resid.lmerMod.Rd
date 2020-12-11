@@ -79,11 +79,11 @@ within-group sample sizes.}
 consider the fixed effect portion of the estimates. Equivalent to
 \code{resid(object, level=0)} in \code{nlme}, not currently implemented
 within the \code{lme4::resid} function. When \code{standardize = TRUE},
-cholskey marginal residuals are returned.}
+Cholesky marginal residuals are returned.}
 \item{\strong{higher-level residuals} (random effects)}{}
 \item{\code{.ranef.var_name}}{The group level random effects using the EB method of
 estimating parameters. Equivalent to \code{ranef(object)} on the specified
-level. EB residuals are prefered at higher levels as LS residuals are dependent
+level. EB residuals are preferred at higher levels as LS residuals are dependent
 on a large sample size.}
 \item{\code{.ls.var_name}}{The group level random effects using the LS method of
 estimating parameters. Calculated using \code{ranef} on a \code{lmList}

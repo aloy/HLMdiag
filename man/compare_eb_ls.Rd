@@ -15,7 +15,7 @@ compare_eb_ls(eb, ols, identify = FALSE, silent = TRUE, ...)
 \code{FALSE} if you do not want the points identified.}
 
 \item{silent}{logical: should the list of data frames used to make the plots
-be supressed.}
+be suppressed.}
 
 \item{...}{other arguments to be passed to \code{qplot()}}
 }

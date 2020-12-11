@@ -45,7 +45,7 @@ lmer(lnw ~ exper + (exper | id), data = wages)
 \references{
   Singer, J. D. and Willett, J. B. (2003), \emph{Applied
   Longitudinal Data Analysis: Modeling Change and Event
-  Occurence}, New York: Oxford University Press.
+  Occurrence}, New York: Oxford University Press.
 
   Cook, D. and Swayne, D. F. (2007), \emph{Interactive and
   Dynamic Graphics for Data Analysis with R and GGobi},

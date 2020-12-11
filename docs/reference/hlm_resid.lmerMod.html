@@ -77,7 +77,7 @@ easily conduct an upward residual analysis during model exploration/checking." /
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -103,7 +103,10 @@ easily conduct an upward residual analysis during model exploration/checking." /
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -143,27 +146,27 @@ easily conduct an upward residual analysis during model exploration/checking.</p
     </div>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'>hlm_resid</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for lmerMod</span>
-<span class='fu'>hlm_resid</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include.ls</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)
+<span class='fu'>hlm_resid</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  level <span class='op'>=</span> <span class='fl'>1</span>,
+  standardize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include.ls <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for lme</span>
-<span class='fu'>hlm_resid</span>(
-  <span class='no'>object</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>include.ls</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>data</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>hlm_resid</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  level <span class='op'>=</span> <span class='fl'>1</span>,
+  standardize <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  include.ls <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -209,7 +212,7 @@ residuals and predicted values from a fitted <code>lmerMod</code> or <code>lme</
 object. The function provides access to residual quantities already made available by
 the functions <code>resid</code>, <code>predict</code>, and <code>ranef</code>, but adds
 additional functionality. Below is a list of types of residuals and predicted
-values that are extracted and appended to the model data.</p><dl'>
+values that are extracted and appended to the model data.</p><dl>
 <dt><strong>level-1 residuals</strong></dt><dd><p></p></dd>
 <dt><code>.resid</code> and <code>.fitted</code></dt><dd><p>Residuals calculated using
 the EB method (using maximum likelihood). Level-1 EB residuals are interrelated
@@ -225,11 +228,11 @@ within-group sample sizes.</p></dd>
 consider the fixed effect portion of the estimates. Equivalent to
 <code><a href='https://rdrr.io/r/stats/residuals.html'>resid(object, level=0)</a></code> in <code>nlme</code>, not currently implemented
 within the <code>lme4::resid</code> function. When <code>standardize = TRUE</code>,
-cholskey marginal residuals are returned.</p></dd>
+Cholesky marginal residuals are returned.</p></dd>
 <dt><strong>higher-level residuals</strong> (random effects)</dt><dd><p></p></dd>
 <dt><code>.ranef.var_name</code></dt><dd><p>The group level random effects using the EB method of
-estimating parameters. Equivalent to <code>ranef(object)</code> on the specified
-level. EB residuals are prefered at higher levels as LS residuals are dependent
+estimating parameters. Equivalent to <code><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef(object)</a></code> on the specified
+level. EB residuals are preferred at higher levels as LS residuals are dependent
 on a large sample size.</p></dd>
 <dt><code>.ls.var_name</code></dt><dd><p>The group level random effects using the LS method of
 estimating parameters. Calculated using <code>ranef</code> on a <code>lmList</code>
@@ -250,88 +253,95 @@ Objects into Tidy Tibbles. R package version 0.5.6.
 <a href='https://CRAN.R-project.org/package=broom'>https://CRAN.R-project.org/package=broom</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hlm_augment.lmerMod.html'>hlm_augment</a></code>, <code><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></code>, <code>ranef</code></p></div>
+    <div class='dont-index'><p><code><a href='hlm_augment.lmerMod.html'>hlm_augment</a></code>, <code><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></code>, <code><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef</a></code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a>, Jack Moran, Jaylin Lowe</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>sleepstudy</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"lme4"</span>)
-<span class='no'>fm.lmer</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Reaction</span> ~ <span class='no'>Days</span> + (<span class='no'>Days</span><span class='kw'>|</span><span class='no'>Subject</span>), <span class='no'>sleepstudy</span>)
-<span class='no'>fm.lme</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>nlme</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nlme/man/lme.html'>lme</a></span>(<span class='no'>Reaction</span> ~ <span class='no'>Days</span>, <span class='kw'>random</span> <span class='kw'>=</span> ~<span class='no'>Days</span><span class='kw'>|</span><span class='no'>Subject</span>, <span class='no'>sleepstudy</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>sleepstudy</span>, package <span class='op'>=</span> <span class='st'>"lme4"</span><span class='op'>)</span>
+<span class='va'>fm.lmer</span> <span class='op'>&lt;-</span> <span class='fu'>lme4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>Reaction</span> <span class='op'>~</span> <span class='va'>Days</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>Days</span><span class='op'>|</span><span class='va'>Subject</span><span class='op'>)</span>, <span class='va'>sleepstudy</span><span class='op'>)</span>
+<span class='va'>fm.lme</span> <span class='op'>&lt;-</span> <span class='fu'>nlme</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/nlme/man/lme.html'>lme</a></span><span class='op'>(</span><span class='va'>Reaction</span> <span class='op'>~</span> <span class='va'>Days</span>, random <span class='op'>=</span> <span class='op'>~</span><span class='va'>Days</span><span class='op'>|</span><span class='va'>Subject</span>, <span class='va'>sleepstudy</span><span class='op'>)</span>
 
 <span class='co'># level-1 and marginal residuals</span>
-<span class='no'>fm.lmer.res1</span> <span class='kw'>&lt;-</span> <span class='fu'>hlm_resid</span>(<span class='no'>fm.lmer</span>) <span class='co'>## raw level-1 and mar resids</span>
-<span class='no'>fm.lmer.res1</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 180 x 10</span><span>
+<span class='va'>fm.lmer.res1</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lmer</span><span class='op'>)</span> <span class='co'>## raw level-1 and mar resids</span>
+<span class='va'>fm.lmer.res1</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 180 x 10</span><span>
 #&gt;       id Reaction  Days Subject  .resid .fitted .ls.resid .ls.fitted .mar.resid
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1     250.     0 308       -</span><span style='color: #BB0000;'>4.10</span><span>    254.      5.37       244.      -</span><span style='color: #BB0000;'>1.85</span><span>
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2     259.     1 308      -</span><span style='color: #BB0000;'>14.6</span><span>     273.     -</span><span style='color: #BB0000;'>7.25</span><span>       266.      -</span><span style='color: #BB0000;'>3.17</span><span>
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3     251.     2 308      -</span><span style='color: #BB0000;'>42.2</span><span>     293.    -</span><span style='color: #BB0000;'>36.9</span><span>        288.     -</span><span style='color: #BB0000;'>21.5</span><span> 
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4     321.     3 308        8.78    313.     12.0        309.      38.6 
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5     357.     4 308       24.5     332.     25.6        331.      63.6 
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6     415.     5 308       62.7     352.     61.7        353.     111.  
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7     382.     6 308       10.5     372.      7.42       375.      68.0 
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8     290.     7 308     -</span><span style='color: #BB0000;'>101.</span><span>      391.   -</span><span style='color: #BB0000;'>106.</span><span>         397.     -</span><span style='color: #BB0000;'>34.5</span><span> 
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9     431.     8 308       19.6     411.     12.3        418.      95.4 
-#&gt; </span><span style='color: #555555;'>10</span><span>    10     466.     9 308       35.7     431.     26.3        440.     121.  
-#&gt; </span><span style='color: #555555;'># … with 170 more rows, and 1 more variable: .mar.fitted </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='no'>fm.lme.std1</span> <span class='kw'>&lt;-</span> <span class='fu'>hlm_resid</span>(<span class='no'>fm.lme</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>) <span class='co'>## std level-1 and mar resids</span>
-<span class='no'>fm.lme.std1</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 180 x 10</span><span>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>     1     250.     0 308       -</span><span style='color: #BB0000;'>4.10</span><span>    254.      5.37       244.      -</span><span style='color: #BB0000;'>1.85</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>     2     259.     1 308      -</span><span style='color: #BB0000;'>14.6</span><span>     273.     -</span><span style='color: #BB0000;'>7.25</span><span>       266.      -</span><span style='color: #BB0000;'>3.17</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>     3     251.     2 308      -</span><span style='color: #BB0000;'>42.2</span><span>     293.    -</span><span style='color: #BB0000;'>36.9</span><span>        288.     -</span><span style='color: #BB0000;'>21.5</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span>     4     321.     3 308        8.78    313.     12.0        309.      38.6 
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>     5     357.     4 308       24.5     332.     25.6        331.      63.6 
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>     6     415.     5 308       62.7     352.     61.7        353.     111.  
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>     7     382.     6 308       10.5     372.      7.42       375.      68.0 
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     8     290.     7 308     -</span><span style='color: #BB0000;'>101.</span><span>      391.   -</span><span style='color: #BB0000;'>106.</span><span>         397.     -</span><span style='color: #BB0000;'>34.5</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     9     431.     8 308       19.6     411.     12.3        418.      95.4 
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span>    10     466.     9 308       35.7     431.     26.3        440.     121.  
+#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 1 more variable: .mar.fitted </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='va'>fm.lme.std1</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lme</span>, standardize <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'>## std level-1 and mar resids</span>
+<span class='va'>fm.lme.std1</span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 180 x 10</span><span>
 #&gt;       id Reaction  Days Subject .std.resid .fitted .std.ls.resid .ls.fitted
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>     1     250.     0 308         -</span><span style='color: #BB0000;'>0.160</span><span>    254.         0.139       244.
-#&gt; </span><span style='color: #555555;'> 2</span><span>     2     259.     1 308         -</span><span style='color: #BB0000;'>0.571</span><span>    273.        -</span><span style='color: #BB0000;'>0.175</span><span>       266.
-#&gt; </span><span style='color: #555555;'> 3</span><span>     3     251.     2 308         -</span><span style='color: #BB0000;'>1.65</span><span>     293.        -</span><span style='color: #BB0000;'>0.851</span><span>       288.
-#&gt; </span><span style='color: #555555;'> 4</span><span>     4     321.     3 308          0.343    313.         0.268       309.
-#&gt; </span><span style='color: #555555;'> 5</span><span>     5     357.     4 308          0.958    332.         0.566       331.
-#&gt; </span><span style='color: #555555;'> 6</span><span>     6     415.     5 308          2.45     352.         1.36        353.
-#&gt; </span><span style='color: #555555;'> 7</span><span>     7     382.     6 308          0.412    372.         0.166       375.
-#&gt; </span><span style='color: #555555;'> 8</span><span>     8     290.     7 308         -</span><span style='color: #BB0000;'>3.95</span><span>     391.        -</span><span style='color: #BB0000;'>2.45</span><span>        397.
-#&gt; </span><span style='color: #555555;'> 9</span><span>     9     431.     8 308          0.766    411.         0.296       418.
-#&gt; </span><span style='color: #555555;'>10</span><span>    10     466.     9 308          1.39     431.         0.680       440.
-#&gt; </span><span style='color: #555555;'># … with 170 more rows, and 2 more variables: .chol.mar.resid </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #555555;'>,</span><span>
-#&gt; </span><span style='color: #555555;'>#   .mar.fitted </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span>     1     250.     0 308         -</span><span style='color: #BB0000;'>0.160</span><span>    254.         0.139       244.
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span>     2     259.     1 308         -</span><span style='color: #BB0000;'>0.571</span><span>    273.        -</span><span style='color: #BB0000;'>0.175</span><span>       266.
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span>     3     251.     2 308         -</span><span style='color: #BB0000;'>1.65</span><span>     293.        -</span><span style='color: #BB0000;'>0.851</span><span>       288.
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span>     4     321.     3 308          0.343    313.         0.268       309.
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span>     5     357.     4 308          0.958    332.         0.566       331.
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span>     6     415.     5 308          2.45     352.         1.36        353.
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span>     7     382.     6 308          0.412    372.         0.166       375.
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     8     290.     7 308         -</span><span style='color: #BB0000;'>3.95</span><span>     391.        -</span><span style='color: #BB0000;'>2.45</span><span>        397.
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     9     431.     8 308          0.766    411.         0.296       418.
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span>    10     466.     9 308          1.39     431.         0.680       440.
+#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 2 more variables: .chol.mar.resid </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
+#&gt; </span><span style='color: #949494;'>#   .mar.fitted </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
 <span class='co'># level-2 residuals</span>
-<span class='no'>fm.lmer.res2</span> <span class='kw'>&lt;-</span> <span class='fu'>hlm_resid</span>(<span class='no'>fm.lmer</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>) <span class='co'>## level-2 ranefs</span>
-<span class='no'>fm.lmer.res2</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 18 x 5</span><span>
+<span class='va'>fm.lmer.res2</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lmer</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span><span class='op'>)</span> <span class='co'>## level-2 ranefs</span>
+<span class='va'>fm.lmer.res2</span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 18 x 5</span><span>
 #&gt;    Subject .ranef.intercept .ranef.days .ls.intercept .ls.days
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 308                2.26        9.20          -</span><span style='color: #BB0000;'>7.21</span><span>   11.3  
-#&gt; </span><span style='color: #555555;'> 2</span><span> 309              -</span><span style='color: #BB0000;'>40.4</span><span>        -</span><span style='color: #BB0000;'>8.62</span><span>         -</span><span style='color: #BB0000;'>46.4</span><span>    -</span><span style='color: #BB0000;'>8.21</span><span> 
-#&gt; </span><span style='color: #555555;'> 3</span><span> 310              -</span><span style='color: #BB0000;'>39.0</span><span>        -</span><span style='color: #BB0000;'>5.45</span><span>         -</span><span style='color: #BB0000;'>47.9</span><span>    -</span><span style='color: #BB0000;'>4.35</span><span> 
-#&gt; </span><span style='color: #555555;'> 4</span><span> 330               23.7        -</span><span style='color: #BB0000;'>4.81</span><span>          38.3    -</span><span style='color: #BB0000;'>7.46</span><span> 
-#&gt; </span><span style='color: #555555;'> 5</span><span> 331               22.3        -</span><span style='color: #BB0000;'>3.07</span><span>          34.3    -</span><span style='color: #BB0000;'>5.20</span><span> 
-#&gt; </span><span style='color: #555555;'> 6</span><span> 332                9.04       -</span><span style='color: #BB0000;'>0.272</span><span>         12.8    -</span><span style='color: #BB0000;'>0.901</span><span>
-#&gt; </span><span style='color: #555555;'> 7</span><span> 333               16.8        -</span><span style='color: #BB0000;'>0.224</span><span>         23.6    -</span><span style='color: #BB0000;'>1.33</span><span> 
-#&gt; </span><span style='color: #555555;'> 8</span><span> 334               -</span><span style='color: #BB0000;'>7.23</span><span>        1.07         -</span><span style='color: #BB0000;'>11.2</span><span>     1.79 
-#&gt; </span><span style='color: #555555;'> 9</span><span> 335               -</span><span style='color: #BB0000;'>0.334</span><span>     -</span><span style='color: #BB0000;'>10.8</span><span>           11.6   -</span><span style='color: #BB0000;'>13.3</span><span>  
-#&gt; </span><span style='color: #555555;'>10</span><span> 337               34.9         8.63          38.7     8.56 
-#&gt; </span><span style='color: #555555;'>11</span><span> 349              -</span><span style='color: #BB0000;'>25.2</span><span>         1.17         -</span><span style='color: #BB0000;'>36.3</span><span>     3.03 
-#&gt; </span><span style='color: #555555;'>12</span><span> 350              -</span><span style='color: #BB0000;'>13.1</span><span>         6.61         -</span><span style='color: #BB0000;'>25.6</span><span>     9.04 
-#&gt; </span><span style='color: #555555;'>13</span><span> 351                4.58       -</span><span style='color: #BB0000;'>3.02</span><span>           9.74   -</span><span style='color: #BB0000;'>4.03</span><span> 
-#&gt; </span><span style='color: #555555;'>14</span><span> 352               20.9         3.54          25.0     3.10 
-#&gt; </span><span style='color: #555555;'>15</span><span> 369                3.28        0.872          3.56    0.881
-#&gt; </span><span style='color: #555555;'>16</span><span> 370              -</span><span style='color: #BB0000;'>25.6</span><span>         4.82         -</span><span style='color: #BB0000;'>41.0</span><span>     7.59 
-#&gt; </span><span style='color: #555555;'>17</span><span> 371                0.807      -</span><span style='color: #BB0000;'>0.988</span><span>          2.23   -</span><span style='color: #BB0000;'>1.28</span><span> 
-#&gt; </span><span style='color: #555555;'>18</span><span> 372               12.3         1.28          15.6     0.831</div><div class='input'><span class='no'>fm.lme.res2</span> <span class='kw'>&lt;-</span> <span class='fu'>hlm_resid</span>(<span class='no'>fm.lme</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>, <span class='kw'>include.ls</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>) <span class='co'>##level-2 ranef, no LS</span>
-<span class='no'>fm.lme.res2</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 18 x 3</span><span>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 308                2.26        9.20          -</span><span style='color: #BB0000;'>7.21</span><span>   11.3  
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 309              -</span><span style='color: #BB0000;'>40.4</span><span>        -</span><span style='color: #BB0000;'>8.62</span><span>         -</span><span style='color: #BB0000;'>46.4</span><span>    -</span><span style='color: #BB0000;'>8.21</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 310              -</span><span style='color: #BB0000;'>39.0</span><span>        -</span><span style='color: #BB0000;'>5.45</span><span>         -</span><span style='color: #BB0000;'>47.9</span><span>    -</span><span style='color: #BB0000;'>4.35</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 330               23.7        -</span><span style='color: #BB0000;'>4.81</span><span>          38.3    -</span><span style='color: #BB0000;'>7.46</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 331               22.3        -</span><span style='color: #BB0000;'>3.07</span><span>          34.3    -</span><span style='color: #BB0000;'>5.20</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 332                9.04       -</span><span style='color: #BB0000;'>0.272</span><span>         12.8    -</span><span style='color: #BB0000;'>0.901</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 333               16.8        -</span><span style='color: #BB0000;'>0.224</span><span>         23.6    -</span><span style='color: #BB0000;'>1.33</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 334               -</span><span style='color: #BB0000;'>7.23</span><span>        1.07         -</span><span style='color: #BB0000;'>11.2</span><span>     1.79 
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 335               -</span><span style='color: #BB0000;'>0.334</span><span>     -</span><span style='color: #BB0000;'>10.8</span><span>           11.6   -</span><span style='color: #BB0000;'>13.3</span><span>  
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 337               34.9         8.63          38.7     8.56 
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> 349              -</span><span style='color: #BB0000;'>25.2</span><span>         1.17         -</span><span style='color: #BB0000;'>36.3</span><span>     3.03 
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> 350              -</span><span style='color: #BB0000;'>13.1</span><span>         6.61         -</span><span style='color: #BB0000;'>25.6</span><span>     9.04 
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> 351                4.58       -</span><span style='color: #BB0000;'>3.02</span><span>           9.74   -</span><span style='color: #BB0000;'>4.03</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> 352               20.9         3.54          25.0     3.10 
+#&gt; </span><span style='color: #BCBCBC;'>15</span><span> 369                3.28        0.872          3.56    0.881
+#&gt; </span><span style='color: #BCBCBC;'>16</span><span> 370              -</span><span style='color: #BB0000;'>25.6</span><span>         4.82         -</span><span style='color: #BB0000;'>41.0</span><span>     7.59 
+#&gt; </span><span style='color: #BCBCBC;'>17</span><span> 371                0.807      -</span><span style='color: #BB0000;'>0.988</span><span>          2.23   -</span><span style='color: #BB0000;'>1.28</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>18</span><span> 372               12.3         1.28          15.6     0.831</div><div class='input'><span class='va'>fm.lme.res2</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lme</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span>, include.ls <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span> <span class='co'>##level-2 ranef, no LS</span>
+<span class='va'>fm.lme.res2</span>
+</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 18 x 3</span><span>
 #&gt;    Subject .ranef.intercept .ranef.days
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 308                2.26        9.20 
-#&gt; </span><span style='color: #555555;'> 2</span><span> 309              -</span><span style='color: #BB0000;'>40.4</span><span>        -</span><span style='color: #BB0000;'>8.62</span><span> 
-#&gt; </span><span style='color: #555555;'> 3</span><span> 310              -</span><span style='color: #BB0000;'>39.0</span><span>        -</span><span style='color: #BB0000;'>5.45</span><span> 
-#&gt; </span><span style='color: #555555;'> 4</span><span> 330               23.7        -</span><span style='color: #BB0000;'>4.81</span><span> 
-#&gt; </span><span style='color: #555555;'> 5</span><span> 331               22.3        -</span><span style='color: #BB0000;'>3.07</span><span> 
-#&gt; </span><span style='color: #555555;'> 6</span><span> 332                9.04       -</span><span style='color: #BB0000;'>0.272</span><span>
-#&gt; </span><span style='color: #555555;'> 7</span><span> 333               16.8        -</span><span style='color: #BB0000;'>0.224</span><span>
-#&gt; </span><span style='color: #555555;'> 8</span><span> 334               -</span><span style='color: #BB0000;'>7.23</span><span>        1.07 
-#&gt; </span><span style='color: #555555;'> 9</span><span> 335               -</span><span style='color: #BB0000;'>0.334</span><span>     -</span><span style='color: #BB0000;'>10.8</span><span>  
-#&gt; </span><span style='color: #555555;'>10</span><span> 337               34.9         8.63 
-#&gt; </span><span style='color: #555555;'>11</span><span> 349              -</span><span style='color: #BB0000;'>25.2</span><span>         1.17 
-#&gt; </span><span style='color: #555555;'>12</span><span> 350              -</span><span style='color: #BB0000;'>13.1</span><span>         6.61 
-#&gt; </span><span style='color: #555555;'>13</span><span> 351                4.58       -</span><span style='color: #BB0000;'>3.02</span><span> 
-#&gt; </span><span style='color: #555555;'>14</span><span> 352               20.9         3.54 
-#&gt; </span><span style='color: #555555;'>15</span><span> 369                3.28        0.872
-#&gt; </span><span style='color: #555555;'>16</span><span> 370              -</span><span style='color: #BB0000;'>25.6</span><span>         4.82 
-#&gt; </span><span style='color: #555555;'>17</span><span> 371                0.807      -</span><span style='color: #BB0000;'>0.988</span><span>
-#&gt; </span><span style='color: #555555;'>18</span><span> 372               12.3         1.28 </div></span></pre>
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 308                2.26        9.20 
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 309              -</span><span style='color: #BB0000;'>40.4</span><span>        -</span><span style='color: #BB0000;'>8.62</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 310              -</span><span style='color: #BB0000;'>39.0</span><span>        -</span><span style='color: #BB0000;'>5.45</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 330               23.7        -</span><span style='color: #BB0000;'>4.81</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 331               22.3        -</span><span style='color: #BB0000;'>3.07</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 332                9.04       -</span><span style='color: #BB0000;'>0.272</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 333               16.8        -</span><span style='color: #BB0000;'>0.224</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 334               -</span><span style='color: #BB0000;'>7.23</span><span>        1.07 
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 335               -</span><span style='color: #BB0000;'>0.334</span><span>     -</span><span style='color: #BB0000;'>10.8</span><span>  
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 337               34.9         8.63 
+#&gt; </span><span style='color: #BCBCBC;'>11</span><span> 349              -</span><span style='color: #BB0000;'>25.2</span><span>         1.17 
+#&gt; </span><span style='color: #BCBCBC;'>12</span><span> 350              -</span><span style='color: #BB0000;'>13.1</span><span>         6.61 
+#&gt; </span><span style='color: #BCBCBC;'>13</span><span> 351                4.58       -</span><span style='color: #BB0000;'>3.02</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>14</span><span> 352               20.9         3.54 
+#&gt; </span><span style='color: #BCBCBC;'>15</span><span> 369                3.28        0.872
+#&gt; </span><span style='color: #BCBCBC;'>16</span><span> 370              -</span><span style='color: #BB0000;'>25.6</span><span>         4.82 
+#&gt; </span><span style='color: #BCBCBC;'>17</span><span> 371                0.807      -</span><span style='color: #BB0000;'>0.988</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>18</span><span> 372               12.3         1.28 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -347,7 +357,7 @@ Objects into Tidy Tibbles. R package version 0.5.6.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

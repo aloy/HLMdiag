@@ -56,7 +56,7 @@ and deleted parameter estimates.
 }
 \description{
 These functions calculate measures of the change in the fixed effects
-estimates based on the deletetion of an observation, or group of 
+estimates based on the deletion of an observation, or group of 
 observations, for a hierarchical linear model fit using \code{lmer}.
 }
 \details{

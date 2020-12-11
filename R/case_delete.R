@@ -35,7 +35,7 @@ case_delete.default <- function(model, ...){
 #'cases from different groups using \code{delete}, so numeric indices should be double checked 
 #'to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.
 #' @param ... do not use
-#'@return a list with the following compontents:
+#'@return a list with the following components:
 #' \describe{
 #'   \item{\code{fixef.original}}{the original fixed effects estimates}
 #'   \item{\code{ranef.original}}{the original predicted random effects}

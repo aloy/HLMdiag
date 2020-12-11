@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Case Deletion for <code>mer</code>/<code>lmerMod</code> objects — case_delete.default • HLMdiag</title>
+<title>Case Deletion for mer/lmerMod objects — case_delete.default • HLMdiag</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Case Deletion for <code>mer</code>/<code>lmerMod</code> objects — case_delete.default" />
+<meta property="og:title" content="Case Deletion for mer/lmerMod objects — case_delete.default" />
 <meta property="og:description" content="This function is used to iteratively delete groups corresponding to the
 levels of a hierarchical linear model. It uses lmer() to fit
 the models for each deleted case (i.e. uses brute force). To investigate
@@ -76,7 +76,7 @@ times, specifying the group (level) of interest each time." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -102,7 +102,10 @@ times, specifying the group (level) of interest each time." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -134,48 +137,48 @@ times, specifying the group (level) of interest each time." />
 
     <div class="ref-description">
     <p>This function is used to iteratively delete groups corresponding to the
-levels of a hierarchical linear model. It uses <code>lmer()</code> to fit
+levels of a hierarchical linear model. It uses <code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer()</a></code> to fit
 the models for each deleted case (i.e. uses brute force). To investigate
 numerous levels of the model, the function will need to be called multiple
 times, specifying the group (level) of interest each time.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'>case_delete</span>(<span class='no'>model</span>, <span class='no'>...</span>)
+<span class='fu'>case_delete</span><span class='op'>(</span><span class='va'>model</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for mer</span>
-<span class='fu'>case_delete</span>(
-  <span class='no'>model</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span>),
-  <span class='kw'>delete</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)
+<span class='fu'>case_delete</span><span class='op'>(</span>
+  <span class='va'>model</span>,
+  level <span class='op'>=</span> <span class='fl'>1</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span><span class='op'>)</span>,
+  delete <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for lmerMod</span>
-<span class='fu'>case_delete</span>(
-  <span class='no'>model</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span>),
-  <span class='kw'>delete</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)
+<span class='fu'>case_delete</span><span class='op'>(</span>
+  <span class='va'>model</span>,
+  level <span class='op'>=</span> <span class='fl'>1</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span><span class='op'>)</span>,
+  delete <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for lme</span>
-<span class='fu'>case_delete</span>(
-  <span class='no'>model</span>,
-  <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span>),
-  <span class='kw'>delete</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>case_delete</span><span class='op'>(</span>
+  <span class='va'>model</span>,
+  level <span class='op'>=</span> <span class='fl'>1</span>,
+  type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"both"</span>, <span class='st'>"fixef"</span>, <span class='st'>"varcomp"</span><span class='op'>)</span>,
+  delete <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>model</th>
-      <td><p>the original hierarchical model fit using <code>lmer()</code></p></td>
+      <td><p>the original hierarchical model fit using <code><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer()</a></code></p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -205,7 +208,7 @@ to confirm that they encompass entire groups. If <code>delete = NULL</code> then
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a list with the following compontents:</p><dl'>
+    <p>a list with the following components:</p><dl>
   <dt><code>fixef.original</code></dt><dd><p>the original fixed effects estimates</p></dd>
   <dt><code>ranef.original</code></dt><dd><p>the original predicted random effects</p></dd>
   <dt><code>vcov.original</code></dt><dd><p>the original variance-covariance matrix for the fixed effects</p></dd>
@@ -229,19 +232,24 @@ Case-Deletion Diagnostics for Mixed Models, <em>Technometrics</em>, <b>34</b>, 3
 <p>Schabenberger, O. (2004) Mixed Model Influence Diagnostics, in
 <em>Proceedings of the Twenty-Ninth SAS Users Group International
 Conference</em>, SAS Users Group International.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>sleepstudy</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'lme4'</span>)
-<span class='no'>fm</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Reaction</span> ~ <span class='no'>Days</span> + (<span class='no'>Days</span><span class='kw'>|</span><span class='no'>Subject</span>), <span class='no'>sleepstudy</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>sleepstudy</span>, package <span class='op'>=</span> <span class='st'>'lme4'</span><span class='op'>)</span>
+<span class='va'>fm</span> <span class='op'>&lt;-</span> <span class='fu'>lme4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>Reaction</span> <span class='op'>~</span> <span class='va'>Days</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>Days</span><span class='op'>|</span><span class='va'>Subject</span><span class='op'>)</span>, <span class='va'>sleepstudy</span><span class='op'>)</span>
 
 <span class='co'># Deleting every Subject</span>
-<span class='no'>fmDel</span> <span class='kw'>&lt;-</span> <span class='fu'>case_delete</span>(<span class='kw'>model</span> <span class='kw'>=</span> <span class='no'>fm</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"both"</span>)
+<span class='va'>fmDel</span> <span class='op'>&lt;-</span> <span class='fu'>case_delete</span><span class='op'>(</span>model <span class='op'>=</span> <span class='va'>fm</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span>, type <span class='op'>=</span> <span class='st'>"both"</span><span class='op'>)</span>
 
 <span class='co'># Deleting only subject 308</span>
-<span class='no'>del308</span> <span class='kw'>&lt;-</span> <span class='fu'>case_delete</span>(<span class='kw'>model</span> <span class='kw'>=</span> <span class='no'>fm</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"both"</span>, <span class='kw'>delete</span> <span class='kw'>=</span> <span class='fl'>308</span>)
+<span class='va'>del308</span> <span class='op'>&lt;-</span> <span class='fu'>case_delete</span><span class='op'>(</span>model <span class='op'>=</span> <span class='va'>fm</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span>, type <span class='op'>=</span> <span class='st'>"both"</span>, delete <span class='op'>=</span> <span class='fl'>308</span><span class='op'>)</span>
 
 <span class='co'># Deleting a subset of subjects</span>
-<span class='no'>delSubset</span> <span class='kw'>&lt;-</span> <span class='fu'>case_delete</span>(<span class='kw'>model</span> <span class='kw'>=</span> <span class='no'>fm</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"both"</span>, <span class='kw'>delete</span> <span class='kw'>=</span> <span class='fl'>308</span>:<span class='fl'>310</span>)</div></pre>
+<span class='va'>delSubset</span> <span class='op'>&lt;-</span> <span class='fu'>case_delete</span><span class='op'>(</span>model <span class='op'>=</span> <span class='va'>fm</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span>, type <span class='op'>=</span> <span class='st'>"both"</span>, delete <span class='op'>=</span> <span class='fl'>308</span><span class='op'>:</span><span class='fl'>310</span><span class='op'>)</span>
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -257,7 +265,7 @@ Conference</em>, SAS Users Group International.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

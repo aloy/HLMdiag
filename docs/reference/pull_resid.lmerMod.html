@@ -78,7 +78,7 @@ lmeresampler package." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -104,7 +104,10 @@ lmeresampler package." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -138,20 +141,20 @@ lmeresampler package." />
     <p><code>pull_resid</code> takes a hierarchical linear model fit as a <code>lmerMod</code>
 or <code>lme</code> object and returns various types of level-1 residuals as a
 vector. Because the <code>pull_resid</code> only calculates one type of residual,
-it is more efficient than using <code><a href='hlm_resid.lmerMod.html'>hlm_resid</a></code> and indexing the
+it is more efficient than using <code><a href='hlm_resid.default.html'>hlm_resid</a></code> and indexing the
 resulting tibble. <code>pull_resid</code> is designed to be used with methods that
 take a long time to run, such as the resampling methods found in the
 <code>lmeresampler</code> package.</p>
     </div>
 
     <pre class="usage"><span class='co'># S3 method for default</span>
-<span class='fu'>pull_resid</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>pull_resid</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for lmerMod</span>
-<span class='fu'>pull_resid</span>(<span class='no'>object</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"ls"</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>pull_resid</span><span class='op'>(</span><span class='va'>object</span>, type <span class='op'>=</span> <span class='st'>"ls"</span>, standardize <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for lme</span>
-<span class='fu'>pull_resid</span>(<span class='no'>object</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"ls"</span>, <span class='kw'>standardize</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>pull_resid</span><span class='op'>(</span><span class='va'>object</span>, type <span class='op'>=</span> <span class='st'>"ls"</span>, standardize <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -178,25 +181,25 @@ take a long time to run, such as the resampling methods found in the
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     
-<dl'>
+<dl>
 <dt><code>type = "ls"</code></dt><dd><p>Residuals calculated by fitting separate LS
 regression models for each group. LS residuals are unconfounded by higher
 level residuals, but unreliable for small within-group sample sizes. When
 <code>standardize = TRUE</code>, residuals are standardized by sigma components of
 the model object.</p></dd>
-<dt><code>type = "eb"</code></dt><dd><p>Residuals calculated using the Empircal Bayes (EB)
+<dt><code>type = "eb"</code></dt><dd><p>Residuals calculated using the empirical Bayes (EB)
 method using maximum likelihood. EB residuals are interrelated with higher
 level residuals. When <code>standardize = TRUE</code>, residuals are standardized
 by sigma components of the model object.</p></dd>
 <dt><code>type = "marginal"</code></dt><dd><p>Marginal residuals only consider the fixed
-effect portion of the estimates. When <code>standardize = TRUE</code>, cholskey
+effect portion of the estimates. When <code>standardize = TRUE</code>, Cholesky
 residuals are returned.</p></dd>
 
 </dl>
 
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='hlm_resid.lmerMod.html'>hlm_resid</a></p></div>
+    <div class='dont-index'><p><a href='hlm_resid.default.html'>hlm_resid</a></p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -213,7 +216,7 @@ residuals are returned.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

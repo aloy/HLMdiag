@@ -54,7 +54,7 @@ cases from different groups using \code{delete}, so numeric indices should be do
 to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.}
 }
 \value{
-a list with the following compontents:
+a list with the following components:
 \describe{
   \item{\code{fixef.original}}{the original fixed effects estimates}
   \item{\code{ranef.original}}{the original predicted random effects}

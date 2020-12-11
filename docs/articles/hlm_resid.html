@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -57,7 +57,10 @@
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -84,7 +87,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>HLMdiag Residual Diagnostics</h1>
             
-            <h4 class="date">2020-08-21</h4>
+            <h4 class="date">2020-12-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/aloy/HLMdiag/blob/master/vignettes/hlm_resid.Rmd"><code>vignettes/hlm_resid.Rmd</code></a></small>
       <div class="hidden name"><code>hlm_resid.Rmd</code></div>
@@ -96,13 +99,13 @@
 <div id="hlmdiag-a-diagnostic-tool-for-hierarchical-multilevel-linear-models" class="section level1">
 <h1 class="hasAnchor">
 <a href="#hlmdiag-a-diagnostic-tool-for-hierarchical-multilevel-linear-models" class="anchor"></a>HLMdiag: a diagnostic tool for hierarchical (multilevel) linear models</h1>
-<p>The package <code>HLMdiag</code> was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). When <code>HLMdiag</code> was created in 2014, it made diagnostic producedures available for HLMs that had not yet been implemented in statistical software. Over the past 6 years, other packages have gradually implemented some of these procedures; however, diagnosing a model still often requires multiple packages, each of which has its own syntax and quirks. <code>HLMdiag</code> provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. In this update, <code>HLMdiag</code> focuses on usability in its functions. Drawing inspiration from the <code>augment()</code> function in the <code>broom</code> package, the new functions <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code>, and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> append diagnostic information to a model’s data frame, allowing the analyst to easily work with and see how residuals and influence diagnostics relate to the original variables.</p>
-<p>This vignette introduces new functions concerning residual diagnostics in <code>HLMdiag</code>, specifically <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, <code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code>, and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>. The main focus of this vignette, <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, is intended to replace <code><a href="../reference/HLMresid.mer.html">HLMresid()</a></code> in functionality, and works more robustly with 3-level models as well as models fit with <code>nlme</code>. Additionally, <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> appends residuals and fitted values to a model’s data frame in the form of a tibble. Tibbles help the analyst diagnose models by simplifing the creation of diagnostic plots, especially within <code>ggplot2</code>, and working seamlessly with sorting functions in <code>dplyr</code>.</p>
-<p>For information about influence diagnostics such as Cook’s distance and leverage in HLMs, the reader should see the vignette for <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code>.</p>
+<p>The package <code>HLMdiag</code> was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). When <code>HLMdiag</code> was created in 2014, it made diagnostic procedures available for HLMs that had not yet been implemented in statistical software. Over the past 6 years, other packages have gradually implemented some of these procedures; however, diagnosing a model still often requires multiple packages, each of which has its own syntax and quirks. <code>HLMdiag</code> provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. In this update, <code>HLMdiag</code> focuses on usability in its functions. Drawing inspiration from the <code>augment()</code> function in the <code>broom</code> package, the new functions <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code>, and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> append diagnostic information to a model’s data frame, allowing the analyst to easily work with and see how residuals and influence diagnostics relate to the original variables.</p>
+<p>This vignette introduces new functions concerning residual diagnostics in <code>HLMdiag</code>, specifically <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, <code><a href="../reference/pull_resid.default.html">pull_resid()</a></code>, and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>. The main focus of this vignette, <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, is intended to replace <code><a href="../reference/HLMresid.default.html">HLMresid()</a></code> in functionality, and works more robustly with 3-level models as well as models fit with <code>nlme</code>. Additionally, <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> appends residuals and fitted values to a model’s data frame in the form of a tibble. Tibbles help the analyst diagnose models by simplifying the creation of diagnostic plots, especially within <code>ggplot2</code>, and working seamlessly with sorting functions in <code>dplyr</code>.</p>
+<p>For information about influence diagnostics such as Cook’s distance and leverage in HLMs, the reader should see the vignette for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code>.</p>
 <div id="hlm_resid-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hlm_resid-function" class="anchor"></a>hlm_resid() function</h2>
-<p>The function <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> takes a hierarchical linear model fit as a <code>lmerMod</code> or <code>lme</code> object and extracts residuals and predicted values from the model using both Least Squares (LS) and Empirical Bayes (EB) methods in estimating parameters. Whereas the old function, <code><a href="../reference/HLMresid.mer.html">HLMresid()</a></code>, would return a vector with a single type of residual, <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> appends specified residuals to the data frame of the model in the form of a tibble. The use of a tibble allows the analyst to easily plot residuals against explanatory variables and identify possible outliers or model deficiencies. The function draws heavy inspiration from the <code>augment</code> function of the <code>broom</code> package, however offers more options for the types of residuals that the analyst may want to use.</p>
+<p>The function <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> takes a hierarchical linear model fit as a <code>lmerMod</code> or <code>lme</code> object and extracts residuals and predicted values from the model using both Least Squares (LS) and Empirical Bayes (EB) methods in estimating parameters. Whereas the old function, <code><a href="../reference/HLMresid.default.html">HLMresid()</a></code>, would return a vector with a single type of residual, <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> appends specified residuals to the data frame of the model in the form of a tibble. The use of a tibble allows the analyst to easily plot residuals against explanatory variables and identify possible outliers or model deficiencies. The function draws heavy inspiration from the <code>augment</code> function of the <code>broom</code> package, however offers more options for the types of residuals that the analyst may want to use.</p>
 </div>
 <div id="types-of-residuals-in-multilevel-models" class="section level2">
 <h2 class="hasAnchor">
@@ -113,15 +116,16 @@
 <li>higher-level (random effects) residuals</li>
 <li>marginal (composite) residuals</li>
 </ol>
-<p>The definitions of level-1 and higher-level residuals lead to different residuals depending on how the fixed and random model coefficients are estimated. <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> implements two estimation methods: Least Squares estimation and Empirical Bayes estimation. For a comprehensive discussion of these two methods and how they are implemented, we direct the reader to <strong>Loy and Hoffman (2014)</strong>.</p>
-<p>LS and EB residuals each have their own advantages and disadvantages. Level-1 LS residuals are calculated by fitting separate linear models to each group and using LS to estimate the fixed and random effects. Because they rely only on the first level of the hierarchy, they are unconfounded with higher-level residuals and a useful first step in diagnosing a model; however, for small group sample sizes, LS residuals are unreliable. Level-1 EB residuals are defined as the conditional modes of the random effects given the data and the estimated parameter values, which are calculated with (restricted) maximum likelihood. They are confounded with higher-level residuals, but more robust with small sample sizes. For higher-level residuals, coefficients can again be estimated using either LS or EB, but EB residuals are generally prefered due to small group sizes.</p>
+<p>The definitions of level-1 and higher-level residuals lead to different residuals depending on how the fixed and random model coefficients are estimated. <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> implements two estimation methods: Least Squares estimation and Empirical Bayes estimation. For a comprehensive discussion of these two methods and how they are implemented, we direct the reader to <strong>Loy and Hoffman (2014)</strong>.</p>
+<p>LS and EB residuals each have their own advantages and disadvantages. Level-1 LS residuals are calculated by fitting separate linear models to each group and using LS to estimate the fixed and random effects. Because they rely only on the first level of the hierarchy, they are unconfounded with higher-level residuals and a useful first step in diagnosing a model; however, for small group sample sizes, LS residuals are unreliable. Level-1 EB residuals are defined as the conditional modes of the random effects given the data and the estimated parameter values, which are calculated with (restricted) maximum likelihood. They are confounded with higher-level residuals, but more robust with small sample sizes. For higher-level residuals, coefficients can again be estimated using either LS or EB, but EB residuals are generally preferred due to small group sizes.</p>
 </div>
 <div id="example-data" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example-data" class="anchor"></a>Example Data</h2>
-<p>To illustrate the use of <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package <code>mlmRev</code> (<strong>Bates, Maechler, Bolker 2013</strong>), which makes well known multilevel modeling data sets available in R.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"Exam"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"mlmRev"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">Exam</span>)
+<p>To illustrate the use of <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, we make use of data on exam scores of 4,059 students in 65 inner London schools. This data set is distributed as part of the R package <code>mlmRev</code> (<strong>Bates, Maechler, Bolker 2013</strong>), which makes well known multilevel modeling data sets available in R.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"Exam"</span>, package <span class="op">=</span> <span class="st">"mlmRev"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">Exam</span><span class="op">)</span>
 <span class="co">#&gt;   school   normexam schgend    schavg      vr     intake   standLRT sex type</span>
 <span class="co">#&gt; 1      1  0.2613242   mixed 0.1661752 mid 50% bottom 25%  0.6190592   F  Mxd</span>
 <span class="co">#&gt; 2      1  0.1340672   mixed 0.1661752 mid 50%    mid 50%  0.2058022   F  Mxd</span>
@@ -135,11 +139,12 @@
 <span class="co">#&gt; 3     142</span>
 <span class="co">#&gt; 4     141</span>
 <span class="co">#&gt; 5     138</span>
-<span class="co">#&gt; 6     155</span></pre></body></html></div>
+<span class="co">#&gt; 6     155</span></code></pre></div>
 <p>For each student, the data consist of their gender (<code>sex</code>) and two standardized exam scores— an intake score on the London Reading Test (LRT) at age 11 (<code>standLRT</code>) and a score on the General Certificate of Secondary Education (GCSE) examination at age 16 (<code>normexam</code>). Additionally, the students’ LRT scores were used to segment students into three categories (bottom 25%, middle 50%, and top 25%) based on their verbal reasoning subscore (<code>vr</code>) and overall score (<code>intake)</code>. At the school level, the data contain the average intake score for the school (<code>schavg</code>) and type based on school gender (<code>schgend</code>, coded as mixed, boys, or girls).</p>
-<p>We illustrate usage for <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> below using the exam data and fitting an initial two-level HLM using a student’s standardized London Reading Test intake score (standLRT) to explain their GCSE exam score, allowing for a random intercept for each school:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">fm1</span> <span class="kw">&lt;-</span> <span class="kw pkg">lme4</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(<span class="no">normexam</span> ~ <span class="no">standLRT</span> + (<span class="fl">1</span> <span class="kw">|</span> <span class="no">school</span>), <span class="no">Exam</span>, <span class="kw">REML</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">fm1</span>
+<p>We illustrate usage for <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> below using the exam data and fitting an initial two-level HLM using a student’s standardized London Reading Test intake score (standLRT) to explain their GCSE exam score, allowing for a random intercept for each school:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fm1</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">normexam</span> <span class="op">~</span> <span class="va">standLRT</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>, <span class="va">Exam</span>, REML <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">fm1</span>
 <span class="co">#&gt; Linear mixed model fit by maximum likelihood  ['lmerMod']</span>
 <span class="co">#&gt; Formula: normexam ~ standLRT + (1 | school)</span>
 <span class="co">#&gt;    Data: Exam</span>
@@ -152,25 +157,26 @@
 <span class="co">#&gt; Number of obs: 4059, groups:  school, 65</span>
 <span class="co">#&gt; Fixed Effects:</span>
 <span class="co">#&gt; (Intercept)     standLRT  </span>
-<span class="co">#&gt;    0.002391     0.563371</span></pre></body></html></div>
+<span class="co">#&gt;    0.002391     0.563371</span></code></pre></div>
 </div>
 <div id="hlm_resid-usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hlm_resid-usage" class="anchor"></a>hlm_resid() usage</h2>
-<p><code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> takes 5 arguments:</p>
+<p><code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> takes 5 arguments:</p>
 <ul>
 <li><p><code>object</code> - the model fit as a <code>lmerMod</code> or <code>lme</code> object.</p></li>
-<li><p><code>level</code> - the level at which residuals should be extracted. By default, <code>level = 1</code>, returning both EB and LS level-1 residuals as well as marginal residuals. <code>level</code> can also be set to a grouping factor as defined in <code><a href="https://rdrr.io/r/base/names.html">names(object@flist)</a></code> in <code>lme4</code> or in <code><a href="https://rdrr.io/r/base/names.html">names(object$groups)</a></code> in <code>nlme</code>. When set to a grouping factor, <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> returns both EB and LS higher-level residuals, otherwise known as the random effects for each group.</p></li>
+<li><p><code>level</code> - the level at which residuals should be extracted. By default, <code>level = 1</code>, returning both EB and LS level-1 residuals as well as marginal residuals. <code>level</code> can also be set to a grouping factor as defined in <code><a href="https://rdrr.io/r/base/names.html">names(object@flist)</a></code> in <code>lme4</code> or in <code><a href="https://rdrr.io/r/base/names.html">names(object$groups)</a></code> in <code>nlme</code>. When set to a grouping factor, <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> returns both EB and LS higher-level residuals, otherwise known as the random effects for each group.</p></li>
 <li><p><code>standardize</code> - a logical indicating if the returned residuals should be standardized. By default, <code>standardize = FALSE</code>, returning unstandardized residuals. When <code>standardize = TRUE</code>, residuals are divided by the estimated standard error. For marginal residuals, when <code>standardize = TRUE</code>, the Cholesky residuals are returned.</p></li>
 <li><p><code>include.ls</code> - a logical indicating if LS residuals should be returned. By default, <code>include.ls = TRUE</code>. The LS method of estimating residuals is more computationally intensive than the EB method. Consequently, setting <code>include.ls = FALSE</code> substantially decreases the runtime on models with many observations.</p></li>
-<li><p><code>data</code> - only necesarry if <code>na.action = na.exclude</code> for a <code>lmerMod</code> model object. <code>data</code> should specify the data frame used to fit the model containing observations with <code>NA</code> values.</p></li>
+<li><p><code>data</code> - only necessary if <code>na.action = na.exclude</code> for a <code>lmerMod</code> model object. <code>data</code> should specify the data frame used to fit the model containing observations with <code>NA</code> values.</p></li>
 </ul>
 <div id="general-usage" class="section level3">
 <h3 class="hasAnchor">
 <a href="#general-usage" class="anchor"></a>General usage</h3>
 <p>To extract unstandardized level-1 residuals and marginal residuals, we use the following call.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">HLMdiag</span>)
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/aloy/HLMdiag">HLMdiag</a></span><span class="op">)</span>
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 4,059 x 10</span>
 <span class="co">#&gt;       id normexam standLRT school  .resid .fitted .ls.resid .ls.fitted</span>
 <span class="co">#&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -185,8 +191,8 @@
 <span class="co">#&gt;  9     9   -0.939   -0.538 1      -1.01    0.0730    -0.941    0.00167</span>
 <span class="co">#&gt; 10    10   -1.22    -1.45  1      -0.780  -0.439     -0.576   -0.643  </span>
 <span class="co">#&gt; # … with 4,049 more rows, and 2 more variables: .mar.resid &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></pre></body></html></div>
-<p><code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> appends 6 columns to the model frame:</p>
+<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></code></pre></div>
+<p><code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> appends 6 columns to the model frame:</p>
 <ul>
 <li>
 <code>.resid</code> the unstandardized Empirical Bayes (EB) level-1 residuals for each observation</li>
@@ -207,7 +213,8 @@
 <h3 class="hasAnchor">
 <a href="#standardize-and-include-ls" class="anchor"></a>standardize and include.ls</h3>
 <p>We can alter the output of the level-1 residuals using the <code>standardize</code> and <code>include.ls</code> parameters introduced above. The following call returns both the level-1 and marginal residuals divided by the estimated standard error and excludes the least squares residuals.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1</span>, <span class="kw">standardize</span> <span class="kw">=</span> <span class="fl">TRUE</span>, <span class="kw">include.ls</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span>, include.ls <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 4,059 x 8</span>
 <span class="co">#&gt;       id normexam standLRT school .std.resid .fitted .chol.mar.resid .mar.fitted</span>
 <span class="co">#&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;   &lt;dbl&gt;           &lt;dbl&gt;       &lt;dbl&gt;</span>
@@ -221,17 +228,19 @@
 <span class="co">#&gt;  8     8   -0.129   -1.03  1          0.103  -0.206           0.352       -0.580</span>
 <span class="co">#&gt;  9     9   -0.939   -0.538 1         -1.35    0.0730         -1.07        -0.301</span>
 <span class="co">#&gt; 10    10   -1.22    -1.45  1         -1.04   -0.439          -0.705       -0.813</span>
-<span class="co">#&gt; # … with 4,049 more rows</span></pre></body></html></div>
-<p><code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> appends the EB and marginal residual columns to the mode frame. The names of the columns containing residuals now have the prefix <code>.std</code> to reflect the fact that they are stanardized. Note that standardized marginal residuals are equivalent to the Cholesky residuals of a HLM and thus are named <code>.chol.mar.resid</code>.</p>
+<span class="co">#&gt; # … with 4,049 more rows</span></code></pre></div>
+<p><code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> appends the EB and marginal residual columns to the mode frame. The names of the columns containing residuals now have the prefix <code>.std</code> to reflect the fact that they are standardized. Note that standardized marginal residuals are equivalent to the Cholesky residuals of a HLM and thus are named <code>.chol.mar.resid</code>.</p>
 </div>
 <div id="higher-level-residuals" class="section level3">
 <h3 class="hasAnchor">
 <a href="#higher-level-residuals" class="anchor"></a>Higher-level residuals</h3>
 <p>To access higher-level residuals, we can set the <code>level</code> parameter to a grouping factor as defined in <code><a href="https://rdrr.io/r/base/names.html">names(object@flist)</a></code> in <code>lme4</code> or in <code><a href="https://rdrr.io/r/base/names.html">names(object$groups)</a></code> in <code>nlme</code>.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">fm1</span>@<span class="kw">flist</span>)
-<span class="co">#&gt; [1] "school"</span></pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fm1</span><span class="op">@</span><span class="va">flist</span><span class="op">)</span>
+<span class="co">#&gt; [1] "school"</span></code></pre></div>
 <p>To extract the school-level residuals, otherwise known as the predicted random effects for school, we use the following call.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="st">"school"</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1</span>, level <span class="op">=</span> <span class="st">"school"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 65 x 3</span>
 <span class="co">#&gt;    school .ranef.intercept .ls.intercept</span>
 <span class="co">#&gt;    &lt;chr&gt;             &lt;dbl&gt;         &lt;dbl&gt;</span>
@@ -245,8 +254,8 @@
 <span class="co">#&gt;  8 8               -0.0262        0.0429</span>
 <span class="co">#&gt;  9 9               -0.135        -0.169 </span>
 <span class="co">#&gt; 10 10              -0.337        -0.257 </span>
-<span class="co">#&gt; # … with 55 more rows</span></pre></body></html></div>
-<p>In the tibble returned by <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, each row now represents one of the groups specified by the <code>level</code> parameter. In this example, there were 65 schools from which data was collected, and the resulting tibble has 65 rows. If we had included school-level variables in the model, such as the average intake score for a school (<code>schavg</code>), those variables would also be included in the output. The final two columns contain the random effects for intercept at the school.</p>
+<span class="co">#&gt; # … with 55 more rows</span></code></pre></div>
+<p>In the tibble returned by <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, each row now represents one of the groups specified by the <code>level</code> parameter. In this example, there were 65 schools from which data was collected, and the resulting tibble has 65 rows. If we had included school-level variables in the model, such as the average intake score for a school (<code>schavg</code>), those variables would also be included in the output. The final two columns contain the random effects for intercept at the school.</p>
 <ul>
 <li>
 <code>.ranef.intercept</code> the random effects for intercept, using Empirical Bayes estimation</li>
@@ -258,21 +267,23 @@
 <div id="na-action-and-data" class="section level3">
 <h3 class="hasAnchor">
 <a href="#na-action-and-data" class="anchor"></a>na.action and data</h3>
-<p>The final parameter, <code>data</code>, is an argument that becomes required when <code>na.action = na.exclude</code> for an <code>lmerMod</code> model object. Model frames in <code>lme4</code> always use <code>na.omit</code>. Thus, a <code>data</code> parameter is needed to retain <code>NA</code> values in the model frame that <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> returns. To demonstrate this requirement, we create a duplicate data set of <code>Exam</code> with the standardized LRT scores set to <code>NA</code> for observations 1, 2, and 5.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="co"># make copy of Exam data set</span>
-<span class="no">Exam2</span> <span class="kw">&lt;-</span> <span class="no">Exam</span>
+<p>The final parameter, <code>data</code>, is an argument that becomes required when <code>na.action = na.exclude</code> for an <code>lmerMod</code> model object. Model frames in <code>lme4</code> always use <code>na.omit</code>. Thus, a <code>data</code> parameter is needed to retain <code>NA</code> values in the model frame that <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> returns. To demonstrate this requirement, we create a duplicate data set of <code>Exam</code> with the standardized LRT scores set to <code>NA</code> for observations 1, 2, and 5.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># make copy of Exam data set</span>
+<span class="va">Exam2</span> <span class="op">&lt;-</span> <span class="va">Exam</span>              
 <span class="co"># set standLRT to NA for 3 observations</span>
-<span class="no">Exam2</span>[<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">5</span>),<span class="fl">7</span>] <span class="kw">&lt;-</span> <span class="fl">NA</span>
+<span class="va">Exam2</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">5</span><span class="op">)</span>,<span class="fl">7</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span>    
 <span class="co"># refit model with na.exclude</span>
-<span class="no">fm1.NA</span> <span class="kw">&lt;-</span> <span class="kw pkg">lme4</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(<span class="no">normexam</span> ~ <span class="no">standLRT</span> + (<span class="fl">1</span> <span class="kw">|</span> <span class="no">school</span>), <span class="no">Exam2</span>,
-               <span class="kw">na.action</span> <span class="kw">=</span> <span class="no">na.exclude</span>)</pre></body></html></div>
-<p>In the first example, when we try to call <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> on our model object, it throws an informative error asking for the data set used to fit the model. We provide this using the <code>data</code> parameter in the second example.</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="co"># incorrect:</span>
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1.NA</span>)
+<span class="va">fm1.NA</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">normexam</span> <span class="op">~</span> <span class="va">standLRT</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span> <span class="op">|</span> <span class="va">school</span><span class="op">)</span>, <span class="va">Exam2</span>,  
+               na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></code></pre></div>
+<p>In the first example, when we try to call <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> on our model object, it throws an informative error asking for the data set used to fit the model. We provide this using the <code>data</code> parameter in the second example.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># incorrect:</span>
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1.NA</span><span class="op">)</span> 
 <span class="co">#&gt; Error in hlm_resid.lmerMod(fm1.NA): Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude</span>
 
 <span class="co"># correct:</span>
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1.NA</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">Exam2</span>)
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1.NA</span>, data <span class="op">=</span> <span class="va">Exam2</span><span class="op">)</span> 
 <span class="co">#&gt; # A tibble: 4,059 x 10</span>
 <span class="co">#&gt;       id school normexam standLRT  .resid .fitted .ls.resid .ls.fitted</span>
 <span class="co">#&gt;    &lt;dbl&gt; &lt;fct&gt;     &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -287,11 +298,12 @@
 <span class="co">#&gt;  9     9 1        -0.939   -0.538 -1.02    0.0850    -0.954     0.0142</span>
 <span class="co">#&gt; 10    10 1        -1.22    -1.45  -0.792  -0.427     -0.585    -0.634 </span>
 <span class="co">#&gt; # … with 4,049 more rows, and 2 more variables: .mar.resid &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></pre></body></html></div>
+<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></code></pre></div>
 <p>Note that for the same model fit in <code>nlme</code>, we do not need to include the <code>data</code> parameter.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="no">fm1.NA.lme</span> <span class="kw">&lt;-</span> <span class="kw pkg">nlme</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span>(<span class="no">normexam</span> ~ <span class="no">standLRT</span>, <span class="kw">random</span> <span class="kw">=</span> ~<span class="fl">1</span> <span class="kw">|</span> <span class="no">school</span>, <span class="no">Exam2</span>,
-               <span class="kw">na.action</span> <span class="kw">=</span> <span class="no">na.exclude</span>)
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1.NA.lme</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fm1.NA.lme</span> <span class="op">&lt;-</span> <span class="fu">nlme</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">normexam</span> <span class="op">~</span> <span class="va">standLRT</span>, random <span class="op">=</span> <span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">school</span>, <span class="va">Exam2</span>,  
+               na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span>
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1.NA.lme</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 4,059 x 10</span>
 <span class="co">#&gt;       id normexam standLRT school  .resid .fitted .ls.resid .ls.fitted</span>
 <span class="co">#&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -306,14 +318,15 @@
 <span class="co">#&gt;  9     9   -0.939   -0.538 1      -1.02    0.0850    -0.954     0.0142</span>
 <span class="co">#&gt; 10    10   -1.22    -1.45  1      -0.792  -0.427     -0.585    -0.634 </span>
 <span class="co">#&gt; # … with 4,049 more rows, and 2 more variables: .mar.resid &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></pre></body></html></div>
+<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></code></pre></div>
 </div>
 <div id="three-level-models" class="section level3">
 <h3 class="hasAnchor">
 <a href="#three-level-models" class="anchor"></a>Three-level models</h3>
 <p>In three-level models, how we specify middle-level residuals changes depending on whether a model is a <code>lmerMod</code> or <code>lme</code> object. This is due to differences in how <code>lme4</code> and <code>nlme</code> store their grouping factors To demonstrate this, we use a classroom data set from <strong>West, Welch, Galecki (2006)</strong>. The data contains math testing scores from 1190 children in 312 different classroom within 107 unique schools. All classrooms are nested within schools, and all students are nested within a single classroom.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"classroom"</span>, <span class="kw">package</span> <span class="kw">=</span> <span class="st">"WWGbook"</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">classroom</span>)
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"classroom"</span>, package <span class="op">=</span> <span class="st">"WWGbook"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">classroom</span><span class="op">)</span>
 <span class="co">#&gt;   sex minority mathkind mathgain   ses yearstea mathknow housepov mathprep</span>
 <span class="co">#&gt; 1   1        1      448       32  0.46        1       NA    0.082     2.00</span>
 <span class="co">#&gt; 2   0        1      460      109 -0.27        1       NA    0.082     2.00</span>
@@ -327,23 +340,26 @@
 <span class="co">#&gt; 3     160        1       3</span>
 <span class="co">#&gt; 4     217        1       4</span>
 <span class="co">#&gt; 5     217        1       5</span>
-<span class="co">#&gt; 6     217        1       6</span></pre></body></html></div>
+<span class="co">#&gt; 6     217        1       6</span></code></pre></div>
 <p>The data set contains 12 columns; however, we are only interested in the response variable, <code>mathgain</code>, and the grouping variables, <code>classid</code> and <code>schoolid</code>. We fit the simple unconditional means model in both <code>lme4</code> and <code>nlme</code> below.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="co"># lme4</span>
-<span class="no">fm2.lmer</span> <span class="kw">&lt;-</span> <span class="kw pkg">lme4</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span>(<span class="no">mathgain</span> ~ <span class="fl">1</span> + (<span class="fl">1</span><span class="kw">|</span><span class="no">schoolid</span>/<span class="no">classid</span>), <span class="kw">data</span> <span class="kw">=</span> <span class="no">classroom</span>)
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># lme4</span>
+<span class="va">fm2.lmer</span> <span class="op">&lt;-</span> <span class="fu">lme4</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/lme4/man/lmer.html">lmer</a></span><span class="op">(</span><span class="va">mathgain</span> <span class="op">~</span> <span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="fl">1</span><span class="op">|</span><span class="va">schoolid</span><span class="op">/</span><span class="va">classid</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">classroom</span><span class="op">)</span>
 <span class="co"># nlme</span>
-<span class="no">fm2.lme</span> <span class="kw">&lt;-</span> <span class="kw pkg">nlme</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span>(<span class="no">mathgain</span> ~ <span class="fl">1</span>, <span class="kw">random</span> <span class="kw">=</span> ~<span class="fl">1</span><span class="kw">|</span><span class="no">schoolid</span>/<span class="no">classid</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">classroom</span>)</pre></body></html></div>
+<span class="va">fm2.lme</span> <span class="op">&lt;-</span> <span class="fu">nlme</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">mathgain</span> <span class="op">~</span> <span class="fl">1</span>, random <span class="op">=</span> <span class="op">~</span><span class="fl">1</span><span class="op">|</span><span class="va">schoolid</span><span class="op">/</span><span class="va">classid</span>, data <span class="op">=</span> <span class="va">classroom</span><span class="op">)</span></code></pre></div>
 <p>For both models, classroom is nested within school. We can access the grouping factors for each model with the following:</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="co"># lme4</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">fm2.lmer</span>@<span class="kw">flist</span>)
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># lme4</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fm2.lmer</span><span class="op">@</span><span class="va">flist</span><span class="op">)</span>
 <span class="co">#&gt; [1] "classid:schoolid" "schoolid"</span>
 <span class="co"># nlme</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">fm2.lme</span>$<span class="no">groups</span>)
-<span class="co">#&gt; [1] "schoolid" "classid"</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">fm2.lme</span><span class="op">$</span><span class="va">groups</span><span class="op">)</span>
+<span class="co">#&gt; [1] "schoolid" "classid"</span></code></pre></div>
 <p>Note how the orders of the grouping factors are opposite for <code>lme4</code> and <code>nlme</code>. In <code>lme4</code>, convention is to start at the lowest level of hierarchy and move upwards (in this case <code>classid:schoolid</code>, followed by <code>schoolid</code>). Grouping factors in <code>nlme</code> are given starting at the highest grouping and move down (<code>schoolid</code>, followed by <code>classid</code>). The order of <code>classid</code> and <code>schoolid</code> in the returned tibble is based on these conventions.</p>
 <p>To extract the classroom-level random effects for <code>fm2.lmer</code>, we set <code>level = "classid:schoolid"</code>.</p>
-<div class="sourceCode" id="cb13"><html><body><pre class="r"><span class="co"># lme4</span>
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm2.lmer</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="st">"classid:schoolid"</span>)
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># lme4</span>
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm2.lmer</span>, level <span class="op">=</span> <span class="st">"classid:schoolid"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 312 x 5</span>
 <span class="co">#&gt;    group classid schoolid .ranef.intercept .ls.intercept</span>
 <span class="co">#&gt;    &lt;chr&gt;   &lt;int&gt;    &lt;int&gt;            &lt;dbl&gt;         &lt;dbl&gt;</span>
@@ -357,10 +373,11 @@
 <span class="co">#&gt;  8 145:3     145        3           8.10            6.62</span>
 <span class="co">#&gt;  9 228:3     228        3          -0.0237        -18.4 </span>
 <span class="co">#&gt; 10 48:4       48        4           3.77           44   </span>
-<span class="co">#&gt; # … with 302 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 302 more rows</span></code></pre></div>
 <p>For the <code>fm2.lme</code>, we set <code>level = "classid"</code>.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="co"># nlme</span>
-<span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm2.lme</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="st">"classid"</span>)
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># nlme</span>
+<span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm2.lme</span>, level <span class="op">=</span> <span class="st">"classid"</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 312 x 5</span>
 <span class="co">#&gt;    group schoolid classid .ranef.intercept .ls.intercept</span>
 <span class="co">#&gt;    &lt;chr&gt;    &lt;int&gt;   &lt;int&gt;            &lt;dbl&gt;         &lt;dbl&gt;</span>
@@ -374,15 +391,16 @@
 <span class="co">#&gt;  8 3/145        3     145           8.10            6.62</span>
 <span class="co">#&gt;  9 3/228        3     228          -0.0235        -18.4 </span>
 <span class="co">#&gt; 10 4/48         4      48           3.77           44   </span>
-<span class="co">#&gt; # … with 302 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 302 more rows</span></code></pre></div>
 </div>
 </div>
 <div id="using-hlm_resid-in-context" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-hlm_resid-in-context" class="anchor"></a>Using hlm_resid() in context</h2>
-<p>Now that we have discussed how to extract all types of residuals for hierarchical models using <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, we illustrate how to use those residuals in context to evaluate a model. We will diagnose the earlier model, <code>fm1</code>, fit on the <code>Exam</code> data set above. We use <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> to extract the standardized level-1 and marginal residuals.</p>
-<div class="sourceCode" id="cb15"><html><body><pre class="r"><span class="no">resid1_fm1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">standardize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
-<span class="no">resid1_fm1</span>
+<p>Now that we have discussed how to extract all types of residuals for hierarchical models using <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, we illustrate how to use those residuals in context to evaluate a model. We will diagnose the earlier model, <code>fm1</code>, fit on the <code>Exam</code> data set above. We use <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> to extract the standardized level-1 and marginal residuals.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">resid1_fm1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1</span>, level <span class="op">=</span> <span class="fl">1</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">resid1_fm1</span>
 <span class="co">#&gt; # A tibble: 4,059 x 10</span>
 <span class="co">#&gt;       id normexam standLRT school .std.resid .fitted .std.ls.resid .ls.fitted</span>
 <span class="co">#&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt; &lt;fct&gt;       &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;      &lt;dbl&gt;</span>
@@ -397,36 +415,37 @@
 <span class="co">#&gt;  9     9   -0.939   -0.538 1         -1.35    0.0730        -1.15     0.00167</span>
 <span class="co">#&gt; 10    10   -1.22    -1.45  1         -1.04   -0.439         -0.712   -0.643  </span>
 <span class="co">#&gt; # … with 4,049 more rows, and 2 more variables: .chol.mar.resid &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></pre></body></html></div>
-<p>Utilizing the tibble output of <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score. We use the LS residuals at level-1 because they are unconfounded of higher-level residuals.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">resid1_fm1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">standLRT</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">.std.ls.resid</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.2</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"loess"</span>, <span class="kw">se</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="st">"LS level-1 residuals"</span>,
-       <span class="kw">title</span> <span class="kw">=</span> <span class="st">"LS residuals against standardized LRT score"</span>)</pre></body></html></div>
-<p><img src="hlm_resid_files/figure-html/unnamed-chunk-17-1.png" width="480" style="display: block; margin: auto;"></p>
+<span class="co">#&gt; #   .mar.fitted &lt;dbl&gt;</span></code></pre></div>
+<p>Utilizing the tibble output of <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, we can easily plot the standardized LS residuals against explanatory variables such as the standardized LRT score. We use the LS residuals at level-1 because they are unconfounded of higher-level residuals.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">resid1_fm1</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">standLRT</span>, y <span class="op">=</span> <span class="va">.std.ls.resid</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"LS level-1 residuals"</span>, 
+       title <span class="op">=</span> <span class="st">"LS residuals against standardized LRT score"</span><span class="op">)</span></code></pre></div>
 <p>The smoother shows that standardized LRT scores might not be linearly related to GCSE exam scores. Likelihood ratio tests (not shown) confirm that quadratic and cubic terms for <code>standLRT</code> contribute significantly in describing GCSE exam scores, so we incorporate these terms in the updated model, <code>fm1b</code>. We then reassess the level-1 LS residuals.</p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">fm1b</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html">update</a></span>(<span class="no">fm1</span>, <span class="no">.</span>~<span class="no">.</span> + <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">standLRT</span>^<span class="fl">2</span>) + <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span>(<span class="no">standLRT</span>^<span class="fl">3</span>))
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fm1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/update.html">update</a></span><span class="op">(</span><span class="va">fm1</span>, <span class="va">.</span><span class="op">~</span><span class="va">.</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">standLRT</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="va">standLRT</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">resid1_fm1b</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1b</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="fl">1</span>, <span class="kw">standardize</span> <span class="kw">=</span> <span class="fl">TRUE</span>)
+<span class="va">resid1_fm1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1b</span>, level <span class="op">=</span> <span class="fl">1</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">resid1_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">standLRT</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">.std.ls.resid</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.2</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"loess"</span>, <span class="kw">se</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="st">"LS level-1 residuals"</span>, <span class="kw">title</span> <span class="kw">=</span> <span class="st">"LS residuals against standardized LRT score"</span>)</pre></body></html></div>
-<p><img src="hlm_resid_files/figure-html/unnamed-chunk-18-1.png" width="480" style="display: block; margin: auto;"></p>
-<p>The addition of the quadratic and cubic terms seems to have improved the level-1 residuals. Additionally, there don’t appear to be any large outliers that might need to be removed. We double check the LS level-1 residuals for <code>fm1</code>, plotting them against the LS fitted values appended to the model frame by <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>.</p>
-<div class="sourceCode" id="cb18"><html><body><pre class="r"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">resid1_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.ls.fitted</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">.std.ls.resid</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">0.2</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span>(<span class="kw">method</span> <span class="kw">=</span> <span class="st">"loess"</span>, <span class="kw">se</span> <span class="kw">=</span> <span class="fl">FALSE</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="st">"LS fitted values"</span>,
-       <span class="kw">y</span> <span class="kw">=</span> <span class="st">"LS level-1 residuals"</span>,
-       <span class="kw">title</span> <span class="kw">=</span> <span class="st">"LS residuals against LS fitted values"</span>)</pre></body></html></div>
-<p><img src="hlm_resid_files/figure-html/unnamed-chunk-19-1.png" width="480" style="display: block; margin: auto;"></p>
-<p>The LS level-1 residuals give no indication that the model violates any assumptions of an HLM. Because there are no glaring issues, we move on to the higher-level residuals, again plotting the output of <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>.</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="no">resid2_fm1b</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.lmerMod.html">hlm_resid</a></span>(<span class="no">fm1b</span>, <span class="kw">level</span> <span class="kw">=</span> <span class="st">"school"</span>, <span class="kw">include.ls</span> <span class="kw">=</span> <span class="fl">FALSE</span>)
-<span class="no">resid2_fm1b</span>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">resid1_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">standLRT</span>, y <span class="op">=</span> <span class="va">.std.ls.resid</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"LS level-1 residuals"</span>, title <span class="op">=</span> <span class="st">"LS residuals against standardized LRT score"</span><span class="op">)</span></code></pre></div>
+<p>The addition of the quadratic and cubic terms seems to have improved the level-1 residuals. Additionally, there don’t appear to be any large outliers that might need to be removed. We double check the LS level-1 residuals for <code>fm1</code>, plotting them against the LS fitted values appended to the model frame by <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">resid1_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.ls.fitted</span>, y <span class="op">=</span> <span class="va">.std.ls.resid</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html">geom_smooth</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"loess"</span>, se <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"LS fitted values"</span>,
+       y <span class="op">=</span> <span class="st">"LS level-1 residuals"</span>, 
+       title <span class="op">=</span> <span class="st">"LS residuals against LS fitted values"</span><span class="op">)</span></code></pre></div>
+<p>The LS level-1 residuals give no indication that the model violates any assumptions of an HLM. Because there are no glaring issues, we move on to the higher-level residuals, again plotting the output of <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">resid2_fm1b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_resid.default.html">hlm_resid</a></span><span class="op">(</span><span class="va">fm1b</span>, level <span class="op">=</span> <span class="st">"school"</span>, include.ls <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">resid2_fm1b</span>
 <span class="co">#&gt; # A tibble: 65 x 2</span>
 <span class="co">#&gt;    school .ranef.intercept</span>
 <span class="co">#&gt;    &lt;chr&gt;             &lt;dbl&gt;</span>
@@ -442,19 +461,18 @@
 <span class="co">#&gt; 10 10              -0.331 </span>
 <span class="co">#&gt; # … with 55 more rows</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="kw">data</span> <span class="kw">=</span> <span class="no">resid2_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">school</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">.ranef.intercept</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(<span class="kw">y</span> <span class="kw">=</span> <span class="st">"Random effects - intercept"</span>,
-       <span class="kw">title</span> <span class="kw">=</span> <span class="st">"Intercept random effects against school"</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span>()</pre></body></html></div>
-<p><img src="hlm_resid_files/figure-html/unnamed-chunk-20-1.png" width="480" style="display: block; margin: auto;"></p>
-<p>The school-level random effects again show no large outliers. We would now check influence diagnostics such as Cook’s distance and leverage to ensure our model is appropriate. For a discussion of influence diagnostics within <code>HLMdiag</code>, we direct the reader to the vignette for <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code>.</p>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">resid2_fm1b</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">school</span>, y <span class="op">=</span> <span class="va">.ranef.intercept</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Random effects - intercept"</span>, 
+       title <span class="op">=</span> <span class="st">"Intercept random effects against school"</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p>The school-level random effects again show no large outliers. We would now check influence diagnostics such as Cook’s distance and leverage to ensure our model is appropriate. For a discussion of influence diagnostics within <code>HLMdiag</code>, we direct the reader to the vignette for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code>.</p>
 </div>
 <div id="pull_resid" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pull_resid" class="anchor"></a>pull_resid()</h2>
-<p>The function <code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code> is an efficient way to pull a single type of residual as a vector. Whereas <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> spends time calculating all types of residuals and fitted values, <code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code> only calculates the type of residual specified by the user, saving time over using <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> and indexing for a specific column. This is especially useful when used in a loop, such as when using simulation-based diagnostics.</p>
-<p><code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code> takes three parameters, <code>object</code>, <code>type</code>, and <code>standardize</code>. The parameters <code>object</code> and <code>standardize</code> work identically as they do in <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>, and the new parameter, <code>type</code>, can be set to:</p>
+<p>The function <code><a href="../reference/pull_resid.default.html">pull_resid()</a></code> is an efficient way to pull a single type of residual as a vector. Whereas <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> spends time calculating all types of residuals and fitted values, <code><a href="../reference/pull_resid.default.html">pull_resid()</a></code> only calculates the type of residual specified by the user, saving time over using <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> and indexing for a specific column. This is especially useful when used in a loop, such as when using simulation-based diagnostics.</p>
+<p><code><a href="../reference/pull_resid.default.html">pull_resid()</a></code> takes three parameters, <code>object</code>, <code>type</code>, and <code>standardize</code>. The parameters <code>object</code> and <code>standardize</code> work identically as they do in <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, and the new parameter, <code>type</code>, can be set to:</p>
 <ul>
 <li>
 <code>"ls"</code> to return LS level-1 residuals</li>
@@ -463,17 +481,19 @@
 <li>
 <code>"marginal"</code> to return marginal residuals</li>
 </ul>
-<p>The example below illustrates the output of <code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code> being used to extract level-1 standardized LS residuals.</p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="fu"><a href="../reference/pull_resid.lmerMod.html">pull_resid</a></span>(<span class="no">fm1</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"ls"</span>, <span class="kw">standardize</span> <span class="kw">=</span> <span class="fl">TRUE</span>))
-<span class="co">#&gt; [1] -0.6824458 -0.4800891 -1.4044892  0.5323373 -0.1242091 -0.2512477</span></pre></body></html></div>
-<p>The function <code><a href="../reference/pull_resid.lmerMod.html">pull_resid()</a></code> is only implemented for level-1 residuals. If the analyst wants to extract random effects for a model, they should use the <code>ranef()</code> functions from either <code>lme4</code> or <code>nlme</code>.</p>
+<p>The example below illustrates the output of <code><a href="../reference/pull_resid.default.html">pull_resid()</a></code> being used to extract level-1 standardized LS residuals.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/pull_resid.default.html">pull_resid</a></span><span class="op">(</span><span class="va">fm1</span>, type <span class="op">=</span> <span class="st">"ls"</span>, standardize <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] -0.6824458 -0.4800891 -1.4044892  0.5323373 -0.1242091 -0.2512477</span></code></pre></div>
+<p>The function <code><a href="../reference/pull_resid.default.html">pull_resid()</a></code> is only implemented for level-1 residuals. If the analyst wants to extract random effects for a model, they should use the <code><a href="https://rdrr.io/pkg/lme4/man/ranef.html">ranef()</a></code> functions from either <code>lme4</code> or <code>nlme</code>.</p>
 </div>
 <div id="hlm_augment" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hlm_augment" class="anchor"></a>hlm_augment()</h2>
-<p>The <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> function combines the <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> and <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code> functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> has three parameters, <code>object</code>, <code>level</code>, and <code>include.ls</code>, all of which have the same functionality as in <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code>. The syntax is the same for the two functions. For example, we can extract both level-1 residual and influence diagnostics from the model <code>fm1</code> with the following call.</p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="no">fm1.aug</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../reference/hlm_augment.lmerMod.html">hlm_augment</a></span>(<span class="no">fm1</span>)
-<span class="kw pkg">tibble</span><span class="kw ns">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span>(<span class="no">fm1.aug</span>)
+<p>The <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> function combines the <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> and <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> has three parameters, <code>object</code>, <code>level</code>, and <code>include.ls</code>, all of which have the same functionality as in <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>. The syntax is the same for the two functions. For example, we can extract both level-1 residual and influence diagnostics from the model <code>fm1</code> with the following call.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">fm1.aug</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_augment.lmerMod.html">hlm_augment</a></span><span class="op">(</span><span class="va">fm1</span><span class="op">)</span>
+<span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/glimpse.html">glimpse</a></span><span class="op">(</span><span class="va">fm1.aug</span><span class="op">)</span>
 <span class="co">#&gt; Rows: 4,059</span>
 <span class="co">#&gt; Columns: 15</span>
 <span class="co">#&gt; $ id               &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1…</span>
@@ -490,17 +510,17 @@
 <span class="co">#&gt; $ mdffits          &lt;dbl&gt; 1.503227e-05, 2.075722e-06, 1.042108e-03, 3.661194e-…</span>
 <span class="co">#&gt; $ covtrace         &lt;dbl&gt; 7.814095e-05, 1.809065e-05, 6.568974e-04, 1.809065e-…</span>
 <span class="co">#&gt; $ covratio         &lt;dbl&gt; 1.000078, 1.000018, 1.000657, 1.000018, 1.000031, 1.…</span>
-<span class="co">#&gt; $ leverage.overall &lt;dbl&gt; 0.01271288, 0.01265360, 0.01328391, 0.01265360, 0.01…</span></pre></body></html></div>
-<p>This is useful for inspecting residuals values and influence diagnostics values at the same time. However, <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> lacks some of the functionality that <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> have. The <code>delete</code> and <code>approx</code> parameters avaliable for <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code> are not avaliable in <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The <code>standardize</code> parameter from <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> is also not included, so unstandardized residuals will always be returned. If additional functionality is required, <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_resid.lmerMod.html">hlm_resid()</a></code> should be used instead. <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> is especially useful for inspecting influence diagnostics of observations with relatively high residuals, or vice versa. For more information about avaliable functionality in <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code>, see the <code><a href="../reference/hlm_influence.lmerMod.html">hlm_influence()</a></code> vignette.</p>
+<span class="co">#&gt; $ leverage.overall &lt;dbl&gt; 0.01271288, 0.01265360, 0.01328391, 0.01265360, 0.01…</span></code></pre></div>
+<p>This is useful for inspecting residuals values and influence diagnostics values at the same time. However, <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> lacks some of the functionality that <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> have. The <code>delete</code> and <code>approx</code> parameters available for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> are not available in <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The <code>standardize</code> parameter from <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> is also not included, so unstandardized residuals will always be returned. If additional functionality is required, <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> should be used instead. <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> is especially useful for inspecting influence diagnostics of observations with relatively high residuals, or vice versa. For more information about available functionality in <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code>, see the <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> vignette.</p>
 </div>
 <div id="references" class="section level2">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>
-<p>Adam Loy, Heike Hofmann (2014). HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R. Journal of Statistical Software, 56(5), 1-28. URL <a href="http://www.jstatsoft.org/v56/i05/" class="uri">http://www.jstatsoft.org/v56/i05/</a></p>
+<p>Adam Loy, Heike Hofmann (2014). HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R. Journal of Statistical Software, 56(5), 1-28. DOI </p>
 <p>Brady West, Kathleen Welch, Andrzej Galecki (2006) Linear Mixed Models: A Practical Guide Using Statistical Software. First Edition. Chapman Hall / CRC Press. ISBN 1584884800</p>
 <p>David Robinson, Alex Hayes (2020). broom: Convert Statistical Analysis Objects into Tidy Tibbles. R package version 0.5.6. <a href="https://CRAN.R-project.org/package=broom" class="uri">https://CRAN.R-project.org/package=broom</a></p>
 <p>Douglas Bates, Martin Maechler, Ben Bolker (2020). mlmRev: Examples from Multilevel Modelling Software Review. R package version 1.0-8. <a href="https://CRAN.R-project.org/package=mlmRev" class="uri">https://CRAN.R-project.org/package=mlmRev</a></p>
-<p>Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting Linear Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48. <a href="doi:10.18637/jss.v067.i01" class="uri">doi:10.18637/jss.v067.i01</a></p>
+<p>Douglas Bates, Martin Maechler, Ben Bolker, Steve Walker (2015). Fitting Linear Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48. DOI </p>
 <p>J.A. Hilden-Minton (1995). Multilevel Diagnostics for Mixed and Hierarchical Linear Models. Ph.D. thesis, University of California Los Angeles.</p>
 <p>Jose Pinheiro, Douglas Bates, Saikat DebRoy, Deepayan Sarkar, R Core Team (2020). nlme: Linear and Nonlinear Mixed Effects Models. R package version 3.1-148, <a href="https://CRAN.R-project.org/package=nlme" class="uri">https://CRAN.R-project.org/package=nlme</a>.</p>
 </div>
@@ -522,7 +542,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

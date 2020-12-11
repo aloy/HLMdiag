@@ -37,7 +37,7 @@ observation/group is returned.
 If \code{delete} is specified then a named vector is returned.
 
 The residual variance is named \code{sigma2} and the other variance 
-componenets are named \code{D**} where the trailing digits give the
+components are named \code{D**} where the trailing digits give the
 position in the covariance matrix of the random effects.
 }
 \description{

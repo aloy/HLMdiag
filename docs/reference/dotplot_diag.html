@@ -74,7 +74,7 @@ of the diagnostic measure and visually identify unusual cases." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -100,7 +100,10 @@ of the diagnostic measure and visually identify unusual cases." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -136,15 +139,15 @@ diagnostic measures.  The plot allows the user to understand the distribution
 of the diagnostic measure and visually identify unusual cases.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>dotplot_diag</span>(
-  <span class='no'>x</span>,
-  <span class='no'>cutoff</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"cooks.distance"</span>, <span class='st'>"mdffits"</span>, <span class='st'>"covratio"</span>, <span class='st'>"covtrace"</span>, <span class='st'>"rvc"</span>, <span class='st'>"leverage"</span>),
-  <span class='no'>data</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>modify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='no'>...</span>
-)</pre>
+    <pre class="usage"><span class='fu'>dotplot_diag</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  <span class='va'>cutoff</span>,
+  name <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"cooks.distance"</span>, <span class='st'>"mdffits"</span>, <span class='st'>"covratio"</span>, <span class='st'>"covtrace"</span>, <span class='st'>"rvc"</span>, <span class='st'>"leverage"</span><span class='op'>)</span>,
+  <span class='va'>data</span>,
+  index <span class='op'>=</span> <span class='cn'>NULL</span>,
+  modify <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -192,22 +195,29 @@ space-saving modification: either <code>"dotplot"</code> or <code>"boxplot"</cod
     <p>The resulting plot uses <code>coord_flip</code> to rotate the plot, so when
 adding customized axis labels you will need to flip the names 
 between the x and y axes.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>sleepstudy</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>'lme4'</span>)
-<span class='no'>fm</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>lme4</span><span class='kw ns'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span>(<span class='no'>Reaction</span> ~ <span class='no'>Days</span> + (<span class='no'>Days</span> <span class='kw'>|</span> <span class='no'>Subject</span>), <span class='no'>sleepstudy</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>sleepstudy</span>, package <span class='op'>=</span> <span class='st'>'lme4'</span><span class='op'>)</span>
+<span class='va'>fm</span> <span class='op'>&lt;-</span> <span class='fu'>lme4</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>Reaction</span> <span class='op'>~</span> <span class='va'>Days</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>Days</span> <span class='op'>|</span> <span class='va'>Subject</span><span class='op'>)</span>, <span class='va'>sleepstudy</span><span class='op'>)</span>
 
 <span class='co'>#Observation level deletion and diagnostics</span>
-<span class='no'>obs.infl</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='hlm_influence.lmerMod.html'>hlm_influence</a></span>(<span class='no'>fm</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='va'>obs.infl</span> <span class='op'>&lt;-</span> <span class='fu'><a href='hlm_influence.default.html'>hlm_influence</a></span><span class='op'>(</span><span class='va'>fm</span>, level <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
 
-<span class='fu'>dotplot_diag</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>obs.infl</span>$<span class='no'>cooksd</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='st'>"internal"</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cooks.distance"</span>, <span class='kw'>modify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='dotplot_diag-1.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'>dotplot_diag</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>obs.infl</span>$<span class='no'>mdffits</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='st'>"internal"</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cooks.distance"</span>, <span class='kw'>modify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='dotplot_diag-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>dotplot_diag</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>obs.infl</span><span class='op'>$</span><span class='va'>cooksd</span>, cutoff <span class='op'>=</span> <span class='st'>"internal"</span>, name <span class='op'>=</span> <span class='st'>"cooks.distance"</span>, modify <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='img'><img src='dotplot_diag-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>dotplot_diag</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>obs.infl</span><span class='op'>$</span><span class='va'>mdffits</span>, cutoff <span class='op'>=</span> <span class='st'>"internal"</span>, name <span class='op'>=</span> <span class='st'>"cooks.distance"</span>, modify <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='img'><img src='dotplot_diag-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'># Subject level deletion and diagnostics</span>
-<span class='no'>subject.infl</span>  <span class='kw'>&lt;-</span> <span class='fu'><a href='hlm_influence.lmerMod.html'>hlm_influence</a></span>(<span class='no'>fm</span>, <span class='kw'>level</span> <span class='kw'>=</span> <span class='st'>"Subject"</span>)
+<span class='va'>subject.infl</span>  <span class='op'>&lt;-</span> <span class='fu'><a href='hlm_influence.default.html'>hlm_influence</a></span><span class='op'>(</span><span class='va'>fm</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span><span class='op'>)</span>
 
-<span class='fu'>dotplot_diag</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>subject.infl</span>$<span class='no'>cooksd</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='st'>"internal"</span>,
-             <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cooks.distance"</span>, <span class='kw'>modify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</div><div class='img'><img src='dotplot_diag-3.png' alt='' width='700' height='433' /></div><div class='input'>
-<span class='fu'>dotplot_diag</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>subject.infl</span>$<span class='no'>mdffits</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='st'>"internal"</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"mdffits"</span>, <span class='kw'>modify</span> <span class='kw'>=</span> <span class='st'>"dotplot"</span>)</div><div class='img'><img src='dotplot_diag-4.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>dotplot_diag</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>subject.infl</span><span class='op'>$</span><span class='va'>cooksd</span>, cutoff <span class='op'>=</span> <span class='st'>"internal"</span>,
+             name <span class='op'>=</span> <span class='st'>"cooks.distance"</span>, modify <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</div><div class='img'><img src='dotplot_diag-3.png' alt='' width='700' height='433' /></div><div class='input'>             
+<span class='fu'>dotplot_diag</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>subject.infl</span><span class='op'>$</span><span class='va'>mdffits</span>, cutoff <span class='op'>=</span> <span class='st'>"internal"</span>, name <span class='op'>=</span> <span class='st'>"mdffits"</span>, modify <span class='op'>=</span> <span class='st'>"dotplot"</span><span class='op'>)</span>
+</div><div class='img'><img src='dotplot_diag-4.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -223,7 +233,7 @@ between the x and y axes.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

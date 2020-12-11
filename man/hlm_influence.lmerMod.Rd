@@ -45,7 +45,7 @@ If \code{delete = NULL} then all cases are iteratively deleted.}
 
 \item{approx}{logical parameter used to determine how the influence diagnostics are calculated.
 If \code{FALSE} (default), influence diagnostics are calculated using a one step approximation.
-If \code{TRUE}, influence diagnostics are caclulated by iteratively deleting groups and refitting
+If \code{TRUE}, influence diagnostics are calculated by iteratively deleting groups and refitting
 the model using \code{lmer}. This method is more accurate, but slower than the one step approximation.
 If \code{approx = FALSE}, the returned tibble also contains columns for relative variance change (RVC).}
 
@@ -67,7 +67,7 @@ The \code{hlm_influence} function provides a wrapper that appends influence diag
 to the original data. The approximated influence diagnostics returned by this
 function are equivalent to those returned by \code{cooks.distance}, \code{mdffits}, \code{covtrace},
 \code{covratio}, and \code{leverage}. The exact influence diagnostics obtained through a full
-refit of the data are also avaliable through \code{case_delete} and the accompaning functions
+refit of the data are also available through \code{case_delete} and the accompanying functions
 \code{cooks.distance}, \code{mdffits}, \code{covtrace}, and \code{covratio} that can be called
 directly on the \code{case_delete} object.
 }

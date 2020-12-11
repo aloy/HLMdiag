@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
 ![CRAN_Downloads_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
 
-The package `HLMdiag` was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). When `HLMdiag` was created in 2014, it made diagnostic producedures available for HLMs that had not yet been implemented in statistical software. Over the past 6 years, other packages have gradually implemented some of these procedures; however, diagnosing a model still often requires multiple packages, each of which has its own syntax and quirks. `HLMdiag` provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. `HLMdiag` provides wrapper functions to all types of residuals implemented in `lme4` and `nlme` as well as providing access to the marginal and least squares residuals. For influence diagnostics, `HLMdiag` provides functions to calculate Cook's distance, MDFFITS, covariance trace and ratio, relative variance change, and leverage. 
+The package `HLMdiag` was created in order to provide a unified framework for analysts to diagnose hierarchical linear models (HLMs). When `HLMdiag` was created in 2014, it made diagnostic procedures available for HLMs that had not yet been implemented in statistical software. Over the past 6 years, other packages have gradually implemented some of these procedures; however, diagnosing a model still often requires multiple packages, each of which has its own syntax and quirks. `HLMdiag` provides diagnostic tools targeting all aspects and levels of hierarchical linear models in a single package. `HLMdiag` provides wrapper functions to all types of residuals implemented in `lme4` and `nlme` as well as providing access to the marginal and least squares residuals. For influence diagnostics, `HLMdiag` provides functions to calculate Cook's distance, MDFFITS, covariance trace and ratio, relative variance change, and leverage. 
 
 ## Installation
 
@@ -48,12 +48,12 @@ The functions available for residual analysis in `HLMdiag` are:
 *`hlm_augment()` combines `hlm_influence()` and `hlm_resid()` to return a tibble with residual values and influence diagnostics appended to the original model frame. 
 
 ### Influence Analysis
-The influence analysis functions provide functionality to calculate Cook's distance, MDFFITS, covariance ratio, covariance trace, relative variance change, and leverage. Additionally, two functions to calculate Cook's distance, MDFFITS, covariance ratio, and covariance trace are provided: a one step approximation, and a full refit method that refits the model and recalculates the fixed and random effects. This functionality is avaliable through individual functions for each diagnostic; however, the `hlm_influence` function can be used to calculate all avaliable diagnostics for each observation or group of observations.
+The influence analysis functions provide functionality to calculate Cook's distance, MDFFITS, covariance ratio, covariance trace, relative variance change, and leverage. Additionally, two functions to calculate Cook's distance, MDFFITS, covariance ratio, and covariance trace are provided: a one step approximation, and a full refit method that refits the model and recalculates the fixed and random effects. This functionality is available through individual functions for each diagnostic; however, the `hlm_influence` function can be used to calculate all available diagnostics for each observation or group of observations.
 
 The functions available for influence analysis in `HLMdiag` are:
 
 * `cooks.distance()` calculates Cook's distance values, which measures the difference between the original fixed effects and the deleted ones. 
-* `mdffits()` calculates MDFFITS, a multivariate version of the DFFFITS statistic, which is also a measure of the difference in fixed effects. 
+* `mdffits()` calculates MDFFITS, a multivariate version of the DFFITS statistic, which is also a measure of the difference in fixed effects. 
 * `covtrace()` calculates covariance trace, the ratio between the covariance matrices with and without unit *i* to the identity matrix.
 * `covratio()` calculate covariance ratio, a comparison of the two covariance matrices with and without unit *i* using their determinants.
 * `rvc()` calculates relative variance change, a measurement of the ratio of estimates of the *l* th variance component with and without unit *i*.

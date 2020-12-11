@@ -39,12 +39,12 @@ regression models for each group. LS residuals are unconfounded by higher
 level residuals, but unreliable for small within-group sample sizes. When
 \code{standardize = TRUE}, residuals are standardized by sigma components of
 the model object.}
-\item{\code{type = "eb"}}{Residuals calculated using the Empircal Bayes (EB)
+\item{\code{type = "eb"}}{Residuals calculated using the empirical Bayes (EB)
 method using maximum likelihood. EB residuals are interrelated with higher
 level residuals. When \code{standardize = TRUE}, residuals are standardized
 by sigma components of the model object.}
 \item{\code{type = "marginal"}}{Marginal residuals only consider the fixed
-effect portion of the estimates. When \code{standardize = TRUE}, cholskey
+effect portion of the estimates. When \code{standardize = TRUE}, Cholesky
 residuals are returned.}
 }
 }

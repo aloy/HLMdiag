@@ -76,7 +76,7 @@ about each function." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.3.2.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0</span>
       </span>
     </div>
 
@@ -102,7 +102,10 @@ about each function." />
       <a href="../articles/hlm_resid.html">HLMdiag Residual Diagnostics</a>
     </li>
     <li>
-      <a href="../articles/influence_diagnostics.html">HLMdiag Influence Diagnostics</a>
+      <a href="../articles/influence_diagnostics.html">Influence Diagnostics</a>
+    </li>
+    <li>
+      <a href="../articles/jss_update.html">Updated code for JSS analysis</a>
     </li>
   </ul>
 </li>
@@ -145,34 +148,34 @@ about each function.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p><b>Residual analysis</b></p>
-<p>HLMdiag's <code><a href='hlm_resid.lmerMod.html'>hlm_resid</a></code> function provides a wrapper that 
+<p>HLMdiag's <code><a href='hlm_resid.default.html'>hlm_resid</a></code> function provides a wrapper that 
 extracts residuals and fitted values for individual observations
 or groups of observations. In addition to being a wrapper function for functions
 implemented in the <code>lme4</code> and <code>nlme</code> packages,
-<code><a href='hlm_resid.lmerMod.html'>hlm_resid</a></code> provides access to the marginal and least squares
+<code><a href='hlm_resid.default.html'>hlm_resid</a></code> provides access to the marginal and least squares
 residuals.</p>
 <p><b>Influence analysis</b></p>
-<p>HLMdiag's <code><a href='hlm_influence.lmerMod.html'>hlm_influence</a></code> function provides a convenient wrapper 
+<p>HLMdiag's <code><a href='hlm_influence.default.html'>hlm_influence</a></code> function provides a convenient wrapper 
 to obtain influence diagnostics for each observation or group of observations 
 appended to the data used to fit the model. The diagnostics returned by 
-<code><a href='hlm_influence.lmerMod.html'>hlm_influence</a></code> include Cook's distance, MDFFITS, covariance trace (covtrace),
+<code><a href='hlm_influence.default.html'>hlm_influence</a></code> include Cook's distance, MDFFITS, covariance trace (covtrace),
 covariance ratio (covratio), leverage, and relative variance change (RVC). 
 HLMdiag also contains functions to calculate these diagnostics individually, as discussed below.</p>
 <p>Influence on fitted values</p>
-<p>HLMdiag provides <code><a href='leverage.mer.html'>leverage</a></code> that calculates the influence
+<p>HLMdiag provides <code><a href='leverage.default.html'>leverage</a></code> that calculates the influence
 that observations/groups have on the fitted values (leverage). 
 For mixed/hierarchical models leverage can be decomposed into two parts: the 
 fixed part and the random part. We refer the user to the references
 cited in the help documentation for additional explanation.</p>
 <p>Influence on fixed effects estimates</p>
-<p>HLMdiag provides <code><a href='cooks.distance.html'>cooks.distance</a></code> and <code><a href='cooks.distance.html'>mdffits</a></code>
+<p>HLMdiag provides <code><a href='mdffits.default.html'>cooks.distance</a></code> and <code><a href='mdffits.default.html'>mdffits</a></code>
 to assess the influence of subsets of observations on the fixed effects.</p>
 <p>Influence on precision of fixed effects</p>
-<p>HLMdiag provides <code><a href='covratio.html'>covratio</a></code> and <code><a href='covratio.html'>covtrace</a></code>
+<p>HLMdiag provides <code><a href='covratio.default.html'>covratio</a></code> and <code><a href='covratio.default.html'>covtrace</a></code>
 to assess the influence of subsets of observations on the precision of
 the fixed effects.</p>
 <p>Influence on variance components</p>
-<p>HLMdiag's <code><a href='rvc.mer.html'>rvc</a></code> calculates the relative variance change to
+<p>HLMdiag's <code><a href='rvc.default.html'>rvc</a></code> calculates the relative variance change to
 assess the influence of subsets of observations on the variance
 components.</p>
 <p><b>Graphics</b></p>
@@ -197,7 +200,7 @@ and Q-Q plots that combine the functionality of <code><a href='https://rdrr.io/r
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

@@ -7,7 +7,7 @@ Status](https://travis-ci.org/aloy/HLMdiag.svg?branch=master)](https://travis-ci
 
 The package `HLMdiag` was created in order to provide a unified
 framework for analysts to diagnose hierarchical linear models (HLMs).
-When `HLMdiag` was created in 2014, it made diagnostic producedures
+When `HLMdiag` was created in 2014, it made diagnostic procedures
 available for HLMs that had not yet been implemented in statistical
 software. Over the past 6 years, other packages have gradually
 implemented some of these procedures; however, diagnosing a model still
@@ -74,9 +74,9 @@ variance change, and leverage. Additionally, two functions to calculate
 Cook’s distance, MDFFITS, covariance ratio, and covariance trace are
 provided: a one step approximation, and a full refit method that refits
 the model and recalculates the fixed and random effects. This
-functionality is avaliable through individual functions for each
+functionality is available through individual functions for each
 diagnostic; however, the `hlm_influence` function can be used to
-calculate all avaliable diagnostics for each observation or group of
+calculate all available diagnostics for each observation or group of
 observations.
 
 The functions available for influence analysis in `HLMdiag` are:

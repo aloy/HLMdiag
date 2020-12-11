@@ -289,7 +289,7 @@ isNestedModel <- function(object) {
 }
 
 
-#' Extracting covariance matricies from lme
+#' Extracting covariance matrices from lme
 #' 
 #' This function extracts the full covariance matrices from a mixed/hierarchical
 #' linear model fit using \code{lme}.
@@ -302,7 +302,7 @@ isNestedModel <- function(object) {
 #' \item{\code{D} contains the covariance matrix of the random effects.}
 #' \item{\code{V} contains the covariance matrix of the response.}
 #' \item{\code{X} contains the fixed-effect model matrix.}
-#' \item{\code{Z} contians the random-effect model matrix.}}
+#' \item{\code{Z} contains the random-effect model matrix.}}
 #' @param b a fitted model object of class \code{lme}.
 #' @author Adam Loy \email{loyad01@@gmail.com}
 #' @references This method has been adapted from the method
