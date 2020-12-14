@@ -1,7 +1,7 @@
 library("lme4", quietly = TRUE)
 library("nlme", quietly = TRUE)
 
-
+context("residuals for 2-level models")
 #2 level, random intercept
 bdf <- nlme::bdf
 bdf.lmer <- lme4::lmer(IQ.verb ~ ses + aritPOST + langPOST + schoolSES + 
@@ -31,7 +31,6 @@ test_that("correct dimentions, nlme", {
   #check lvl2
   expect_equal(nrow(bdf.resids.lme.lvl2), length(unique(bdf$schoolNR)))
 })
-
 
 
 
@@ -83,16 +82,16 @@ test_that("detects level 2 variables, nlme", {
 })
 
 
-
-
+context("residuals for 3-level model")
 #3 level, random intercept and slope
-class <- read.csv("http://www-personal.umich.edu/~bwest/classroom.csv")
-class.lmer <- lme4::lmer(mathgain ~ mathkind + minority + ses + housepov + 
-                     (mathkind | schoolid/classid), class)
-class.lme <- nlme::lme(mathgain ~ mathkind + minority + ses + housepov,
-                     random = ~mathkind | schoolid/classid, class)
+data("classroom", package = "WWGbook")
 
 test_that("3 level model tests, lme4", {
+  skip_on_cran()
+  
+  class.lmer <- lme4::lmer(mathgain ~ mathkind + minority + ses + housepov + 
+                             (mathkind | schoolid/classid), classroom)
+  
   #inner level
   class.resids <- hlm_resid(class.lmer, level = "classid:schoolid")
   #intercept and slope random effect and both fixed effect terms
@@ -109,6 +108,11 @@ test_that("3 level model tests, lme4", {
 })
 
 test_that("3 level model tests, nlme", {
+  skip_on_cran()
+  
+  class.lme <- nlme::lme(mathgain ~ mathkind + minority + ses + housepov,
+                         random = ~mathkind | schoolid/classid, classroom)
+  
   #inner level
   class.resids <- hlm_resid(class.lme, level = "classid")
   #intercept and slope random effect and both fixed effect terms
@@ -124,32 +128,33 @@ test_that("3 level model tests, nlme", {
   expect_equal(names(class.resids)[1:2], c("schoolid", "housepov"))
 })
 
-
+context("NA action for 3-level model")
 class.lmerNA <- lme4::lmer(mathgain ~ mathkind + minority + mathknow + 
-             ses + housepov + (mathkind | schoolid/classid), data = class, 
+             ses + housepov + (1 | schoolid/classid), data = classroom, 
            na.action = na.exclude)
 class.lmeNA <- nlme::lme(mathgain ~ mathkind + minority + mathknow + 
-                           ses + housepov, random = ~mathkind | schoolid/classid, 
-                         data = class, na.action = na.exclude)
+                           ses + housepov, random = ~1 | schoolid/classid, 
+                         data = classroom, na.action = na.exclude)
+
 test_that("respects na.action, lme4", {
-  expect_equal(nrow(expect_warning(hlm_resid(class.lmerNA, data = class))),
-               nrow(class))
-  expect_equal(nrow(hlm_resid(class.lmerNA, data = class, include.ls = FALSE)),
-               nrow(class))
+  expect_equal(nrow(expect_warning(hlm_resid(class.lmerNA, data = classroom))),
+               nrow(classroom))
+  expect_equal(nrow(hlm_resid(class.lmerNA, data = classroom, include.ls = FALSE)),
+               nrow(classroom))
 })
 
 test_that("respects na.action, nlme", {
-  expect_equal(nrow(expect_warning(hlm_resid(class.lmeNA, data = class))),
-               nrow(class))
-  expect_equal(nrow(hlm_resid(class.lmeNA, data = class, include.ls = FALSE)),
-               nrow(class))
+  expect_equal(nrow(expect_warning(hlm_resid(class.lmeNA, data = classroom))),
+               nrow(classroom))
+  expect_equal(nrow(hlm_resid(class.lmeNA, data = classroom, include.ls = FALSE)),
+               nrow(classroom))
 })
+
 
 Exam <- mlmRev::Exam
 exam.lmer <- lme4::lmer(normexam ~ standLRT + schgend + (1 | school), data = Exam)
 exam.lme <- nlme::lme(normexam ~ standLRT + schgend, random = ~1|school, data = Exam)
 
-hlm_resid(exam.lmer, standardize = TRUE)
 
 test_that("correct dimentions- simple model, lme4", {
   #check lvl1
