@@ -1,5 +1,7 @@
 # HLMdiag
 
+[![R build
+status](https://github.com/aloy/HLMdiag/workflows/R-CMD-check/badge.svg)](https://github.com/aloy/HLMdiag/actions)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
 ![CRAN\_Downloads\_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
 
@@ -82,9 +84,9 @@ The functions available for influence analysis in `HLMdiag` are:
   - `cooks.distance()` calculates Cook’s distance values, which measures
     the difference between the original fixed effects and the deleted
     ones.
-  - `mdffits()` calculates MDFFITS, a multivariate version of the
-    DFFFITS statistic, which is also a measure of the difference in
-    fixed effects.
+  - `mdffits()` calculates MDFFITS, a multivariate version of the DFFITS
+    statistic, which is also a measure of the difference in fixed
+    effects.
   - `covtrace()` calculates covariance trace, the ratio between the
     covariance matrices with and without unit *i* to the identity
     matrix.

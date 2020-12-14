@@ -13,6 +13,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
+[![R build status](https://github.com/aloy/HLMdiag/workflows/R-CMD-check/badge.svg)](https://github.com/aloy/HLMdiag/actions)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
 ![CRAN_Downloads_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
 

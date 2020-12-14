@@ -11,3 +11,4 @@
 ^revdep$
 ^jss_update$
 ^CRAN-RELEASE$
+^\.github$
