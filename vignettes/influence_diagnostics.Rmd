@@ -5,15 +5,20 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Influence Diagnostics}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
   %\VignetteEncoding{UTF-8}
 ---
 ```{r, include = FALSE}
+is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
+             "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.show = "hide"
+  fig.show = "hide",
+  eval = !is_check
 )
+
 library(dplyr)
 library(ggplot2)
 ```

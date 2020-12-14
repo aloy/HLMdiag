@@ -1,21 +1,25 @@
 ---
-title: "Updated code for JSS analysis"
+title: "Updated JSS code"
 authors: "Adam Loy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{jss_update}
+  %\VignetteIndexEntry{Updated JSS code}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
+is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
+             "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.show = "hide"
+  fig.show = "hide",
+  eval = !is_check
 )
 ```
 

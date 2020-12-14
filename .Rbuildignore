@@ -1,7 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.gitignore$
-^\.travis\.yml$
 ^cran-comments\.md$
 ^doc$
 ^Meta$
@@ -11,3 +10,4 @@
 ^pkgdown$
 ^revdep$
 ^jss_update$
+^CRAN-RELEASE$

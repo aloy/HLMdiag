@@ -1,7 +1,5 @@
 # HLMdiag
 
-[![Build
-Status](https://travis-ci.org/aloy/HLMdiag.svg?branch=master)](https://travis-ci.org/aloy/HLMdiag)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
 ![CRAN\_Downloads\_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
 

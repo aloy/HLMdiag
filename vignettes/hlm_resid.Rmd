@@ -1,21 +1,25 @@
 ---
-title: "HLMdiag Residual Diagnostics"
+title: "Residual Diagnostics"
 authors: "Jack Moran, Jaylin Lowe, Adam Loy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hlm_resid}
+  %\VignetteIndexEntry{Residual Diagnostics}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown_notangle}
 editor_options: 
   chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
+is_check <- ("CheckExEnv" %in% search()) || any(c("_R_CHECK_TIMINGS_",
+             "_R_CHECK_LICENSE_") %in% names(Sys.getenv()))
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.show = "hide"
+  fig.show = "hide",
+  eval = !is_check
 )
 ```
 
