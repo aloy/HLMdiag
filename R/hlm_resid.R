@@ -387,7 +387,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     # Marginal Residuals
     mr <- resid(object, type="response", level=0)
     if (standardize == TRUE) {
-      V      <- extract_design(object)$V
+      V      <- Matrix(extract_design(object)$V)
       V.chol <- chol( V )
       
       Lt <- solve(t(V.chol))
