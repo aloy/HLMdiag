@@ -1,4 +1,4 @@
-# HLMdiag
+# HLMdiag <img src='man/figures/logo.png' align="right" height="139" />
 
 [![R build
 status](https://github.com/aloy/HLMdiag/workflows/R-CMD-check/badge.svg)](https://github.com/aloy/HLMdiag/actions)
