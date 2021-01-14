@@ -1,0 +1,36 @@
+Package: HLMdiag
+Type: Package
+Title: Diagnostic Tools for Hierarchical (Multilevel) Linear Models
+Version: 0.3.1
+Date: 2015-12-7
+Author: Adam Loy <loyad01@gmail.com>
+Maintainer: Adam Loy <loyad01@gmail.com>
+Description: A suite of diagnostic tools for hierarchical
+    (multilevel) linear models. The tools include
+    not only leverage and traditional deletion diagnostics (Cook's
+    distance, covratio, covtrace, and MDFFITS) but also 
+    convenience functions and graphics for residual analysis. Models
+    can be fit using either lmer in the 'lme4' package or lme in the 'nlme' package,
+    but only two-level models fit using lme are currently supported.
+Depends: R (>= 2.15.0)
+Imports: ggplot2 (>= 0.9.2), stats, methods, plyr, reshape2, MASS,
+        Matrix, RLRsim, mgcv
+LinkingTo: Rcpp, RcppArmadillo
+Suggests: mlmRev, WWGbook, lme4 (>= 1.0), nlme
+License: GPL-2
+LazyLoad: yes
+LazyData: yes
+Collate: 'diagnostic_functions.R' 'group_level_residual_functions.R'
+        'identification.R' 'plot_functions.R' 'quantile_functions.R'
+        'adjust_formula_lmList.R' 'case_delete.R' 'LSresids.R'
+        'HLMresid.R' 'help.R' 'influence_functions.R'
+        'utility_functions.R' 'rotate_ranefs.R' 'autism.R' 'ahd.R'
+        'radon.R'
+URL: https://github.com/aloy/HLMdiag
+BugReports: https://github.com/aloy/HLMdiag/issues
+NeedsCompilation: yes
+Packaged: 2015-12-11 19:26:48 UTC; loya
+Repository: CRAN
+Date/Publication: 2015-12-12 09:41:00
+Built: R 4.0.2; x86_64-apple-darwin17.0; 2020-07-17 00:09:19 UTC; unix
+Archs: HLMdiag.so.dSYM

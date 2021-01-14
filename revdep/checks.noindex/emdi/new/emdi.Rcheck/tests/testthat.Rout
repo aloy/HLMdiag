@@ -1,0 +1,245 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library(testthat)
+> library(emdi)
+
+Attaching package: 'emdi'
+
+The following object is masked from 'package:testthat':
+
+    compare
+
+The following object is masked from 'package:stats':
+
+    step
+
+> 
+> test_check("emdi")
+b = 1 
+b = 2 
+b = 3 
+b = 1 
+b = 2 
+b = 3 
+b = 1 
+b = 2 
+b = 3 
+b = 1 
+b = 2 
+b = 3 
+b = 1 
+b = 2 
+b = 3 
+b = 1 
+b = 2 
+b = 3 
+domain = 1 
+domain = 2 
+domain = 3 
+domain = 4 
+domain = 5 
+domain = 6 
+domain = 7 
+domain = 8 
+domain = 9 
+domain = 10 
+domain = 11 
+domain = 12 
+domain = 13 
+domain = 14 
+domain = 15 
+domain = 16 
+domain = 17 
+domain = 18 
+domain = 19 
+domain = 20 
+domain = 21 
+domain = 22 
+domain = 23 
+domain = 24 
+domain = 25 
+domain = 26 
+domain = 27 
+domain = 28 
+domain = 29 
+domain = 30 
+domain = 31 
+domain = 32 
+domain = 33 
+domain = 34 
+domain = 35 
+domain = 36 
+domain = 37 
+domain = 38 
+domain = 39 
+domain = 40 
+domain = 41 
+domain = 42 
+domain = 43 
+domain = 44 
+domain = 45 
+domain = 46 
+domain = 47 
+domain = 48 
+domain = 49 
+domain = 50 
+domain = 51 
+domain = 52 
+domain = 53 
+domain = 54 
+domain = 55 
+domain = 56 
+domain = 57 
+domain = 58 
+domain = 59 
+domain = 60 
+domain = 61 
+domain = 62 
+domain = 63 
+domain = 64 
+domain = 65 
+domain = 66 
+domain = 67 
+domain = 68 
+domain = 69 
+domain = 70 
+domain = 71 
+domain = 72 
+domain = 73 
+domain = 74 
+domain = 75 
+domain = 76 
+domain = 77 
+domain = 78 
+domain = 79 
+domain = 80 
+domain = 81 
+domain = 82 
+domain = 83 
+domain = 84 
+domain = 85 
+domain = 86 
+domain = 87 
+domain = 88 
+domain = 89 
+domain = 90 
+domain = 91 
+domain = 92 
+domain = 93 
+domain = 94 
+domain = 1 
+domain = 2 
+domain = 3 
+domain = 4 
+domain = 5 
+domain = 6 
+domain = 7 
+domain = 8 
+domain = 9 
+domain = 10 
+domain = 11 
+domain = 12 
+domain = 13 
+domain = 14 
+domain = 15 
+domain = 16 
+domain = 17 
+domain = 18 
+domain = 19 
+domain = 20 
+domain = 21 
+domain = 22 
+domain = 23 
+domain = 24 
+domain = 25 
+domain = 26 
+domain = 27 
+domain = 28 
+domain = 29 
+domain = 30 
+domain = 31 
+domain = 32 
+domain = 33 
+domain = 34 
+domain = 35 
+domain = 36 
+domain = 37 
+domain = 38 
+domain = 39 
+domain = 40 
+domain = 41 
+domain = 42 
+domain = 43 
+domain = 44 
+domain = 45 
+domain = 46 
+domain = 47 
+domain = 48 
+domain = 49 
+domain = 50 
+domain = 51 
+domain = 52 
+domain = 53 
+domain = 54 
+domain = 55 
+domain = 56 
+domain = 57 
+domain = 58 
+domain = 59 
+domain = 60 
+domain = 61 
+domain = 62 
+domain = 63 
+domain = 64 
+domain = 65 
+domain = 66 
+domain = 67 
+domain = 68 
+domain = 69 
+domain = 70 
+domain = 71 
+domain = 72 
+domain = 73 
+domain = 74 
+domain = 75 
+domain = 76 
+domain = 77 
+domain = 78 
+domain = 79 
+domain = 80 
+domain = 81 
+domain = 82 
+domain = 83 
+domain = 84 
+domain = 85 
+domain = 86 
+domain = 87 
+domain = 88 
+domain = 89 
+domain = 90 
+domain = 91 
+domain = 92 
+domain = 93 
+domain = 94 
+b = 1 
+b = 2 
+b = 3 
+> 
+> proc.time()
+   user  system elapsed 
+ 81.874   8.056  94.694 

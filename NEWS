@@ -1,3 +1,11 @@
+Version 0.4.0.9000
+=============
+
+TODO:
+* From chapter 13 of A. Gałecki and T. Burzykowski, Linear Mixed-Effects Models Using R, check on Cholesky residuals for the error terms
+* Modularize the residual function
+
+
 Version 0.4.0
 =============
 DEVELOPMENT

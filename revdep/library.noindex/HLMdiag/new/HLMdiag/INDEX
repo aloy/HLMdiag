@@ -1,0 +1,28 @@
+HLMdiag                 Diagnostic tools for hierarchical (multilevel)
+                        linear models
+HLMdiag-deprecated      Deprecated functions in HLMdiag
+HLMresid.default        Calculating residuals from HLMs
+LSresids.default        Calculating least squares residuals
+adjust_lmList.formula   Fitting Common Models via 'lm'
+ahd                     Methylprednisolone data
+autism                  Autism data
+case_delete.default     Case Deletion for 'mer'/'lmerMod' objects
+compare_eb_ls           Visually comparing shrinkage and LS estimates
+covratio.default        Influence on precision of fixed effects in HLMs
+diagnostics             Calculating influence diagnostics for HLMs.
+dotplot_diag            Dot plots for influence diagnostics
+extract_design          Extracting covariance matricies from lme
+ggplot_qqnorm           Constructing a normal Q-Q plot
+group_qqnorm            Overlaying normal Q-Q plots
+hlm_augment.lmerMod     Calculating residuals and influence diagnostics
+                        for HLMs
+hlm_influence.default   Calculating influence diagnostics for HLMs
+hlm_resid.default       Calculating residuals from HLMs
+leverage.default        Leverage for HLMs
+mdffits.default         Influence on fixed effects of HLMs
+pull_resid.default      Computationally Efficient HLM Residuals
+radon                   Radon data
+rotate_ranef.default    Calculate s-dimensional rotated random effects
+rvc.default             Relative variance change for HLMs
+varcomp.mer             Extracting variance components
+wages                   Wages for male high school dropouts
