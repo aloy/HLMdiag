@@ -157,7 +157,7 @@ isDiagonal <- function(mat, tol = 1e-10) {
                   PACKAGE = "HLMdiag")
   
   return( list(Y = Y, X = X, n = n, ngrps = ngrps, flist = flist,
-               sig0 = sig0, V = V, Vinv = Vinv, XVXinv = XVXinv,
+               sig0 = sig0, V = V, V.chol = V.chol, Vinv = Vinv, XVXinv = XVXinv,
                M = M, P = P) )
   
 }
