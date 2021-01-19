@@ -26,23 +26,66 @@ resid_conditional.default <- function(object, ...){
 }
 
 
+#' @title Marginal residuals
+#' 
+#' @description 
+#' Calculates marginal residuals of \code{lmerMod} and \code{lme} model objects.
+#' 
+#' @param object an object of class \code{lmerMod} or \code{lme}.
+#' @param type a character string specifying what type of residuals should be calculated.
+#'   It is set to \code{"raw"} (observed - fitted) by default. Other options include
+#'   \code{"pearson"}, \code{"studentized"}, and \code{"cholesky"}. Partial matching of arguments is used, 
+#'   so only the first character needs to be provided.
+#' 
+#' @return
+#' A vector of marginal residuals.
+#' 
+#' @details
+#' For a model of the form \eqn{Y = X \beta + Z b + \epsilon},
+#' four types of marginal residuals can be calculated:
+#' 
+#' \describe{
+#'   \item{\code{raw}}{\eqn{r = Y - X \hat{beta}}}
+#'   \item{\code{pearson}}{\eqn{r / \sqrt{diag(\hat{Var}(Y)})}}
+#'   \item{\code{studentized}}{\eqn{r / \sqrt{diag(\hat{Var}(r)})}}
+#'   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} r} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(Y)}}
+#' }
+#' 
+#' @references 
+#' Singer, J. M., Rocha, F. M. M., & Nobre, J. S. (2017). 
+#' Graphical Tools for Detecting Departures from Linear Mixed Model 
+#' Assumptions and Some Remedial Measures. 
+#' \emph{International Statistical Review}, \bold{85}, 290--324.
+#' 
+#' Schabenberger, O. (2004) Mixed Model Influence Diagnostics,
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
+#' 
 #' @export
 #' @method resid_marginal lmerMod
 #' @aliases resid_marginal
-resid_marginal.lmerMod <- function(object, standardize =  FALSE, ...){
-  if(!is.logical(standardize)) {
-    stop("standardize must be logical (TRUE or FALSE).")
-  }
+#' @rdname resid_marginal
+resid_marginal.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+  type <- match.arg(type)
   
   res <- lme4::getME(object, "y") - stats::predict(object, re.form = NA)
   
-  if(standardize == TRUE){
+  if(type != "raw") {
     res_names <- names(res)
     mats <- .lmerMod_matrices(object)
+  }
+  if(type == "cholesky"){
     Lt <- solve(t(mats$V.chol))
     res <- as.numeric(Lt %*% res)
     names(res) <- res_names
   } 
+  else if(type == "pearson"){
+    res <- res / sqrt(diag(mats$V))
+  }
+  else if(type == "studentized"){
+    mar_var <- mats$V - mats$X %*% tcrossprod(mats$XVXinv, mats$X)
+    res <- res / sqrt(diag(mar_var))
+  }
   
   res
 }
@@ -50,54 +93,122 @@ resid_marginal.lmerMod <- function(object, standardize =  FALSE, ...){
 #' @export
 #' @method resid_marginal lme
 #' @aliases resid_marginal
-resid_marginal.lme <- function(object, standardize =  FALSE, ...){
-  if(!is.logical(standardize)) {
-    stop("standardize must be logical (TRUE or FALSE).")
-  }
+#' @rdname resid_marginal
+resid_marginal.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+  type <- match.arg(type)
   
   res <- resid(object, type = "response", level = 0)
   
-  if(standardize == TRUE){
+  if(type != "raw") {
     res_names <- names(res)
-    V      <- extract_design(object)$V
-    V.chol <- chol(V)
+    mats <- .lme_matrices(object)
+  }
+  if(type == "cholesky"){
+    V.chol <- chol(mats$V)
     Lt <- solve(t(V.chol))
     res <- as.numeric(Lt %*% res)
     names(res) <- res_names
   } 
+  else if(type == "pearson"){
+    res <- res / sqrt(diag(mats$V))
+  }
+  else if(type == "studentized"){
+    mar_var <- mats$V - mats$X %*% tcrossprod(mats$XVXinv, mats$X)
+    res <- res / sqrt(diag(mar_var))
+  }
   
   res
 }
 
 
+#' @title Conditional residuals
+#' 
+#' @description 
+#' Calculates conditional residuals of \code{lmerMod} and \code{lme} model objects.
+#' 
+#' @param object an object of class \code{lmerMod} or \code{lme}.
+#' @param type a character string specifying what type of residuals should be calculated.
+#'   It is set to \code{"raw"} (observed - fitted) by default. Other options include
+#'   \code{"pearson"}, \code{"studentized"}, and \code{"cholesky"}. 
+#'   Partial matching of arguments is used, so only the first character needs to be provided.
+#' 
+#' @return
+#' A vector of conditional residuals.
+#' 
+#' @details
+#' For a model of the form \eqn{Y = X \beta + Z b + \epsilon},
+#' four types of marginal residuals can be calculated:
+#' 
+#' \describe{
+#'   \item{\code{raw}}{\eqn{e = Y - X \hat{beta} - Z \hat{b}}}
+#'   \item{\code{pearson}}{\eqn{e / \sqrt{diag(\hat{Var}(Y|b)})}}
+#'   \item{\code{studentized}}{e / \sqrt{diag(\hat{Var}(e))}}
+#'   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} e} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(e)}}
+#' }
+#' 
+#' @references 
+#' Singer, J. M., Rocha, F. M. M., & Nobre, J. S. (2017). 
+#' Graphical Tools for Detecting Departures from Linear Mixed Model 
+#' Assumptions and Some Remedial Measures. 
+#' \emph{International Statistical Review}, \bold{85}, 290--324.
+#' 
+#' Schabenberger, O. (2004) Mixed Model Influence Diagnostics,
+#' in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
+#' SAS Users Group International.
+#' 
 #' @export
 #' @method resid_conditional lmerMod
 #' @aliases resid_conditional
-resid_conditional.lmerMod <- function(object, standardize = FALSE, ...){
-  if(!is.logical(standardize)) {
-    stop("standardize must be logical (TRUE or FALSE).")
-  }
+#' @rdname resid_conditional
+resid_conditional.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+  type <- match.arg(type)
   
-  if(standardize){
-    resid(object, scaled = TRUE)
-  } else {
-    resid(object)
+  # Raw residuals
+  res <- resid(object)
+  
+  if(type == "cholesky"){
+    # For Diagonal R, this will just be the Pearson resids...
+  } 
+  else if(type == "studentized") {
+    mats <- .lmerMod_matrices(object)
+    sig0 <- lme4::getME(object, "sigma")
+    R <- Diagonal(n = mats$n, x = sig0^2)
+    cond_var <- R %*% mats$P %*% R
+    res <- res / sqrt(diag(cond_var))
   }
+  else if(type == "pearson"){
+    res <- resid(object, scaled = TRUE)
+  }
+
+  res
 }
 
 #' @export
 #' @method resid_conditional lme
 #' @aliases resid_conditional
-resid_conditional.lme <- function(object, standardize = FALSE, ...){
-  if(!is.logical(standardize)) {
-    stop("standardize must be logical (TRUE or FALSE).")
+#' @rdname resid_conditional
+resid_conditional.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+  type <- match.arg(type)
+  
+  # Raw residuals
+  res <- resid(object)
+  
+  if(type == "cholesky"){
+    # For Diagonal R, this will just be the Pearson resids...
+    res <- resid(object, type = "normalized")
+  } 
+  else if(type == "studentized") {
+    mats <- .lme_matrices(object)
+    sig0 <- object$sigma
+    R <- Diagonal(n = mats$n, x = sig0^2)
+    cond_var <- R %*% mats$P %*% R
+    res <- res / sqrt(diag(cond_var))
+  }
+  else if(type == "pearson"){
+    res <- resid(object, type = "pearson")
   }
   
-  if(standardize){
-    resid(object, type = "normalized")
-  } else {
-    resid(object)
-  }
+  res
 }
 
 #' @export
