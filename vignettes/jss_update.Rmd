@@ -180,6 +180,12 @@ dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance")
 dotplot_diag(influence_fm4$cooksd, cutoff = "internal", name = "cooks.distance", modify = "dotplot")
 ```
 
+```{r}
+beta_cdd <- cooks.distance(fm4, level = "school", include.attr = TRUE)
+beta_cdd[25,]
+```
+
+
 ## Diagnostics for variance components
 
 To calculate the relative variance change, we use `hlm_influence()`, but `approx = FALSE` must be specified:
