@@ -1,16 +1,3 @@
-#' @export
-hlm_augment <- function(object, ...){
-  UseMethod("hlm_augment", object)
-}
-
-#' @export
-#' @rdname hlm_augment
-#' @method hlm_augment default
-hlm_augment.default <- function(object, ...){
-  stop(paste("there is no hlm_augment() method for objects of class",
-             paste(class(object), collapse=", ")))
-}
-
 #'Calculating residuals and influence diagnostics for HLMs
 #'
 #'\code{hlm_augment} is used to compute residuals, fitted values, and influence diagnostics for a 
@@ -19,8 +6,6 @@ hlm_augment.default <- function(object, ...){
 #'approximations. 
 #'
 #'@export
-#'@method hlm_augment lmerMod
-#'@aliases hlm_augment
 #'@param object an object of class \code{lmerMod} or \code{lme}.
 #'@param level which residuals should be extracted and what cases should be deleted for influence diagnostics.
 #'If \code{level = 1} (default), then within-group (case-level) residuals are returned and influence diagnostics
@@ -41,6 +26,22 @@ hlm_augment.default <- function(object, ...){
 #'diagnostics. If this additional functionality is desired, \code{hlm_influence} should be used instead. The additional
 #'parameter \code{standardize} is available in \code{hlm_resid}; if this are desired, \code{hlm_resid}
 #'should be used instead. 
+hlm_augment <- function(object, ...){
+  UseMethod("hlm_augment", object)
+}
+
+#' @export
+#' @rdname hlm_augment
+#' @method hlm_augment default
+hlm_augment.default <- function(object, ...){
+  stop(paste("there is no hlm_augment() method for objects of class",
+             paste(class(object), collapse=", ")))
+}
+
+
+#'@export
+#'@method hlm_augment lmerMod
+#'@aliases hlm_augment
 hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NULL, ...) {
   residuals <- hlm_resid(object, level = level, include.ls = include.ls, data = data)
   infl <- hlm_influence(object, level = level, data = data)
