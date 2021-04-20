@@ -1,4 +1,4 @@
-#'Calculating residuals and influence diagnostics for HLMs
+#'@title Calculating residuals and influence diagnostics for HLMs
 #'
 #'\code{hlm_augment} is used to compute residuals, fitted values, and influence diagnostics for a 
 #'hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
@@ -39,9 +39,9 @@ hlm_augment.default <- function(object, ...){
 }
 
 
-#'@export
-#'@method hlm_augment lmerMod
-#'@aliases hlm_augment
+#' @export
+#' @method hlm_augment lmerMod
+#' @rdname hlm_augment
 hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NULL, ...) {
   residuals <- hlm_resid(object, level = level, include.ls = include.ls, data = data)
   infl <- hlm_influence(object, level = level, data = data)
