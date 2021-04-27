@@ -2,7 +2,7 @@
 
 |field    |value                        |
 |:--------|:----------------------------|
-|version  |R version 4.0.3 (2020-10-10) |
+|version  |R version 4.0.5 (2021-03-31) |
 |os       |macOS Catalina 10.15.7       |
 |system   |x86_64, darwin17.0           |
 |ui       |RStudio                      |
@@ -10,25 +10,17 @@
 |collate  |en_US.UTF-8                  |
 |ctype    |en_US.UTF-8                  |
 |tz       |America/Chicago              |
-|date     |2020-12-10                   |
+|date     |2021-04-27                   |
 
 # Dependencies
 
-|package       |old   |new        |Δ  |
-|:-------------|:-----|:----------|:--|
-|HLMdiag       |0.3.1 |0.4.0      |*  |
-|colorspace    |NA    |2.0-0      |*  |
-|cpp11         |NA    |0.2.4      |*  |
-|diffobj       |NA    |0.3.2      |*  |
-|generics      |NA    |0.1.0      |*  |
-|ggplot2       |NA    |3.3.2.9000 |*  |
-|isoband       |NA    |0.2.3      |*  |
-|labeling      |NA    |0.4.2      |*  |
-|lubridate     |NA    |1.7.9.2    |*  |
-|RcppArmadillo |NA    |0.10.1.2.0 |*  |
-|rstudioapi    |NA    |0.13       |*  |
-|testthat      |NA    |3.0.0      |*  |
-|waldo         |NA    |0.2.3      |*  |
+|package |old   |new        |Δ  |
+|:-------|:-----|:----------|:--|
+|HLMdiag |0.4.0 |0.4.0.9000 |*  |
+|cli     |NA    |2.5.0      |*  |
+|ggplot2 |NA    |3.3.3.9000 |*  |
+|tibble  |NA    |3.1.1      |*  |
+|withr   |NA    |2.4.2      |*  |
 
 # Revdeps
 
