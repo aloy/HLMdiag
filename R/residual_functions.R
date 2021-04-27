@@ -1,26 +1,26 @@
 #' @export
-resid_marginal <- function(object, ...){
+resid_marginal <- function(object, type){
   UseMethod("resid_marginal", object)
 }
 
 #' @export
 #' @rdname resid_marginal
 #' @method resid_marginal default
-resid_marginal.default <- function(object, ...){
+resid_marginal.default <- function(object, type){
   stop(paste("there is no resid_marginal() method for objects of class",
              paste(class(object), collapse=", ")))
 }
 
 
 #' @export
-resid_conditional <- function(object, ...){
+resid_conditional <- function(object, type){
   UseMethod("resid_conditional", object)
 }
 
 #' @export
 #' @rdname resid_conditional
 #' @method resid_conditional default
-resid_conditional.default <- function(object, ...){
+resid_conditional.default <- function(object, type){
   stop(paste("there is no resid_conditional() method for objects of class",
              paste(class(object), collapse=", ")))
 }
@@ -46,8 +46,8 @@ resid_conditional.default <- function(object, ...){
 #' 
 #' \describe{
 #'   \item{\code{raw}}{\eqn{r = Y - X \hat{beta}}}
-#'   \item{\code{pearson}}{\eqn{r / \sqrt{diag(\hat{Var}(Y)})}}
-#'   \item{\code{studentized}}{\eqn{r / \sqrt{diag(\hat{Var}(r)})}}
+#'   \item{\code{pearson}}{\eqn{r / \sqrt{ diag(\hat{Var}(Y)})}}
+#'   \item{\code{studentized}}{\eqn{r / \sqrt{ diag(\hat{Var}(r)})}}
 #'   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} r} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(Y)}}
 #' }
 #' 
@@ -65,7 +65,7 @@ resid_conditional.default <- function(object, ...){
 #' @method resid_marginal lmerMod
 #' @aliases resid_marginal
 #' @rdname resid_marginal
-resid_marginal.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+resid_marginal.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky")){
   type <- match.arg(type)
   
   res <- lme4::getME(object, "y") - stats::predict(object, re.form = NA)
@@ -94,7 +94,7 @@ resid_marginal.lmerMod <- function(object, type = c("raw", "pearson", "studentiz
 #' @method resid_marginal lme
 #' @aliases resid_marginal
 #' @rdname resid_marginal
-resid_marginal.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+resid_marginal.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky")){
   type <- match.arg(type)
   
   res <- resid(object, type = "response", level = 0)
@@ -142,7 +142,7 @@ resid_marginal.lme <- function(object, type = c("raw", "pearson", "studentized",
 #' \describe{
 #'   \item{\code{raw}}{\eqn{e = Y - X \hat{beta} - Z \hat{b}}}
 #'   \item{\code{pearson}}{\eqn{e / \sqrt{diag(\hat{Var}(Y|b)})}}
-#'   \item{\code{studentized}}{e / \sqrt{diag(\hat{Var}(e))}}
+#'   \item{\code{studentized}}{\eqn{e / \sqrt{diag(\hat{Var}(e))}}}
 #'   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} e} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(e)}}
 #' }
 #' 
@@ -160,7 +160,7 @@ resid_marginal.lme <- function(object, type = c("raw", "pearson", "studentized",
 #' @method resid_conditional lmerMod
 #' @aliases resid_conditional
 #' @rdname resid_conditional
-resid_conditional.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+resid_conditional.lmerMod <- function(object, type = c("raw", "pearson", "studentized", "cholesky")){
   type <- match.arg(type)
   
   # Raw residuals
@@ -168,6 +168,7 @@ resid_conditional.lmerMod <- function(object, type = c("raw", "pearson", "studen
   
   if(type == "cholesky"){
     # For Diagonal R, this will just be the Pearson resids...
+    res <- res / sqrt(sigma(object)^2)
   } 
   else if(type == "studentized") {
     mats <- .lmerMod_matrices(object)
@@ -187,7 +188,7 @@ resid_conditional.lmerMod <- function(object, type = c("raw", "pearson", "studen
 #' @method resid_conditional lme
 #' @aliases resid_conditional
 #' @rdname resid_conditional
-resid_conditional.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky"), ...){
+resid_conditional.lme <- function(object, type = c("raw", "pearson", "studentized", "cholesky")){
   type <- match.arg(type)
   
   # Raw residuals
@@ -211,16 +212,26 @@ resid_conditional.lme <- function(object, type = c("raw", "pearson", "studentize
   res
 }
 
-#' @export
-resid_ranef <- function(object, ...){
+#' @title Random effects residuals
+#' 
+#' @description 
+#' Calculates Random effects  residuals of \code{lmerMod} model objects.
+#' 
+#' @param object an object of class \code{lmerMod}.
+#' @param level DESCRIPTION
+#' @param which DESCRIPTION
+#' @param standardize DESCRIPTION
+#' 
+#' @return
+#' A vector of conditional residuals.
+resid_ranef <- function(object, level, which, standardize){
   UseMethod("resid_ranef", object)
 }
 
 
-#' @export
 #' @method resid_ranef lmerMod
 #' @aliases resid_ranef
-resid_ranef.lmerMod<- function(object, level, which, standardize = FALSE, ...){
+resid_ranef.lmerMod <- function(object, level, which, standardize = FALSE){
   if(!is.logical(standardize)) {
     stop("standardize must be logical (TRUE or FALSE).")
   }
@@ -229,33 +240,34 @@ resid_ranef.lmerMod<- function(object, level, which, standardize = FALSE, ...){
   
   # Allow which to follow lme example...
   
-  flist <- getME(object, "flist")
+  flist <- lme4::getME(object, "flist")
 
   if(standardize){
-    re <- ranef(object, condVar = TRUE)
-    vc <- VarCorr(object)
+    re <- lme4::ranef(object, condVar = TRUE)
+    vc <- lme4::VarCorr(object)
     for(i in names(flist)) {
       diag_var <- diag(as.matrix(vc[[i]])) - diag(as.matrix(attr(re[[i]], "postVar")[,,1]))
       re[[i]] <- sweep(re[[i]], 2, sqrt(diag_var), FUN = "/")
     }
   } else {
-    re <- ranef(object)
+    re <- lme4::ranef(object)
   }
   
   re
 }
 
 
-#' @export
-#' @import diagonals
-mahalanobis_ranef.lmerMod <- function(object, ...){
-  mats <- HLMdiag:::.lmerMod_matrices(object)
+
+#' @importFrom diagonals split_vector fatdiag
+mahalanobis_ranef.lmerMod <- function(object){
+  ngrps <- 0
+  mats <- .lmerMod_matrices(object)
   
-  n_lev <- length(getME(object, "flist"))
+  n_lev <- length(lme4::getME(object, "flist"))
   
   if(n_lev == 1) {
-    Z <- getME(object, "Z")
-    vc <- VarCorr(object)
+    Z <- lme4::getME(object, "Z")
+    vc <- lme4::VarCorr(object)
     D  <- kronecker(Diagonal(mats$ngrps), bdiag(vc))
     
     eblup <- tcrossprod(D, Z) %*% mats$Vinv %*% resid_marginal(object)
@@ -267,8 +279,9 @@ mahalanobis_ranef.lmerMod <- function(object, ...){
       diagonals::split_vector(size = 4) %>%
       map(~matrix(.x, nrow = 2, byrow = TRUE))
     
-    mah_dist_eblup <- map2_dbl(eblup_lst, vcov_eblup_lst, ~t(.x) %*% MASS::ginv(.y) %*% .x)
+    mah_dist_eblup <- purrr::map2_dbl(eblup_lst, vcov_eblup_lst, ~t(.x) %*% MASS::ginv(.y) %*% .x)
   } else{
     ### Need to check for higher-level models.... D will fail...
   } 
+  return(mah_dist_eblup)
   }

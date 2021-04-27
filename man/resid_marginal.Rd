@@ -7,19 +7,11 @@
 \alias{resid_marginal.lme}
 \title{Marginal residuals}
 \usage{
-\method{resid_marginal}{default}(object, ...)
+\method{resid_marginal}{default}(object, type)
 
-\method{resid_marginal}{lmerMod}(
-  object,
-  type = c("raw", "pearson", "studentized", "cholesky"),
-  ...
-)
+\method{resid_marginal}{lmerMod}(object, type = c("raw", "pearson", "studentized", "cholesky"))
 
-\method{resid_marginal}{lme}(
-  object,
-  type = c("raw", "pearson", "studentized", "cholesky"),
-  ...
-)
+\method{resid_marginal}{lme}(object, type = c("raw", "pearson", "studentized", "cholesky"))
 }
 \arguments{
 \item{object}{an object of class \code{lmerMod} or \code{lme}.}
@@ -41,8 +33,8 @@ four types of marginal residuals can be calculated:
 
 \describe{
   \item{\code{raw}}{\eqn{r = Y - X \hat{beta}}}
-  \item{\code{pearson}}{\eqn{r / \sqrt{diag(\hat{Var}(Y)})}}
-  \item{\code{studentized}}{\eqn{r / \sqrt{diag(\hat{Var}(r)})}}
+  \item{\code{pearson}}{\eqn{r / \sqrt{ diag(\hat{Var}(Y)})}}
+  \item{\code{studentized}}{\eqn{r / \sqrt{ diag(\hat{Var}(r)})}}
   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} r} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(Y)}}
 }
 }

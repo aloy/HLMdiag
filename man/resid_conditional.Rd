@@ -7,18 +7,16 @@
 \alias{resid_conditional.lme}
 \title{Conditional residuals}
 \usage{
-\method{resid_conditional}{default}(object, ...)
+\method{resid_conditional}{default}(object, type)
 
 \method{resid_conditional}{lmerMod}(
   object,
-  type = c("raw", "pearson", "studentized", "cholesky"),
-  ...
+  type = c("raw", "pearson", "studentized", "cholesky")
 )
 
 \method{resid_conditional}{lme}(
   object,
-  type = c("raw", "pearson", "studentized", "cholesky"),
-  ...
+  type = c("raw", "pearson", "studentized", "cholesky")
 )
 }
 \arguments{
@@ -42,7 +40,7 @@ four types of marginal residuals can be calculated:
 \describe{
   \item{\code{raw}}{\eqn{e = Y - X \hat{beta} - Z \hat{b}}}
   \item{\code{pearson}}{\eqn{e / \sqrt{diag(\hat{Var}(Y|b)})}}
-  \item{\code{studentized}}{e / \sqrt{diag(\hat{Var}(e))}}
+  \item{\code{studentized}}{\eqn{e / \sqrt{diag(\hat{Var}(e))}}}
   \item{\code{cholesky}}{\eqn{\hat{C}^{-1} e} where \eqn{\hat{C}\hat{C}^\prime = \hat{Var}(e)}}
 }
 }
