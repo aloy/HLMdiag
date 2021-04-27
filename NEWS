@@ -1,10 +1,10 @@
 Version 0.4.0.9000
 =============
 
-TODO:
-* From chapter 13 of A. Gałecki and T. Burzykowski, Linear Mixed-Effects Models Using R, check on Cholesky residuals for the error terms
-* Modularize the residual function
-
+* Added separate functions to calculate residuals for LMEs. 
+    + `resid_marginal()` calculates (raw, studentized, Pearson, or Cholesky) marginal residuals.
+    + `resid_conditional` calculates (raw, studentized, Pearson, or Cholesky) conditional residuals (i.e., error terms).
+    + `resid_ranef` calculates raw and standardized predicted random effects.
 
 Version 0.4.0
 =============
