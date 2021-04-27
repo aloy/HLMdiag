@@ -51,47 +51,11 @@
 #' fm <- lme4::lmer(Reaction ~ Days + (Days | Subject), sleepstudy)
 #' 
 #' # Subject level deletion and diagnostics
-#' subject.del  <- case_delete(model = fm, level = "Subject", type = "both")
-#' subject.diag <- diagnostics(subject.del)
-#' }
-diagnostics <- function(object){
-  .Deprecated("hlm_influence")
-  type <- attributes(object)$type
-  if(type %in% c("fixef", "both")){
-    ids <- as.vector(rownames(object$fixef.delete, do.NULL = FALSE, prefix = ""))
-  }
-  else{
-    ids <- as.vector(names(object$varcomp.delete))
-    if(is.null(ids)) ids <- 1:length(object$varcomp.delete)
-  }
-  if(type  %in% c("fixef", "both")){
-    if(!is(object$fixef.delete, "matrix")) {
-      res1 <- data.frame(COOKSD = cooks.distance(object),
-                         MDFFITS = mdffits(object),
-                         COVTRACE = covtrace(object),
-                         COVRATIO = covratio(object))
-    }
-    else {
-      res1 <- data.frame(IDS = ids, COOKSD = cooks.distance(object),
-                         MDFFITS = mdffits(object),
-                         COVTRACE = covtrace(object),
-                         COVRATIO = covratio(object))
-    }
-    if(type == "fixef") return(res1)
-  }
-  
-  if(type %in% c("varcomp", "both")){
-    if(!is(object$varcomp.delete, "list")) { res2 <- data.frame(rvc(object)) }
-    else res2 <- data.frame(IDS = ids, rvc(object))
-    
-    if(type == "varcomp") return(res2)
-  }
-  
-  if(type == "both"){
-    res <- list(fixef_diag = res1, varcomp_diag = res2)
-    return(res)
-  } 
-}
+#' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
+#' subject.cooks <- cooks.distance(subject.del)
+#' subject.covtrace <- covtrace(subject.del)
+#' @rdname diagnostics
+NULL
 
 #' @export
 #' @rdname diagnostics
