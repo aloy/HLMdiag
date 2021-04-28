@@ -74,12 +74,7 @@ ggplot(resid_fm2, aes(x = `I(standLRT^2)`, y = .ls.resid)) +
 ```
 
 
-You can still access the `ggplot_qqnorm()` function, but it is no longer exported from the namespace.
-```{r}
-HLMdiag:::ggplot_qqnorm(x = resid_fm2$.ls.resid, line = "rlm")
-```
-
-Q-Q plots are now much easier to create in **ggplot2** directly
+`ggplot_qqnorm()` function is now defunct, Q-Q plots are now much easier to create in **ggplot2** directly than when the package was first created.
 
 ```{r}
 ggplot(resid_fm2, aes(sample = .ls.resid)) +
