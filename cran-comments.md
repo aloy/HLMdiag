@@ -1,12 +1,12 @@
 ## Test environments
-* local OS X install, R 4.0.3
-* local OS X install, R-devel
-* Ubuntu 20.04.1 LTS (on GitHub), R 4.0.3
+* local OS X install, R 4.0.5
+* Windows (on Github), R 4.0.5
+* Ubuntu 20.04.1 LTS (on GitHub), R 4.0.5
 * Ubuntu 20.04.1 LTS (on GitHub), R-devel
-* win-builder (devel and 4.0.3)
+* win-builder (devel and 4.0.5)
 
 ## R CMD check results
-There were no ERRORs, WARNINGs, or NOTEs in R 4.0.3 or R-devel on 
+There were no ERRORs, WARNINGs, or NOTEs in R 4.0.5 or R-devel on 
   OS X or win-builder.
 
 There was one NOTE on Ubuntu (relase and devel):   
@@ -20,4 +20,4 @@ There was one NOTE on Ubuntu (relase and devel):
 ## Downstream dependencies
 
 I have also run R CMD check on downstream dependencies of HLMdiag.
-All packages passed.
+All packages passed. (https://github.com/aloy/HLMdiag/tree/master/revdep).

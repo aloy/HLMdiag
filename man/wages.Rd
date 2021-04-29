@@ -17,8 +17,7 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
 \item{ue.mean}{} \item{ue.person.cen}{} \item{ue1}{} }}
 \source{
   These data are originally from the 1979 National
-  Longitudinal Survey on Youth (NLSY79) that can be found
-  here \url{https://www.bls.gov/nls/nlsy79.htm}.
+  Longitudinal Survey on Youth (NLSY79).
 
   Singer and Willett (2003) used these data for examples in
   chapter (insert info. here) and the data sets used can be
