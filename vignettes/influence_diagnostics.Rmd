@@ -359,8 +359,7 @@ $C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i
 The full refits from the `lme4` and `car` packages both choose to calculate what is MDFFITS in the `HLMdiag` package, and additionally choose to scale by dividing by the variance from each refit model. Those choices explain almost all of the differences between Cook's distance values from the three different packages; additional variation is due to differences in how the new models are fit and coefficients estimated. 
 
 ##References
-Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Models Using lme4.
-  Journal of Statistical Software, 67(1), 1-48. URL http://dx.doi.org/10.18637/jss.v056.i05
+Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Models Using lme4. *Journal of Statistical Software*, 67(1), 1-48.
 
 Christensen R, Pearson L, Johnson W (1992). “Case-Deletion Diagnostics for Mixed Models.” *Technometrics*, 34(1), 38–45.
 
