@@ -1,3 +1,9 @@
+## Resubmission
+This is a resubmission. In this version I have:
+
+* Fixed URL issue.
+
+
 ## Test environments
 * local OS X install, R 4.0.5
 * Windows Server 2008 R2 SP1, R-devel (R-hub), 32/64 bit
