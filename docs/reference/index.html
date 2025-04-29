@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -159,6 +159,12 @@
       <tr>
         
         <td>
+          <p><code><a href="HLMdiag-defunct.html">HLMresid()</a></code> <code><a href="HLMdiag-defunct.html">HLMresid.default()</a></code> <code><a href="HLMdiag-defunct.html">HLMresid.lmerMod()</a></code> <code><a href="HLMdiag-defunct.html">HLMresid.mer()</a></code> <code><a href="HLMdiag-defunct.html">diagnostics()</a></code> <code><a href="HLMdiag-defunct.html">group_qqnorm()</a></code> <code><a href="HLMdiag-defunct.html">ggplot_qqnorm()</a></code> </p>
+        </td>
+        <td><p>Defunct functions in package HLMdiag</p></td>
+      </tr><tr>
+        
+        <td>
           <p><code><a href="HLMdiag-deprecated.html">HLMdiag-deprecated</a></code> </p>
         </td>
         <td><p>Deprecated functions in HLMdiag</p></td>
@@ -168,12 +174,6 @@
           <p><code><a href="HLMdiag.html">HLMdiag</a></code> </p>
         </td>
         <td><p>Diagnostic tools for hierarchical (multilevel) linear models</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="HLMresid.mer.html">HLMresid(<i>&lt;default&gt;</i>)</a></code> <code><a href="HLMresid.mer.html">HLMresid(<i>&lt;mer&gt;</i>)</a></code> <code><a href="HLMresid.mer.html">HLMresid(<i>&lt;lmerMod&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Calculating residuals from HLMs</p></td>
       </tr><tr>
         
         <td>
@@ -225,12 +225,6 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="diagnostics.html">diagnostics()</a></code> <code><a href="diagnostics.html">cooks.distance(<i>&lt;case_delete&gt;</i>)</a></code> <code><a href="diagnostics.html">mdffits(<i>&lt;case_delete&gt;</i>)</a></code> <code><a href="diagnostics.html">covtrace(<i>&lt;case_delete&gt;</i>)</a></code> <code><a href="diagnostics.html">covratio(<i>&lt;case_delete&gt;</i>)</a></code> <code><a href="diagnostics.html">rvc(<i>&lt;case_delete&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Calculating influence diagnostics for HLMs.</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="dotplot_diag.html">dotplot_diag()</a></code> </p>
         </td>
         <td><p>Dot plots for influence diagnostics</p></td>
@@ -243,21 +237,14 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="ggplot_qqnorm.html">ggplot_qqnorm()</a></code> </p>
+          <p><code><a href="hlm_augment.html">hlm_augment()</a></code> </p>
         </td>
-        <td><p>Constructing a normal Q-Q plot</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="group_qqnorm.html">group_qqnorm()</a></code> </p>
-        </td>
-        <td><p>Overlaying normal Q-Q plots</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="hlm_augment.lmerMod.html">hlm_augment(<i>&lt;lmerMod&gt;</i>)</a></code> <code><a href="hlm_augment.lmerMod.html">hlm_augment(<i>&lt;lme&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Calculating residuals and influence diagnostics for HLMs</p></td>
+        <td><p>Calculating residuals and influence diagnostics for HLMs
+
+<code>hlm_augment</code> is used to compute residuals, fitted values, and influence diagnostics for a 
+hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
+and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
+approximations.</p></td>
       </tr><tr>
         
         <td>
@@ -288,6 +275,24 @@
           <p><code><a href="radon.html">radon</a></code> </p>
         </td>
         <td><p>Radon data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="resid_conditional.html">resid_conditional(<i>&lt;default&gt;</i>)</a></code> <code><a href="resid_conditional.html">resid_conditional(<i>&lt;lmerMod&gt;</i>)</a></code> <code><a href="resid_conditional.html">resid_conditional(<i>&lt;lme&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Conditional residuals</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="resid_marginal.html">resid_marginal(<i>&lt;default&gt;</i>)</a></code> <code><a href="resid_marginal.html">resid_marginal(<i>&lt;lmerMod&gt;</i>)</a></code> <code><a href="resid_marginal.html">resid_marginal(<i>&lt;lme&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Marginal residuals</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="resid_ranef.html">resid_ranef()</a></code> </p>
+        </td>
+        <td><p>Random effects residuals</p></td>
       </tr><tr>
         
         <td>

@@ -4,18 +4,16 @@
 \alias{hlm_augment}
 \alias{hlm_augment.default}
 \alias{hlm_augment.lmerMod}
-\title{Calculating residuals and influence diagnostics for HLMs
-
-\code{hlm_augment} is used to compute residuals, fitted values, and influence diagnostics for a 
-hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
-and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
-approximations.}
+\alias{hlm_augment.lme}
+\title{Calculating residuals and influence diagnostics for HLMs}
 \usage{
 hlm_augment(object, ...)
 
 \method{hlm_augment}{default}(object, ...)
 
 \method{hlm_augment}{lmerMod}(object, level = 1, include.ls = TRUE, data = NULL, ...)
+
+\method{hlm_augment}{lme}(object, level = 1, include.ls = TRUE, ...)
 }
 \arguments{
 \item{object}{an object of class \code{lmerMod} or \code{lme}.}
@@ -35,9 +33,7 @@ return tibble. \code{include.ls = FALSE} decreases runtime substantially.}
 `na.action = "na.exclude"`}
 }
 \description{
-Calculating residuals and influence diagnostics for HLMs
-
-\code{hlm_augment} is used to compute residuals, fitted values, and influence diagnostics for a 
+This function is used to compute residuals, fitted values, and influence diagnostics for a 
 hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
 and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
 approximations.

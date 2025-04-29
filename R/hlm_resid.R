@@ -73,7 +73,7 @@ hlm_resid.default <- function(object, ...){
 #' Note that \code{standardize = "semi"} is only implemented for level-1 LS residuals.
 #' @author  Adam Loy \email{loyad01@@gmail.com}, Jack Moran, Jaylin Lowe
 #' @keywords models regression
-#' @seealso \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link{ranef}}
+#' @seealso \code{\link{hlm_augment}}, \code{\link{resid}}, \code{\link[lme4:ranef]{lme4::ranef}}
 #' @references 
 #' Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
 #' linear models. University of California Los Angeles.
@@ -114,7 +114,8 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   if(!is.null(standardize) && !standardize %in% c(FALSE, TRUE, "semi")) {
     stop("standardize can only be specified to be logical or 'semi'.")
   }
-  if(class(attr(object@frame, "na.action")) == "exclude" && is.null(data) && level == 1){
+  if(inherits(attr(object@frame, "na.action"), "exclude") && is.null(data) && level == 1){
+  # if(class(attr(object@frame, "na.action")) == "exclude" && is.null(data) && level == 1){
     stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude")
   }
   if(!is.null(getCall(object)$correlation)){
@@ -123,7 +124,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
   }
 
   # NA action
-  if(class(attr(object@frame, "na.action")) == "exclude"){         #if na.exclude
+  if(inherits(attr(object@frame, "na.action"), "exclude")){         #if na.exclude
     na.index <- which(!rownames(data) %in% rownames(object@frame))
     col.index <- which(colnames(data) %in% colnames(object@frame))
     data <- data[col.index]
@@ -169,7 +170,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     mar.fitted  <- data.frame(.mar.fitted = predict(object, re.form = ~0))
     
     # NA Action
-    if(class(attr(object@frame, "na.action")) == "exclude"){
+    if(inherits(attr(object@frame, "na.action"), "exclude")){
       if(include.ls == TRUE){
         problem_dfs <- cbind(ls.resid, mar.resid)
         na.fix <- data.frame(LSR = rep(NA, length(na.index)), 
@@ -408,7 +409,7 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     model.data <- model.frame(formula(dataform), data)
     
     # NA action
-    if(class(object$na.action) == "exclude"){ # if na.exclude
+    if(inherits(object$na.action, "exclude")){ # if na.exclude
       # fix data frame
       na.index <- which(!rownames(data) %in% rownames(model.data))
       na.fix.data <- data[which(rownames(data) %in% na.index),] %>% 

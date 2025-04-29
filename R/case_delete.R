@@ -156,7 +156,7 @@ case_delete.mer <- function(model, level = 1, type = c("both", "fixef", "varcomp
       data.delete <- split(model@frame, model@frame[, level])
       data.delete <- lapply(data.delete, function(df){
         index <- unique( df[, level ] )
-        if(class(index) != "character") index <- as.character(index)
+        if(!inherits(index, "character")) index <- as.character(index)
         data.delete[[ index ]] <- NULL
         do.call('rbind', data.delete)
       })

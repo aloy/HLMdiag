@@ -66,11 +66,11 @@ rotate_ranef.mer <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   A <- crossprod( pzdl )
   B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
   W <- try( mcrotate(A, B, s) )
-  if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
+  if(inherits(W, "try-error")) {W <- NA} else {W <- as.matrix(W)}
     
   if( .varimax == TRUE) {
     W <- try( varimax(W, normalize = FALSE)$loadings )
-    if( class(W) == "try-error" ) W <- NA 
+    if(inherits(W, "try-error")) W <- NA 
   }
     
   return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
@@ -113,11 +113,11 @@ rotate_ranef.lmerMod <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   A <- crossprod( pzdl )
   B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
   W <- try( mcrotate(A, B, s) )
-  if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
+  if(inherits(W, "try-error")) {W <- NA} else {W <- as.matrix(W)}
   
   if( .varimax == TRUE) {
     W <- try( varimax(W, normalize = FALSE)$loadings )
-    if( class(W) == "try-error" ) W <- NA 
+    if(inherits(W, "try-error")) W <- NA 
   }
   
   return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
@@ -176,11 +176,11 @@ rotate_ranef.lme <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
   A <- crossprod( pzdl )
   B <- t(.L) %*% D %*% t(Z) %*% P %*% Z %*% D %*% .L ## diagnostic se
   W <- try( mcrotate(A, B, s) )
-  if( class(W) == "try-error") {W <- NA} else {W <- as.matrix(W)}
+  if(inherits(W, "try-error")) {W <- NA} else {W <- as.matrix(W)}
   
   if( .varimax == TRUE) {
     W <- try( varimax(W, normalize = FALSE)$loadings )
-    if( class(W) == "try-error" ) W <- NA 
+    if(inherits(W, "try-error")) W <- NA 
   }
   
   return( as.numeric( t(W) %*% as.numeric( t(.L) %*% bvec ) ) )
@@ -230,7 +230,7 @@ rotate_ranef.lme <- function(.mod, .L, s = NULL, .varimax = FALSE, ...) {
       }
     }
   }
-  X <- if (class(m$call$fixed) == "name" && !is.null(m$data$X)) {
+  X <- if(inherits(m$call$fixed, "name") && !is.null(m$data$X)) {
     m$data$X
   }
   else {

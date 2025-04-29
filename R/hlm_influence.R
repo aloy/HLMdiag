@@ -73,7 +73,8 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
   }
   
   na.action <- attr(model@frame, "na.action")
-  if(class(na.action) == "exclude" & is.null(data)) {
+  if(inherits(na.action, "exclude") & is.null(data)) {
+  # if(class(na.action) == "exclude" & is.null(data)) {
     stop("Please provide the data frame used to fit the model. This is necessary when the na.action is set to na.exclude.")
   }
   
@@ -106,7 +107,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)
-      if (class(na.action) == "exclude") {
+      if (inherits(na.action, "exclude")) {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
       infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
@@ -142,7 +143,7 @@ hlm_influence.lmerMod <- function(model, level = 1, delete = NULL, approx = TRUE
     
     if (level == 1) {
       infl.tbl <- tibble::add_column(infl.tbl, model@frame, .before = 1)  
-      if (class(na.action) == "exclude") {
+      if (inherits(na.action, "exclude")) {
         infl.tbl <- .lmerMod_add_NArows(model, infl.tbl, na.action, data)
       }
       infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
@@ -218,7 +219,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
       
       infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1) 
       
-      if (class(na.action) == "exclude") {
+      if (inherits(na.action, "exclude")) {
         infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
       }
       infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)
@@ -261,7 +262,7 @@ hlm_influence.lme <- function(model, level = 1, delete = NULL, approx = TRUE, le
         as.data.frame()
       new.data <- model.frame(formula(dataform), data.fixed)
       infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)  
-      if (class(na.action) == "exclude") {
+      if (inherits(na.action, "exclude")) {
         infl.tbl <- .lme_add_NArows(model, infl.tbl, na.action, org.data = model$data, fixed.data = new.data)
       }
       infl.tbl <- tibble::add_column(infl.tbl, id = 1:nrow(infl.tbl), .before = 1)

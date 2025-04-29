@@ -2,6 +2,7 @@
 % Please edit documentation in R/help.R
 \docType{package}
 \name{HLMdiag}
+\alias{HLMdiag-package}
 \alias{HLMdiag}
 \alias{package-HLMdiag}
 \title{Diagnostic tools for hierarchical (multilevel) linear models}
@@ -63,5 +64,23 @@ HLMdiag also strives to make graphical assessment easier in the
 (\code{\link{dotplot_diag}}), grouped Q-Q plots (\code{\link{group_qqnorm}}),
 and Q-Q plots that combine the functionality of \code{\link{qqnorm}} and
 \code{\link{qqline}} (\code{\link{ggplot_qqnorm}}).
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/aloy/HLMdiag}
+  \item Report bugs at \url{https://github.com/aloy/HLMdiag/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Adam Loy \email{loyad01@gmail.com}
+
+Authors:
+\itemize{
+  \item Jaylin Lowe
+  \item Jack Moran
+}
+
 }
 \keyword{package}

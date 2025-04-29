@@ -85,7 +85,7 @@ easily conduct an upward residual analysis during model exploration/checking." /
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -261,7 +261,7 @@ Objects into Tidy Tibbles. R package version 0.5.6.
 <a href='https://CRAN.R-project.org/package=broom'>https://CRAN.R-project.org/package=broom</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><code><a href='hlm_augment.lmerMod.html'>hlm_augment</a></code>, <code><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></code>, <code><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef</a></code></p></div>
+    <div class='dont-index'><p><code><a href='hlm_augment.html'>hlm_augment</a></code>, <code><a href='https://rdrr.io/r/stats/residuals.html'>resid</a></code>, <code><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef</a></code></p></div>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
 
     <p>Adam Loy <a href='mailto:loyad01@gmail.com'>loyad01@gmail.com</a>, Jack Moran, Jaylin Lowe</p>
@@ -287,7 +287,7 @@ Objects into Tidy Tibbles. R package version 0.5.6.
 #&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     8     290.     7 308     -</span><span style='color: #BB0000;'>101.</span><span>      391.   -</span><span style='color: #BB0000;'>106.</span><span>         397.     -</span><span style='color: #BB0000;'>34.5</span><span> 
 #&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     9     431.     8 308       19.6     411.     12.3        418.      95.4 
 #&gt; </span><span style='color: #BCBCBC;'>10</span><span>    10     466.     9 308       35.7     431.     26.3        440.     121.  
-#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 1 more variable: .mar.fitted </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'><span class='va'>fm.lme.std1</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lme</span>, standardize <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'>## std level-1 and mar resids</span>
+#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 1 more variable: .mar.fitted &lt;dbl&gt;</span><span></div><div class='input'><span class='va'>fm.lme.std1</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lme</span>, standardize <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span> <span class='co'>## std level-1 and mar resids</span>
 <span class='va'>fm.lme.std1</span>
 </div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 180 x 10</span><span>
 #&gt;       id Reaction  Days Subject .std.resid .fitted .std.ls.resid .ls.fitted
@@ -302,8 +302,8 @@ Objects into Tidy Tibbles. R package version 0.5.6.
 #&gt; </span><span style='color: #BCBCBC;'> 8</span><span>     8     290.     7 308         -</span><span style='color: #BB0000;'>3.95</span><span>     391.        -</span><span style='color: #BB0000;'>2.45</span><span>        397.
 #&gt; </span><span style='color: #BCBCBC;'> 9</span><span>     9     431.     8 308          0.766    411.         0.296       418.
 #&gt; </span><span style='color: #BCBCBC;'>10</span><span>    10     466.     9 308          1.39     431.         0.680       440.
-#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 2 more variables: .chol.mar.resid </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span style='color: #949494;'>,</span><span>
-#&gt; </span><span style='color: #949494;'>#   .mar.fitted </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span></div><div class='input'>
+#&gt; </span><span style='color: #949494;'># … with 170 more rows, and 2 more variables: .chol.mar.resid &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   .mar.fitted &lt;dbl&gt;</span><span></div><div class='input'>
 <span class='co'># level-2 residuals</span>
 <span class='va'>fm.lmer.res2</span> <span class='op'>&lt;-</span> <span class='fu'>hlm_resid</span><span class='op'>(</span><span class='va'>fm.lmer</span>, level <span class='op'>=</span> <span class='st'>"Subject"</span><span class='op'>)</span> <span class='co'>## level-2 ranefs</span>
 <span class='va'>fm.lmer.res2</span>

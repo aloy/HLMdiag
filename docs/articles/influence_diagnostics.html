@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -89,13 +89,13 @@
 
       
 
-      </header><script src="influence_diagnostics_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="influence_diagnostics_files/header-attrs-2.7/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Influence Diagnostics</h1>
                         <h4 class="author">Jaylin Lowe, Jack Moran, Adam Loy</h4>
             
-            <h4 class="date">2021-01-16</h4>
+            <h4 class="date">2021-05-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/aloy/HLMdiag/blob/master/vignettes/influence_diagnostics.Rmd"><code>vignettes/influence_diagnostics.Rmd</code></a></small>
       <div class="hidden name"><code>influence_diagnostics.Rmd</code></div>
@@ -117,7 +117,7 @@
 <p>The <code>HLMdiag</code> package provides functionality to examine diagnostics for hierarchical linear models, including residuals values and influence diagnostics. This vignette aims to:</p>
 <ul>
 <li>inform users how to use the new function <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code>, which provides any easy way to obtain multiple influence diagnostics in one tibble</li>
-<li>inform users how to use the new function <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>, which combines <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> to return influence diagnostics and residuals</li>
+<li>inform users how to use the new function <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code>, which combines <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> to return influence diagnostics and residuals</li>
 <li>introduce new functionality for <code>lme</code> created from the <code>nlme</code> package</li>
 <li>compare the differences between Cook’s distances values returned by <code>HLMdiag</code> and those returned by the <code>lme4</code> and <code>car</code> packages</li>
 </ul>
@@ -415,9 +415,9 @@
 <div id="hlm_augment-function" class="section level2">
 <h2 class="hasAnchor">
 <a href="#hlm_augment-function" class="anchor"></a>hlm_augment function</h2>
-<p>The <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> function combines the <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> and <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. For example, we can obtain residuals and influence diagnostics at once for all students in the <code>class</code> data set with the following:</p>
+<p>The <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code> function combines the <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> and <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> functions to return a tibble containing information about the residuals and the influence diagnostics appended to the data. For example, we can obtain residuals and influence diagnostics at once for all students in the <code>class</code> data set with the following:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">aug</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_augment.lmerMod.html">hlm_augment</a></span><span class="op">(</span><span class="va">class.lmer</span>, level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="va">aug</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hlm_augment.html">hlm_augment</a></span><span class="op">(</span><span class="va">class.lmer</span>, level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
 <pre><code>#&gt; # A tibble: 1,190 x 20
 #&gt;       id mathgain mathkind   sex minority   ses housepov schoolid classid
 #&gt;    &lt;dbl&gt;    &lt;int&gt;    &lt;int&gt; &lt;int&gt;    &lt;int&gt; &lt;dbl&gt;    &lt;dbl&gt;    &lt;int&gt;   &lt;int&gt;
@@ -456,8 +456,8 @@
 #&gt;  9 0.000129      0.00401     1.00           0.0801
 #&gt; 10 0.00108       0.00147     1.00           0.0778
 #&gt; # … with 1,180 more rows</code></pre>
-<p>This is useful for inspecting residuals values and influence diagnostics values at the same time. However, <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> lacks some of the functionality that <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> have. The <code>delete</code> and <code>approx</code> parameters available for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> are not available in <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The <code>standardize</code> parameter from <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> is also not included, so <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> should be used instead if this functionality is desired. For more information about available functionality in <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, see the <code>hlm_resid</code> vignette.</p>
-<p><code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> is especially useful for inspecting residual values of observations with relatively high influence diagnostics values, or vice versa.</p>
+<p>This is useful for inspecting residuals values and influence diagnostics values at the same time. However, <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code> lacks some of the functionality that <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> have. The <code>delete</code> and <code>approx</code> parameters available for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> are not available in <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code>, so the function will always use a one step approximation and delete all observations or groups instead of a selected few. The <code>standardize</code> parameter from <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> is also not included, so <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code> should be used instead if this functionality is desired. For more information about available functionality in <code><a href="../reference/hlm_resid.default.html">hlm_resid()</a></code>, see the <code>hlm_resid</code> vignette.</p>
+<p><code><a href="../reference/hlm_augment.html">hlm_augment()</a></code> is especially useful for inspecting residual values of observations with relatively high influence diagnostics values, or vice versa.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">aug2</span> <span class="op">&lt;-</span> <span class="va">aug</span> <span class="op">%&gt;%</span>
   <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">cooksd</span><span class="op">)</span><span class="op">)</span></code></pre></div>
@@ -477,13 +477,13 @@
 #&gt;    .fitted .ls.resid .ls.fitted .mar.resid .mar.fitted cooksd mdffits covtrace
 #&gt;      &lt;dbl&gt;     &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
 #&gt;  1  143.    4.04e+ 1      213.       117.       136.   0.0536  0.0527  0.0172 
-#&gt;  2   47.0   0.           -110       -177.        66.8  0.0265  0.0264  0.00406
-#&gt;  3  141.    0.            203         65.9      137.   0.0256  0.0250  0.0250 
+#&gt;  2   47.0   0            -110       -177.        66.8  0.0265  0.0264  0.00406
+#&gt;  3  141.    0             203         65.9      137.   0.0256  0.0250  0.0250 
 #&gt;  4    4.67 -2.79e+ 1      -56.1      -81.9       -2.08 0.0245  0.0242  0.0125 
 #&gt;  5   43.4  -2.66e-15      138         98.1       39.9  0.0221  0.0219  0.00988
 #&gt;  6  111.   -6.66e-15      218        125.        93.1  0.0202  0.0200  0.00702
-#&gt;  7  136.    0.            197         62.3      135.   0.0194  0.0190  0.0198 
-#&gt;  8  154.    0.            214         80.4      134.   0.0187  0.0183  0.0195 
+#&gt;  7  136.    0             197         62.3      135.   0.0194  0.0190  0.0198 
+#&gt;  8  154.    0             214         80.4      134.   0.0187  0.0183  0.0195 
 #&gt;  9   59.8   2.78e+ 1      119.       109.        38.3  0.0148  0.0147  0.00797
 #&gt; 10   90.8  -2.60e+ 1       37.0      -91.1      102.   0.0132  0.0131  0.00825
 #&gt;    covratio leverage.overall
@@ -504,12 +504,12 @@
 <div id="lme-objects-from-nlme-package" class="section level2">
 <h2 class="hasAnchor">
 <a href="#lme-objects-from-nlme-package" class="anchor"></a>lme objects from nlme package</h2>
-<p>Previously, only the individual one step approximation influence functions worked on <code>lme</code> models fit using the <code>nlme</code> package. However, <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> can also be used on <code>lme</code> objects, as can <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>. This allows the user to calculate influence diagnostics for <code>lme</code> models by fulling refitting the model using the <code>approx = FALSE</code> argument.</p>
+<p>Previously, only the individual one step approximation influence functions worked on <code>lme</code> models fit using the <code>nlme</code> package. However, <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> can also be used on <code>lme</code> objects, as can <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code>. This allows the user to calculate influence diagnostics for <code>lme</code> models by fulling refitting the model using the <code>approx = FALSE</code> argument.</p>
 <div id="important-differences-for-lme-objects" class="section level3">
 <h3 class="hasAnchor">
 <a href="#important-differences-for-lme-objects" class="anchor"></a>Important differences for lme objects</h3>
-<p>In most cases, using a <code>lme</code> object for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> is identical to their usage with <code>lmerMod</code> objects from <code>lme4</code>. However, there are a few notable exceptions.</p>
-<p>For both <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code>, levels should be specified by names that appear in <code>model@flist</code>. For the second level of a three level <code>lmerMod</code> model, this usually looks like “level2:level3” where level2 and level3 are the names of the second and third level variables, respectively. However, for a <code>lme</code> model, levels should be specified by names that appear in <code>model$groups</code>. For example, we can obtain influence diagnostics for each classroom from the <code>class</code> data set in the following way:</p>
+<p>In most cases, using a <code>lme</code> object for <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> or <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code> is identical to their usage with <code>lmerMod</code> objects from <code>lme4</code>. However, there are a few notable exceptions.</p>
+<p>For both <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code>, levels should be specified by names that appear in <code>model@flist</code>. For the second level of a three level <code>lmerMod</code> model, this usually looks like “level2:level3” where level2 and level3 are the names of the second and third level variables, respectively. However, for a <code>lme</code> model, levels should be specified by names that appear in <code>model$groups</code>. For example, we can obtain influence diagnostics for each classroom from the <code>class</code> data set in the following way:</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">class.lme</span> <span class="op">&lt;-</span> <span class="fu">nlme</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">mathgain</span> <span class="op">~</span> <span class="va">mathkind</span> <span class="op">+</span> <span class="va">sex</span> <span class="op">+</span> <span class="va">minority</span> <span class="op">+</span> <span class="va">ses</span> <span class="op">+</span> <span class="va">housepov</span>, random <span class="op">=</span> <span class="op">~</span> <span class="fl">1</span><span class="op">|</span><span class="va">schoolid</span><span class="op">/</span><span class="va">classid</span>, data <span class="op">=</span> <span class="va">classroom</span><span class="op">)</span>
 <span class="fu"><a href="../reference/hlm_influence.default.html">hlm_influence</a></span><span class="op">(</span><span class="va">class.lme</span>, level <span class="op">=</span> <span class="st">"classid"</span><span class="op">)</span>
@@ -542,7 +542,7 @@
 <span class="co">#&gt;      &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 0.000561 0.000557   0.0381     1.04</span></code></pre></div>
 <p>Note that both examples specify units for deletion in the same way they are specified in <code>model@flist</code> (<code>lmerMod</code> models) or <code>model$groups</code> (<code>lme</code> models).</p>
-<p>Additionally, <code>lmerMod</code> models require that the <code>data</code> argument is passed into <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> when <code>na.action = "na.exclude"</code> during the model fitting process. However, this is unnecessary for <code>lme</code> models.</p>
+<p>Additionally, <code>lmerMod</code> models require that the <code>data</code> argument is passed into <code><a href="../reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="../reference/hlm_augment.html">hlm_augment()</a></code> when <code>na.action = "na.exclude"</code> during the model fitting process. However, this is unnecessary for <code>lme</code> models.</p>
 </div>
 </div>
 <div id="cooks-distance-values-comparison-to-other-packages" class="section level2">
@@ -557,7 +557,7 @@
 <p>Notice that the difference in the change in the parameter estimates is scaled by the estimated covariance matrix of the original parameter estimates. We can calculate the Cook’s distance values in the <code>HLMdiag</code> package by first using the <code><a href="../reference/case_delete.default.html">case_delete()</a></code> function, followed by the <code><a href="../reference/mdffits.default.html">cooks.distance()</a></code> function.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">hlm_case</span> <span class="op">&lt;-</span> <span class="fu">HLMdiag</span><span class="fu">:::</span><span class="fu"><a href="../reference/case_delete.default.html">case_delete.lmerMod</a></span><span class="op">(</span><span class="va">class.lmer</span><span class="op">)</span>
-<span class="va">hlm_cd_full</span> <span class="op">&lt;-</span> <span class="fu">HLMdiag</span><span class="fu">:::</span><span class="fu"><a href="../reference/diagnostics.html">cooks.distance.case_delete</a></span><span class="op">(</span><span class="va">hlm_case</span><span class="op">)</span>
+<span class="va">hlm_cd_full</span> <span class="op">&lt;-</span> <span class="fu">HLMdiag</span><span class="fu">:::</span><span class="fu">cooks.distance.case_delete</span><span class="op">(</span><span class="va">hlm_case</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">hlm_cd_full</span><span class="op">)</span>
 <span class="co">#&gt; [1] 9.327238e-04 1.415243e-03 3.316859e-04 2.282399e-04 1.797497e-04</span>
 <span class="co">#&gt; [6] 6.968432e-07</span></code></pre></div>
@@ -623,7 +623,7 @@
 <p>The values obtained from <code>lme4</code> match those from <code>car</code>, meaning that <code>lme4</code> is also scaling the estimates by dividing by the estimated variance of each refit model, in addition to using the estimated covariance matrix from the deletion estimates, rather than the original estimates. Therefore, the <code>lme4</code> package is also using this formula to calculate Cook’s distance:</p>
 <p><span class="math inline">\(C_i(\hat{\beta}) = \frac{1}{p\hat{\sigma_{i}}^2}{(\hat{\beta} - \hat{\beta}_{(i)})}^\top\widehat{\mathrm{VAR}(\hat{\beta}_{(i)})}^{-1}(\hat{\beta} - \hat{\beta}_{(i)})\)</span></p>
 <p>The full refits from the <code>lme4</code> and <code>car</code> packages both choose to calculate what is MDFFITS in the <code>HLMdiag</code> package, and additionally choose to scale by dividing by the variance from each refit model. Those choices explain almost all of the differences between Cook’s distance values from the three different packages; additional variation is due to differences in how the new models are fit and coefficients estimated.</p>
-<p>##References Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Models Using lme4. Journal of Statistical Software, 67(1), 1-48. URL <a href="http://dx.doi.org/10.18637/jss.v056.i05" class="uri">http://dx.doi.org/10.18637/jss.v056.i05</a></p>
+<p>##References Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Models Using lme4. <em>Journal of Statistical Software</em>, 67(1), 1-48.</p>
 <p>Christensen R, Pearson L, Johnson W (1992). “Case-Deletion Diagnostics for Mixed Models.” <em>Technometrics</em>, 34(1), 38–45.</p>
 <p>Fox J, Weisburg S (2019). A {R} Companion to Applied Regression, Third Addition. Thousand Oaks CA: Sage. URL: <a href="https://socialsciences.mcmaster.ca/jfox/Books/Companion/" class="uri">https://socialsciences.mcmaster.ca/jfox/Books/Companion/</a></p>
 <p>Loy A, Hofmann H (2014). HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R. <em>Journal of Statistical Software</em>, 56(5), 1-28.</p>

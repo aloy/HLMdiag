@@ -43,7 +43,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">HLMdiag</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.4.0.9000</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.5.0</span>
       </span>
     </div>
 
@@ -125,7 +125,7 @@
 <p>The residual functions in <code>HLMdiag</code> allow the analyst to estimate all types of residuals defined for a hierarchical linear model. They provide access to level-1, higher-level, and marginal residuals and use both Least Squares and Empirical Bayes estimation methods to provide the analyst with more choices in evaluating a model. The <code>hlm_resid</code> method is inspired by the <code>augment()</code> function in <code>broom</code> and appends all types of residuals and fitted values for a given level to the model frame; however, individual types of residuals can be calculated with the <code>pull_resid</code> method.</p>
 <p>The functions available for residual analysis in <code>HLMdiag</code> are: *<code><a href="reference/hlm_resid.default.html">hlm_resid()</a></code> calculates all residual diagnostics for a given level, returning a tibble with the residuals and fitted values appended to the original model frame.</p>
 <p>*<code><a href="reference/pull_resid.default.html">pull_resid()</a></code> calculates a specified type of residual, returning a vector and prioritizing computational efficiency.</p>
-<p>*<code><a href="reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> combines <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="reference/hlm_resid.default.html">hlm_resid()</a></code> to return a tibble with residual values and influence diagnostics appended to the original model frame.</p>
+<p>*<code><a href="reference/hlm_augment.html">hlm_augment()</a></code> combines <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="reference/hlm_resid.default.html">hlm_resid()</a></code> to return a tibble with residual values and influence diagnostics appended to the original model frame.</p>
 <div id="influence-analysis" class="section level3">
 <h3 class="hasAnchor">
 <a href="#influence-analysis" class="anchor"></a>Influence Analysis</h3>
@@ -149,13 +149,13 @@
 <li>
 <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code> calculates all of the influence diagnostics, returning a tibble with the influence values appended to the original model frame.</li>
 <li>
-<code><a href="reference/hlm_augment.lmerMod.html">hlm_augment()</a></code> combines <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="reference/hlm_resid.default.html">hlm_resid()</a></code> to return a tibble with residual values and influence diagnostics appended to the original model frame.</li>
+<code><a href="reference/hlm_augment.html">hlm_augment()</a></code> combines <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code> and <code><a href="reference/hlm_resid.default.html">hlm_resid()</a></code> to return a tibble with residual values and influence diagnostics appended to the original model frame.</li>
 </ul>
 </div>
 <div id="graphical-tools" class="section level3">
 <h3 class="hasAnchor">
 <a href="#graphical-tools" class="anchor"></a>Graphical Tools</h3>
-<p><code>HLMdiag</code> provides the function <code><a href="reference/dotplot_diag.html">dotplot_diag()</a></code>, which creates dotplots to visually represent influence diagnostics. It is especially useful when used with the values returned by <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code>. <code>HLMdiag</code> also provides grouped Q-Q plots (<code><a href="reference/group_qqnorm.html">group_qqnorm()</a></code>), and Q-Q plots that combine the functionality of qqnorm and qqline (<code><a href="reference/ggplot_qqnorm.html">ggplot_qqnorm()</a></code>).</p>
+<p><code>HLMdiag</code> provides the function <code><a href="reference/dotplot_diag.html">dotplot_diag()</a></code>, which creates dotplots to visually represent influence diagnostics. It is especially useful when used with the values returned by <code><a href="reference/hlm_influence.default.html">hlm_influence()</a></code>. <code>HLMdiag</code> also provides grouped Q-Q plots (<code><a href="reference/HLMdiag-defunct.html">group_qqnorm()</a></code>), and Q-Q plots that combine the functionality of qqnorm and qqline (<code><a href="reference/HLMdiag-defunct.html">ggplot_qqnorm()</a></code>).</p>
 </div>
 </div>
 <div id="usage" class="section level2">

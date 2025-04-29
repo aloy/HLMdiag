@@ -78,8 +78,7 @@
 #'  model.matrix ppoints qnorm qt quantile reorder resid rstandard
 #'  varimax vcov cooks.distance covratio as.formula getCall na.exclude
 #'  predict sigma
-#' @docType package
 #' @name HLMdiag
 #' @aliases HLMdiag package-HLMdiag
 #' @keywords package
-NULL
+"_PACKAGE"

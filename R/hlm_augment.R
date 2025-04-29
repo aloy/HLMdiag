@@ -1,23 +1,24 @@
-#'@title Calculating residuals and influence diagnostics for HLMs
+#' Calculating residuals and influence diagnostics for HLMs
 #'
-#'\code{hlm_augment} is used to compute residuals, fitted values, and influence diagnostics for a 
-#'hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
-#'and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
-#'approximations. 
+#' 
+#' This function is used to compute residuals, fitted values, and influence diagnostics for a 
+#' hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
+#' and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
+#' approximations. 
 #'
-#'@export
-#'@param object an object of class \code{lmerMod} or \code{lme}.
-#'@param level which residuals should be extracted and what cases should be deleted for influence diagnostics.
+#' @export
+#' @param object an object of class \code{lmerMod} or \code{lme}.
+#' @param level which residuals should be extracted and what cases should be deleted for influence diagnostics.
 #'If \code{level = 1} (default), then within-group (case-level) residuals are returned and influence diagnostics
 #'are calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
 #'factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.
 #'This will return between-group residuals and influence diagnostics calculated for each group. 
-#'@param include.ls a logical indicating if LS residuals should be included in the
+#' @param include.ls a logical indicating if LS residuals should be included in the
 #'return tibble. \code{include.ls = FALSE} decreases runtime substantially.
-#'@param data the original data frame passed to `lmer`. This is only necessary for `lmerMod` models where
+#' @param data the original data frame passed to `lmer`. This is only necessary for `lmerMod` models where
 #'`na.action = "na.exclude"`
-#'@param ... currently not used
-#'@details The \code{hlm_augment} function combines functionality from \code{hlm_resid}
+#' @param ... currently not used
+#' @details The \code{hlm_augment} function combines functionality from \code{hlm_resid}
 #'and \code{hlm_influence} for a simpler way of obtaining residuals and influence 
 #'diagnostics. Please see \code{?hlm_resid} and \code{?hlm_influence} for additional information 
 #'about the returned values.
@@ -39,6 +40,7 @@ hlm_augment.default <- function(object, ...){
 }
 
 
+
 #' @export
 #' @method hlm_augment lmerMod
 #' @rdname hlm_augment
@@ -55,10 +57,10 @@ hlm_augment.lmerMod <- function(object, level = 1, include.ls = TRUE, data = NUL
   return(aug.tibble)
 }
 
-#'@export
-#'@rdname hlm_augment.lmerMod
-#'@method hlm_augment lme
-#'@aliases hlm_augment
+#' @export
+#' @rdname hlm_augment
+#' @method hlm_augment lme
+#' @aliases hlm_augment
 hlm_augment.lme <- function(object, level = 1, include.ls = TRUE, ...) {
   residuals <- hlm_resid(object, level = level, include.ls = include.ls)
   infl <- hlm_influence(object, level = level)

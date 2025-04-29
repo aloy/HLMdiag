@@ -54,7 +54,8 @@
 #' subject.del  <- case_delete(model = fm, group = "Subject", type = "both")
 #' subject.cooks <- cooks.distance(subject.del)
 #' subject.covtrace <- covtrace(subject.del)
-#' @rdname diagnostics
+#' }
+#' @name diagnostics
 NULL
 
 #' @export
@@ -168,7 +169,7 @@ covratio.case_delete <- function(object, ...){
 #' @param ... do not use
 #' @method rvc case_delete
 rvc.case_delete <- function(object, ...){
-	if(class(object$varcomp.delete) == "list") {
+	if(inherits(object$varcomp.delete, "list")) {
 	  res <- do.call('rbind', lapply(object$varcomp.delete, function(x){ (x / object$varcomp.original) - 1}))
 	}
   else{
