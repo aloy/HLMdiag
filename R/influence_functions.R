@@ -1,66 +1,66 @@
 #' @export
-leverage <- function(object, ...){
-  UseMethod("leverage", object)
+leverage <- function(model, ...){
+  UseMethod("leverage", model)
 }
 
 #' @export
 #' @rdname leverage.mer
 #' @method leverage default
-leverage.default <- function(object, ...){
-  stop(paste("there is no leverage() method for objects of class",
-             paste(class(object), collapse=", ")))
+leverage.default <- function(model, ...){
+  stop(paste("there is no leverage() method for models of class",
+             paste(class(model), collapse=", ")))
 }
 
 #' @export
-covratio <- function(object, ...){
-  UseMethod("covratio", object)
+covratio <- function(model, ...){
+  UseMethod("covratio", model)
 }
 
 #' @export
 #' @rdname covratio
 #' @method covratio default
-covratio.default <- function(object, ...){
-  stop(paste("there is no covratio() method for objects of class",
-             paste(class(object), collapse=", ")))
+covratio.default <- function(model, ...){
+  stop(paste("there is no covratio() method for models of class",
+             paste(class(model), collapse=", ")))
 }
 
 #' @export
-covtrace <- function(object, ...){
-  UseMethod("covtrace", object)
+covtrace <- function(model, ...){
+  UseMethod("covtrace", model)
 }
 
 #' @export
 #' @rdname covratio
 #' @method covtrace default
-covtrace.default <- function(object, ...){
-  stop(paste("there is no covtrace() method for objects of class",
-             paste(class(object), collapse=", ")))
+covtrace.default <- function(model, ...){
+  stop(paste("there is no covtrace() method for models of class",
+             paste(class(model), collapse=", ")))
 }
 
 #' @export
-mdffits <- function(object, ...){
-  UseMethod("mdffits", object)
+mdffits <- function(model, ...){
+  UseMethod("mdffits", model)
 }
 
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits default
-mdffits.default <- function(object, ...){
-  stop(paste("there is no mdffits() method for objects of class",
-             paste(class(object), collapse=", ")))
+mdffits.default <- function(model, ...){
+  stop(paste("there is no mdffits() method for models of class",
+             paste(class(model), collapse=", ")))
 }
 
 #' @export
-rvc <- function(object, ...){
-  UseMethod("rvc", object)
+rvc <- function(model, ...){
+  UseMethod("rvc", model)
 }
 
 #' @export
 #' @rdname rvc.mer
 #' @method rvc default
-rvc.default <- function(object, ...){
-  stop(paste("there is no rvc() method for objects of class",
-             paste(class(object), collapse=", ")))
+rvc.default <- function(model, ...){
+  stop(paste("there is no rvc() method for models of class",
+             paste(class(model), collapse=", ")))
 }
 
 
@@ -72,7 +72,7 @@ rvc.default <- function(object, ...){
 #' @export
 #' @method leverage mer
 #' @aliases leverage
-#' @param object fitted object of class \code{mer} of \code{lmerMod}
+#' @param model fitted model object of class \code{mer} of \code{lmerMod}
 #' @param level the level at which the leverage should be calculated: either
 #'   1 for observation level leverage (default) or the name of the grouping factor 
 #'   (as defined in \code{flist} of the \code{mer} object) for group level
@@ -128,38 +128,38 @@ rvc.default <- function(object, ...){
 #' # Group level leverage
 #' lev2 <- leverage(fm, level = "Subject")
 #' head(lev2)
-leverage.mer <- function(object, level = 1, ...) {
+leverage.mer <- function(model, level = 1, ...) {
   .Deprecated("leverage.lmerMod")
-  if(!is(object, "mer")) stop("object must be of class 'mer'")
-  if(object@dims[["nest"]] == 0) {
+  if(!is(model, "mer")) stop("model must be of class 'mer'")
+  if(model@dims[["nest"]] == 0) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(lme4::getME(object, "flist")))) {
+  if(!level %in% c( 1, names(lme4::getME(model, "flist")))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
-  if(!object@dims["LMM"]){
+  if(!model@dims["LMM"]){
     stop("leverage is currently not implemented for GLMMs or NLMMs.")
   }
   
-  X <- lme4::getME(object, "X")
-  # Z <- BlockZ(object)
+  X <- lme4::getME(model, "X")
+  # Z <- BlockZ(model)
   
   n     <- nrow(X)
-  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
-  ngrps <- unname( summary(object)@ngrps )
+  nt    <- model@dims[["nt"]]  # number of random-effects terms in the model
+  ngrps <- unname( summary(model)@ngrps )
   
-  vc   <- lme4::VarCorr(object)
+  vc   <- lme4::VarCorr(model)
   # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
-  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(object, "A") )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
   
   V      <- ZDZt + R
   V.chol <- chol( V )
   Vinv   <- chol2inv( V.chol )
   
-  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(object, "RX"))
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(model, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
   H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
@@ -173,7 +173,7 @@ leverage.mer <- function(object, level = 1, ...) {
                        ranef =  diag.H2, ranef.uc = diag.H2.uc)
 #     class(lev1) <- "leverage"
   } else {
-    flist   <- data.frame( lme4::getME(object, "flist")[, level] )
+    flist   <- data.frame( lme4::getME(model, "flist")[, level] )
     
     grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
     grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
@@ -193,36 +193,36 @@ leverage.mer <- function(object, level = 1, ...) {
 #' @export
 #' @rdname leverage.mer
 #' @method leverage lmerMod
-leverage.lmerMod <- function(object, level = 1, ...) {
-  if(!isNestedModel(object)) {
+leverage.lmerMod <- function(model, level = 1, ...) {
+  if(!isNestedModel(model)) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(lme4::getME(object, "flist")))) {
+  if(!level %in% c( 1, names(lme4::getME(model, "flist")))) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
-  if(!lme4::isLMM(object)){
+  if(!lme4::isLMM(model)){
     stop("leverage is currently not implemented for GLMMs or NLMMs.")
   }
   
-  X <- lme4::getME(object, "X")
-  # Z <- BlockZ(object)
+  X <- lme4::getME(model, "X")
+  # Z <- BlockZ(model)
   
   n     <- nrow(X)
-#  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
-  ngrps <- unname( summary(object)$ngrps )
+#  nt    <- model@dims[["nt"]]  # number of random-effects terms in the model
+  ngrps <- unname( summary(model)$ngrps )
   
-  vc   <- lme4::VarCorr(object)
+  vc   <- lme4::VarCorr(model)
   # D  <- kronecker( Diagonal(ngrps), bdiag(vc) )
-  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(object, "A") )
+  ZDZt <- attr(vc, "sc")^2 * crossprod( lme4::getME(model, "A") )
   R    <- Diagonal( n = n, x = attr(vc, "sc")^2 )
   
   V      <- ZDZt + R
   V.chol <- chol( V )
   Vinv   <- chol2inv( V.chol )
   
-  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(object, "RX"))
+  xvix.inv <- attr(vc, "sc")^2 * chol2inv(lme4::getME(model, "RX"))
   
   H1 <- X %*% xvix.inv %*% t(X) %*% Vinv
   H2 <- ZDZt %*% Vinv %*% (Diagonal( n = n ) - H1)
@@ -236,7 +236,7 @@ leverage.lmerMod <- function(object, level = 1, ...) {
                        ranef =  diag.H2, ranef.uc = diag.H2.uc)
     #     class(lev1) <- "leverage"
   } else {
-    flist   <- data.frame( lme4::getME(object, "flist")[[level]] )
+    flist   <- data.frame( lme4::getME(model, "flist")[[level]] )
     
     grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
     grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]
@@ -668,25 +668,25 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits lmerMod
-mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
+mdffits.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
   if(level != 1) {
-    if(!level %in% names(lme4::getME(object, "flist"))) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if(!lme4::isLMM(object)){
+  if(!lme4::isLMM(model)){
     stop("mdffits is currently not implemented for GLMMs or NLMMs.")
   }
   
   XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
   
   # Extract key pieces of the model
-  mats <- .lmerMod_matrices(object)
+  mats <- .lmerMod_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
@@ -734,25 +734,25 @@ mdffits.lmerMod <- function(object, level = 1, delete = NULL, include.attr = FAL
 #' @export
 #' @rdname cooks.distance
 #' @method mdffits lme
-mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, ...) {
+mdffits.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
   if(level != 1) {
-    if(!level %in% names(object$groups)) {
+    if(!level %in% names(model$groups)) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(object))) 
+  if (any("nlme" == class(model))) 
     stop("not implemented for \"nlme\" objects")
   
   
   XVXinv <- X <- Vinv <- Y <- NULL # Make codetools happy
   
   # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  mats <- .lme_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
@@ -815,7 +815,7 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' @rdname covratio
 #'@method covratio mer
 #'@aliases covratio
-#'@param object fitted object of class \code{mer} or \code{lmerMod}
+#'@param model fitted model object of class \code{mer} or \code{lmerMod}
 #'@param level variable used to define the group for which cases will be
 #'deleted.  If \code{level = 1} (default), then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
@@ -864,9 +864,9 @@ mdffits.lme <- function(object, level = 1, delete = NULL, include.attr = FALSE, 
 #' # covratio for school-level deletion
 #' cr2 <- covratio(fm, level = "school")
 #' }
-covratio.mer <- function(object, level = 1, delete = NULL, ...) {
+covratio.mer <- function(model, level = 1, delete = NULL, ...) {
   .Deprecated("covratio.lmerMod")
-  if(!is(object, "mer")) stop("object must be of class 'mer'")
+  if(!is(model, "mer")) stop("model must be of class 'mer'")
   
   if (hasArg(group)) {
     group <- NULL
@@ -874,16 +874,16 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
   }
   
   if(level != 1) {
-    if(!level %in% names(lme4::getME(object, "flist"))) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if(!object@dims["LMM"]){
+  if(!model@dims["LMM"]){
     stop("covratio is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .mer_matrices(object)
+  mats <- .mer_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[, level] )
@@ -913,23 +913,23 @@ covratio.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covratio lmerMod
-covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+covratio.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
   if(level != 1) {
-    if(!level %in% names(lme4::getME(object, "flist"))) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if(!lme4::isLMM(object)){
+  if(!lme4::isLMM(model)){
     stop("covratio is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .lmerMod_matrices(object)
+  mats <- .lmerMod_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[[level]] )
@@ -959,22 +959,22 @@ covratio.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covratio lme
-covratio.lme <- function(object, level = 1, delete = NULL, ...) {
+covratio.lme <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
   if(level != 1) {
-    if(!level %in% names(object$groups)) {
+    if(!level %in% names(model$groups)) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(object))) 
+  if (any("nlme" == class(model))) 
     stop("not implemented for \"nlme\" objects")
   
   # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  mats <- .lme_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[[level]] )
@@ -1021,25 +1021,25 @@ covratio.lme <- function(object, level = 1, delete = NULL, ...) {
 #' # covtrace for school-level deletion
 #' ct2 <- covtrace(fm, level = "school")
 #' }
-covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
+covtrace.mer <- function(model, level = 1, delete = NULL, ...) {
   .Deprecated("covtrace.lmerMod")
-  if(!is(object, "mer")) stop("object must be of class 'mer'")
+  if(!is(model, "mer")) stop("model must be of class 'mer'")
   
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   if(level != 1) {
-    if(!level %in% names(lme4::getME(object, "flist"))) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if(!object@dims["LMM"]){
+  if(!model@dims["LMM"]){
     stop("covtrace is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .mer_matrices(object)
+  mats <- .mer_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[, level] )
@@ -1069,23 +1069,23 @@ covtrace.mer <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covtrace lmerMod
-covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+covtrace.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
   if(level != 1) {
-    if(!level %in% names(lme4::getME(object, "flist"))) {
+    if(!level %in% names(lme4::getME(model, "flist"))) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if(!lme4::isLMM(object)){
+  if(!lme4::isLMM(model)){
     stop("covtrace is currently not implemented for GLMMs or NLMMs.")
   }
   
   # Extract key pieces of the model
-  mats <- .lmerMod_matrices(object)
+  mats <- .lmerMod_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[[level]] )
@@ -1116,22 +1116,22 @@ covtrace.lmerMod <- function(object, level = 1, delete = NULL, ...) {
 #'@export
 #'@rdname covratio
 #'@method covtrace lme
-covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
+covtrace.lme <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
     if(level != 1) {
-      if(!level %in% names(object$groups)) {
+      if(!level %in% names(model$groups)) {
         stop(paste(level, "is not a valid grouping factor for this model."))
       }
     }
-    if (any("nlme" == class(object))) 
+    if (any("nlme" == class(model))) 
       stop("not implemented for \"nlme\" objects")
   
   # Extract key pieces of the model
-  mats <- .lme_matrices(object)
+  mats <- .lme_matrices(model)
   
   if( level != 1 ){
     grp.names <- unique( mats$flist[[level]] )
@@ -1166,7 +1166,7 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @method rvc mer
 #' @aliases rvc
-#'@param object fitted object of class \code{mer} or \code{lmerMod}
+#'@param model fitted model object of class \code{mer} or \code{lmerMod}
 #'@param level variable used to define the group for which cases will be
 #'deleted.  If \code{level = 1} (default), then individual cases will be deleted.
 #'@param delete index of individual cases to be deleted. To delete specific 
@@ -1193,9 +1193,9 @@ covtrace.lme <- function(object, level = 1, delete = NULL, ...) {
 #' @seealso \code{\link{leverage.mer}}, 
 #' \code{\link{cooks.distance.mer}}, \code{\link{mdffits.mer}},
 #' \code{\link{covratio.mer}}, \code{\link{covtrace.mer}}
-rvc.mer <- function(object, level = 1, delete = NULL, ...) {
+rvc.mer <- function(model, level = 1, delete = NULL, ...) {
   .Deprecated("rvc.lmerMod")
-    delete <- case_delete(object, level = 1, type = "varcomp", delete = delete)
+    delete <- case_delete(model, level = 1, type = "varcomp", delete = delete)
     return( rvc(delete) )
 }
 
@@ -1203,25 +1203,25 @@ rvc.mer <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname rvc.mer
 #' @method rvc lmerMod
-rvc.lmerMod <- function(object, level = 1, delete = NULL, ...) {
+rvc.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
   
-  delete <- case_delete(object, level = level, type = "varcomp", delete = delete)
+  delete <- case_delete(model, level = level, type = "varcomp", delete = delete)
   return( rvc(delete) )
 }
 
 #' @export
 #' @rdname rvc.mer
 #' @method rvc lme
-rvc.lme <- function(object, level = 1, delete = NULL, ...) {
+rvc.lme <- function(model, level = 1, delete = NULL, ...) {
   if (hasArg(group)) {
     group <- NULL
     warning("group is not a valid argument for this function. As of version 0.4.0, group has been replaced by level.")
   }
-  delete <- case_delete(object, level = level, type = "varcomp", delete = delete)
+  delete <- case_delete(model, level = level, type = "varcomp", delete = delete)
   return( rvc(delete) )
 }
 
@@ -1230,27 +1230,27 @@ rvc.lme <- function(object, level = 1, delete = NULL, ...) {
 #' @export
 #' @rdname leverage.mer
 #' @method leverage lme
-leverage.lme <- function(object, level = 1, ...) {
-  if(!isNestedModel(object)) {
+leverage.lme <- function(model, level = 1, ...) {
+  if(!isNestedModel(model)) {
     stop("leverage.mer has not yet been implemented for models with 
          crossed random effects")
   }
-  if(!level %in% c( 1, names(object$groups) )) {
+  if(!level %in% c( 1, names(model$groups) )) {
     stop("level can only be 1 or a grouping factor from the fitted model.")
   }
   
-  mats <- .lme_matrices(object)
+  mats <- .lme_matrices(model)
   
   X <- mats$X
-  # Z <- BlockZ(object)
+  # Z <- BlockZ(model)
   
   n     <- nrow(X)
-  #  nt    <- object@dims[["nt"]]  # number of random-effects terms in the model
-  ngrps <- unname( summary(object)$ngrps )
+  #  nt    <- model@dims[["nt"]]  # number of random-effects terms in the model
+  ngrps <- unname( summary(model)$ngrps )
   
   D <- mats$D
   Z <- mats$Z
-  ZDZt <- object$sigma^2 * Z %*% D %*% t(Z)
+  ZDZt <- model$sigma^2 * Z %*% D %*% t(Z)
   
   Vinv   <- mats$Vinv
   
@@ -1261,14 +1261,14 @@ leverage.lme <- function(object, level = 1, ...) {
   
   diag.H1 <- diag(H1)
   diag.H2 <- diag(H2)
-  diag.H2.uc <- diag(ZDZt) / object$sigma^2
+  diag.H2.uc <- diag(ZDZt) / model$sigma^2
   
   if(level == 1) {
     lev1 <- data.frame(overall = diag.H1 + diag.H2, fixef = diag.H1, 
                        ranef =  diag.H2, ranef.uc = diag.H2.uc)
     #     class(lev1) <- "leverage"
   } else {
-    flist   <- data.frame( object$groups[[level]] )
+    flist   <- data.frame( model$groups[[level]] )
     
     grp.lev.fixef <- aggregate(diag.H1, flist, mean)[,2]
     grp.lev.ranef <- aggregate(diag.H2, flist, mean)[,2]

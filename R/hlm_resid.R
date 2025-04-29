@@ -4,7 +4,7 @@ hlm_resid <- function(object, ...){
 }
 
 #' @export
-#' @rdname hlm_resid.lmerMod
+#' @rdname hlm_resid
 #' @method hlm_resid default
 hlm_resid.default <- function(object, ...){
   stop(paste("there is no hlm_resid() method for objects of class",
@@ -22,7 +22,7 @@ hlm_resid.default <- function(object, ...){
 #'
 #' @export
 #' @method hlm_resid lmerMod
-#' @aliases hlm_resid
+#' @name hlm_resid
 #' @param object an object of class \code{lmerMod} or \code{lme}.
 #' @param level which residuals should be extracted: 1 for within-group
 #'   (case-level) residuals, the name of a grouping factor for between-group
@@ -353,7 +353,7 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
 }
 
 #' @export
-#' @rdname hlm_resid.lmerMod
+#' @rdname hlm_resid
 #' @method hlm_resid lme
 hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = TRUE, data = NULL, ...) {
   

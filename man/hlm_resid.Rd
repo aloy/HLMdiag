@@ -2,8 +2,8 @@
 % Please edit documentation in R/hlm_resid.R
 \name{hlm_resid.default}
 \alias{hlm_resid.default}
-\alias{hlm_resid.lmerMod}
 \alias{hlm_resid}
+\alias{hlm_resid.lmerMod}
 \alias{hlm_resid.lme}
 \title{Calculating residuals from HLMs}
 \usage{

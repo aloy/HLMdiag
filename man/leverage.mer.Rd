@@ -8,16 +8,16 @@
 \alias{leverage.lme}
 \title{Leverage for HLMs}
 \usage{
-\method{leverage}{default}(object, ...)
+\method{leverage}{default}(model, ...)
 
-\method{leverage}{mer}(object, level = 1, ...)
+\method{leverage}{mer}(model, level = 1, ...)
 
-\method{leverage}{lmerMod}(object, level = 1, ...)
+\method{leverage}{lmerMod}(model, level = 1, ...)
 
-\method{leverage}{lme}(object, level = 1, ...)
+\method{leverage}{lme}(model, level = 1, ...)
 }
 \arguments{
-\item{object}{fitted object of class \code{mer} of \code{lmerMod}}
+\item{model}{fitted model object of class \code{mer} of \code{lmerMod}}
 
 \item{...}{do not use}
 

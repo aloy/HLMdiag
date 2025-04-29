@@ -12,7 +12,7 @@
 \alias{mdffits.lme}
 \title{Influence on fixed effects of HLMs}
 \usage{
-\method{mdffits}{default}(object, ...)
+\method{mdffits}{default}(model, ...)
 
 \method{cooks.distance}{mer}(model, level = 1, delete = NULL, ...)
 
@@ -22,16 +22,14 @@
 
 \method{mdffits}{mer}(object, level = 1, delete = NULL, ...)
 
-\method{mdffits}{lmerMod}(object, level = 1, delete = NULL, include.attr = FALSE, ...)
+\method{mdffits}{lmerMod}(model, level = 1, delete = NULL, include.attr = FALSE, ...)
 
-\method{mdffits}{lme}(object, level = 1, delete = NULL, include.attr = FALSE, ...)
+\method{mdffits}{lme}(model, level = 1, delete = NULL, include.attr = FALSE, ...)
 }
 \arguments{
-\item{object}{fitted object of class \code{mer} or \code{lmerMod}}
+\item{model}{fitted model of class \code{mer} or \code{lmerMod}}
 
 \item{...}{do not use}
-
-\item{model}{fitted model of class \code{mer} or \code{lmerMod}}
 
 \item{level}{variable used to define the group for which cases will be
 deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
@@ -46,6 +44,8 @@ the full and deleted parameter estimates should be included. If \code{FALSE}
 (default), a numeric vector of Cook's distance or MDFFITS is returned. 
 If \code{TRUE}, a tibble with the Cook's distance or MDFFITS values in the 
 first column and the parameter differences in the remaining columns is returned.}
+
+\item{object}{fitted object of class \code{mer} or \code{lmerMod}}
 }
 \value{
 Both functions return a numeric vector (or single value if 

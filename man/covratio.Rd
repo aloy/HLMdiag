@@ -13,24 +13,24 @@
 \alias{covtrace.lme}
 \title{Influence on precision of fixed effects in HLMs}
 \usage{
-\method{covratio}{default}(object, ...)
+\method{covratio}{default}(model, ...)
 
-\method{covtrace}{default}(object, ...)
+\method{covtrace}{default}(model, ...)
 
-\method{covratio}{mer}(object, level = 1, delete = NULL, ...)
+\method{covratio}{mer}(model, level = 1, delete = NULL, ...)
 
-\method{covratio}{lmerMod}(object, level = 1, delete = NULL, ...)
+\method{covratio}{lmerMod}(model, level = 1, delete = NULL, ...)
 
-\method{covratio}{lme}(object, level = 1, delete = NULL, ...)
+\method{covratio}{lme}(model, level = 1, delete = NULL, ...)
 
-\method{covtrace}{mer}(object, level = 1, delete = NULL, ...)
+\method{covtrace}{mer}(model, level = 1, delete = NULL, ...)
 
-\method{covtrace}{lmerMod}(object, level = 1, delete = NULL, ...)
+\method{covtrace}{lmerMod}(model, level = 1, delete = NULL, ...)
 
-\method{covtrace}{lme}(object, level = 1, delete = NULL, ...)
+\method{covtrace}{lme}(model, level = 1, delete = NULL, ...)
 }
 \arguments{
-\item{object}{fitted object of class \code{mer} or \code{lmerMod}}
+\item{model}{fitted model object of class \code{mer} or \code{lmerMod}}
 
 \item{...}{do not use}
 

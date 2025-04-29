@@ -8,16 +8,16 @@
 \alias{rvc.lme}
 \title{Relative variance change for HLMs}
 \usage{
-\method{rvc}{default}(object, ...)
+\method{rvc}{default}(model, ...)
 
-\method{rvc}{mer}(object, level = 1, delete = NULL, ...)
+\method{rvc}{mer}(model, level = 1, delete = NULL, ...)
 
-\method{rvc}{lmerMod}(object, level = 1, delete = NULL, ...)
+\method{rvc}{lmerMod}(model, level = 1, delete = NULL, ...)
 
-\method{rvc}{lme}(object, level = 1, delete = NULL, ...)
+\method{rvc}{lme}(model, level = 1, delete = NULL, ...)
 }
 \arguments{
-\item{object}{fitted object of class \code{mer} or \code{lmerMod}}
+\item{model}{fitted model object of class \code{mer} or \code{lmerMod}}
 
 \item{...}{do not use}
 
