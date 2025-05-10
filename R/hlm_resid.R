@@ -198,19 +198,21 @@ hlm_resid.lmerMod <- function(object, level = 1, standardize = FALSE, include.ls
     
     # Assemble Tibble
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+      return.tbl <- tibble::tibble("row_id" = as.numeric(rownames(data)),
                                    data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
-                                   mar.fitted)
+                                   mar.fitted, 
+                                   .name_repair = "minimal")
     } else { 
-      return.tbl <- tibble::tibble("id" = as.numeric(rownames(data)),
+      return.tbl <- tibble::tibble("row_id" = as.numeric(rownames(data)),
                                    data,
                                    eb.resid,
                                    eb.fitted,
                                    problem_dfs,
-                                   mar.fitted)
+                                   mar.fitted, 
+                                   .name_repair = "minimal")
     }
     
     return(return.tbl)
@@ -430,20 +432,22 @@ hlm_resid.lme <- function(object, level = 1, standardize = FALSE, include.ls = T
     
     # Continue to Assemble Tibble  
     if (include.ls == TRUE) {
-      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+      return.tbl <- tibble::tibble("row_id" = as.numeric(rownames(model.data)),
                                    model.data,
                                    eb.resid,
                                    eb.fitted,
                                    ls.resid,
                                    mar.resid,
-                                   mar.fitted)
+                                   mar.fitted, 
+                                   .name_repair = "minimal")
     } else { 
-      return.tbl <- tibble::tibble("id" = as.numeric(rownames(model.data)),
+      return.tbl <- tibble::tibble("row_id" = as.numeric(rownames(model.data)),
                                    model.data,
                                    eb.resid,
                                    eb.fitted,
                                    mar.resid,
-                                   mar.fitted)
+                                   mar.fitted, 
+                                   .name_repair = "minimal")
     }
     
     return(return.tbl)

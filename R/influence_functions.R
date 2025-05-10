@@ -423,6 +423,7 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr
   mats <- .lmerMod_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  beta_names <- rownames(betaHat)
   
   # Obtaining the building blocks
   if(level == 1 & is.null(delete)) {
@@ -439,11 +440,12 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr
     }
     else {
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      nbetas <- ncol(cook.tbl) - 1 
-      for (i in 1:nbetas) {
-        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      }
+      # nbetas <- ncol(cook.tbl) - 1 
+      # for (i in 1:nbetas) {
+      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      # }
       return(cook.tbl)
     }
   }
@@ -481,11 +483,12 @@ cooks.distance.lmerMod <- function(model, level = 1, delete = NULL, include.attr
     }
     else { 
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      nbetas <- ncol(cook.tbl) - 1 
-      for (i in 1:nbetas) {
-        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      }
+      # nbetas <- ncol(cook.tbl) - 1 
+      # for (i in 1:nbetas) {
+      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      # }
       return(cook.tbl)
     }
   }
@@ -514,6 +517,7 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = F
   mats <- .lme_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  beta_names <- rownames(betaHat)
   
   # Obtaining the building blocks
   if(level == 1 & is.null(delete)) {
@@ -530,11 +534,12 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = F
     }
     else {
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      nbetas <- ncol(cook.tbl) - 1 
-      for (i in 1:nbetas) {
-        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      }
+      # nbetas <- ncol(cook.tbl) - 1 
+      # for (i in 1:nbetas) {
+      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      # }
       return(cook.tbl)
     }
   }
@@ -572,11 +577,12 @@ cooks.distance.lme <- function(model, level = 1, delete = NULL, include.attr = F
     }
     else { 
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
+      colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      nbetas <- ncol(cook.tbl) - 1 
-      for (i in 1:nbetas) {
-        names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      }
+      # nbetas <- ncol(cook.tbl) - 1 
+      # for (i in 1:nbetas) {
+      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+      # }
       return(cook.tbl)
     }
   }
@@ -689,6 +695,7 @@ mdffits.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALS
   mats <- .lmerMod_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  beta_names <- rownames(betaHat)
   e <- with(mats, Y - X %*% betaHat)
   
   if( level != 1 ){
@@ -720,12 +727,13 @@ mdffits.lmerMod <- function(model, level = 1, delete = NULL, include.attr = FALS
   }
   else { 
     beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
-    mdffits.tbl <- tibble::as_tibble(cbind(mdffits.vals, beta_matrix))
-    names(mdffits.tbl)[1] <- "mdffits"
-    nbetas <- ncol(mdffits.tbl) - 1 
-    for (i in 1:nbetas) {
-      names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-    }
+    colnames(beta_matrix) <- beta_names
+    mdffits.tbl <- tibble::as_tibble(cbind(mdffits = mdffits.vals, beta_matrix))
+    # names(mdffits.tbl)[1] <- "mdffits"
+    # nbetas <- ncol(mdffits.tbl) - 1 
+    # for (i in 1:nbetas) {
+    #   names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+    # }
     return(mdffits.tbl)
   }
 }
@@ -755,6 +763,7 @@ mdffits.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, .
   mats <- .lme_matrices(model)
   
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
+  beta_names <- rownames(betaHat)
   e <- with(mats, Y - X %*% betaHat)
   
   if( level != 1 ){
@@ -786,12 +795,13 @@ mdffits.lme <- function(model, level = 1, delete = NULL, include.attr = FALSE, .
   }
   else { 
     beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE) 
-    mdffits.tbl <- tibble::as_tibble(cbind(mdffits.vals, beta_matrix))
-    names(mdffits.tbl)[1] <- "mdffits"
-    nbetas <- ncol(mdffits.tbl) - 1 
-    for (i in 1:nbetas) {
-      names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-    }
+    colnames(beta_matrix) <- beta_names
+    mdffits.tbl <- tibble::as_tibble(cbind(mdffits = mdffits.vals, beta_matrix))
+    # names(mdffits.tbl)[1] <- "mdffits"
+    # nbetas <- ncol(mdffits.tbl) - 1 
+    # for (i in 1:nbetas) {
+      # names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
+    # }
     return(mdffits.tbl)
   }
 }
