@@ -22,7 +22,7 @@ unemployment rate for that year} \item{ue.7}{} \item{ue.centert1}{}
   Singer and Willett (2003) used these data for examples in
   chapter (insert info. here) and the data sets used can be
   found on the UCLA Statistical Computing website:
-  \url{https://stats.idre.ucla.edu/other/examples/alda/}
+  \url{https://stats.oarc.ucla.edu/other/examples/alda/}
 
   Additionally the data were discussed by Cook and Swayne
   (2003) and the data can be found on the GGobi website:

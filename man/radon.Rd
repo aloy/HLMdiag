@@ -16,7 +16,7 @@ A data frame with 919 observations on the following 5 variables:
 }
 }
 \source{
-\url{http://www.stat.columbia.edu/~gelman/arm/software/}
+\url{https://sites.stat.columbia.edu/gelman/arm/software/}
 }
 \usage{
 data(radon)

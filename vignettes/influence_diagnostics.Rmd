@@ -363,7 +363,7 @@ Bates D, Maechler M, Bolker B, Walker S (2015). Fitting Linear Mixed-Effects Mod
 
 Christensen R, Pearson L, Johnson W (1992). “Case-Deletion Diagnostics for Mixed Models.” *Technometrics*, 34(1), 38–45.
 
-Fox J, Weisburg S (2019). A {R} Companion to Applied Regression, Third Addition. Thousand Oaks CA: Sage. URL: https://socialsciences.mcmaster.ca/jfox/Books/Companion/
+Fox J, Weisburg S (2019). A {R} Companion to Applied Regression, Third Addition. Thousand Oaks CA: Sage. URL: https://www.john-fox.ca/Companion/
   
 Loy A, Hofmann H (2014). HLMdiag: A Suite of Diagnostics for Hierarchical Linear Models in R. *Journal of Statistical Software*, 56(5), 1-28. 
 
