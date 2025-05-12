@@ -15,9 +15,6 @@ A data frame with 919 observations on the following 5 variables:
 \item{county.name}{County name - a factor.}
 }
 }
-\source{
-\url{https://sites.stat.columbia.edu/gelman/arm/software/}
-}
 \usage{
 data(radon)
 }

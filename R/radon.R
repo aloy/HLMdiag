@@ -15,8 +15,6 @@
 #' \item{county}{County ID.}
 #' \item{county.name}{County name - a factor.}
 #' }
-#' @source 
-#' \url{https://sites.stat.columbia.edu/gelman/arm/software/}
 #' @references
 #'   Price, P. N., Nero, A. V. and Gelman, A. (1996) Bayesian prediction of mean 
 #'   indoor radon concentrations for Minnesota counties. \emph{Health Physics}.
