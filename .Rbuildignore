@@ -12,3 +12,4 @@
 ^jss_update$
 ^CRAN-RELEASE$
 ^\.github$
+^CRAN-SUBMISSION$
