@@ -2,8 +2,8 @@
 
 [![R build
 status](https://github.com/aloy/HLMdiag/workflows/R-CMD-check/badge.svg)](https://github.com/aloy/HLMdiag/actions)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
-![CRAN\_Downloads\_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/HLMdiag)](https://cran.r-project.org/package=HLMdiag)
+![CRAN_Downloads_Badge](http://cranlogs.r-pkg.org/badges/HLMdiag)
 
 The package `HLMdiag` was created in order to provide a unified
 framework for analysts to diagnose hierarchical linear models (HLMs).
@@ -81,32 +81,30 @@ observations.
 
 The functions available for influence analysis in `HLMdiag` are:
 
-  - `cooks.distance()` calculates Cook’s distance values, which measures
-    the difference between the original fixed effects and the deleted
-    ones.
-  - `mdffits()` calculates MDFFITS, a multivariate version of the DFFITS
-    statistic, which is also a measure of the difference in fixed
-    effects.
-  - `covtrace()` calculates covariance trace, the ratio between the
-    covariance matrices with and without unit *i* to the identity
-    matrix.
-  - `covratio()` calculate covariance ratio, a comparison of the two
-    covariance matrices with and without unit *i* using their
-    determinants.
-  - `rvc()` calculates relative variance change, a measurement of the
-    ratio of estimates of the *l* th variance component with and without
-    unit *i*.
-  - `leverage()` calculates leverage, he rate of change in the predicted
-    response with respect to the observed response.
-  - `case_delete()` iteratively deletes observations or groups of
-    observations, returning a list of fixed and random components from
-    the original model and the models created by deletion.
-  - `hlm_influence()` calculates all of the influence diagnostics,
-    returning a tibble with the influence values appended to the
-    original model frame.
-  - `hlm_augment()` combines `hlm_influence()` and `hlm_resid()` to
-    return a tibble with residual values and influence diagnostics
-    appended to the original model frame.
+- `cooks.distance()` calculates Cook’s distance values, which measures
+  the difference between the original fixed effects and the deleted
+  ones.
+- `mdffits()` calculates MDFFITS, a multivariate version of the DFFITS
+  statistic, which is also a measure of the difference in fixed effects.
+- `covtrace()` calculates covariance trace, the ratio between the
+  covariance matrices with and without unit *i* to the identity matrix.
+- `covratio()` calculate covariance ratio, a comparison of the two
+  covariance matrices with and without unit *i* using their
+  determinants.
+- `rvc()` calculates relative variance change, a measurement of the
+  ratio of estimates of the *l* th variance component with and without
+  unit *i*.
+- `leverage()` calculates leverage, he rate of change in the predicted
+  response with respect to the observed response.
+- `case_delete()` iteratively deletes observations or groups of
+  observations, returning a list of fixed and random components from the
+  original model and the models created by deletion.
+- `hlm_influence()` calculates all of the influence diagnostics,
+  returning a tibble with the influence values appended to the original
+  model frame.
+- `hlm_augment()` combines `hlm_influence()` and `hlm_resid()` to return
+  a tibble with residual values and influence diagnostics appended to
+  the original model frame.
 
 ### Graphical Tools
 
@@ -140,8 +138,8 @@ observation below.
 
 ``` r
 hlm_resid(sleep.lmer)
-#> # A tibble: 180 x 10
-#>       id Reaction  Days Subject  .resid .fitted .ls.resid .ls.fitted .mar.resid
+#> # A tibble: 180 × 10
+#>      .id Reaction  Days Subject  .resid .fitted .ls.resid .ls.fitted .mar.resid
 #>    <dbl>    <dbl> <dbl> <fct>     <dbl>   <dbl>     <dbl>      <dbl>      <dbl>
 #>  1     1     250.     0 308       -4.10    254.      5.37       244.      -1.85
 #>  2     2     259.     1 308      -14.6     273.     -7.25       266.      -3.17
@@ -153,7 +151,8 @@ hlm_resid(sleep.lmer)
 #>  8     8     290.     7 308     -101.      391.   -106.         397.     -34.5 
 #>  9     9     431.     8 308       19.6     411.     12.3        418.      95.4 
 #> 10    10     466.     9 308       35.7     431.     26.3        440.     121.  
-#> # … with 170 more rows, and 1 more variable: .mar.fitted <dbl>
+#> # ℹ 170 more rows
+#> # ℹ 1 more variable: .mar.fitted <dbl>
 ```
 
 For more information and examples of the functionality of `hlm_resid()`,
@@ -166,20 +165,21 @@ following line:
 
 ``` r
 hlm_influence(sleep.lmer)
-#> # A tibble: 180 x 9
-#>       id Reaction  Days Subject  cooksd mdffits covtrace covratio
-#>    <int>    <dbl> <dbl> <fct>     <dbl>   <dbl>    <dbl>    <dbl>
-#>  1     1     250.     0 308     1.48e-4 1.47e-4 0.00887      1.01
-#>  2     2     259.     1 308     1.10e-3 1.09e-3 0.00558      1.01
-#>  3     3     251.     2 308     5.13e-3 5.11e-3 0.00330      1.00
-#>  4     4     321.     3 308     1.14e-4 1.14e-4 0.00175      1.00
-#>  5     5     357.     4 308     3.93e-4 3.92e-4 0.000778     1.00
-#>  6     6     415.     5 308     1.07e-3 1.07e-3 0.000321     1.00
-#>  7     7     382.     6 308     3.49e-5 3.49e-5 0.000361     1.00
-#>  8     8     290.     7 308     8.81e-3 8.80e-3 0.000944     1.00
-#>  9     9     431.     8 308     8.23e-4 8.21e-4 0.00219      1.00
-#> 10    10     466.     9 308     5.99e-3 5.96e-3 0.00435      1.00
-#> # … with 170 more rows, and 1 more variable: leverage.overall <dbl>
+#> # A tibble: 180 × 9
+#>       id Reaction  Days Subject    cooksd   mdffits covtrace covratio
+#>    <int>    <dbl> <dbl> <fct>       <dbl>     <dbl>    <dbl>    <dbl>
+#>  1     1     250.     0 308     0.000148  0.000147  0.00887      1.01
+#>  2     2     259.     1 308     0.00110   0.00109   0.00558      1.01
+#>  3     3     251.     2 308     0.00513   0.00511   0.00330      1.00
+#>  4     4     321.     3 308     0.000114  0.000114  0.00175      1.00
+#>  5     5     357.     4 308     0.000393  0.000392  0.000778     1.00
+#>  6     6     415.     5 308     0.00107   0.00107   0.000321     1.00
+#>  7     7     382.     6 308     0.0000349 0.0000349 0.000361     1.00
+#>  8     8     290.     7 308     0.00881   0.00880   0.000944     1.00
+#>  9     9     431.     8 308     0.000823  0.000821  0.00219      1.00
+#> 10    10     466.     9 308     0.00599   0.00596   0.00435      1.00
+#> # ℹ 170 more rows
+#> # ℹ 1 more variable: leverage.overall <dbl>
 ```
 
 For more information and examples of the functionality of
