@@ -2,7 +2,7 @@
 
 * Added a `NEWS.md` file to track changes to the package.
 * `cooks.distance` and `mdffits` with `include.attr = TRUE` now returns a tibble with column names for the fixed effects in agreement with the fixef() output.
-* First columns of `hlm_resid` output is now `row_id` to avoid conflicts with `id` columns
+* First columns of `hlm_resid` output is now `.id` to avoid conflicts with `id` columns
 
 # Version 0.5.0
 
