@@ -1,5 +1,9 @@
 # HLMdiag (development version)
 
+## Bug fixes
+
+* `hlm_resid()` now correctly passes the `standardize` argument to `LSresids()` when computing higher-level LS residuals for `lmerMod` models and level-1 LS residuals for `lme` models. Previously, the argument was silently ignored, so LS residuals were never standardized in those code paths even when `standardize = TRUE`.
+
 # HLMdiag 0.5.1
 
 * Added a `NEWS.md` file to track changes to the package.

@@ -36,7 +36,7 @@ These functions are defunct and no longer available.
 
 \code{diagnostics} is replaced by \code{\link{hlm_influence}}
 
-\code{group_qqnorm} and \code{group_qqnorm} are replaced by functions in \pkg{qqplotr}. 
-   See \code{\link[qqplotr]{stat_qq_point}}, \code{\link[qqplotr]{stat_qq_line}}, and 
+\code{group_qqnorm} and \code{group_qqnorm} are replaced by functions in \pkg{qqplotr}.
+   See \code{\link[qqplotr]{stat_qq_point}}, \code{\link[qqplotr]{stat_qq_line}}, and
    \code{\link[qqplotr]{stat_qq_band}}.
 }

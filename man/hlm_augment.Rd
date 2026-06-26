@@ -33,15 +33,15 @@ return tibble. \code{include.ls = FALSE} decreases runtime substantially.}
 `na.action = "na.exclude"`}
 }
 \description{
-This function is used to compute residuals, fitted values, and influence diagnostics for a 
+This function is used to compute residuals, fitted values, and influence diagnostics for a
 hierarchical linear model. The residuals and fitted values are computed using Least Squares(LS)
-and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step 
+and Empirical Bayes (EB) methods. The influence diagnostics are computed through one step
 approximations.
 }
 \details{
 The \code{hlm_augment} function combines functionality from \code{hlm_resid}
-and \code{hlm_influence} for a simpler way of obtaining residuals and influence 
-diagnostics. Please see \code{?hlm_resid} and \code{?hlm_influence} for additional information 
+and \code{hlm_influence} for a simpler way of obtaining residuals and influence
+diagnostics. Please see \code{?hlm_resid} and \code{?hlm_influence} for additional information
 about the returned values.
 }
 \note{

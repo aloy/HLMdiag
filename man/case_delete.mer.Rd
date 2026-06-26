@@ -47,10 +47,10 @@ individual observations.}
 diagnostics: the fixed effects (\code{"fixef"}), variance components
 (\code{"varcomp"}), or \code{"both"} (default).}
 
-\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter 
-is specified, \code{delete} may also take the form of a character vector consisting of group 
+\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter
+is specified, \code{delete} may also take the form of a character vector consisting of group
 names as they appear in \code{flist}. It is possible to set \code{level} and delete individual
-cases from different groups using \code{delete}, so numeric indices should be double checked 
+cases from different groups using \code{delete}, so numeric indices should be double checked
 to confirm that they encompass entire groups. If \code{delete = NULL} then all cases are iteratively deleted.}
 }
 \value{
@@ -62,7 +62,7 @@ a list with the following components:
   \item{\code{varcomp.original}}{the original estimated variance components}
   \item{\code{fixef.delete}}{a list of the fixed effects estimated after case deletion}
   \item{\code{ranef.delete}}{a list of the random effects predicted after case deletion}
-  \item{\code{vcov.delete}}{a list of the variance-covariance matrices for the fixed 
+  \item{\code{vcov.delete}}{a list of the variance-covariance matrices for the fixed
      effects obtained after case deletion}
   \item{\code{fitted.delete}}{a list of the fitted values obtained after case
      deletion}

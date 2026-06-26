@@ -17,22 +17,22 @@ dotplot_diag(
 \arguments{
 \item{x}{values of the diagnostic of interest}
 
-\item{cutoff}{value(s) specifying the boundary for unusual values of the 
+\item{cutoff}{value(s) specifying the boundary for unusual values of the
 diagnostic. The cutoff(s) can either be supplied by the user, or automatically
 calculated using measures of internal scaling if \code{cutoff = "internal"}.}
 
 \item{name}{what diagnostic is being plotted
-(one of \code{"cooks.distance"}, \code{"mdffits"}, \code{"covratio"}, 
+(one of \code{"cooks.distance"}, \code{"mdffits"}, \code{"covratio"},
 \code{"covtrace"}, \code{"rvc"}, or \code{"leverage"}).
 This is used for the calculation of "internal" cutoffs.}
 
 \item{data}{data frame to use (optional)}
 
 \item{index}{optional parameter to specify index (IDs) of \code{x} values.
-If \code{NULL}(default), values will be indexed in the order of the vector 
+If \code{NULL}(default), values will be indexed in the order of the vector
 passed to \code{x}.}
 
-\item{modify}{specifies the \code{geom} to be used to produce a 
+\item{modify}{specifies the \code{geom} to be used to produce a
 space-saving modification: either \code{"dotplot"} or \code{"boxplot"}}
 
 \item{...}{other arguments to be passed to \code{ggplot()}}
@@ -44,7 +44,7 @@ of the diagnostic measure and visually identify unusual cases.
 }
 \note{
 The resulting plot uses \code{coord_flip} to rotate the plot, so when
-adding customized axis labels you will need to flip the names 
+adding customized axis labels you will need to flip the names
 between the x and y axes.
 }
 \examples{
@@ -63,7 +63,7 @@ subject.infl  <- hlm_influence(fm, level = "Subject")
 
 dotplot_diag(x = subject.infl$cooksd, cutoff = "internal",
              name = "cooks.distance", modify = FALSE)
-             
+
 dotplot_diag(x = subject.infl$mdffits, cutoff = "internal", name = "mdffits", modify = "dotplot")
 }
 \author{

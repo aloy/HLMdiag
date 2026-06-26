@@ -55,9 +55,9 @@ diagnostics are calculated. If \code{level = 1} (default), then influence diagno
 calculated for individual observations. Otherwise, \code{level} should be the name of a grouping
 factor as defined in \code{flist} for a \code{lmerMod} object or as in \code{groups} for a \code{lme} object.}
 
-\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter 
-is specified, \code{delete} may also take the form of a character vector consisting of group 
-names as they appear in \code{flist} for \code{lme4} models or as in \code{groups} for \code{nlme} models. 
+\item{delete}{numeric index of individual cases to be deleted. If the \code{level} parameter
+is specified, \code{delete} may also take the form of a character vector consisting of group
+names as they appear in \code{flist} for \code{lme4} models or as in \code{groups} for \code{nlme} models.
 If \code{delete = NULL} then all cases are iteratively deleted.}
 
 \item{approx}{logical parameter used to determine how the influence diagnostics are calculated.
@@ -89,7 +89,7 @@ refit of the data are also available through \code{case_delete} and the accompan
 directly on the \code{case_delete} object.
 }
 \note{
-It is possible to set \code{level} and delete individual cases from different groups using 
+It is possible to set \code{level} and delete individual cases from different groups using
 \code{delete}, so numeric indices should be double checked to confirm that they encompass entire groups.
 Additionally, if \code{delete} is specified, leverage values are not returned in the resulting tibble.
 }

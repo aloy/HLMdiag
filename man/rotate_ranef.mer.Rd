@@ -25,17 +25,17 @@
 
 \item{s}{the dimension of the subspace of interest.}
 
-\item{.varimax}{if \code{.varimax = TRUE} than the raw varimax rotation 
+\item{.varimax}{if \code{.varimax = TRUE} than the raw varimax rotation
 will be applied to the resulting rotation.}
 }
 \description{
-This function calculates reduced dimensional rotated random effects. 
+This function calculates reduced dimensional rotated random effects.
 The rotation reduces the influence of the residuals from other levels
 of the model so that distributional assessment of the resulting
 random effects is possible.
 }
 \references{
-Loy, A. & Hofmann, H. (in press). Are you Normal? 
+Loy, A. & Hofmann, H. (in press). Are you Normal?
 The Problem of Confounded Residual Structures in Hierarchical Linear Models.
 \emph{Journal of Computational and Graphical Statistics}.
 }

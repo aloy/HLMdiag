@@ -22,7 +22,7 @@
 \item{...}{do not use}
 
 \item{level}{which residuals should be extracted: 1 for case-level
-residuals or the name of a grouping factor (as defined in \code{flist} of the 
+residuals or the name of a grouping factor (as defined in \code{flist} of the
 \code{mer} object) for between-group residuals.}
 
 \item{sim}{optional argument giving the data frame used for LS residuals. This
@@ -38,7 +38,7 @@ found by fitting separate LS regression models to each case.
 For examples see the documentation for \code{HLMresid}.
 }
 \references{
-Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
+Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical
 linear models. University of California Los Angeles.
 }
 \seealso{

@@ -1,7 +1,7 @@
 #' Radon data
-#' 
+#'
 #' Radon measurements of 919 owner-occupied homes in 85 counties of Minnesota.
-#' 
+#'
 #' @usage data(radon)
 #' @docType data
 #' @name radon
@@ -16,10 +16,10 @@
 #' \item{county.name}{County name - a factor.}
 #' }
 #' @references
-#'   Price, P. N., Nero, A. V. and Gelman, A. (1996) Bayesian prediction of mean 
+#'   Price, P. N., Nero, A. V. and Gelman, A. (1996) Bayesian prediction of mean
 #'   indoor radon concentrations for Minnesota counties. \emph{Health Physics}.
 #'   \bold{71}(6), 922--936.
-#'   
-#'   Gelman, A. and Hill, J. (2007) \emph{Data analysis using regression and 
+#'
+#'   Gelman, A. and Hill, J. (2007) \emph{Data analysis using regression and
 #'   multilevel/hierarchical models}. Cambridge University Press.
 NULL

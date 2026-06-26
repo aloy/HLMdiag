@@ -24,7 +24,7 @@
 
 \item{type}{a character string specifying what type of residuals should be calculated.
 It is set to \code{"raw"} (observed - fitted) by default. Other options include
-\code{"pearson"}, \code{"studentized"}, and \code{"cholesky"}. 
+\code{"pearson"}, \code{"studentized"}, and \code{"cholesky"}.
 Partial matching of arguments is used, so only the first character needs to be provided.}
 }
 \value{
@@ -45,9 +45,9 @@ four types of marginal residuals can be calculated:
 }
 }
 \references{
-Singer, J. M., Rocha, F. M. M., & Nobre, J. S. (2017). 
-Graphical Tools for Detecting Departures from Linear Mixed Model 
-Assumptions and Some Remedial Measures. 
+Singer, J. M., Rocha, F. M. M., & Nobre, J. S. (2017).
+Graphical Tools for Detecting Departures from Linear Mixed Model
+Assumptions and Some Remedial Measures.
 \emph{International Statistical Review}, \bold{85}, 290--324.
 
 Schabenberger, O. (2004) Mixed Model Influence Diagnostics,

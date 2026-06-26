@@ -73,5 +73,5 @@ Collate:
 Encoding: UTF-8
 URL: https://github.com/aloy/HLMdiag
 BugReports: https://github.com/aloy/HLMdiag/issues
-RoxygenNote: 7.3.2
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.0.0

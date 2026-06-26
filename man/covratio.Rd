@@ -37,7 +37,7 @@
 \item{level}{variable used to define the group for which cases will be
 deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
 
-\item{delete}{index of individual cases to be deleted. To delete specific 
+\item{delete}{index of individual cases to be deleted. To delete specific
 observations the row number must be specified. To delete higher level
 units the group ID and \code{group} parameter must be specified.
 If \code{delete = NULL} then all cases are iteratively deleted.}
@@ -52,7 +52,7 @@ to the deleted subset specified.
 \description{
 These functions calculate measures of the change in the covariance
 matrices for the fixed effects based on the deletion of an
-observation, or group of observations, for a hierarchical 
+observation, or group of observations, for a hierarchical
 linear model fit using \code{lmer}.
 }
 \details{
@@ -102,10 +102,10 @@ ct2 <- covtrace(fm, level = "school")
 }
 }
 \references{
-Christensen, R., Pearson, L., & Johnson, W. (1992) 
-Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}(1), 
+Christensen, R., Pearson, L., & Johnson, W. (1992)
+Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}(1),
 38--45.
-  
+
 Schabenberger, O. (2004) Mixed Model Influence Diagnostics,
 in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
 SAS Users Group International.

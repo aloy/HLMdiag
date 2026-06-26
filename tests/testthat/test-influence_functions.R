@@ -6,17 +6,25 @@ context("tests for all influence functions")
 
 #sleepstudy models - 2 level
 data(sleepstudy, package = 'lme4')
-sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days|Subject), data = sleepstudy)
-sleep.lme <- nlme::lme(Reaction ~ Days, random =  ~ Days|Subject, data = sleepstudy)
+sleep.lmer <- lme4::lmer(Reaction ~ Days + (Days | Subject), data = sleepstudy)
+sleep.lme <- nlme::lme(
+  Reaction ~ Days,
+  random = ~ Days | Subject,
+  data = sleepstudy
+)
 nsleep <- nrow(sleep.lmer@frame)
 sleep.ngroups <- length(unique(sleep.lmer@flist[["Subject"]]))
 
 
-#chemistry models - 3 level 
-data(Chem97, package = "mlmRev")  
-Chem97 <- Chem97[1:257,]
-chem.lmer <- lme4::lmer(score ~ gcsecnt + (1|lea/school), data = Chem97)
-chem.lme <- nlme::lme(score ~ gcsecnt, random = ~1|lea/school, data = Chem97)
+#chemistry models - 3 level
+data(Chem97, package = "mlmRev")
+Chem97 <- Chem97[1:257, ]
+chem.lmer <- lme4::lmer(score ~ gcsecnt + (1 | lea / school), data = Chem97)
+chem.lme <- nlme::lme(
+  score ~ gcsecnt,
+  random = ~ 1 | lea / school,
+  data = Chem97
+)
 nchem <- nrow(chem.lmer@frame)
 
 chem.ngroups2 <- length(unique(chem.lmer@flist[["school:lea"]]))
@@ -37,14 +45,14 @@ test_that("Number of rows from leverage output is equal to number of observation
 
 test_that("Number of rows from leverage output is equal to number of groups for group deletion for lme4 models", {
   expect_equal(nrow(leverage(sleep.lmer, level = "Subject")), sleep.ngroups)
-  
+
   expect_equal(nrow(leverage(chem.lmer, level = "lea")), chem.ngroups3)
   expect_equal(nrow(leverage(chem.lmer, level = "school:lea")), chem.ngroups2)
 })
 
 test_that("Number of rows from leverage output is equal to number of groups for group deletion for nlme models", {
   expect_equal(nrow(leverage(sleep.lme, level = "Subject")), sleep.ngroups)
-  
+
   expect_equal(nrow(leverage(chem.lme, level = "lea")), chem.ngroups3)
   expect_equal(nrow(leverage(chem.lme, level = "school")), chem.ngroups2)
 })
@@ -62,15 +70,27 @@ test_that("Number of rows from cook's distance output is equal to number of obse
 })
 
 test_that("Number of rows from cook's distance output is equal to number of groups for group deletion for lme4 models", {
-  expect_equal(length(cooks.distance(sleep.lmer, level = "Subject")), sleep.ngroups)
+  expect_equal(
+    length(cooks.distance(sleep.lmer, level = "Subject")),
+    sleep.ngroups
+  )
   expect_equal(length(cooks.distance(chem.lmer, level = "lea")), chem.ngroups3)
-  expect_equal(length(cooks.distance(chem.lmer, level = "school:lea")), chem.ngroups2)
+  expect_equal(
+    length(cooks.distance(chem.lmer, level = "school:lea")),
+    chem.ngroups2
+  )
 })
 
 test_that("Number of rows from cook's distance output is equal to number of groups for group deletion for nlme models", {
-  expect_equal(length(cooks.distance(sleep.lme, level = "Subject")), sleep.ngroups)
+  expect_equal(
+    length(cooks.distance(sleep.lme, level = "Subject")),
+    sleep.ngroups
+  )
   expect_equal(length(cooks.distance(chem.lme, level = "lea")), chem.ngroups3)
-  expect_equal(length(cooks.distance(chem.lme, level = "school")), chem.ngroups2)
+  expect_equal(
+    length(cooks.distance(chem.lme, level = "school")),
+    chem.ngroups2
+  )
 })
 
 context("tests for MDFFITS")
@@ -147,11 +167,11 @@ test_that("Number of rows from covratio output is equal to number of groups for 
 
 context("tests for RVC")
 
-#SOMETHING IS WRONG HERE 
+#SOMETHING IS WRONG HERE
 #test_that("Number of rows from RVC output is equal to number of observations for single case deletion for lme4 models", {
-  #skip_on_cran()
-  #expect_equal(nrow(rvc(sleep.lmer)), nsleep)
-  #expect_equal(nrow(rvc(chem.lmer)), nchem)
+#skip_on_cran()
+#expect_equal(nrow(rvc(sleep.lmer)), nsleep)
+#expect_equal(nrow(rvc(chem.lmer)), nchem)
 #})
 
 test_that("Number of rows from RVC output is equal to number of observations for single case deletion for nlme models", {
@@ -160,12 +180,12 @@ test_that("Number of rows from RVC output is equal to number of observations for
   expect_equal(nrow(rvc(chem.lme)), nchem)
 })
 
-#SOMETHING IS WRONG HERE 
+#SOMETHING IS WRONG HERE
 #test_that("Number of rows from RVC output is equal to number of groups for group deletion for lme4 models", {
-  #skip_on_cran()
-  #expect_equal(nrow(rvc(sleep.lmer, level = "Subject")), sleep.ngroups)
-  #expect_equal(nrow(rvc(chem.lmer, level = "lea")), chem.ngroups3)
-  #expect_equal(nrow(rvc(chem.lmer, level = "school:lea")), chem.ngroups2)
+#skip_on_cran()
+#expect_equal(nrow(rvc(sleep.lmer, level = "Subject")), sleep.ngroups)
+#expect_equal(nrow(rvc(chem.lmer, level = "lea")), chem.ngroups3)
+#expect_equal(nrow(rvc(chem.lmer, level = "school:lea")), chem.ngroups2)
 #})
 
 test_that("Number of rows from RVC output is equal to number of groups for group deletion for nlme models", {

@@ -34,37 +34,37 @@
 \item{level}{variable used to define the group for which cases will be
 deleted.  If \code{level = 1} (default), then individual cases will be deleted.}
 
-\item{delete}{index of individual cases to be deleted. To delete specific 
+\item{delete}{index of individual cases to be deleted. To delete specific
 observations the row number must be specified. To delete higher level
 units the group ID and \code{group} parameter must be specified.
 If \code{delete = NULL} then all cases are iteratively deleted.}
 
-\item{include.attr}{logical value determining whether the difference between 
-the full and deleted parameter estimates should be included. If \code{FALSE} 
-(default), a numeric vector of Cook's distance or MDFFITS is returned. 
-If \code{TRUE}, a tibble with the Cook's distance or MDFFITS values in the 
+\item{include.attr}{logical value determining whether the difference between
+the full and deleted parameter estimates should be included. If \code{FALSE}
+(default), a numeric vector of Cook's distance or MDFFITS is returned.
+If \code{TRUE}, a tibble with the Cook's distance or MDFFITS values in the
 first column and the parameter differences in the remaining columns is returned.}
 
 \item{object}{fitted object of class \code{mer} or \code{lmerMod}}
 }
 \value{
-Both functions return a numeric vector (or single value if 
-\code{delete} has been specified) as the default. If \code{include.attr = TRUE}, 
+Both functions return a numeric vector (or single value if
+\code{delete} has been specified) as the default. If \code{include.attr = TRUE},
 then a tibble is returned. The first column consists of the Cook's distance or
 MDFFITS values, and the later columns capture the difference between the full
 and deleted parameter estimates.
 }
 \description{
 These functions calculate measures of the change in the fixed effects
-estimates based on the deletion of an observation, or group of 
+estimates based on the deletion of an observation, or group of
 observations, for a hierarchical linear model fit using \code{lmer}.
 }
 \details{
-Both Cook's distance and MDFFITS measure the change in the 
-fixed effects estimates based on the deletion of a subset of observations. 
+Both Cook's distance and MDFFITS measure the change in the
+fixed effects estimates based on the deletion of a subset of observations.
 The key difference between the two diagnostics is that Cook's distance uses
 the covariance matrix for the fixed effects from the original
-model while MDFFITS uses the covariance matrix from the deleted 
+model while MDFFITS uses the covariance matrix from the deleted
 model.
 }
 \note{
@@ -103,7 +103,7 @@ ss.m1 <- mdffits(ss)
 # MDFFITS for each Subject
 ss.m.subject <- mdffits(ss, level = "Subject")
 
-\dontrun{  
+\dontrun{
 
 # MDFFITS  for individual observations
 m1 <- mdffits(fm)
@@ -113,10 +113,10 @@ m.school <- mdffits(fm, level = "school")
 }
 }
 \references{
-Christensen, R., Pearson, L., & Johnson, W. (1992) 
-Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34}, 
+Christensen, R., Pearson, L., & Johnson, W. (1992)
+Case-deletion diagnostics for mixed models. \emph{Technometrics}, \bold{34},
 38--45.
-  
+
 Schabenberger, O. (2004) Mixed Model Influence Diagnostics,
 in \emph{Proceedings of the Twenty-Ninth SAS Users Group International Conference},
 SAS Users Group International.

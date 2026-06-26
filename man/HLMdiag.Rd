@@ -7,16 +7,16 @@
 \alias{package-HLMdiag}
 \title{Diagnostic tools for hierarchical (multilevel) linear models}
 \description{
-HLMdiag provides a suite of diagnostic tools for hierarchical 
+HLMdiag provides a suite of diagnostic tools for hierarchical
 (multilevel) linear models fit using the \code{lme4} or \code{nlme}
-packages. These tools are grouped below by purpose. 
+packages. These tools are grouped below by purpose.
 See the help documentation for additional information
 about each function.
 }
 \details{
 \bold{Residual analysis}
 
-HLMdiag's \code{\link{hlm_resid}} function provides a wrapper that 
+HLMdiag's \code{\link{hlm_resid}} function provides a wrapper that
 extracts residuals and fitted values for individual observations
 or groups of observations. In addition to being a wrapper function for functions
 implemented in the \code{lme4} and \code{nlme} packages,
@@ -25,18 +25,18 @@ residuals.
 
 \bold{Influence analysis}
 
-HLMdiag's \code{\link{hlm_influence}} function provides a convenient wrapper 
-to obtain influence diagnostics for each observation or group of observations 
-appended to the data used to fit the model. The diagnostics returned by 
+HLMdiag's \code{\link{hlm_influence}} function provides a convenient wrapper
+to obtain influence diagnostics for each observation or group of observations
+appended to the data used to fit the model. The diagnostics returned by
 \code{\link{hlm_influence}} include Cook's distance, MDFFITS, covariance trace (covtrace),
-covariance ratio (covratio), leverage, and relative variance change (RVC). 
-HLMdiag also contains functions to calculate these diagnostics individually, as discussed below. 
+covariance ratio (covratio), leverage, and relative variance change (RVC).
+HLMdiag also contains functions to calculate these diagnostics individually, as discussed below.
 
 Influence on fitted values
 
 HLMdiag provides \code{\link{leverage}} that calculates the influence
-that observations/groups have on the fitted values (leverage). 
-For mixed/hierarchical models leverage can be decomposed into two parts: the 
+that observations/groups have on the fitted values (leverage).
+For mixed/hierarchical models leverage can be decomposed into two parts: the
 fixed part and the random part. We refer the user to the references
 cited in the help documentation for additional explanation.
 
@@ -59,7 +59,7 @@ components.
 
 \bold{Graphics}
 
-HLMdiag also strives to make graphical assessment easier in the 
+HLMdiag also strives to make graphical assessment easier in the
 \code{ggplot2} framework by providing dotplots for influence diagnostics
 (\code{\link{dotplot_diag}}), grouped Q-Q plots (\code{\link{group_qqnorm}}),
 and Q-Q plots that combine the functionality of \code{\link{qqnorm}} and
@@ -78,6 +78,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Adam Loy \email{loyad01@gmail.com}
   \item Jaylin Lowe
   \item Jack Moran
 }

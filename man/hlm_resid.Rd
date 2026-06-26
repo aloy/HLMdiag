@@ -110,12 +110,12 @@ fm.lme.res2 <- hlm_resid(fm.lme, level = "Subject", include.ls = FALSE) ##level-
 fm.lme.res2
 }
 \references{
-Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical 
+Hilden-Minton, J. (1995) Multilevel diagnostics for mixed and hierarchical
 linear models. University of California Los Angeles.
 
-Houseman, E. A., Ryan, L. M., & Coull, B. A. (2004) 
-Cholesky Residuals for Assessing Normal Errors in a Linear 
-Model With Correlated Outcomes. 
+Houseman, E. A., Ryan, L. M., & Coull, B. A. (2004)
+Cholesky Residuals for Assessing Normal Errors in a Linear
+Model With Correlated Outcomes.
 \emph{Journal of the American Statistical Association}, 99(466), 383--394.
 
 David Robinson and Alex Hayes (2020). broom: Convert Statistical Analysis

@@ -1,14 +1,16 @@
 #' @export
-pull_resid <- function(object, ...){
+pull_resid <- function(object, ...) {
   UseMethod("pull_resid", object)
 }
 
 #' @export
 #' @rdname pull_resid.lmerMod
 #' @method pull_resid default
-pull_resid.default <- function(object, ...){
-  stop(paste("there is no pull_resid() method for objects of class",
-             paste(class(object), collapse=", ")))
+pull_resid.default <- function(object, ...) {
+  stop(paste(
+    "there is no pull_resid() method for objects of class",
+    paste(class(object), collapse = ", ")
+  ))
 }
 
 #' Computationally Efficient HLM Residuals
@@ -46,47 +48,45 @@ pull_resid.default <- function(object, ...){
 #' @aliases pull_resid
 
 pull_resid.lmerMod <- function(object, type = "ls", standardize = FALSE, ...) {
-  
-  if(!is.null(standardize) && !standardize %in% c(TRUE, FALSE)) {
+  if (!is.null(standardize) && !standardize %in% c(TRUE, FALSE)) {
     stop("standardize can only be specified to be TRUE or FALSE.")
   }
-  if(!type %in% c("ls", "eb", "marginal")) {
+  if (!type %in% c("ls", "eb", "marginal")) {
     stop("type must be either 'ls', 'eb', or 'marginal'.")
   }
-  
-  if(type == "ls") {
+
+  if (type == "ls") {
     ls.resid <- LSresids(object, level = 1, standardize = standardize)
-    ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
-    
-    return(ls.resid[,1])
+    ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))), ]
+
+    return(ls.resid[, 1])
   }
-  
-  if(type == "eb") {
+
+  if (type == "eb") {
     if (standardize == TRUE) {
       eb.resid <- data.frame(.std.resid = resid(object, scale = TRUE))
     } else {
       eb.resid <- data.frame(.resid = resid(object))
     }
-    return(eb.resid[,1])
+    return(eb.resid[, 1])
   }
-  
-  if(type == "marginal") {
+
+  if (type == "marginal") {
     mr <- object@resp$y - lme4::getME(object, "X") %*% lme4::fixef(object)
     if (standardize == TRUE) {
       sig0 <- lme4::getME(object, "sigma")
-      ZDZt <- sig0^2 * crossprod( lme4::getME(object, "A") )
-      n    <- nrow(ZDZt)
-      R      <- Diagonal( n = n, x = sig0^2 )
-      V      <- R + ZDZt
-      V.chol <- chol( V )
-      
+      ZDZt <- sig0^2 * crossprod(lme4::getME(object, "A"))
+      n <- nrow(ZDZt)
+      R <- Diagonal(n = n, x = sig0^2)
+      V <- R + ZDZt
+      V.chol <- chol(V)
+
       Lt <- solve(t(V.chol))
-      mar.resid <- data.frame(.chol.mar.resid = (Lt %*% mr)[,1])
-      
+      mar.resid <- data.frame(.chol.mar.resid = (Lt %*% mr)[, 1])
     } else {
-      mar.resid <- data.frame(.mar.resid = mr[,1])
+      mar.resid <- data.frame(.mar.resid = mr[, 1])
     }
-    return(mar.resid[,1])
+    return(mar.resid[, 1])
   }
 }
 
@@ -95,42 +95,40 @@ pull_resid.lmerMod <- function(object, type = "ls", standardize = FALSE, ...) {
 #' @rdname pull_resid.lmerMod
 #' @method pull_resid lme
 pull_resid.lme <- function(object, type = "ls", standardize = FALSE, ...) {
-  
-  if(!is.null(standardize) && !standardize %in% c(TRUE, FALSE)) {
+  if (!is.null(standardize) && !standardize %in% c(TRUE, FALSE)) {
     stop("standardize can only be specified to be TRUE or FALSE.")
   }
-  if(!type %in% c("ls", "eb", "marginal")) {
+  if (!type %in% c("ls", "eb", "marginal")) {
     stop("type must be either 'ls', 'eb', or 'marginal'.")
   }
-  
-  if(type == "ls") {
+
+  if (type == "ls") {
     ls.resid <- LSresids(object, level = 1, standardize = standardize)
-    ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))),]
-    
-    return(ls.resid[,1])
+    ls.resid <- ls.resid[order(as.numeric(rownames(ls.resid))), ]
+
+    return(ls.resid[, 1])
   }
-  
-  if(type == "eb") {
-    if(standardize == TRUE) {
+
+  if (type == "eb") {
+    if (standardize == TRUE) {
       eb.resid <- data.frame(.std.resid = resid(object, type = "normalized"))
-    } else { 
+    } else {
       eb.resid <- data.frame(.resid = resid(object, type = "response"))
     }
-    return(eb.resid[,1])
+    return(eb.resid[, 1])
   }
-  
-  if(type == "marginal") {
-    mr <- resid(object, type="response", level=0)
+
+  if (type == "marginal") {
+    mr <- resid(object, type = "response", level = 0)
     if (standardize == TRUE) {
-      V      <- extract_design(object)$V
-      V.chol <- chol( V )
-      
+      V <- extract_design(object)$V
+      V.chol <- chol(V)
+
       Lt <- solve(t(V.chol))
-      mar.resid <- data.frame(.chol.mar.resid = (Lt %*% mr)[,1])
-      
+      mar.resid <- data.frame(.chol.mar.resid = (Lt %*% mr)[, 1])
     } else {
       mar.resid <- data.frame(.mar.resid = mr)
     }
-    return(mar.resid[,1])
+    return(mar.resid[, 1])
   }
 }
