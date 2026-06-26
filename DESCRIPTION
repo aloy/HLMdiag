@@ -31,7 +31,8 @@ Imports:
     Rcpp,
     rlang,
     ggrepel,
-    diagonals
+    diagonals,
+    reformulas
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:
     mlmRev,
