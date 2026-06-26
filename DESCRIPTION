@@ -11,18 +11,16 @@ Description: A suite of diagnostic tools for hierarchical
     convenience functions and graphics for residual analysis. Models
     can be fit using either lmer in the 'lme4' package or lme in the 'nlme' package.
 Depends:
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports:
     ggplot2 (>= 0.9.2),
     stats,
     methods,
-    plyr,
     reshape2,
     MASS,
     Matrix,
     mgcv,
     dplyr,
-    magrittr,
     stringr,
     purrr,
     tibble,

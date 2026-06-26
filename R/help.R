@@ -58,14 +58,12 @@
 #' \code{\link{qqline}} (\code{\link{ggplot_qqnorm}}).
 #'
 #' @useDynLib HLMdiag, .registration = TRUE
-#' @importFrom magrittr %>%
 #' @importFrom reshape2 melt dcast
-#' @importFrom plyr adply ddply
 #' @importFrom MASS rlm
 #' @importFrom mgcv tensor.prod.model.matrix
-#' @importFrom dplyr select left_join mutate across bind_cols filter arrange desc
+#' @importFrom dplyr select left_join mutate across bind_cols bind_rows filter arrange desc
 #' @importFrom stringr str_c str_detect str_split
-#' @importFrom purrr map map_lgl map_df map_dfc map_dfr map_dbl
+#' @importFrom purrr map map_lgl map_df map_dbl
 #' @importFrom tibble tibble
 #' @importFrom tidyselect all_of
 #' @importFrom janitor clean_names

@@ -455,8 +455,8 @@ extract_design <- function(b) {
   for (i in 1:length(na.action)) {
     rownums[i] <- na.action[[i]]
   }
-  df <- data %>%
-    dplyr::anti_join(model@frame, by = colnames(model@frame)) %>%
+  df <- data |>
+    dplyr::anti_join(model@frame, by = colnames(model@frame)) |>
     dplyr::select(colnames(model@frame))
 
   for (i in 1:nrow(df)) {
@@ -472,8 +472,8 @@ extract_design <- function(b) {
     rownums[i] <- na.action[[i]]
   }
 
-  df <- org.data %>%
-    dplyr::anti_join(fixed.data, by = colnames(fixed.data)) %>%
+  df <- org.data |>
+    dplyr::anti_join(fixed.data, by = colnames(fixed.data)) |>
     dplyr::select(colnames(fixed.data))
 
   for (i in 1:length(na.action)) {

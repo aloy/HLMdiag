@@ -294,8 +294,8 @@ hlm_influence.lme <- function(
         " + ",
         paste(names(model$groups), collapse = " + ")
       )
-      data.fixed <- model$data %>%
-        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      data.fixed <- model$data |>
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) |>
         as.data.frame()
       new.data <- model.frame(formula(dataform), data.fixed)
 
@@ -364,8 +364,8 @@ hlm_influence.lme <- function(
         " + ",
         paste(names(model$groups), collapse = " + ")
       )
-      data.fixed <- model$data %>%
-        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+      data.fixed <- model$data |>
+        dplyr::mutate(across(where(is.character), ~ as.factor(.x))) |>
         as.data.frame()
       new.data <- model.frame(formula(dataform), data.fixed)
       infl.tbl <- tibble::add_column(infl.tbl, new.data, .before = 1)

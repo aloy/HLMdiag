@@ -120,8 +120,8 @@ dotplot_diag <- function(
   }
 
   df <- data.frame(index = index, value = x)
-  df <- df %>%
-    arrange(desc(.data$value)) %>%
+  df <- df |>
+    arrange(desc(.data$value)) |>
     mutate(n = nrow(df):1, n.factor = factor(seq(nrow(df), 1)))
 
   if (!is.null(cutoff)) {
@@ -131,10 +131,10 @@ dotplot_diag <- function(
 
     if (is.numeric(cutoff)) {
       if (!name %in% c("covratio", "rvc")) {
-        df <- df %>%
+        df <- df |>
           mutate(extreme = ifelse(.data$value > cutoff, TRUE, FALSE))
       } else {
-        df <- df %>%
+        df <- df |>
           mutate(
             extreme = ifelse(
               .data$value < cutoff[1] | .data$value > cutoff[2],

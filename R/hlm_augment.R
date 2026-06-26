@@ -85,8 +85,8 @@ hlm_augment.lme <- function(object, level = 1, include.ls = TRUE, ...) {
     " + ",
     paste(names(object$groups), collapse = " + ")
   )
-  data <- object$data %>%
-    dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+  data <- object$data |>
+    dplyr::mutate(across(where(is.character), ~ as.factor(.x))) |>
     as.data.frame()
   newdata <- model.frame(formula(dataform), data)
 

@@ -258,11 +258,9 @@ case_delete.mer <- function(
         ranef.delete <- do.call('rbind', ranef.delete)
       } else {
         flist <- names(model@flist)
-        temp <- NULL
-        for (i in 1:length(flist)) {
-          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]])
-        }
-        ranef.delete <- temp
+        ranef.delete <- lapply(seq_along(flist), function(i) {
+          do.call(rbind, lapply(ranef.delete, function(x) x[[i]]))
+        })
         names(ranef.delete) <- names(lme4::ranef(model))
       }
     }
@@ -507,11 +505,9 @@ case_delete.lmerMod <- function(
         ranef.delete <- do.call('rbind', ranef.delete)
       } else {
         flist <- names(model@flist)
-        temp <- NULL
-        for (i in 1:length(flist)) {
-          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]])
-        }
-        ranef.delete <- temp
+        ranef.delete <- lapply(seq_along(flist), function(i) {
+          do.call(rbind, lapply(ranef.delete, function(x) x[[i]]))
+        })
         names(ranef.delete) <- names(lme4::ranef(model))
       }
     }
@@ -627,8 +623,8 @@ case_delete.lme <- function(
           " + ",
           paste(names(model.delete$groups), collapse = " + ")
         )
-        data <- model.delete$data %>%
-          dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        data <- model.delete$data |>
+          dplyr::mutate(across(where(is.character), ~ as.factor(.x))) |>
           as.data.frame()
         new.frame <- model.frame(formula(dataform), data)
 
@@ -738,8 +734,8 @@ case_delete.lme <- function(
           " + ",
           paste(names(model.delete[[i]]$groups), collapse = " + ")
         )
-        data <- model.delete[[i]]$data %>%
-          dplyr::mutate(across(where(is.character), ~ as.factor(.x))) %>%
+        data <- model.delete[[i]]$data |>
+          dplyr::mutate(across(where(is.character), ~ as.factor(.x))) |>
           as.data.frame()
         model.delete[[i]]$newframe <- model.frame(formula(dataform), data)
       }
@@ -820,11 +816,9 @@ case_delete.lme <- function(
         ranef.delete <- do.call('rbind', ranef.delete)
       } else {
         flist <- colnames(flist)
-        temp <- NULL
-        for (i in 1:length(flist)) {
-          temp[[i]] <- plyr::ldply(ranef.delete, function(x) x[[i]])
-        }
-        ranef.delete <- temp
+        ranef.delete <- lapply(seq_along(flist), function(i) {
+          do.call(rbind, lapply(ranef.delete, function(x) x[[i]]))
+        })
         names(ranef.delete) <- names(nlme::ranef(model))
       }
     }

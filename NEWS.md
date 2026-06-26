@@ -1,5 +1,11 @@
 # HLMdiag (development version)
 
+## Modernization
+
+* The package now requires R >= 4.1.0 to take advantage of the native pipe operator (`|>`).
+* Removed dependencies on `magrittr` and `plyr`. All `%>%` pipes have been replaced with `|>`, `plyr::ldply()` calls replaced with base R equivalents, `plyr::rbind.fill()` replaced with `dplyr::bind_rows()`, and `plyr::adply()` replaced with `reshape2::melt()`.
+* Deprecated `purrr::map_dfc()` and `purrr::map_dfr()` calls in `LSresids()` have been replaced with `purrr::map() |> dplyr::bind_cols()` and `purrr::map() |> dplyr::bind_rows()`.
+
 ## Bug fixes
 
 * `hlm_resid()` now correctly passes the `standardize` argument to `LSresids()` when computing higher-level LS residuals for `lmerMod` models and level-1 LS residuals for `lme` models. Previously, the argument was silently ignored, so LS residuals were never standardized in those code paths even when `standardize = TRUE`.

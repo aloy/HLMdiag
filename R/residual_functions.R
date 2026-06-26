@@ -284,9 +284,9 @@ mahalanobis_ranef.lmerMod <- function(object) {
     vcov_eblup <- tcrossprod(D, Z) %*% mats$P %*% tcrossprod(Z, D)
 
     eblup_lst <- diagonals::split_vector(eblup, size = 2)
-    vcov_eblup_lst <- diagonals::fatdiag(vcov_eblup, steps = ngrps(object)) %>%
-      diagonals::split_vector(size = 4) %>%
-      map(~ matrix(.x, nrow = 2, byrow = TRUE))
+    vcov_eblup_lst <- diagonals::fatdiag(vcov_eblup, steps = ngrps(object)) |>
+      diagonals::split_vector(size = 4) |>
+      purrr::map(~ matrix(.x, nrow = 2, byrow = TRUE))
 
     mah_dist_eblup <- purrr::map2_dbl(
       eblup_lst,

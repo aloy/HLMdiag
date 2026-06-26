@@ -268,14 +268,13 @@ adjust_lmList.formula <- function(object, data, pool) {
 
 #' @export
 #' @method coef adjust_lmList
-#' @importFrom plyr rbind.fill
 # setMethod("coef", signature(object = "adjust_lmList"),
 coef.adjust_lmList <- function(object, ...) {
   coefs <- lapply(object, coef)
   non.null <- !unlist(lapply(coefs, is.null))
   if (sum(non.null) > 0) {
     coefs <- lapply(coefs, function(x) as.data.frame(t(x)))
-    coefs <- do.call('rbind.fill', coefs)
+    coefs <- dplyr::bind_rows(coefs)
     rownames(coefs) <- names(object)
     #dimnames(coefs) <- list(names(object), names(coefs))
     #coefs <- as.data.frame(coefs)
@@ -353,7 +352,7 @@ plot.adjust_lmList.confint <- function(x, y, ...) {
   # 		stopifnot(require("ggplot2"))
   group <- intervals <- NULL # Make codetools happy
   cis <- as(x, "array")
-  df <- adply(cis, c(1, 2, 3), identity)
+  df <- reshape2::melt(cis)
   colnames(df) <- c("what", "end", "group", "intervals")
   p <- ggplot(df, aes(x = group, y = intervals))
   p +

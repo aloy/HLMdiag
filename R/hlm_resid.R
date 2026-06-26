@@ -284,7 +284,7 @@ hlm_resid.lmerMod <- function(
       g.index.frame <- which(
         stringr::str_detect(g.exp, names(object@frame))
       )
-      g.vars <- object@frame %>%
+      g.vars <- object@frame |>
         dplyr::select(all_of(level), all_of(g.index.frame))
       g.vars <- unique(g.vars)
 
@@ -346,7 +346,7 @@ hlm_resid.lmerMod <- function(
       g.index.frame <- which(
         stringr::str_detect(g.exp, names(object@frame))
       )
-      g.vars <- object@frame %>%
+      g.vars <- object@frame |>
         dplyr::select(
           all_of(level.var),
           all_of(higher.level),
@@ -363,7 +363,7 @@ hlm_resid.lmerMod <- function(
           sep = ":"
         )
       }
-      g.vars <- g.vars %>%
+      g.vars <- g.vars |>
         dplyr::select(ncol(g.vars), 1:(ncol(g.vars) - 1))
 
       # Assemble data frame
@@ -455,8 +455,8 @@ hlm_resid.lme <- function(
       " + ",
       paste(names(object$groups), collapse = " + ")
     )
-    data <- object$data %>%
-      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
+    data <- object$data |>
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) |>
       as.data.frame()
     model.data <- model.frame(formula(dataform), data)
 
@@ -465,7 +465,7 @@ hlm_resid.lme <- function(
       # if na.exclude
       # fix data frame
       na.index <- which(!rownames(data) %in% rownames(model.data))
-      na.fix.data <- data[which(rownames(data) %in% na.index), ] %>%
+      na.fix.data <- data[which(rownames(data) %in% na.index), ] |>
         dplyr::select(all_of(names(model.data)))
       model.data <- rbind(model.data, na.fix.data)
       model.data <- model.data[order(as.numeric(rownames(model.data))), ]
@@ -549,8 +549,8 @@ hlm_resid.lme <- function(
     } else {
       ranef_names <- names(nlme::ranef(object)[[level]])
     }
-    data <- object$data %>%
-      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
+    data <- object$data |>
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) |>
       as.data.frame()
 
     form <- paste(fixed[2], fixed[1], fixed[3], "|", level)
@@ -573,7 +573,7 @@ hlm_resid.lme <- function(
 
     if (level == names(object$groups)[1]) {
       # highest level
-      g.vars <- data %>%
+      g.vars <- data |>
         dplyr::select(all_of(level), all_of(g.index.frame))
       g.vars <- unique(g.vars)
 
@@ -616,7 +616,7 @@ hlm_resid.lme <- function(
       higher.level <- names(object$groups[
         which(names(object$groups) == level) - 1
       ])
-      g.vars <- data %>%
+      g.vars <- data |>
         dplyr::select(
           all_of(higher.level),
           all_of(level),
@@ -633,7 +633,7 @@ hlm_resid.lme <- function(
           sep = "/"
         )
       }
-      g.vars <- g.vars %>%
+      g.vars <- g.vars |>
         dplyr::select(ncol(g.vars), 1:(ncol(g.vars) - 1))
 
       # Assemble data frame

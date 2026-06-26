@@ -309,7 +309,7 @@ LSresids.lmerMod <- function(object, level, standardize = FALSE, ...) {
         standardize <- FALSE
       }
       ls.ranef <- lme4::ranef(ls.models, standard = standardize)[ranef_names]
-      ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      ls.resid <- purrr::map(ls.ranef, ~.x) |> dplyr::bind_cols()
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)), ls.resid)
 
       if (ncol(ls.resid) != length(ranef_names) + 1) {
@@ -382,7 +382,7 @@ LSresids.lmerMod <- function(object, level, standardize = FALSE, ...) {
       # reconstruct the data frame with group id
       ls.resid <- tibble::tibble(
         group = row.order2,
-        purrr::map_dfr(ls.ranef, ~ dplyr::bind_cols(.x))
+        purrr::map(ls.ranef, ~ dplyr::bind_cols(.x)) |> dplyr::bind_rows()
       )
 
       if (ncol(ls.resid) != length(ranef_names) + 1) {
@@ -488,8 +488,8 @@ LSresids.lme <- function(object, level, standardize = FALSE, ...) {
   if (level != 1) {
     fixed <- as.character(formula(object))
 
-    data <- object$data %>%
-      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) %>%
+    data <- object$data |>
+      dplyr::mutate(dplyr::across(where(is.character), ~ as.factor(.x))) |>
       as.data.frame()
 
     n.ranefs <- length(names(object$groups))
@@ -523,7 +523,7 @@ LSresids.lme <- function(object, level, standardize = FALSE, ...) {
         standardize <- FALSE
       }
       ls.ranef <- lme4::ranef(ls.models, standard = standardize)[ranef_names]
-      ls.resid <- purrr::map_dfc(ls.ranef, ~.x)
+      ls.resid <- purrr::map(ls.ranef, ~.x) |> dplyr::bind_cols()
       ls.resid <- tibble::tibble(group = row.names(coef(ls.models)), ls.resid)
 
       if (ncol(ls.resid) != length(ranef_names) + 1) {
@@ -594,7 +594,7 @@ LSresids.lme <- function(object, level, standardize = FALSE, ...) {
       # reconstruct the data frame with group id
       ls.resid <- tibble::tibble(
         group = row.order2,
-        purrr::map_dfr(ls.ranef, ~ dplyr::bind_cols(.x))
+        purrr::map(ls.ranef, ~ dplyr::bind_cols(.x)) |> dplyr::bind_rows()
       )
 
       if (ncol(ls.resid) != length(ranef_names) + 1) {
