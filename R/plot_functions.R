@@ -115,7 +115,7 @@ dotplot_diag <- function(
   x <- eval(substitute(x), data, parent.frame())
   index <- eval(substitute(index), data, parent.frame())
 
-  if (class(x) %in% c("fixef.dd", "vcov.dd")) {
+  if (inherits(x, c("fixef.dd", "vcov.dd"))) {
     x <- as.numeric(x)
   }
 
