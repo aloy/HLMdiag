@@ -355,14 +355,11 @@ hlm_resid.lmerMod <- function(
       g.vars <- unique(g.vars)
 
       # Add the group variable
-      g.vars$group <- rep(NA, nrow(g.vars))
-      for (i in 1:nrow(g.vars)) {
-        g.vars$group[i] <- stringr::str_c(
-          g.vars[level.var][i, ],
-          g.vars[higher.level][i, ],
-          sep = ":"
-        )
-      }
+      g.vars$group <- paste(
+        g.vars[[level.var]],
+        g.vars[[higher.level]],
+        sep = ":"
+      )
       g.vars <- g.vars |>
         dplyr::select(ncol(g.vars), 1:(ncol(g.vars) - 1))
 
@@ -625,14 +622,7 @@ hlm_resid.lme <- function(
       g.vars <- unique(g.vars)
 
       # Add group variable
-      g.vars$group <- rep(NA, nrow(g.vars))
-      for (i in 1:nrow(g.vars)) {
-        g.vars$group[i] <- stringr::str_c(
-          g.vars[higher.level][i, ],
-          g.vars[level][i, ],
-          sep = "/"
-        )
-      }
+      g.vars$group <- paste(g.vars[[higher.level]], g.vars[[level]], sep = "/")
       g.vars <- g.vars |>
         dplyr::select(ncol(g.vars), 1:(ncol(g.vars) - 1))
 

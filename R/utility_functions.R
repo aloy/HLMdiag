@@ -42,7 +42,7 @@ varcomp.mer <- function(object) {
 
   if (isDiagonal(vc.mat)) {
     vc.vec <- diag(vc.mat)
-    vc.names <- paste("D", 1:length(vc.vec), 1:length(vc.vec), sep = "")
+    vc.names <- paste("D", seq_along(vc.vec), seq_along(vc.vec), sep = "")
   } else {
     vc.vec <- as.matrix(vc.mat)[!upper.tri(vc.mat)]
     vc.index <- which(!upper.tri(vc.mat) == TRUE, arr.ind = TRUE)
@@ -67,7 +67,7 @@ varcomp.lme <- function(model) {
 
   if (isDiagonal(vc.mat)) {
     vc.vec <- diag(vc.mat)
-    vc.names <- paste("D", 1:length(vc.vec), 1:length(vc.vec), sep = "")
+    vc.names <- paste("D", seq_along(vc.vec), seq_along(vc.vec), sep = "")
   } else {
     vc.vec <- as.matrix(vc.mat)[!upper.tri(vc.mat)]
     vc.index <- which(!upper.tri(vc.mat) == TRUE, arr.ind = TRUE)
@@ -356,20 +356,7 @@ extract_design <- function(b) {
   } else {
     w <- 1 / nlme::varWeights(b$modelStruct$varStruct)
     group.name <- names(b$groups)
-    order.txt <- paste("ind<-order(data[[\"", group.name[1], "\"]]", sep = "")
-    if (length(b$groups) > 1) {
-      for (i in 2:length(b$groups)) {
-        order.txt <- paste(
-          order.txt,
-          ",data[[\"",
-          group.name[i],
-          "\"]]",
-          sep = ""
-        )
-      }
-    }
-    order.txt <- paste(order.txt, ")")
-    eval(parse(text = order.txt))
+    ind <- do.call(order, lapply(group.name, \(g) data[[g]]))
     w[ind] <- w
     w <- w * b$sigma
   }
@@ -452,15 +439,12 @@ extract_design <- function(b) {
 #adding rows with NAs into returned tibble
 
 .lmerMod_add_NArows <- function(model, frame, na.action, data) {
-  rownums <- NULL
-  for (i in 1:length(na.action)) {
-    rownums[i] <- na.action[[i]]
-  }
+  rownums <- unlist(na.action)
   df <- data |>
     dplyr::anti_join(model@frame, by = colnames(model@frame)) |>
     dplyr::select(colnames(model@frame))
 
-  for (i in 1:nrow(df)) {
+  for (i in seq_len(nrow(df))) {
     frame <- tibble::add_row(frame, df[i, ], .before = as.numeric(rownums[i]))
   }
 
@@ -468,16 +452,13 @@ extract_design <- function(b) {
 }
 
 .lme_add_NArows <- function(model, frame, na.action, org.data, fixed.data) {
-  rownums <- NULL
-  for (i in 1:length(na.action)) {
-    rownums[i] <- na.action[[i]]
-  }
+  rownums <- unlist(na.action)
 
   df <- org.data |>
     dplyr::anti_join(fixed.data, by = colnames(fixed.data)) |>
     dplyr::select(colnames(fixed.data))
 
-  for (i in 1:length(na.action)) {
+  for (i in seq_along(na.action)) {
     frame <- tibble::add_row(frame, df[i, ], .before = as.numeric(rownums[i]))
   }
 

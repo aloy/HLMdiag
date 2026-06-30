@@ -12,17 +12,21 @@ cooks.distance.case_delete <- function(model, ...) {
 
   if (is(model$fixef.delete, "matrix")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
-    cook <- NULL
-    for (i in 1:length(groups)) {
-      change.fixef <- as.matrix(model$fixef.original - model$fixef.delete[i, ])
-      cook <- c(
-        cook,
-        t(change.fixef) %*%
-          solve(as.matrix(model$vcov.original)) %*%
-          change.fixef /
-          p
-      )
-    }
+    cook <- vapply(
+      seq_along(groups),
+      \(i) {
+        change.fixef <- as.matrix(
+          model$fixef.original - model$fixef.delete[i, ]
+        )
+        as.numeric(
+          t(change.fixef) %*%
+            solve(as.matrix(model$vcov.original)) %*%
+            change.fixef /
+            p
+        )
+      },
+      numeric(1)
+    )
   } else {
     change.fixef <- as.matrix(model$fixef.original - model$fixef.delete)
     cook <- t(change.fixef) %*%
@@ -47,17 +51,21 @@ mdffits.case_delete <- function(model, ...) {
 
   if (is(model$fixef.delete, "matrix")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
-    MDFFITS <- NULL
-    for (i in 1:length(groups)) {
-      change.fixef <- as.matrix(model$fixef.original - model$fixef.delete[i, ])
-      MDFFITS <- c(
-        MDFFITS,
-        t(change.fixef) %*%
-          solve(as.matrix(model$vcov.delete[[i]])) %*%
-          change.fixef /
-          p
-      )
-    }
+    MDFFITS <- vapply(
+      seq_along(groups),
+      \(i) {
+        change.fixef <- as.matrix(
+          model$fixef.original - model$fixef.delete[i, ]
+        )
+        as.numeric(
+          t(change.fixef) %*%
+            solve(as.matrix(model$vcov.delete[[i]])) %*%
+            change.fixef /
+            p
+        )
+      },
+      numeric(1)
+    )
   } else {
     change.fixef <- as.matrix(model$fixef.original - model$fixef.delete)
     MDFFITS <- t(change.fixef) %*%
@@ -78,15 +86,15 @@ covtrace.case_delete <- function(model, ...) {
 
   if (is(model$vcov.delete, "list")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
-    COVTRACE <- NULL
-    for (i in 1:length(groups)) {
-      V.original <- as.matrix(model$vcov.original)
-      V.delete <- as.matrix(model$vcov.delete[[i]])
-      COVTRACE <- c(
-        COVTRACE,
+    V.original <- as.matrix(model$vcov.original)
+    COVTRACE <- vapply(
+      seq_along(groups),
+      \(i) {
+        V.delete <- as.matrix(model$vcov.delete[[i]])
         abs(sum(diag(solve(V.original) %*% V.delete)) - p)
-      )
-    }
+      },
+      numeric(1)
+    )
   } else {
     V.original <- as.matrix(model$vcov.original)
     V.delete <- as.matrix(model$vcov.delete)
@@ -103,12 +111,15 @@ covtrace.case_delete <- function(model, ...) {
 covratio.case_delete <- function(model, ...) {
   if (is(model$vcov.delete, "list")) {
     groups <- rownames(model$fixef.delete, do.NULL = FALSE, prefix = "")
-    COVRATIO <- NULL
-    for (i in 1:length(groups)) {
-      V.original <- as.matrix(model$vcov.original)
-      V.delete <- as.matrix(model$vcov.delete[[i]])
-      COVRATIO <- c(COVRATIO, det(V.delete) / det(V.original))
-    }
+    V.original <- as.matrix(model$vcov.original)
+    COVRATIO <- vapply(
+      seq_along(groups),
+      \(i) {
+        V.delete <- as.matrix(model$vcov.delete[[i]])
+        det(V.delete) / det(V.original)
+      },
+      numeric(1)
+    )
   } else {
     V.original <- as.matrix(model$vcov.original)
     V.delete <- as.matrix(model$vcov.delete)

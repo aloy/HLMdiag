@@ -1,3 +1,20 @@
+.make_del_index <- function(flist, level, n, ngrps, delete) {
+  if (level != 1) {
+    grp.names <- unique(flist[[level]])
+    if (is.null(delete)) {
+      lapply(seq_len(ngrps[level]), \(x) {
+        which(flist[[level]] == grp.names[x]) - 1
+      })
+    } else {
+      list(which(flist[[level]] %in% delete) - 1)
+    }
+  } else if (is.null(delete)) {
+    split(0L:(n - 1L), 0L:(n - 1L))
+  } else {
+    list(delete - 1)
+  }
+}
+
 #' @export
 leverage <- function(model, ...) {
   UseMethod("leverage", model)
@@ -412,7 +429,7 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
       grp.names <- unique(mats$flist[, level])
 
       if (is.null(delete)) {
-        del.index <- lapply(1:mats$ngrps[level], function(x) {
+        del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
           ind <- which(mats$flist[, level] == grp.names[x]) - 1
         })
       } else {
@@ -496,28 +513,12 @@ cooks.distance.lmerMod <- function(
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE)
       colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      # nbetas <- ncol(cook.tbl) - 1
-      # for (i in 1:nbetas) {
-      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      # }
       return(cook.tbl)
     }
   } else {
     e <- with(mats, Y - X %*% betaHat)
 
-    if (level != 1) {
-      grp.names <- unique(mats$flist[[level]])
-
-      if (is.null(delete)) {
-        del.index <- lapply(1:mats$ngrps[level], function(x) {
-          ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-        })
-      } else {
-        del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-      }
-    } else {
-      del.index <- list(delete - 1)
-    }
+    del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
     calc.cooksd <- .Call(
       "cooksdSubset",
@@ -570,7 +571,7 @@ cooks.distance.lme <- function(
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(model))) {
+  if (inherits(model, "nlme")) {
     stop("not implemented for \"nlme\" objects")
   }
 
@@ -612,19 +613,7 @@ cooks.distance.lme <- function(
   } else {
     e <- with(mats, Y - X %*% betaHat)
 
-    if (level != 1) {
-      grp.names <- unique(mats$flist[[level]])
-
-      if (is.null(delete)) {
-        del.index <- lapply(1:mats$ngrps[level], function(x) {
-          ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-        })
-      } else {
-        del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-      }
-    } else {
-      del.index <- list(delete - 1)
-    }
+    del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
     calc.cooksd <- .Call(
       "cooksdSubset",
@@ -646,10 +635,6 @@ cooks.distance.lme <- function(
       beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE)
       colnames(beta_matrix) <- beta_names
       cook.tbl <- tibble::as_tibble(cbind(cooksd, beta_matrix))
-      # nbetas <- ncol(cook.tbl) - 1
-      # for (i in 1:nbetas) {
-      #   names(cook.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-      # }
       return(cook.tbl)
     }
   }
@@ -719,7 +704,7 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
     grp.names <- unique(mats$flist[, level])
 
     if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
+      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
         ind <- which(mats$flist[, level] == grp.names[x]) - 1
       })
     } else {
@@ -786,23 +771,7 @@ mdffits.lmerMod <- function(
   beta_names <- rownames(betaHat)
   e <- with(mats, Y - X %*% betaHat)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   calc.mdffits <- .Call(
     "mdffitsSubset",
@@ -823,11 +792,6 @@ mdffits.lmerMod <- function(
     beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE)
     colnames(beta_matrix) <- beta_names
     mdffits.tbl <- tibble::as_tibble(cbind(mdffits = mdffits.vals, beta_matrix))
-    # names(mdffits.tbl)[1] <- "mdffits"
-    # nbetas <- ncol(mdffits.tbl) - 1
-    # for (i in 1:nbetas) {
-    #   names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-    # }
     return(mdffits.tbl)
   }
 }
@@ -855,7 +819,7 @@ mdffits.lme <- function(
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(model))) {
+  if (inherits(model, "nlme")) {
     stop("not implemented for \"nlme\" objects")
   }
 
@@ -868,23 +832,7 @@ mdffits.lme <- function(
   beta_names <- rownames(betaHat)
   e <- with(mats, Y - X %*% betaHat)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   calc.mdffits <- .Call(
     "mdffitsSubset",
@@ -905,11 +853,6 @@ mdffits.lme <- function(
     beta_matrix <- matrix(unlist(betas), nrow = length(betas), byrow = TRUE)
     colnames(beta_matrix) <- beta_names
     mdffits.tbl <- tibble::as_tibble(cbind(mdffits = mdffits.vals, beta_matrix))
-    # names(mdffits.tbl)[1] <- "mdffits"
-    # nbetas <- ncol(mdffits.tbl) - 1
-    # for (i in 1:nbetas) {
-    # names(mdffits.tbl)[i+1] <- stringr::str_c("beta", i, sep = "_")
-    # }
     return(mdffits.tbl)
   }
 }
@@ -1011,7 +954,7 @@ covratio.mer <- function(model, level = 1, delete = NULL, ...) {
     grp.names <- unique(mats$flist[, level])
 
     if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
+      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
         ind <- which(mats$flist[, level] == grp.names[x]) - 1
       })
     } else {
@@ -1062,23 +1005,7 @@ covratio.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lmerMod_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covratioCalc",
@@ -1117,23 +1044,7 @@ covratio.lme <- function(model, level = 1, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lme_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covratioCalc",
@@ -1197,7 +1108,7 @@ covtrace.mer <- function(model, level = 1, delete = NULL, ...) {
     grp.names <- unique(mats$flist[, level])
 
     if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
+      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
         ind <- which(mats$flist[, level] == grp.names[x]) - 1
       })
     } else {
@@ -1248,23 +1159,7 @@ covtrace.lmerMod <- function(model, level = 1, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .lmerMod_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covtraceCalc",
@@ -1296,30 +1191,14 @@ covtrace.lme <- function(model, level = 1, delete = NULL, ...) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(model))) {
+  if (inherits(model, "nlme")) {
     stop("not implemented for \"nlme\" objects")
   }
 
   # Extract key pieces of the model
   mats <- .lme_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[[level]])
-
-    if (is.null(delete)) {
-      del.index <- lapply(1:mats$ngrps[level], function(x) {
-        ind <- which(mats$flist[[level]] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[[level]] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covtraceCalc",
