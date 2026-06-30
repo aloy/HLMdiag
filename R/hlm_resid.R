@@ -234,7 +234,7 @@ hlm_resid.lmerMod <- function(
   if (level %in% names(object@flist)) {
     # EB Residuals
     eb.resid <- lme4::ranef(object)[[level]]
-    eb.resid <- janitor::clean_names(eb.resid)
+    eb.resid <- .clean_names(eb.resid)
     groups <- rownames(eb.resid)
     if (standardize == TRUE) {
       se.re <- se.ranef(object)[[level]]
@@ -248,7 +248,7 @@ hlm_resid.lmerMod <- function(
     if (include.ls == TRUE) {
       ls.resid <- LSresids(object, level = level, standardize = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group), ] # fix order
-      ls.resid <- janitor::clean_names(ls.resid)
+      ls.resid <- .clean_names(ls.resid)
       if (standardize == TRUE) {
         ls.names <- paste0(".std.ls.", names(ls.resid))
       } else {
@@ -518,7 +518,7 @@ hlm_resid.lme <- function(
       eb.resid <- nlme::ranef(object, standard = standardize)
     }
 
-    eb.resid <- janitor::clean_names(eb.resid)
+    eb.resid <- .clean_names(eb.resid)
     groups <- rownames(eb.resid)
     if (standardize == TRUE) {
       eb.names <- paste0(".std.ranef.", names(eb.resid))
@@ -530,7 +530,7 @@ hlm_resid.lme <- function(
     if (include.ls == TRUE) {
       ls.resid <- LSresids(object, level = level, standardize = standardize)
       ls.resid <- ls.resid[match(groups, ls.resid$group), ] # fix order
-      ls.resid <- janitor::clean_names(ls.resid)
+      ls.resid <- .clean_names(ls.resid)
       if (standardize == TRUE) {
         ls.names <- paste0(".std.ls.", names(ls.resid))
       } else {

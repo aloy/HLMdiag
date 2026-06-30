@@ -25,29 +25,15 @@ problem_factor_groups <- function(formula, data) {
   are_factors <- rapply(xs_frame, class)
   are_factors <- names(are_factors)[which(are_factors == "factor")]
 
-  id_vars <- c(g, are_factors)
-  molten_model_frame <- melt(model_frame, id = id_vars)
-
   one_level_factor <- matrix(NA, nrow = ngroups, ncol = 1 + length(are_factors))
   colnames(one_level_factor) <- c(g, are_factors)
 
-  for (i in 1:length(are_factors)) {
-    cast_model_frame <- dcast(
-      molten_model_frame,
-      paste(g, "~", are_factors[i]),
-      length
-    )
+  for (i in seq_along(are_factors)) {
+    tab <- table(model_frame[[g]], model_frame[[are_factors[i]]])
     if (i == 1) {
-      one_level_factor[, 1] <- cast_model_frame[, 1]
+      one_level_factor[, 1] <- rownames(tab)
     }
-    one_level_factor[, (i + 1)] <- apply(
-      cast_model_frame[, -1],
-      1,
-      function(x) {
-        empty_factors <- sum(x == 0)
-        empty_factors > 0
-      }
-    )
+    one_level_factor[, (i + 1)] <- apply(tab, 1, \(x) any(x == 0))
   }
 
   return(one_level_factor)
@@ -352,7 +338,7 @@ plot.adjust_lmList.confint <- function(x, y, ...) {
   # 		stopifnot(require("ggplot2"))
   group <- intervals <- NULL # Make codetools happy
   cis <- as(x, "array")
-  df <- reshape2::melt(cis)
+  df <- as.data.frame(as.table(cis))
   colnames(df) <- c("what", "end", "group", "intervals")
   p <- ggplot(df, aes(x = group, y = intervals))
   p +

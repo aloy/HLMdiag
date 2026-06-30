@@ -251,6 +251,14 @@ se.ranef <- function(object) {
   return(se.bygroup)
 }
 
+.clean_names <- function(x) {
+  nms <- tolower(names(x))
+  nms <- gsub("[^[:alnum:]]+", "_", nms)
+  nms <- gsub("^_+|_+$", "", nms)
+  names(x) <- nms
+  x
+}
+
 # Checking whether an LMM is nested
 #' @importFrom reformulas isNested
 isNestedModel <- function(object) {

@@ -58,7 +58,6 @@
 #' \code{\link{qqline}} (\code{\link{ggplot_qqnorm}}).
 #'
 #' @useDynLib HLMdiag, .registration = TRUE
-#' @importFrom reshape2 melt dcast
 #' @importFrom MASS rlm
 #' @importFrom mgcv tensor.prod.model.matrix
 #' @importFrom dplyr select left_join mutate across bind_cols bind_rows filter arrange desc
@@ -66,7 +65,6 @@
 #' @importFrom purrr map map_lgl map_df map_dbl
 #' @importFrom tibble tibble
 #' @importFrom tidyselect all_of
-#' @importFrom janitor clean_names
 #' @import Matrix
 #' @import methods
 #' @import ggplot2
