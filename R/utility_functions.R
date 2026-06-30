@@ -252,6 +252,7 @@ se.ranef <- function(object) {
 }
 
 # Checking whether an LMM is nested
+#' @importFrom reformulas isNested
 isNestedModel <- function(object) {
   cl <- class(object)
   if (cl == "lme") {
@@ -260,7 +261,7 @@ isNestedModel <- function(object) {
     fl <- object@flist
     fnms <- names(fl)
     RVAL <- all(sapply(seq_along(fl)[-1], function(i) {
-      lme4::isNested(fl[[i - 1]], fl[[i]])
+      reformulas::isNested(fl[[i - 1]], fl[[i]])
     }))
   }
 

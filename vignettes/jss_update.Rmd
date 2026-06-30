@@ -186,6 +186,6 @@ beta_cdd[25,]
 To calculate the relative variance change, we use `hlm_influence()`, but `approx = FALSE` must be specified:
 
 ```{r eval=FALSE}
-hlm_influence(fm4, approx = FALSE)
+(vc_diag <- hlm_influence(fm4, approx = FALSE))
 ```
 
