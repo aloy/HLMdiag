@@ -425,19 +425,7 @@ cooks.distance.mer <- function(model, level = 1, delete = NULL, ...) {
   } else {
     e <- with(mats, Y - X %*% betaHat)
 
-    if (level != 1) {
-      grp.names <- unique(mats$flist[, level])
-
-      if (is.null(delete)) {
-        del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
-          ind <- which(mats$flist[, level] == grp.names[x]) - 1
-        })
-      } else {
-        del.index <- list(which(mats$flist[, level] %in% delete) - 1)
-      }
-    } else {
-      del.index <- list(delete - 1)
-    }
+    del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
     calc.cooksd <- .Call(
       "cooksdSubset",
@@ -700,23 +688,7 @@ mdffits.mer <- function(object, level = 1, delete = NULL, ...) {
   betaHat <- with(mats, XVXinv %*% t(X) %*% Vinv %*% Y)
   e <- with(mats, Y - X %*% betaHat)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[, level])
-
-    if (is.null(delete)) {
-      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
-        ind <- which(mats$flist[, level] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[, level] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   calc.mdffits <- .Call(
     "mdffitsSubset",
@@ -950,23 +922,7 @@ covratio.mer <- function(model, level = 1, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .mer_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[, level])
-
-    if (is.null(delete)) {
-      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
-        ind <- which(mats$flist[, level] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[, level] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covratioCalc",
@@ -1037,7 +993,7 @@ covratio.lme <- function(model, level = 1, delete = NULL, ...) {
       stop(paste(level, "is not a valid grouping factor for this model."))
     }
   }
-  if (any("nlme" == class(model))) {
+  if (inherits(model, "nlme")) {
     stop("not implemented for \"nlme\" objects")
   }
 
@@ -1104,23 +1060,7 @@ covtrace.mer <- function(model, level = 1, delete = NULL, ...) {
   # Extract key pieces of the model
   mats <- .mer_matrices(model)
 
-  if (level != 1) {
-    grp.names <- unique(mats$flist[, level])
-
-    if (is.null(delete)) {
-      del.index <- lapply(seq_len(mats$ngrps[level]), function(x) {
-        ind <- which(mats$flist[, level] == grp.names[x]) - 1
-      })
-    } else {
-      del.index <- list(which(mats$flist[, level] %in% delete) - 1)
-    }
-  } else {
-    if (is.null(delete)) {
-      del.index <- split(0:(mats$n - 1), 0:(mats$n - 1))
-    } else {
-      del.index <- list(delete - 1)
-    }
-  }
+  del.index <- .make_del_index(mats$flist, level, mats$n, mats$ngrps, delete)
 
   res <- .Call(
     "covtraceCalc",

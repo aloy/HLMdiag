@@ -252,7 +252,10 @@ se.ranef <- function(object) {
 }
 
 .clean_names <- function(x) {
-  nms <- tolower(names(x))
+  nms <- names(x)
+  nms <- gsub("([a-z0-9])([A-Z])", "\\1_\\2", nms)
+  nms <- gsub("([A-Z]+)([A-Z][a-z])", "\\1_\\2", nms)
+  nms <- tolower(nms)
   nms <- gsub("[^[:alnum:]]+", "_", nms)
   nms <- gsub("^_+|_+$", "", nms)
   names(x) <- nms
