@@ -198,7 +198,7 @@ case_delete.mer <- function(
         ranef.delete <- lapply(model.delete, lme4::ranef)
         deleted.group <- rownames(lme4::ranef(model)[[level]])
 
-        ranef.delete <- lapply(1:length(ranef.delete), function(x) {
+        ranef.delete <- lapply(seq_along(ranef.delete), function(x) {
           ranef.list <- ranef.delete[[x]]
           lapply(ranef.list, function(y) {
             y$id <- rownames(y)
@@ -417,7 +417,7 @@ case_delete.lmerMod <- function(
         ranef.delete <- lapply(model.delete, lme4::ranef)
         deleted.group <- rownames(lme4::ranef(model)[[level]])
 
-        ranef.delete <- lapply(1:length(ranef.delete), function(x) {
+        ranef.delete <- lapply(seq_along(ranef.delete), function(x) {
           ranef.list <- ranef.delete[[x]]
           lapply(ranef.list, function(y) {
             y$id <- rownames(y)
@@ -451,7 +451,7 @@ case_delete.lmerMod <- function(
         index[delete] <- FALSE
         deleted_levels <- as.vector(flist[[level]][delete])
       } else if (is.character(delete)) {
-        for (i in 1:length(delete)) {
+        for (i in seq_along(delete)) {
           if (!delete[i] %in% flist[[level]]) {
             stop(paste(
               delete[i],
@@ -676,7 +676,7 @@ case_delete.lme <- function(
 
     if (is.null(delete)) {
       data.delete <- split(modframe, modframe[, level])[
-        1:length(unique(model$groups[[level]]))
+        seq_along(unique(model$groups[[level]]))
       ] #extract non-empty ones
       data.delete <- lapply(data.delete, function(df) {
         df <- dplyr::anti_join(model$data, df, by = names(model$data))
@@ -705,7 +705,7 @@ case_delete.lme <- function(
         ranef.delete <- lapply(model.delete, nlme::ranef)
         deleted.group <- rownames(nlme::ranef(model))
 
-        ranef.delete <- lapply(1:length(ranef.delete), function(x) {
+        ranef.delete <- lapply(seq_along(ranef.delete), function(x) {
           ranef.list <- ranef.delete[[x]]
           lapply(ranef.list, function(y) {
             y$id <- rownames(y)
@@ -726,7 +726,7 @@ case_delete.lme <- function(
 
       #create new frame of data with variables used in the model
       fixed <- formula(model)
-      for (i in 1:length(model.delete)) {
+      for (i in seq_along(model.delete)) {
         dataform <- paste(
           fixed[2],
           "~",
@@ -755,7 +755,7 @@ case_delete.lme <- function(
         index[delete] <- FALSE
         deleted_levels <- as.vector(model$groups[[level]][delete])
       } else if (is.character(delete)) {
-        for (i in 1:length(delete)) {
+        for (i in seq_along(delete)) {
           if (!delete[i] %in% model$groups[[level]]) {
             stop(paste(
               delete[i],

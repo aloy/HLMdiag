@@ -82,7 +82,7 @@ hlm_influence.lmerMod <- function(
     stop(paste(level, "is not a valid level for this model"))
   }
 
-  for (i in 1:length(leverage)) {
+  for (i in seq_along(leverage)) {
     if (!leverage[i] %in% c("overall", "fixef", "ranef", "ranef.uc")) {
       stop(paste(
         leverage[i],
@@ -230,7 +230,7 @@ hlm_influence.lme <- function(
     stop(paste(level, "is not a valid level for this model"))
   }
 
-  for (i in 1:length(leverage)) {
+  for (i in seq_along(leverage)) {
     if (!leverage[i] %in% c("overall", "fixef", "ranef", "ranef.uc")) {
       stop(paste(
         leverage[i],

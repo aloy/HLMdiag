@@ -222,7 +222,7 @@ LSresids.lmerMod <- function(object, level, standardize = FALSE, ...) {
         purrr::map_lgl(split, ~ all(.x == .x[1]))
       })
 
-    for (i in 1:length(frame.split)) {
+    for (i in seq_along(frame.split)) {
       #remove the all equal columns
       frame.lgl[[i]][1] <- FALSE #make sure we never remove response
       frame.split[[i]] <- frame.split[[i]][!frame.lgl[[i]]]
@@ -431,7 +431,7 @@ LSresids.lme <- function(object, level, standardize = FALSE, ...) {
         purrr::map_lgl(split, ~ all(.x == .x[1]))
       })
 
-    for (i in 1:length(frame.split)) {
+    for (i in seq_along(frame.split)) {
       #remove the all equal columns
       frame.lgl[[i]][1] <- FALSE #make sure we never remove response
       frame.split[[i]] <- frame.split[[i]][!frame.lgl[[i]]]
