@@ -280,7 +280,7 @@ mahalanobis_ranef.lmerMod <- function(object) {
     eblup <- tcrossprod(D, Z) %*% mats$Vinv %*% resid_marginal(object)
     vcov_eblup <- tcrossprod(D, Z) %*% mats$P %*% tcrossprod(Z, D)
 
-    ng <- ngrps(object)
+    ng <- lme4::ngrps(object)
     n_re <- nrow(vc[[1]])
 
     eblup_lst <- lapply(seq_len(ng), \(i) {

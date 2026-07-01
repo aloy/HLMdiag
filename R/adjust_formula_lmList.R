@@ -81,42 +81,28 @@ adjust_formula_lmList <- function(formula, data) {
   problem_list <- split(problem_mat, problem_mat[, 1])
 
   formula_list <- lapply(problem_list, function(x) {
-    #formula_list <- vector("list", length(problem_list))
-    #for(i in 1:length(problem_list)){
-    #	x <- problem_list[[i]]
-    changes <- x[, -1]
+    changes <- vapply(
+      x[, -1, drop = FALSE],
+      \(v) isTRUE(as.logical(v)),
+      logical(1)
+    )
 
-    if (dim(x)[2] == 2) {
-      if (changes == 1) {
-        changes <- colnames(x)[2]
-        changes <- paste(changes, ":.", sep = "")
-      } else {
-        changes <- NULL
-      }
+    nchanges <- sum(changes)
+
+    if (nchanges == 0) {
+      changes <- NULL
     } else {
-      nchanges <- sum(changes)
-
-      if (nchanges == 0) {
-        changes <- NULL
-      } else {
-        if (nchanges == 1) {
-          changes <- colnames(changes)[which(changes == 1)]
-          changes <- paste(changes, ":.", sep = "")
-        } else {
-          #if(nchanges > 1){
-          changes <- colnames(changes)[which(changes == 1)]
-          changes <- paste(changes, ":.", sep = "")
-          changes <- paste(changes, collapse = "-")
-        }
+      changes <- paste0(names(changes)[changes], ":.")
+      if (nchanges > 1) {
+        changes <- paste(changes, collapse = "-")
       }
     }
 
-    if (is.null(changes) != TRUE) {
-      change_form <- update(lm_form, paste(". ~ .", changes, sep = "-"))
+    if (!is.null(changes)) {
+      update(lm_form, paste(". ~ .", changes, sep = "-"))
     } else {
-      change_form <- lm_form
+      lm_form
     }
-    #formula_list[[i]] <- change_form
   })
 
   return(formula_list)
@@ -193,14 +179,13 @@ adjust_lmList.formula <- function(object, data, pool) {
 
     #else{
     new_formulas <- adjust_formula_lmList(object, data)
-    problem_cases <- as.numeric(which(check_results == TRUE))
-    #print(problem_cases)
+    problem_names <- names(which(check_results))
     split_data <- split(data, data[, g])
 
-    for (i in problem_cases) {
-      lmList_result[[i]] <- lm(
-        formula = new_formulas[[i]],
-        data = split_data[[i]]
+    for (nm in problem_names) {
+      lmList_result[[nm]] <- lm(
+        formula = new_formulas[[nm]],
+        data = split_data[[nm]]
       )
     }
   }
