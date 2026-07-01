@@ -27,7 +27,6 @@ Imports:
     Rcpp,
     rlang,
     ggrepel,
-    diagonals,
     reformulas
 LinkingTo: Rcpp, RcppArmadillo
 Suggests:

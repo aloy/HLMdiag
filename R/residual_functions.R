@@ -267,9 +267,7 @@ resid_ranef.lmerMod <- function(object, level, which, standardize = FALSE) {
 }
 
 
-#' @importFrom diagonals split_vector fatdiag
 mahalanobis_ranef.lmerMod <- function(object) {
-  ngrps <- 0
   mats <- .lmerMod_matrices(object)
 
   n_lev <- length(lme4::getME(object, "flist"))
@@ -280,13 +278,18 @@ mahalanobis_ranef.lmerMod <- function(object) {
     D <- kronecker(Diagonal(mats$ngrps), bdiag(vc))
 
     eblup <- tcrossprod(D, Z) %*% mats$Vinv %*% resid_marginal(object)
-    # vcov_eblup <- D - tcrossprod(D, Z) %*% mats$P %*% tcrossprod(Z, D)
     vcov_eblup <- tcrossprod(D, Z) %*% mats$P %*% tcrossprod(Z, D)
 
-    eblup_lst <- diagonals::split_vector(eblup, size = 2)
-    vcov_eblup_lst <- diagonals::fatdiag(vcov_eblup, steps = ngrps(object)) |>
-      diagonals::split_vector(size = 4) |>
-      purrr::map(~ matrix(.x, nrow = 2, byrow = TRUE))
+    ng <- ngrps(object)
+    n_re <- nrow(vc[[1]])
+
+    eblup_lst <- lapply(seq_len(ng), \(i) {
+      eblup[((i - 1) * n_re + 1):(i * n_re)]
+    })
+    vcov_eblup_lst <- lapply(seq_len(ng), function(i) {
+      idx <- ((i - 1) * n_re + 1):(i * n_re)
+      as.matrix(vcov_eblup[idx, idx])
+    })
 
     mah_dist_eblup <- purrr::map2_dbl(
       eblup_lst,
